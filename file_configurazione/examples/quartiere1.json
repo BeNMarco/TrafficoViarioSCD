@@ -1,0 +1,18 @@
+{
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2,"prev":[1,3],"next":[1,4]}],
+
+"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"from":[20,18],"to":[20,25],"numcorsie":1,"strada_confinante":1}],
+
+"incroci":[[1,false,2,true],[2,false,4,false],[1,false,2,true,3,false],[1,false,2,true,3,false,4,false]],	
+
+"rotonde":[[1,false,2,true,3,false,4,false],[1,false,2,true,3,false]],
+
+"luoghi":[{"id":1,"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}],
+
+"abitanti":[{"automunito":true,"bicimunito":false,"idmacchina":3,"idbici":null,"lavora":[1,2],"abita":1}]
+
+}
+
+
+
+

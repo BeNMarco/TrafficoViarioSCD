@@ -1,7 +1,7 @@
 {
-"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2,"prev":[1,3],"next":[1,4]}],
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2}],
 
-"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"from":[20,18],"to":[20,25],"numcorsie":1,"strada_confinante":1}],
+"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20}],
 
 "incroci":[[{"quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":false},{"quartiere":2,"id_strada":3,"tipo_strada":"urbana","polo":true},
 {"quartiere":2,"id_strada":5,"tipo_strada":"urbana","polo":false}],

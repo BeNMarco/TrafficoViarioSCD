@@ -1,19 +1,18 @@
  
-"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2,"prev":[1,3],"next":[1,4]},..
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},..
 from=to:[x,y]
-prev=next:[idquartiere,idstrada]  // prev si riferisce alla strada sull'estremo from, next si riferisce all'estremo to
 numcorsie è il numero di corsie per senso di marcia
 
 
-"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"from":[20,18],"to":[20,25],"numcorsie":1,"strada_confinante":1}],
+"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20}],
 strada_confinante indica la strada dalla quale si ha l'ingresso verso il luogo
+polo indica quale polo della strada confinante
+distanza_da_from indica a che distanza rispetto al from della strada si trova l'incrocio con la laterale
 
 
 
 "incroci"/"rotonde"
 ogni array è un incrocio o rotonda: SOLO l'incrocio può essere un array con size=2 e sse una delle 2 strade è una strada di ingresso; altrimenti sarà un incrocio a 3 (incrocio a T) o a 4. Il valore booleano espresso per ogni strada indica la polarità cioè true=+ e false=- con + il polo più vicino allo 0 del piano.
-*tipo_strada usato per indicare se l'id_strada dell'incrocio/rotonda si riferisce a una strada normale(urbana) o di ingresso
-**tipo_strada:"urbana"/"ingresso"
 
 
 

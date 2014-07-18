@@ -3,9 +3,13 @@
 
 "strade_di_ingresso":[{"id": 1,"lunghezza": 50,"from":[20,18],"to":[20,25],"numcorsie":1,"strada_confinante":1}],
 
-"incroci":[[1,false,2,true],[2,false,4,false],[1,false,2,true,3,false],[1,false,2,true,3,false,4,false]],	
+"incroci":[[{"quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":false},{"quartiere":2,"id_strada":3,"tipo_strada":"urbana","polo":true},
+{"quartiere":2,"id_strada":5,"tipo_strada":"urbana","polo":false}],
+[{"quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":false},{"quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":false},
+{"quartiere":2,"id_strada":3,"tipo_strada":"urbana","polo":false}],
+[{"quartiere":2,"id_strada":5,"tipo_strada":"urbana","polo":false},{"quartiere":1,"id_strada":4,"tipo_strada":"urbana","polo":false}]],
 
-"rotonde":[[1,false,2,true,3,false,4,false],[1,false,2,true,3,false]],
+"rotonde":"analogo agli incroci con dimensione array >=3 mentre incroci >=2",
 
 "luoghi":[{"id":1,"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}],
 

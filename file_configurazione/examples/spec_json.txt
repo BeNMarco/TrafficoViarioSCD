@@ -10,13 +10,10 @@ strada_confinante indica la strada dalla quale si ha l'ingresso verso il luogo
 
 
 
-"incroci":[[1,false,2,true],[2,false,4,false],[1,false,2,true,3,false],[1,false,2,true,3,false,4,false]],...
-ogni array è un incrocio: l'incrocio può essere a 2 sse una delle 2 strade è una strada di ingresso (); altrimenti sarà un incrocio a 3 (incrocio a T) o a 4. Il valore booleano espresso per ogni strada indica la polarità cioè true=+ e false=- con + il polo più vicino allo 0 del piano.
-
-
-
-"rotonde":[[1,false,2,true,3,false,4,false],[1,false,2,true,3,false]...]
-le rotonde prevedono sempre 3 o 4 strade di incrocio
+"incroci"/"rotonde"
+ogni array è un incrocio o rotonda: SOLO l'incrocio può essere un array con size=2 e sse una delle 2 strade è una strada di ingresso; altrimenti sarà un incrocio a 3 (incrocio a T) o a 4. Il valore booleano espresso per ogni strada indica la polarità cioè true=+ e false=- con + il polo più vicino allo 0 del piano.
+*tipo_strada usato per indicare se l'id_strada dell'incrocio/rotonda si riferisce a una strada normale(urbana) o di ingresso
+**tipo_strada:"urbana"/"ingresso"
 
 
 

@@ -2,14 +2,16 @@ with GNATCOLL.JSON;
 with Ada.Text_IO;
 
 with rt_strade;
-with rt_strade.strade_features;
+with strade_common;
+with strade_common.strade_features;
 with JSON_Helper;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
 
+use strade_common;
 use rt_strade;
-use rt_strade.strade_features;
+use strade_common.strade_features;
 use JSON_Helper;
 
 package body partition_setup_utilities is
@@ -21,8 +23,7 @@ package body partition_setup_utilities is
       val_id_quartiere: Positive;
       val_lunghezza: Natural;
       val_num_corsie: Positive;
-      val_ptr_resource_strada: ptr_rt_segmento;
-      ptr_segmento_strada: ptr_resource_segmento_strada;
+      val_ptr_resource_strada: ptr_resource_segmento_strada;
       strada: JSON_Value;
    begin
       for index_strada in 1..Length(json_roads)
@@ -33,13 +34,17 @@ package body partition_setup_utilities is
          val_id_quartiere:= 1;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
-         ptr_segmento_strada:= new resource_segmento_strada;
-         val_ptr_resource_strada:= ptr_rt_segmento(ptr_segmento_strada);
+         val_ptr_resource_strada:= new resource_segmento_strada;
+         -- warning lanciato dalla istruzione: ptr_rt_segmento(val_ptr_resource_strada)
+         -- warning dice che ptr_rt_segmento va dichiarato in strade_common
+         -- questo non è possibile perchè quel package è Pure
+         pragma Warnings(off);
          ptr_array_roads.all(index_strada):= create_new_urbana(val_tipo => val_tipo,val_id => val_id,
                                                                val_id_quartiere => val_id_quartiere,
                                                                val_lunghezza => val_lunghezza,
                                                                val_num_corsie => val_num_corsie,
-                                                               val_ptr_resource_strada => val_ptr_resource_strada);
+                                                               val_ptr_resource_strada => ptr_rt_segmento(val_ptr_resource_strada));
+      	pragma Warnings(on);
       end loop;
       return ptr_array_roads;
    end create_array_strade;

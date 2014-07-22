@@ -1,12 +1,10 @@
 with GNATCOLL.JSON;
 
-with rt_strade;
-with rt_strade.strade_features;
+with strade_common.strade_features;
 
 use GNATCOLL.JSON;
 
-use rt_strade;
-use rt_strade.strade_features;
+use strade_common.strade_features;
 
 package partition_setup_utilities is
 

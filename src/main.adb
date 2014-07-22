@@ -2,7 +2,8 @@ with GNATCOLL.JSON;
 with Ada.Text_IO;
 
 with JSON_Helper;
-with rt_strade.strade_features;
+with strade_common;
+with strade_common.strade_features;
 with name_server_utilities;
 with partition_setup_utilities;
 
@@ -11,9 +12,10 @@ use Ada.Text_IO;
 
 use name_server_utilities;
 use JSON_Helper;
+use strade_common;
 use name_server_utilities;
 use partition_setup_utilities;
-use rt_strade.strade_features;
+use strade_common.strade_features;
 
 procedure main is
    json_quartiere: JSON_Value:=Get_Json_Value(Json_String => "",Json_File_Name => "data/quartiere1.json");

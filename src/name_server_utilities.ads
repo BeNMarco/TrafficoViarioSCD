@@ -1,5 +1,7 @@
+with strade_common;
 with rt_strade;
 
+use strade_common;
 use rt_strade;
 
 package name_server_utilities is

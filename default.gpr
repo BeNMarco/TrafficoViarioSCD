@@ -1,0 +1,35 @@
+with "/usr/local/gnat/lib/gnat/gnatcoll";
+
+project Default is
+
+   type Gnatcoll_Kind_Type is
+      ("static", "relocatable");
+   type Os_Kind is
+      ("Windows_NT", "unix");
+   for Source_Dirs use ("src/**", ".");
+   for Object_Dir use "obj/";
+   OS : Os_Kind := external ("OS");
+   LIBRARY_TYPE : Gnatcoll_Kind_Type := external ("LIBRARY_TYPE");
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-g", "-O2");
+   end Compiler;
+
+   case OS is
+
+      when "Windows_NT" =>
+
+      when "unix" =>
+
+         case LIBRARY_TYPE is
+
+            when "static" =>
+               for Main use ("main.adb");
+
+            when "relocatable" =>
+
+         end case;
+   end case;
+
+end Default;
+

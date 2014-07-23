@@ -4,28 +4,35 @@ package strade_common is
 
    type rt_segmento is limited interface;
 
-   type rt_strada_features is abstract tagged limited private;
+   type rt_strada_features is abstract tagged private;
 
    type type_strade is (urbana,ingresso);
 
-   type rt_incroci_features(num_roads: Positive) is abstract tagged limited private;
+   type road_incrocio_features is tagged private;
 
-   type list_roads is array(Positive range <>) of access rt_strada_features;
+   -- begin tipi incroci
+   type list_road_incrocio_a_4 is array(Positive range 1..4) of road_incrocio_features;
+   type list_road_incrocio_a_3 is array(Positive range 1..3) of road_incrocio_features;
+   type list_road_incrocio_a_2 is array(Positive range 1..2) of road_incrocio_features;
+   -- end tipo incroci
+
+   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;
+                                     val_tipo_strada: type_strade) return road_incrocio_features;
 
 private
 
-   type rt_strada_features is tagged limited record
+   type rt_strada_features is tagged record
       tipo: type_strade;
-      id: Positive;
+      id: Positive;  -- id strada coincide con id della sua risorsa protetta
       id_quartiere: Positive;
       lunghezza: Natural;
       num_corsie: Positive;
-      ptr_resource_strada: access rt_segmento;
    end record;
 
-   type rt_incroci_features(num_roads: Positive) is tagged limited record
-      roads:list_roads(1..num_roads);
-      ptr_resource_incrocio: access rt_segmento;
+   type road_incrocio_features is tagged record
+      id_quartiere: Positive;
+      id_strada: Positive;
+      tipo_strada: type_strade;
    end record;
 
 end strade_common;

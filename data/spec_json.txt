@@ -1,0 +1,26 @@
+ 
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},..
+from=to:[x,y]
+numcorsie è il numero di corsie per senso di marcia
+
+
+"strade_di_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20}],
+strada_confinante indica la strada dalla quale si ha l'ingresso verso il luogo
+polo indica quale polo della strada confinante
+distanza_da_from indica a che distanza rispetto al from della strada si trova l'incrocio con la laterale
+**(PER FARE UN INCROCIO CON 2 LATERALI QUESTE DEVONO AVERE LO STESSO VALORE distanza_da_from, STESSO VALORE DI polo E STESSO
+VALORE DI strada_confinante)
+
+
+"incroci"/"rotonde"
+ogni array è un incrocio o rotonda: SOLO l'incrocio può essere un array con size=2 e sse una delle 2 strade è una strada di ingresso; altrimenti sarà un incrocio a 3 (incrocio a T) o a 4. Il valore booleano espresso per ogni strada indica la polarità cioè true=+ e false=- con + il polo più vicino allo 0 del piano.
+
+
+
+"luoghi":[{"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}]
+l'idstrada deve essere sempre relativa a un tipo di strada di ingresso. Tipologia: casa/lavoro/divertimento
+
+
+
+"abitanti":[{"automunito":true,"bicimunito":false,"idmacchina":3,"idbici":null,"lavora":[1,2],"abita":1}]
+abita viene usato per indicare il luogo del quartiere in cui l'abitante risiede, lavora è un array in cui il primo elemento è il quartiere e il secondo elemento è il luogo di lavoro di quel quartiere.

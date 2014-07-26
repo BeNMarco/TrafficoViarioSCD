@@ -1,5 +1,5 @@
 {
-"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2}],
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 1,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2}],
 
 "strade_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20}],
 

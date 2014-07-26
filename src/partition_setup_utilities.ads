@@ -1,31 +1,27 @@
 with GNATCOLL.JSON;
 
-with strade_common.strade_features;
+with strade_e_incroci_common;
+with risorse_strade_e_incroci;
 
 use GNATCOLL.JSON;
 
-use strade_common.strade_features;
+use strade_e_incroci_common;
+use risorse_strade_e_incroci;
 
 package partition_setup_utilities is
 
-   -- begin catalogo urbane
    urbane_segmento_resources: ptr_resource_segmenti_strade;
-   -- end catalogo urbane
-
-   -- begin catalogo ingressi
    ingressi_segmento_resources: ptr_resource_segmenti_strade;
-   -- end catalogo ingressi
+   incroci_a_4_segmenti_resources: ptr_resource_segmenti_strade;
+   incroci_a_3_segmenti_resources: ptr_resource_segmenti_strade;
 
-   -- begin catalogo incroci
-   incroci_segmenti_resources: ptr_resource_segmenti_strade;
-   -- end catalogo incroci
+   function create_array_strade(json_roads: JSON_array; from: Positive; to: Positive) return strade_urbane_features;
 
-   function create_array_strade(json_roads: JSON_array) return strade_urbane_features;
+   function create_array_ingressi(json_roads: JSON_array; from: Positive; to: Positive) return strade_ingresso_features;
 
-   function create_array_ingressi(json_roads: JSON_array) return strade_ingresso_features;
-
-   function create_array_incroci_a_4(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_4;
-   function create_array_incroci_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3;
-   function create_array_incroci_a_2(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_2;
+   function create_array_incroci_a_4(json_incroci: JSON_array; from: Natural; to: Natural;
+                                     from_urbane: Positive; from_ingressi: Positive) return list_incroci_a_4;
+   function create_array_incroci_a_3(json_incroci: JSON_array; from: Natural; to: Natural;
+                                     from_urbane: Positive; from_ingressi: Positive) return list_incroci_a_3;
 
 end partition_setup_utilities;

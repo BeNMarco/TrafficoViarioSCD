@@ -2,3 +2,6 @@
 obj/
 *.ali
 *.o
+main
+dsa
+bin

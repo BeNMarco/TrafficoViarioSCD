@@ -30,35 +30,44 @@ procedure main is
    to_ingressi: Positive:= size_json_ingressi+size_json_urbane;
 
    urbane_features: strade_urbane_features:=
-     create_array_strade(json_roads => json_urbane, from => from_urbane, to => to_urbane);
+     create_array_urbane(json_roads => json_urbane, from => from_urbane, to => to_urbane);
    ingressi_features: strade_ingresso_features:=
      create_array_ingressi(json_roads => json_ingressi, from => from_ingressi, to => to_ingressi);
 
    json_incroci_a_4: JSON_Array:= Get(Val => json_quartiere, Field => "incroci_a_4");
    json_incroci_a_3: JSON_Array:= Get(Val => json_quartiere, Field => "incroci_a_3");
-   --json_incroci_a_2: JSON_Array:= Get(Val => json_quartiere, Field => "incroci_a_2");
+   json_rotonde_a_4: JSON_Array:= Get(Val => json_quartiere, Field => "rotonde_a_4");
+   json_rotonde_a_3: JSON_Array:= Get(Val => json_quartiere, Field => "rotonde_a_3");
    size_incroci_a_4: Natural:= Length(json_incroci_a_4);
    size_incroci_a_3: Natural:= Length(json_incroci_a_3);
-   --size_incroci_a_2: Natural:= Length(json_incroci_a_2);
+   size_rotonde_a_4: Natural:= Length(json_rotonde_a_4);
+   size_rotonde_a_3: Natural:= Length(json_rotonde_a_3);
 
-   from_incroci_a_4: Positive:= 1;
-   to_incroci_a_4: Positive:= size_incroci_a_4;
-   from_incroci_a_3: Positive:= size_incroci_a_4+1;
-   to_incroci_a_3: Positive:= size_incroci_a_4+size_incroci_a_3;
-   --from_incroci_a_2: Positive:= size_incroci_a_4+size_incroci_a_3+1;
-   --to_incroci_a_2: Positive:= size_incroci_a_2+size_incroci_a_4+size_incroci_a_3;
+   from_incroci_a_4: Natural:= 1;
+   to_incroci_a_4: Natural:= size_incroci_a_4;
+   from_incroci_a_3: Natural:= to_incroci_a_4+1;
+   to_incroci_a_3: Natural:= from_incroci_a_3-1+size_incroci_a_3;
+   from_rotonde_a_4: Natural:= to_incroci_a_3+1;
+   to_rotonde_a_4: Natural:= from_rotonde_a_4-1+size_rotonde_a_4;
+   from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
+   to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
 
-   incroci_a_4: list_incroci_a_4(from_incroci_a_4..size_incroci_a_4):=
+   incroci_a_4: list_incroci_a_4(from_incroci_a_4..to_incroci_a_4):=
      create_array_incroci_a_4(json_incroci => json_incroci_a_4, from => from_incroci_a_4, to => to_incroci_a_4,
                               from_urbane => from_urbane, from_ingressi => from_ingressi);
    incroci_a_3: list_incroci_a_3(from_incroci_a_3..to_incroci_a_3):=
      create_array_incroci_a_3(json_incroci => json_incroci_a_3, from => from_incroci_a_3, to => to_incroci_a_3,
                               from_urbane => from_urbane, from_ingressi => from_ingressi);
-   --incroci_a_2: list_incroci_a_2(from_incroci_a_2..to_incroci_a_2):=
-    -- create_array_incroci_a_2(json_incroci => json_incroci_a_2, from => from_incroci_a_2, to => to_incroci_a_2,
-      --                        from_urbane => from_urbane, from_ingressi => from_ingressi);
+   rotonde_a_4: list_incroci_a_4(from_rotonde_a_4..to_rotonde_a_4):=
+     create_array_incroci_a_4(json_incroci => json_rotonde_a_4, from => from_rotonde_a_4, to => to_rotonde_a_4,
+                              from_urbane => from_urbane, from_ingressi => from_ingressi);
+   rotonde_a_3: list_incroci_a_3(from_rotonde_a_3..to_rotonde_a_3):=
+     create_array_incroci_a_3(json_incroci => json_rotonde_a_3, from => from_rotonde_a_3, to => to_rotonde_a_3,
+                              from_urbane => from_urbane, from_ingressi => from_ingressi);
    gps: ptr_gps_interface;
 begin
+   Put_Line(Integer'Image(size_rotonde_a_4));
    gps:= get_server_gps;
    gps.registra_urbane_quartiere(1, urbane_features);
+   gps.registra_incroci_quartiere(1,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
 end main;

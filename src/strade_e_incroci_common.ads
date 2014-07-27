@@ -28,8 +28,11 @@ package strade_e_incroci_common is
    type strade_ingresso_features is array(Positive range <>) of strada_ingresso_features;
    type ingressi_quartiere is array(Positive range <>) of access strade_ingresso_features;
 
-   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;
-                                     val_tipo_strada: type_strade) return road_incrocio_features;
+   type tratto is tagged private;
+   type percorso is array(Positive range <>) of tratto;
+
+   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive)
+                                     return road_incrocio_features;
 
    function create_new_urbana(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
                               val_lunghezza: Natural;val_num_corsie: Positive) return strada_urbana_features;
@@ -38,12 +41,13 @@ package strade_e_incroci_common is
                                 val_lunghezza: Natural;val_num_corsie: Positive;val_id_main_strada: Positive;
                                 val_distance_from_road_head: Natural) return strada_ingresso_features;
 
-   function get_lunghezza(road: access rt_strada_features) return Natural;
+   function get_lunghezza_road(road: access rt_strada_features) return Natural;
+   function get_id_main_strada_ingresso(road: access strada_ingresso_features) return Positive;
+   function get_distance_from_road_head_ingresso(road: access strada_ingresso_features) return Natural;
 
    -- begin get methods road_incrocio_features
    function get_id_quartiere_road_incrocio(road: access road_incrocio_features) return Positive;
    function get_id_strada_road_incrocio(road: access road_incrocio_features) return Positive;
-   function get_tipo_strada_road_incrocio(road: access road_incrocio_features) return type_strade;
    -- end get methods road_incrocio_features
 
 private
@@ -67,7 +71,11 @@ private
    type road_incrocio_features is tagged record
       id_quartiere: Positive;
       id_strada: Positive;
-      tipo_strada: type_strade;
+   end record;
+
+   type tratto is tagged record
+      id_quartiere: Positive;
+      id_tratto: Positive;
    end record;
 
 end strade_e_incroci_common;

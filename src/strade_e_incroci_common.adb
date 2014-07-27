@@ -2,10 +2,20 @@
 
 package body strade_e_incroci_common is
 
-   function get_lunghezza(road: access rt_strada_features) return Natural is
+   function get_lunghezza_road(road: access rt_strada_features) return Natural is
    begin
       return road.lunghezza;
-   end get_lunghezza;
+   end get_lunghezza_road;
+
+   function get_id_main_strada_ingresso(road: access strada_ingresso_features) return Positive is
+   begin
+      return road.id_main_strada;
+   end get_id_main_strada_ingresso;
+
+   function get_distance_from_road_head_ingresso(road: access strada_ingresso_features) return Natural is
+   begin
+      return road.distance_from_road_head;
+   end get_distance_from_road_head_ingresso;
 
       -- begin get methods road_incrocio_features
    function get_id_quartiere_road_incrocio(road: access road_incrocio_features) return Positive is
@@ -16,19 +26,14 @@ package body strade_e_incroci_common is
    begin
       return road.id_strada;
    end get_id_strada_road_incrocio;
-   function get_tipo_strada_road_incrocio(road: access road_incrocio_features) return type_strade is
-   begin
-      return road.tipo_strada;
-   end get_tipo_strada_road_incrocio;
    -- end get methods road_incrocio_features
 
-   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;
-                                     val_tipo_strada: type_strade) return road_incrocio_features is
+   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive)
+                                     return road_incrocio_features is
       road_incrocio: road_incrocio_features;
    begin
       road_incrocio.id_quartiere:= val_id_quartiere;
       road_incrocio.id_strada:= val_id_strada;
-      road_incrocio.tipo_strada:= val_tipo_strada;
       return road_incrocio;
    end create_new_road_incrocio;
 

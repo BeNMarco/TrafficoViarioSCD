@@ -1,0 +1,27 @@
+{
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 2,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 3,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 4,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 5,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 6,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2}],
+
+"strade_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20}],
+
+"incroci_a_4":[[{"id_quartiere":1,"id_strada":1,"tipo_strada":"urbana","polo":false},{"id_quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":true},
+{"id_quartiere":1,"id_strada":3,"tipo_strada":"urbana","polo":false},
+{"id_quartiere":1,"id_strada":4,"tipo_strada":"urbana","polo":false}],
+[{"id_quartiere":1,"id_strada":1,"tipo_strada":"urbana","polo":false},{"id_quartiere":1,"id_strada":2,"tipo_strada":"urbana","polo":true},
+{"id_quartiere":1,"id_strada":3,"tipo_strada":"urbana","polo":false},
+{"id_quartiere":1,"id_strada":5,"tipo_strada":"urbana","polo":false}]],
+
+"incroci_a_3":[],
+
+"incroci_a_2":[],
+
+"rotonde":"analogo agli incroci con dimensione array >=3 mentre incroci >=2",
+
+"luoghi":[{"id":1,"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}],
+
+"abitanti":[{"automunito":true,"bicimunito":false,"idmacchina":3,"idbici":null,"lavora":[1,2],"abita":1}]
+
+}
+
+
+
+

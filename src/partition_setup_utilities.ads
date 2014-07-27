@@ -15,7 +15,7 @@ package partition_setup_utilities is
    incroci_a_4_segmenti_resources: ptr_resource_segmenti_strade;
    incroci_a_3_segmenti_resources: ptr_resource_segmenti_strade;
 
-   function create_array_strade(json_roads: JSON_array; from: Positive; to: Positive) return strade_urbane_features;
+   function create_array_urbane(json_roads: JSON_array; from: Positive; to: Positive) return strade_urbane_features;
 
    function create_array_ingressi(json_roads: JSON_array; from: Positive; to: Positive) return strade_ingresso_features;
 

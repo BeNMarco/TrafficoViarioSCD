@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Space</title>
+	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="js/paper-full.js"></script>
+	<script type="text/javascript" src="js/mapDrive.js"></script>
+	<script type="text/javascript" src="js/data.js"></script>
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
+	<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript">
+		var myMap = new Map();
+
+		paper.install(window);
+
+
+		function traslladar(a,b){
+			var center = paper.project.view.center;
+			var desX = (a.x - b.x);
+			var desY=  (a.y - b.y);
+
+			var newCenter = [center.x + desX , center.y + desY];
+			return newCenter;
+		}
+
+		function zoomIn(){
+			view.zoom = view.zoom*1.1;
+		}
+
+		function zoomOut(){
+			view.zoom = view.zoom/1.1;
+		}
+
+		function switchTrafficLights(){
+			myMap.switchTrafficLights();
+		}
+
+		onload = function(e){
+
+			paper.setup("canvas");
+			
+			myMap.load(quartiere_2);
+			var style = new MapStyle();
+			style.laneWidth = 5;
+			style.pavementWidth = 2;
+			style.lineWidth = 0.2;
+			myMap.setStyle(style);
+			myMap.draw();
+			secondLayer = new Layer();
+			view.draw();
+
+			var myTool = new Tool();
+        	myTool.onMouseDown = function(event) {
+				path = new Point();
+				path.add(event.point);
+			};
+
+			myTool.onMouseDrag=function(event) {
+				
+	            path.add(event.point);
+				 
+				var des = traslladar (event.downPoint ,event.point); 
+				paper.project.view.center = des; 
+				
+			}
+
+			$('#canvas').mousewheel(function(event){
+				event.deltaY > 0 ? zoomIn() : zoomOut();
+			});
+
+		}
+
+	</script>
+
+</head>
+<body>
+	
+<!--
+	<p>
+		<a id="openws" href="#" onClick="openSocket()">Open</a>
+		<a id="closews" href="#" onClick="closeSocket()">Close</a>
+	</p>-->
+	
+	<div id="canvas-wrap">
+		<canvas id="canvas" resize hidpi="off" style="background-color:#F0EDE5;"></canvas>
+		<div id="zoom-controls-div">
+			<p><a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a id="zoomOutBtn" href="#" onClick="zoomOut()">-</a></p>
+			<p><a onClick="switchTrafficLights()">Switch</a></p>
+		</div>
+		<div></div>
+	</div>
+</body>
+</html>

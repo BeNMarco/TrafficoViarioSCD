@@ -2,38 +2,59 @@
 
 package body strade_e_incroci_common is
 
-   function get_lunghezza_road(road: access rt_strada_features) return Natural is
+   function get_lunghezza_road(road: rt_strada_features) return Natural is
    begin
       return road.lunghezza;
    end get_lunghezza_road;
+   function get_id_quartiere_road(road: rt_strada_features) return Positive is
+   begin
+      return road.id_quartiere;
+   end get_id_quartiere_road;
+   function get_id_road(road: rt_strada_features) return Positive is
+   begin
+      return road.id;
+   end get_id_road;
 
-   function get_id_main_strada_ingresso(road: access strada_ingresso_features) return Positive is
+   function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive is
    begin
       return road.id_main_strada;
    end get_id_main_strada_ingresso;
 
-   function get_distance_from_road_head_ingresso(road: access strada_ingresso_features) return Natural is
+   function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural is
    begin
       return road.distance_from_road_head;
    end get_distance_from_road_head_ingresso;
 
       -- begin get methods road_incrocio_features
-   function get_id_quartiere_road_incrocio(road: access road_incrocio_features) return Positive is
+   function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive is
    begin
       return road.id_quartiere;
    end get_id_quartiere_road_incrocio;
-   function get_id_strada_road_incrocio(road: access road_incrocio_features) return Positive is
+   function get_id_strada_road_incrocio(road: road_incrocio_features) return Positive is
    begin
       return road.id_strada;
    end get_id_strada_road_incrocio;
+   function get_polo_road_incrocio(road: road_incrocio_features) return Boolean is
+   begin
+      return road.polo;
+   end get_polo_road_incrocio;
+   function get_id_quartiere_tratto(segmento: tratto) return Positive is
+   begin
+      return segmento.id_quartiere;
+   end get_id_quartiere_tratto;
+   function get_id_tratto(segmento: tratto) return Positive is
+   begin
+      return segmento.id_tratto;
+   end get_id_tratto;
    -- end get methods road_incrocio_features
 
-   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive)
+   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features is
       road_incrocio: road_incrocio_features;
    begin
       road_incrocio.id_quartiere:= val_id_quartiere;
       road_incrocio.id_strada:= val_id_strada;
+      road_incrocio.polo:= val_polo;
       return road_incrocio;
    end create_new_road_incrocio;
 
@@ -63,5 +84,13 @@ package body strade_e_incroci_common is
       ptr_strada.distance_from_road_head:= val_distance_from_road_head;
       return ptr_strada;
    end create_new_ingresso;
+
+   function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto is
+      ptr_tratto: tratto;
+   begin
+      ptr_tratto.id_quartiere:= id_quartiere;
+      ptr_tratto.id_tratto:= id_tratto;
+      return ptr_tratto;
+   end create_tratto;
 
 end strade_e_incroci_common;

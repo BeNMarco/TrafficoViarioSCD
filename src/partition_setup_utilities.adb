@@ -16,7 +16,7 @@ use JSON_Helper;
 
 package body partition_setup_utilities is
 
-   function create_array_urbane(json_roads: JSON_array; from: Positive; to: Positive) return strade_urbane_features is
+   function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features is
       array_roads: strade_urbane_features(from..to);
       ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       val_tipo: type_strade;
@@ -46,7 +46,7 @@ package body partition_setup_utilities is
       return array_roads;
    end create_array_urbane;
 
-   function create_array_ingressi(json_roads: JSON_array; from: Positive; to: Positive) return strade_ingresso_features is
+   function create_array_ingressi(json_roads: JSON_array; from: Natural; to: Natural) return strade_ingresso_features is
       array_roads: strade_ingresso_features(from..to);
       ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       val_tipo: type_strade;
@@ -83,7 +83,7 @@ package body partition_setup_utilities is
    end create_array_ingressi;
 
    function create_array_incroci_a_4(json_incroci: JSON_array; from: Natural; to: Natural;
-                                     from_urbane: Positive; from_ingressi: Positive) return list_incroci_a_4 is
+                                     from_urbane: Natural; from_ingressi: Natural) return list_incroci_a_4 is
       incroci: list_incroci_a_4(from..to);
       ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
@@ -91,6 +91,7 @@ package body partition_setup_utilities is
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
+      val_polo: Boolean;
       val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
@@ -102,8 +103,9 @@ package body partition_setup_utilities is
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
 	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
+            val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + from_urbane - 1;
-            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada);
+            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
          val_ptr_resource_strada:= new resource_segmento_strada;
          ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
@@ -112,7 +114,7 @@ package body partition_setup_utilities is
    end create_array_incroci_a_4;
 
    function create_array_incroci_a_3(json_incroci: JSON_array; from: Natural; to: Natural;
-                                     from_urbane: Positive; from_ingressi: Positive) return list_incroci_a_3 is
+                                     from_urbane: Natural; from_ingressi: Natural) return list_incroci_a_3 is
       incroci: list_incroci_a_3(from..to);
       ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
@@ -120,6 +122,7 @@ package body partition_setup_utilities is
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
+      val_polo: Boolean;
       val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
@@ -131,13 +134,23 @@ package body partition_setup_utilities is
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
 	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
+            val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + from_urbane - 1;
-            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada);
+            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
          val_ptr_resource_strada:= new resource_segmento_strada;
          ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
       end loop;
       return incroci;
    end create_array_incroci_a_3;
+
+   procedure print_percorso(route: access percorso) is
+   begin
+      Put("[");
+      for i in route'Range loop
+         Put_Line("(" & Integer'Image(route(i).get_id_quartiere_tratto) & "," & Integer'Image(route(i).get_id_tratto) & ")");
+      end loop;
+      Put("]");
+   end print_percorso;
 
 end partition_setup_utilities;

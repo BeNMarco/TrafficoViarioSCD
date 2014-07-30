@@ -21,13 +21,13 @@ procedure main is
 
    json_urbane: JSON_Array:= Get(Val => json_quartiere, Field => "strade");
    json_ingressi: JSON_Array:= Get(Val => json_quartiere, Field => "strade_ingresso");
-   size_json_urbane: Positive:= Length(json_urbane);
-   size_json_ingressi: Positive:= Length(json_ingressi);
+   size_json_urbane: Natural:= Length(json_urbane);
+   size_json_ingressi: Natural:= Length(json_ingressi);
 
-   from_urbane: Positive:= 1;
-   to_urbane: Positive:= size_json_urbane;
-   from_ingressi: Positive:= size_json_urbane+1;
-   to_ingressi: Positive:= size_json_ingressi+size_json_urbane;
+   from_urbane: Natural:= 1;
+   to_urbane: Natural:= size_json_urbane;
+   from_ingressi: Natural:= size_json_urbane+1;
+   to_ingressi: Natural:= size_json_ingressi+size_json_urbane;
 
    urbane_features: strade_urbane_features:=
      create_array_urbane(json_roads => json_urbane, from => from_urbane, to => to_urbane);
@@ -43,8 +43,8 @@ procedure main is
    size_rotonde_a_4: Natural:= Length(json_rotonde_a_4);
    size_rotonde_a_3: Natural:= Length(json_rotonde_a_3);
 
-   from_incroci_a_4: Natural:= 1;
-   to_incroci_a_4: Natural:= size_incroci_a_4;
+   from_incroci_a_4: Natural:= to_ingressi+1;
+   to_incroci_a_4: Natural:= from_incroci_a_4-1+size_incroci_a_4;
    from_incroci_a_3: Natural:= to_incroci_a_4+1;
    to_incroci_a_3: Natural:= from_incroci_a_3-1+size_incroci_a_3;
    from_rotonde_a_4: Natural:= to_incroci_a_3+1;
@@ -65,9 +65,12 @@ procedure main is
      create_array_incroci_a_3(json_incroci => json_rotonde_a_3, from => from_rotonde_a_3, to => to_rotonde_a_3,
                               from_urbane => from_urbane, from_ingressi => from_ingressi);
    gps: ptr_gps_interface;
+   percor: access percorso;
 begin
-   Put_Line(Integer'Image(size_rotonde_a_4));
    gps:= get_server_gps;
    gps.registra_urbane_quartiere(1, urbane_features);
+   gps.registra_ingressi_quartiere(1,ingressi_features);
    gps.registra_incroci_quartiere(1,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
+   percor:= new percorso'(gps.calcola_percorso(1,7,1,8));
+   print_percorso(percor);
 end main;

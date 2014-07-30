@@ -18,7 +18,7 @@ package remote_types is
    procedure registra_incroci_quartiere(obj: access gps_interface; id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
                                         incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                         rotonde_a_3: list_incroci_a_3) is abstract;
-   function calcola_percorso(obj: access gps_interface; from_id_luogo: Positive; from_id_quartiere: Positive;
+   function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
                              to_id_quartiere: Positive; to_id_luogo: Positive) return percorso is abstract;
    -- end gps
 

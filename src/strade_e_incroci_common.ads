@@ -5,6 +5,10 @@ package strade_e_incroci_common is
    type type_strade is (urbana,ingresso);
 
    type rt_strada_features is abstract tagged private;
+   function get_lunghezza_road(road: rt_strada_features) return Natural;
+   function get_id_quartiere_road(road: rt_strada_features) return Positive;
+   function get_id_road(road: rt_strada_features) return Positive;
+
    type strada_urbana_features is new rt_strada_features with private;
    type strada_ingresso_features is new rt_strada_features with private;
 
@@ -31,7 +35,7 @@ package strade_e_incroci_common is
    type tratto is tagged private;
    type percorso is array(Positive range <>) of tratto;
 
-   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive)
+   function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features;
 
    function create_new_urbana(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
@@ -41,14 +45,19 @@ package strade_e_incroci_common is
                                 val_lunghezza: Natural;val_num_corsie: Positive;val_id_main_strada: Positive;
                                 val_distance_from_road_head: Natural) return strada_ingresso_features;
 
-   function get_lunghezza_road(road: access rt_strada_features) return Natural;
-   function get_id_main_strada_ingresso(road: access strada_ingresso_features) return Positive;
-   function get_distance_from_road_head_ingresso(road: access strada_ingresso_features) return Natural;
+   function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto;
+
+   function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
+   function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural;
 
    -- begin get methods road_incrocio_features
-   function get_id_quartiere_road_incrocio(road: access road_incrocio_features) return Positive;
-   function get_id_strada_road_incrocio(road: access road_incrocio_features) return Positive;
+   function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive;
+   function get_id_strada_road_incrocio(road: road_incrocio_features) return Positive;
+   function get_polo_road_incrocio(road: road_incrocio_features) return Boolean;
    -- end get methods road_incrocio_features
+
+   function get_id_quartiere_tratto(segmento: tratto) return Positive;
+   function get_id_tratto(segmento: tratto) return Positive;
 
 private
 
@@ -71,6 +80,7 @@ private
    type road_incrocio_features is tagged record
       id_quartiere: Positive;
       id_strada: Positive;
+      polo: Boolean;
    end record;
 
    type tratto is tagged record

@@ -21,7 +21,11 @@
 
 "luoghi":[{"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}],
 
-"abitanti":[{"automunito":true,"bicimunito":false,"idmacchina":3,"idbici":null,"lavora":[1,2],"abita":1}]
+"auto":[{"id":1}],
+
+"bici":[{"id":1}],
+
+"abitanti":[{"id":1,"lavora":[1,2],"abita":1}]
 
 }
 

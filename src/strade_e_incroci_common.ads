@@ -26,6 +26,16 @@ package strade_e_incroci_common is
    --type list_incroci_a_2 is array(Positive range <>) of list_road_incrocio_a_2;
    -- end incroci
 
+   type abitante is tagged private;
+   type move_parameters is tagged private;
+   type pedone is new move_parameters with private;
+   type bici is new move_parameters with private;
+   type auto is new move_parameters with private;
+   type list_abitanti is array(Positive range <>) of abitante;
+   type list_pedoni is array(Positive range <>) of pedone;
+   type list_bici is array(Positive range <>) of bici;
+   type list_auto is array(Positive range <>) of auto;
+
    type strade_urbane_features is array(Positive range <>) of strada_urbana_features;
    type urbane_quartiere is array(Positive range <>) of access strade_urbane_features;
 
@@ -34,6 +44,11 @@ package strade_e_incroci_common is
 
    type tratto is tagged private;
    type percorso is array(Positive range <>) of tratto;
+   type route_and_distance(size_percorso: Natural) is tagged private; -- tipo usato per rappresentare il percorso minimo da una certo luogo di partenza
+
+   type means_of_carrying is (walking, bike, car, autobus);
+   type stato_percorso is tagged private;
+   --type array_stato_abitanti is array(Positive range <>) of stato_abitante;
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features;
@@ -47,6 +62,8 @@ package strade_e_incroci_common is
 
    function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto;
 
+   function create_percorso(route: percorso; distance: Natural) return route_and_distance;
+
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural;
 
@@ -58,6 +75,9 @@ package strade_e_incroci_common is
 
    function get_id_quartiere_tratto(segmento: tratto) return Positive;
    function get_id_tratto(segmento: tratto) return Positive;
+
+   function get_percorso_from_route_and_distance(route: route_and_distance) return percorso;
+   function get_distance_from_route_and_distance(route: route_and_distance) return Natural;
 
 private
 
@@ -86,6 +106,43 @@ private
    type tratto is tagged record
       id_quartiere: Positive;
       id_tratto: Positive;
+   end record;
+
+   type route_and_distance(size_percorso:Natural) is tagged record
+      route: percorso(1..size_percorso);
+      distance_from_start: Natural;
+   end record;
+
+   type stato_percorso is tagged record
+      percorso: access route_and_distance:= null; -- percorso che deve svolgere, null se si trova su un luogo
+      move_by: means_of_carrying:=  walking;
+   end record;
+
+   type abitante is tagged record
+      id_abitante: Positive;
+      id_quartiere: Positive;
+      id_luogo_casa: Positive; -- il quartiere della casa coincide con id_quartiere
+      id_quaritere_luogo_lavoro: Positive;
+      id_luogo_lavoro: Positive;
+   end record;
+
+   type move_parameters is tagged record
+      id_abitante: Positive;
+      id_quartiere: Positive;
+      desired_velocity: Float; -- m/s
+      time_headway: Float; -- s
+      max_acceleration: Float; -- m/s^2
+      comfortable_deceleration: Float; -- m/s^2
+      s0: Float;
+      length: Float;
+   end record;
+
+   type pedone is new move_parameters with null record;
+
+   type bici is new move_parameters with null record;
+
+   type auto is new move_parameters with record
+      num_posti: Positive;
    end record;
 
 end strade_e_incroci_common;

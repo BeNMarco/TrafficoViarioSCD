@@ -1,12 +1,14 @@
 with strade_e_incroci_common;
 with remote_types;
+with data_quartiere;
 
 use strade_e_incroci_common;
 use remote_types;
+use data_quartiere;
 
 package server_gps_utilities is
 
-   num_quartieri: constant Positive:= 1; -- TO CHANGE WITH INPUT FROM FILE
+   num_quartieri: constant Positive:= 1; -- TO CHANGE WITH INPUT FROM FILE DA METTERE IN SHARED PASSIVE RESOURCE
 
    type index_incroci is tagged private;
    type estremi_incrocio is array(Positive range 1..2) of index_incroci;
@@ -59,8 +61,7 @@ package server_gps_utilities is
                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                        rotonde_a_3: list_incroci_a_3);
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
-                                to_id_quartiere: Positive; to_id_luogo: Positive) return percorso;
-
+                                to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance;
    private
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;

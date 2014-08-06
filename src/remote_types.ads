@@ -19,7 +19,7 @@ package remote_types is
                                         incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                         rotonde_a_3: list_incroci_a_3) is abstract;
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
-                             to_id_quartiere: Positive; to_id_luogo: Positive) return percorso is abstract;
+                             to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is abstract;
    -- end gps
 
 end remote_types;

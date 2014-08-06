@@ -113,7 +113,7 @@ package body server_gps_utilities is
       end print_grafo;
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
-                                to_id_quartiere: Positive; to_id_luogo: Positive) return percorso is
+                                to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is
          coda_nodi: dijkstra_nodi(1..num_quartieri,min_first_incroci..max_last_incroci);
          to_consider: index_to_consider(1..numero_globale_incroci);
          num_elementi_lista: Natural:= 0;
@@ -358,7 +358,7 @@ package body server_gps_utilities is
             index:= index + 1;
          end loop;
          -- viene creato l'array che deve essere tornato
-         return create_array_percorso(size_route,ptr_route);
+         return create_percorso(route => create_array_percorso(size_route,ptr_route), distance => min_distanza);
       end calcola_percorso;
 
       entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;

@@ -1,5 +1,4 @@
 
-
 package body strade_e_incroci_common is
 
    function get_lunghezza_road(road: rt_strada_features) return Natural is
@@ -25,7 +24,7 @@ package body strade_e_incroci_common is
       return road.distance_from_road_head;
    end get_distance_from_road_head_ingresso;
 
-      -- begin get methods road_incrocio_features
+      -- begin get methods
    function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive is
    begin
       return road.id_quartiere;
@@ -46,7 +45,15 @@ package body strade_e_incroci_common is
    begin
       return segmento.id_tratto;
    end get_id_tratto;
-   -- end get methods road_incrocio_features
+   function get_percorso_from_route_and_distance(route: route_and_distance) return percorso is
+   begin
+      return route.route;
+   end get_percorso_from_route_and_distance;
+   function get_distance_from_route_and_distance(route: route_and_distance) return Natural is
+   begin
+      return route.distance_from_start;
+   end get_distance_from_route_and_distance;
+   -- end get methods
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features is
@@ -92,5 +99,13 @@ package body strade_e_incroci_common is
       ptr_tratto.id_tratto:= id_tratto;
       return ptr_tratto;
    end create_tratto;
+
+   function create_percorso(route: percorso; distance: Natural) return route_and_distance is
+      ptr_percorso: route_and_distance(route'Length);
+   begin
+      ptr_percorso.route:= route;
+      ptr_percorso.distance_from_start:= distance;
+      return ptr_percorso;
+   end create_percorso;
 
 end strade_e_incroci_common;

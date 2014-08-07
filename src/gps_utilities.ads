@@ -1,14 +1,14 @@
 with strade_e_incroci_common;
 with remote_types;
 with data_quartiere;
+with global_data;
 
 use strade_e_incroci_common;
 use remote_types;
 use data_quartiere;
+use global_data;
 
-package server_gps_utilities is
-
-   num_quartieri: constant Positive:= 1; -- TO CHANGE WITH INPUT FROM FILE DA METTERE IN SHARED PASSIVE RESOURCE
+package gps_utilities is
 
    type index_incroci is tagged private;
    type estremi_incrocio is array(Positive range 1..2) of index_incroci;
@@ -67,10 +67,10 @@ package server_gps_utilities is
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;
       procedure print_grafo;
 
-      cache_urbane: urbane_quartiere(1..num_quartieri);
-      cache_ingressi: ingressi_quartiere(1..num_quartieri);
-      hash_urbane_quartieri: hash_quartieri_strade(1..num_quartieri);
-      grafo: grafo_mappa(1..num_quartieri);
+      cache_urbane: urbane_quartiere(1..get_num_quartieri);
+      cache_ingressi: ingressi_quartiere(1..get_num_quartieri);
+      hash_urbane_quartieri: hash_quartieri_strade(1..get_num_quartieri);
+      grafo: grafo_mappa(1..get_num_quartieri);
       num_urbane_quartieri_registrate: Natural:= 0;
       num_incroci_quartieri_registrati: Natural:= 0;
       min_first_incroci: Natural:= 0;
@@ -102,4 +102,4 @@ private
       next: ptr_percorso:= null;
    end record;
 
-end server_gps_utilities;
+end gps_utilities;

@@ -10,7 +10,27 @@ use risorse_strade_e_incroci;
 use strade_e_incroci_common;
 
 package data_quartiere is
-   -- occorre rendere privati i seguenti dati e predisporre metodi di get
+
+   function get_json_urbane return JSON_Array;
+   function get_json_ingressi return JSON_Array;
+   function get_json_incroci_a_4 return JSON_Array;
+   function get_json_incroci_a_3 return JSON_Array;
+   function get_json_rotonde_a_4 return JSON_Array;
+   function get_json_rotonde_a_3 return JSON_Array;
+   function get_from_urbane return Natural;
+   function get_to_urbane return Natural;
+   function get_from_ingressi return Natural;
+   function get_to_ingressi return Natural;
+   function get_from_incroci_a_4 return Natural;
+   function get_to_incroci_a_4 return Natural;
+   function get_from_incroci_a_3 return Natural;
+   function get_to_incroci_a_3 return Natural;
+   function get_from_rotonde_a_4 return Natural;
+   function get_to_rotonde_a_4 return Natural;
+   function get_from_rotonde_a_3 return Natural;
+   function get_to_rotonde_a_3 return Natural;
+
+private
 
    json_quartiere: JSON_Value:=Get_Json_Value(Json_String => "",Json_File_Name => "data/quartiere1.json");
 
@@ -40,9 +60,16 @@ package data_quartiere is
    from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
    to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
 
+   json_pedoni: JSON_Array:= Get(Val => json_quartiere, Field => "pedoni");
+   json_bici: JSON_Array:= Get(Val => json_quartiere, Field => "bici");
+   json_auto: JSON_Array:= Get(Val => json_quartiere, Field => "auto");
    json_abitanti: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti");
+   size_json_pedoni: Natural:= Length(json_pedoni);
+   size_json_bici: Natural:= Length(json_bici);
+   size_json_auto: Natural:= Length(json_auto);
    size_json_abitanti: Natural:= Length(json_abitanti);
    from_abitanti: Natural:= to_rotonde_a_3+1;
    to_abitanti: Natural:= from_abitanti+size_json_abitanti;
+
 
 end data_quartiere;

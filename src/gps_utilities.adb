@@ -2,7 +2,7 @@ with Text_IO;
 
 use Text_IO;
 
-package body server_gps_utilities is
+package body gps_utilities is
 
    -- begin get methods index_incrocio
    function get_id_quartiere_index_incroci(incrocio: index_incroci) return Natural is
@@ -114,7 +114,7 @@ package body server_gps_utilities is
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is
-         coda_nodi: dijkstra_nodi(1..num_quartieri,min_first_incroci..max_last_incroci);
+         coda_nodi: dijkstra_nodi(1..get_num_quartieri,min_first_incroci..max_last_incroci);
          to_consider: index_to_consider(1..numero_globale_incroci);
          num_elementi_lista: Natural:= 0;
          min_index_lista: Natural:= Natural'Last;
@@ -363,7 +363,7 @@ package body server_gps_utilities is
 
       entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                       rotonde_a_3: list_incroci_a_3) when num_urbane_quartieri_registrate=num_quartieri is
+                                       rotonde_a_3: list_incroci_a_3) when num_urbane_quartieri_registrate=get_num_quartieri is
          incrocio_a_4: list_road_incrocio_a_4;
          incrocio_a_3: list_road_incrocio_a_3;
          rotonda_a_4: list_road_incrocio_a_4;
@@ -474,7 +474,7 @@ package body server_gps_utilities is
          numero_globale_incroci:= numero_globale_incroci + grafo(id_quartiere)'Length;
 
          num_incroci_quartieri_registrati:= num_incroci_quartieri_registrati + 1;
-         if num_incroci_quartieri_registrati = num_quartieri then
+         if num_incroci_quartieri_registrati = get_num_quartieri then
             -- il grafo può essere costruito
             for quartiere in hash_urbane_quartieri'Range loop
                quartiere_strade:= hash_urbane_quartieri(quartiere);
@@ -557,4 +557,4 @@ package body server_gps_utilities is
 
    end registro_strade_resource;
 
-end server_gps_utilities;
+end gps_utilities;

@@ -10,6 +10,10 @@ package remote_types is
    type ptr_rt_segmento_strade is access all rt_segmento'Class;
    -- end resource segmenti
 
+   type cache_abitanti_interface is limited interface;
+   type ptr_cache_abitanti_interface is access all cache_abitanti_interface'Class;
+   procedure registra_pedoni(from_id_quartiere: Positive) is abstract;
+
    -- begin gps
    type gps_interface is limited interface;
    type ptr_gps_interface is access all gps_interface'Class;

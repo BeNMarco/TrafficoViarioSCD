@@ -21,6 +21,8 @@
 
 "luoghi":[{"nome":"banca","idstrada":5,"tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25}],
 
+"pedoni":[{"id":1}],
+
 "auto":[{"id":1}],
 
 "bici":[{"id":1}],

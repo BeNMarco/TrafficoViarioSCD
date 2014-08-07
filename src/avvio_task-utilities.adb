@@ -72,7 +72,7 @@ package body avvio_task.utilities is
          val_id_quartiere:= 1;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
-         val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+from_urbane-1;
+         val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+get_from_urbane-1;
          val_distance_from_road_head:= Get(Val => strada, Field => "distanza_da_from");
          val_ptr_resource_strada:= new resource_segmento_strada;
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
@@ -109,7 +109,7 @@ package body avvio_task.utilities is
 	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
-            val_id_strada:= val_id_strada + from_urbane - 1;
+            val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
          val_ptr_resource_strada:= new resource_segmento_strada;
@@ -140,7 +140,7 @@ package body avvio_task.utilities is
 	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
-            val_id_strada:= val_id_strada + from_urbane - 1;
+            val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
          val_ptr_resource_strada:= new resource_segmento_strada;

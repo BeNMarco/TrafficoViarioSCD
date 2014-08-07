@@ -31,10 +31,10 @@ package strade_e_incroci_common is
    type pedone is new move_parameters with private;
    type bici is new move_parameters with private;
    type auto is new move_parameters with private;
-   type list_abitanti is array(Positive range <>) of abitante;
-   type list_pedoni is array(Positive range <>) of pedone;
-   type list_bici is array(Positive range <>) of bici;
-   type list_auto is array(Positive range <>) of auto;
+   type list_abitanti is array(Positive range <>,Positive range <>) of abitante; -- cache entità quartiere per quartiere
+   type list_pedoni is array(Positive range <>,Positive range <>) of pedone;
+   type list_bici is array(Positive range <>,Positive range <>) of bici;
+   type list_auto is array(Positive range <>,Positive range <>) of auto;
 
    type strade_urbane_features is array(Positive range <>) of strada_urbana_features;
    type urbane_quartiere is array(Positive range <>) of access strade_urbane_features;

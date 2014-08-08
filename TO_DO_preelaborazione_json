@@ -9,3 +9,4 @@ controlli da fare per il json:
 -size(abitanti)>=size(auto)
 -controllare che gli id nell'array pedoni bici auto siano tt diversi tra loro
 -gli id delle auto e delle bici devono riferirsi a id degli abitanti esistenti
+-gli id degli abitanti/pedoni/bici devono essere inseriti in ordine di id crescente, non a caso.

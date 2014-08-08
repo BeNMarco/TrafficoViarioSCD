@@ -16,6 +16,8 @@ use global_data;
 
 procedure configuration_server is
    gps: ptr_registro_strade_resource:= new registro_strade_resource;
+   server_cache_abitanti_quartieri: ptr_cache_abitanti:= new cache_abitanti;
 begin
+   registra_server_cache_abitanti(ptr_cache_abitanti_interface(server_cache_abitanti_quartieri));
    registra_server_gps(ptr_gps_interface(gps));
 end configuration_server;

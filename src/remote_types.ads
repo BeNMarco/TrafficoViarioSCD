@@ -12,7 +12,14 @@ package remote_types is
 
    type cache_abitanti_interface is limited interface;
    type ptr_cache_abitanti_interface is access all cache_abitanti_interface'Class;
-   procedure registra_pedoni(from_id_quartiere: Positive) is abstract;
+   procedure registra_abitanti(obj: access cache_abitanti_interface; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+                               bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
+   procedure wait_cache_all_quartieri(obj: access cache_abitanti_interface; bounds: out bound_quartieri) is abstract;
+   procedure cache_quartiere_creata(obj: access cache_abitanti_interface) is abstract;
+   function get_abitanti_quartieri(obj: access cache_abitanti_interface) return list_abitanti_temp is abstract;
+   function get_pedoni_quartieri(obj: access cache_abitanti_interface) return list_pedoni_temp is abstract;
+   function get_bici_quartieri(obj: access cache_abitanti_interface) return list_bici_temp is abstract;
+   function get_auto_quartieri(obj: access cache_abitanti_interface) return list_auto_temp is abstract;
 
    -- begin gps
    type gps_interface is limited interface;

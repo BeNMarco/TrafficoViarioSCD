@@ -8,6 +8,7 @@ with avvio_task.utilities;
 with avvio_task;
 with risorse_passive_utilities;
 with configuration_cache_abitanti;
+with global_data;
 
 use GNATCOLL.JSON;
 
@@ -19,6 +20,7 @@ use avvio_task.utilities;
 use avvio_task;
 use risorse_passive_utilities;
 use configuration_cache_abitanti;
+use global_data;
 
 package resource_mappa_inventory is
    pragma Elaborate_Body;
@@ -39,11 +41,10 @@ private
    rotonde_a_3: list_incroci_a_3(get_from_rotonde_a_3..get_to_rotonde_a_3):=
      create_array_incroci_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
 
-   pedoni: list_pedoni(1..2,1..2);
-   --bici: list_bici(from_abitanti..to_abitanti):= create_array_bici;
-   --automobili: list_auto(from_abitanti..to_abitanti):= create_array_auto;
-   --abitanti: list_abitanti(from_abitanti..to_abitanti):= create_array_abitanti;
-
+   abitanti: list_abitanti_quartieri(1..get_num_quartieri);
+   pedoni: list_pedoni_quartieri(1..get_num_quartieri);
+   bici: list_bici_quartieri(1..get_num_quartieri);
+   auto: list_auto_quartieri(1..get_num_quartieri);
    --percorso_abitanti: array(from_abitanti..to_abitanti) of stato_percorso;
 
 end resource_mappa_inventory;

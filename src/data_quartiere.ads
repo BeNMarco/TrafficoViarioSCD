@@ -11,6 +11,7 @@ use strade_e_incroci_common;
 
 package data_quartiere is
 
+   function get_id_quartiere return Positive;
    function get_json_urbane return JSON_Array;
    function get_json_ingressi return JSON_Array;
    function get_json_incroci_a_4 return JSON_Array;
@@ -29,10 +30,21 @@ package data_quartiere is
    function get_to_rotonde_a_4 return Natural;
    function get_from_rotonde_a_3 return Natural;
    function get_to_rotonde_a_3 return Natural;
+   function get_json_pedoni return JSON_Array;
+   function get_json_bici return JSON_Array;
+   function get_json_auto return JSON_Array;
+   function get_json_abitanti return JSON_Array;
+   function get_from_abitanti return Natural;
+   function get_to_abitanti return Natural;
+   function get_default_value_pedoni(value: move_settings) return Float;
+   function get_default_value_bici(value: move_settings) return Float;
+   function get_default_value_auto(value: move_settings) return Float;
 
 private
 
-   json_quartiere: JSON_Value:=Get_Json_Value(Json_String => "",Json_File_Name => "data/quartiere1.json");
+   id_quartiere: Positive:= 1;  -- TO CHANGE X OGNI QUARTIERE MAGARI COME INPUT DAL JSON quartiere.json
+
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "data/quartiere1.json");
 
    json_urbane: JSON_Array:= Get(Val => json_quartiere, Field => "strade");
    json_ingressi: JSON_Array:= Get(Val => json_quartiere, Field => "strade_ingresso");
@@ -60,16 +72,39 @@ private
    from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
    to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
 
+   json_abitanti: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti");
    json_pedoni: JSON_Array:= Get(Val => json_quartiere, Field => "pedoni");
    json_bici: JSON_Array:= Get(Val => json_quartiere, Field => "bici");
    json_auto: JSON_Array:= Get(Val => json_quartiere, Field => "auto");
-   json_abitanti: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti");
+   size_json_abitanti: Natural:= Length(json_abitanti);
    size_json_pedoni: Natural:= Length(json_pedoni);
    size_json_bici: Natural:= Length(json_bici);
    size_json_auto: Natural:= Length(json_auto);
-   size_json_abitanti: Natural:= Length(json_abitanti);
    from_abitanti: Natural:= to_rotonde_a_3+1;
-   to_abitanti: Natural:= from_abitanti+size_json_abitanti;
+   to_abitanti: Natural:= from_abitanti-1+size_json_abitanti;
 
+   -- BEGIN VALORI DI DEFAULT PER RISORSE PASSIVE
+   default_desired_velocity_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("desired_velocity");
+   default_time_headway_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("time_headway");
+   default_max_acceleration_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("max_acceleration");
+   default_comfortable_deceleration_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("comfortable_deceleration");
+   default_s0_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("s0");
+   default_length_pedoni: Float:= Get(Val => json_quartiere, Field => "default_pedoni").Get("length");
+
+   default_desired_velocity_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("desired_velocity");
+   default_time_headway_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("time_headway");
+   default_max_acceleration_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("max_acceleration");
+   default_comfortable_deceleration_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("comfortable_deceleration");
+   default_s0_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("s0");
+   default_length_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("length");
+
+   default_desired_velocity_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("time_headway");
+   default_time_headway_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("time_headway");
+   default_max_acceleration_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("max_acceleration");
+   default_comfortable_deceleration_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("comfortable_deceleration");
+   default_s0_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("s0");
+   default_length_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("length");
+   default_num_posti_auto: Positive:= Get(Val => json_quartiere, Field => "default_auto").Get("num_posti");
+   -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 
 end data_quartiere;

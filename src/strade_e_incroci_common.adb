@@ -108,4 +108,65 @@ package body strade_e_incroci_common is
       return ptr_percorso;
    end create_percorso;
 
+   function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural) return abitante is
+      ptr_abitante: abitante;
+   begin
+      ptr_abitante.id_abitante:= id_abitante;
+      ptr_abitante.id_quartiere:= id_quartiere;
+      ptr_abitante.id_luogo_casa:= id_luogo_casa;
+      ptr_abitante.id_quaritere_luogo_lavoro:= id_quartiere_luogo_lavoro;
+      ptr_abitante.id_luogo_lavoro:= id_luogo_lavoro;
+      return ptr_abitante;
+   end create_abitante;
+
+   function create_pedone(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                          time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                          s0: Float; length: Float) return pedone is
+      ptr_pedone: pedone;
+   begin
+      ptr_pedone.id_abitante:= id_abitante;
+      ptr_pedone.id_quartiere:= id_quartiere;
+      ptr_pedone.desired_velocity:= desired_velocity;
+      ptr_pedone.time_headway:= time_headway;
+      ptr_pedone.max_acceleration:= max_acceleration;
+      ptr_pedone.comfortable_deceleration:= comfortable_deceleration;
+      ptr_pedone.s0:= s0;
+      ptr_pedone.length:= length;
+      return ptr_pedone;
+   end create_pedone;
+
+   function create_bici(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                        time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                        s0: Float; length: Float) return bici is
+      ptr_bici: bici;
+   begin
+      ptr_bici.id_abitante:= id_abitante;
+      ptr_bici.id_quartiere:= id_quartiere;
+      ptr_bici.desired_velocity:= desired_velocity;
+      ptr_bici.time_headway:= time_headway;
+      ptr_bici.max_acceleration:= max_acceleration;
+      ptr_bici.comfortable_deceleration:= comfortable_deceleration;
+      ptr_bici.s0:= s0;
+      ptr_bici.length:= length;
+      return ptr_bici;
+   end create_bici;
+
+   function create_auto(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                        time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                        s0: Float; length: Float; num_posti: Positive) return auto is
+      ptr_auto: auto;
+   begin
+      ptr_auto.id_abitante:= id_abitante;
+      ptr_auto.id_quartiere:= id_quartiere;
+      ptr_auto.desired_velocity:= desired_velocity;
+      ptr_auto.time_headway:= time_headway;
+      ptr_auto.max_acceleration:= max_acceleration;
+      ptr_auto.comfortable_deceleration:= comfortable_deceleration;
+      ptr_auto.s0:= s0;
+      ptr_auto.length:= length;
+      ptr_auto.num_posti:= num_posti;
+      return ptr_auto;
+   end create_auto;
+
 end strade_e_incroci_common;

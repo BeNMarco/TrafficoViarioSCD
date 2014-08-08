@@ -17,24 +17,38 @@ package strade_e_incroci_common is
    -- begin tipi incroci
    type list_road_incrocio_a_4 is array(Positive range 1..4) of road_incrocio_features;
    type list_road_incrocio_a_3 is array(Positive range 1..3) of road_incrocio_features;
-   --type list_road_incrocio_a_2 is array(Positive range 1..2) of road_incrocio_features;
    -- end tipo incroci
 
    -- begin incroci
    type list_incroci_a_4 is array(Positive range <>) of list_road_incrocio_a_4;
    type list_incroci_a_3 is array(Positive range <>) of list_road_incrocio_a_3;
-   --type list_incroci_a_2 is array(Positive range <>) of list_road_incrocio_a_2;
    -- end incroci
+
+   type bound_abitanti is record
+      from_abitanti: Natural:= 0;
+      to_abitanti: Natural:= 0;
+   end record;
+   type bound_quartieri is array(Positive range <>) of bound_abitanti;
+
+   type move_settings is (desired_velocity,time_headway,max_acceleration,comfortable_deceleration,s0,length,num_posti);
 
    type abitante is tagged private;
    type move_parameters is tagged private;
    type pedone is new move_parameters with private;
    type bici is new move_parameters with private;
    type auto is new move_parameters with private;
-   type list_abitanti is array(Positive range <>,Positive range <>) of abitante; -- cache entità quartiere per quartiere
-   type list_pedoni is array(Positive range <>,Positive range <>) of pedone;
-   type list_bici is array(Positive range <>,Positive range <>) of bici;
-   type list_auto is array(Positive range <>,Positive range <>) of auto;
+   type list_abitanti_temp is array(Positive range <>,Positive range <>) of abitante; -- cache entità quartiere per quartiere
+   type list_pedoni_temp is array(Positive range <>,Positive range <>) of pedone;
+   type list_bici_temp is array(Positive range <>,Positive range <>) of bici;
+   type list_auto_temp is array(Positive range <>,Positive range <>) of auto;
+   type list_abitanti_quartiere is array(Positive range <>) of abitante; -- cache entità quartiere per quartiere
+   type list_pedoni_quartiere is array(Positive range <>) of pedone;
+   type list_bici_quartiere is array(Positive range <>) of bici;
+   type list_auto_quartiere is array(Positive range <>) of auto;
+   type list_abitanti_quartieri is array(Positive range <>) of access list_abitanti_quartiere; -- cache entità quartiere per quartiere
+   type list_pedoni_quartieri is array(Positive range <>) of access list_pedoni_quartiere;
+   type list_bici_quartieri is array(Positive range <>) of access list_bici_quartiere;
+   type list_auto_quartieri is array(Positive range <>) of access list_auto_quartiere;
 
    type strade_urbane_features is array(Positive range <>) of strada_urbana_features;
    type urbane_quartiere is array(Positive range <>) of access strade_urbane_features;
@@ -63,6 +77,21 @@ package strade_e_incroci_common is
    function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto;
 
    function create_percorso(route: percorso; distance: Natural) return route_and_distance;
+
+   function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural) return abitante;
+
+   function create_pedone(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                          time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                          s0: Float; length: Float) return pedone;
+
+   function create_bici(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                        time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                        s0: Float; length: Float) return bici;
+
+   function create_auto(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
+                        time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
+                        s0: Float; length: Float; num_posti: Positive) return auto;
 
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural;
@@ -119,16 +148,16 @@ private
    end record;
 
    type abitante is tagged record
-      id_abitante: Positive;
-      id_quartiere: Positive;
-      id_luogo_casa: Positive; -- il quartiere della casa coincide con id_quartiere
-      id_quaritere_luogo_lavoro: Positive;
-      id_luogo_lavoro: Positive;
+      id_abitante: Natural:= 0;
+      id_quartiere: Natural:= 0;
+      id_luogo_casa: Natural:= 0; -- il quartiere della casa coincide con id_quartiere
+      id_quaritere_luogo_lavoro: Natural:= 0;
+      id_luogo_lavoro: Natural:= 0;
    end record;
 
    type move_parameters is tagged record
-      id_abitante: Positive;
-      id_quartiere: Positive;
+      id_abitante: Natural:= 0;
+      id_quartiere: Natural:= 0;
       desired_velocity: Float; -- m/s
       time_headway: Float; -- s
       max_acceleration: Float; -- m/s^2

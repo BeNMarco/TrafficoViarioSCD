@@ -1,0 +1,11 @@
+controlli da fare per il json:
+
+-idstradapricipale nell'array ingressi deve essere un idesistente
+-gli incroci devono riferirsi a strade esistenti sia del quartiere sia di altri quartieri
+-i luoghi devono riferirsi a strade di ingresso esistenti (1 luogo corrisponde a 1 ingresso)
+-il luogo dell'abitante dove abita e dove lavora deve essere un luogo con tipologia rispettivamente "casa" e "lavoro"
+-size(abitanti)=size(pedoni)  
+-size(abitanti)>=size(bici) 
+-size(abitanti)>=size(auto)
+-controllare che gli id nell'array pedoni bici auto siano tt diversi tra loro
+-gli id delle auto e delle bici devono riferirsi a id degli abitanti esistenti

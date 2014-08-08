@@ -36,7 +36,7 @@ package body avvio_task.utilities is
          strada:= Get(Arr => json_roads,Index => index_strada-from+1);
          val_tipo:= urbana;
          val_id:= index_strada;--Get(Val => strada, Field => "id");
-         val_id_quartiere:= 1;  -- TO DO
+         val_id_quartiere:= get_id_quartiere;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          val_ptr_resource_strada:= new resource_segmento_strada;
@@ -69,7 +69,7 @@ package body avvio_task.utilities is
          strada:= Get(Arr => json_roads,Index => index_strada-from+1);
          val_tipo:= urbana;
          val_id:= index_strada;--Get(Val => strada, Field => "id");
-         val_id_quartiere:= 1;  -- TO DO
+         val_id_quartiere:= get_id_quartiere;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+get_from_urbane-1;

@@ -1,12 +1,12 @@
 with GNATCOLL.JSON;
 
 with JSON_Helper;
-with risorse_strade_e_incroci;
+--with risorse_strade_e_incroci;
 with strade_e_incroci_common;
 use GNATCOLL.JSON;
 
 use JSON_Helper;
-use risorse_strade_e_incroci;
+--use risorse_strade_e_incroci;
 use strade_e_incroci_common;
 
 package data_quartiere is

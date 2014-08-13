@@ -5,6 +5,7 @@ use data_quartiere;
 use risorse_strade_e_incroci;
 
 package avvio_task is
+
 private
    task_urbane: task_container_urbane(get_from_urbane..get_to_urbane);
    task_ingressi: task_container_ingressi(get_from_ingressi..get_to_ingressi);

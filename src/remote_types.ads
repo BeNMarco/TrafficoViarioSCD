@@ -10,6 +10,17 @@ package remote_types is
    type ptr_rt_segmento_strade is access all rt_segmento'Class;
    -- end resource segmenti
 
+   -- tipi usati per ottenere informazioni sul percorso che un certo abitante deve intraprendere
+   type rt_location_abitanti is limited interface;
+   type ptr_rt_location_abitanti is access all rt_location_abitanti'Class;
+   type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
+
+   type rt_posizione_abitanti_quartieri is limited interface;
+   type ptr_rt_posizione_abitanti_quartieri is access all rt_posizione_abitanti_quartieri'Class;
+   procedure registra_gps_abitanti_quartiere(obj: access rt_posizione_abitanti_quartieri; id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is abstract;
+   procedure wait_gps_abitanti_all_quaritieri(obj: access rt_posizione_abitanti_quartieri; id_quartiere: Positive; gps_abitanti_quart: out gps_abitanti_quartieri) is abstract;
+   -- end tipi
+
    type cache_abitanti_interface is limited interface;
    type ptr_cache_abitanti_interface is access all cache_abitanti_interface'Class;
    procedure registra_abitanti(obj: access cache_abitanti_interface; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
@@ -32,5 +43,6 @@ package remote_types is
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
                              to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is abstract;
    -- end gps
+
 
 end remote_types;

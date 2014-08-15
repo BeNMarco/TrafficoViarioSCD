@@ -10,7 +10,6 @@ with JSON_Helper;
 with strade_e_incroci_common;
 with the_name_server;
 with remote_types;
-with risorse_strade_e_incroci;
 with risorse_strade_e_incroci.initiliaze;
 
 use GNATCOLL.JSON;
@@ -20,7 +19,6 @@ use JSON_Helper;
 use strade_e_incroci_common;
 use the_name_server;
 use remote_types;
-use risorse_strade_e_incroci;
 
 procedure main is
 

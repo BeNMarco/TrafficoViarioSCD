@@ -20,12 +20,21 @@ package avvio_task.utilities is
 
    function create_array_incroci_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3;
 
+   function create_array_rotonde_a_4(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_4;
+
+   function create_array_rotonde_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3;
+
    procedure print_percorso(route: percorso);
+
+   procedure configure_tasks;
+
 private
 
    urbane_segmento_resources: ptr_resource_segmenti_strade;
    ingressi_segmento_resources: ptr_resource_segmenti_strade;
-   incroci_a_4_segmenti_resources: ptr_resource_segmenti_strade;
-   incroci_a_3_segmenti_resources: ptr_resource_segmenti_strade;
+   incroci_a_4_segmento_resources: ptr_resource_segmenti_strade;
+   incroci_a_3_segmento_resources: ptr_resource_segmenti_strade;
+   rotonde_a_4_segmento_resources: ptr_resource_segmenti_strade;
+   rotonde_a_3_segmento_resources: ptr_resource_segmenti_strade;
 
 end avvio_task.utilities;

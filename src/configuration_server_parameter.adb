@@ -18,7 +18,5 @@ use global_data;
 package body configuration_server_parameter is
 
 begin
-   registra_server_cache_abitanti(ptr_cache_abitanti_interface(server_cache_abitanti_quartieri));
    registra_server_gps(ptr_gps_interface(gps));
-   registra_server_posizione_abitanti_quartiere(ptr_rt_posizione_abitanti_quartieri(server_ior_posizione_abitanti_quartieri));
 end configuration_server_parameter;

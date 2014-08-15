@@ -15,22 +15,10 @@ package remote_types is
    type ptr_rt_location_abitanti is access all rt_location_abitanti'Class;
    type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
 
-   type rt_posizione_abitanti_quartieri is limited interface;
-   type ptr_rt_posizione_abitanti_quartieri is access all rt_posizione_abitanti_quartieri'Class;
-   procedure registra_gps_abitanti_quartiere(obj: access rt_posizione_abitanti_quartieri; id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is abstract;
-   procedure wait_gps_abitanti_all_quaritieri(obj: access rt_posizione_abitanti_quartieri; id_quartiere: Positive; gps_abitanti_quart: out gps_abitanti_quartieri) is abstract;
+   type rt_wait_all_quartieri is limited interface;
+   type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;
+   procedure all_quartieri_set(obj: access rt_wait_all_quartieri) is abstract;
    -- end tipi
-
-   type cache_abitanti_interface is limited interface;
-   type ptr_cache_abitanti_interface is access all cache_abitanti_interface'Class;
-   procedure registra_abitanti(obj: access cache_abitanti_interface; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
-                               bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
-   procedure wait_cache_all_quartieri(obj: access cache_abitanti_interface; bounds: out bound_quartieri) is abstract;
-   procedure cache_quartiere_creata(obj: access cache_abitanti_interface) is abstract;
-   function get_abitanti_quartieri(obj: access cache_abitanti_interface) return list_abitanti_temp is abstract;
-   function get_pedoni_quartieri(obj: access cache_abitanti_interface) return list_pedoni_temp is abstract;
-   function get_bici_quartieri(obj: access cache_abitanti_interface) return list_bici_temp is abstract;
-   function get_auto_quartieri(obj: access cache_abitanti_interface) return list_auto_temp is abstract;
 
    -- begin gps
    type gps_interface is limited interface;
@@ -44,5 +32,6 @@ package remote_types is
                              to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is abstract;
    -- end gps
 
-
+private
+   type rt_server_finalize_configuration is abstract tagged limited null record;
 end remote_types;

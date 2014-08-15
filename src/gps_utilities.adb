@@ -361,9 +361,9 @@ package body gps_utilities is
          return create_percorso(route => create_array_percorso(size_route,ptr_route), distance => min_distanza);
       end calcola_percorso;
 
-      entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
+      procedure registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                       rotonde_a_3: list_incroci_a_3) when num_urbane_quartieri_registrate=get_num_quartieri is
+                                       rotonde_a_3: list_incroci_a_3) is
          incrocio_a_4: list_road_incrocio_a_4;
          incrocio_a_3: list_road_incrocio_a_3;
          rotonda_a_4: list_road_incrocio_a_4;

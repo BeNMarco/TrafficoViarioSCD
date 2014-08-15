@@ -39,6 +39,7 @@ package data_quartiere is
    function get_default_value_pedoni(value: move_settings) return Float;
    function get_default_value_bici(value: move_settings) return Float;
    function get_default_value_auto(value: move_settings) return Float;
+   function get_num_task return Natural;
 
 private
 
@@ -71,6 +72,8 @@ private
    to_rotonde_a_4: Natural:= from_rotonde_a_4-1+size_rotonde_a_4;
    from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
    to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
+
+   num_task: Natural:= size_json_urbane+size_json_ingressi+size_incroci_a_4+size_incroci_a_3+size_rotonde_a_4+size_rotonde_a_3;
 
    json_abitanti: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti");
    json_pedoni: JSON_Array:= Get(Val => json_quartiere, Field => "pedoni");

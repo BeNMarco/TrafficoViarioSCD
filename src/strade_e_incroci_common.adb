@@ -53,6 +53,10 @@ package body strade_e_incroci_common is
    begin
       return route.distance_from_start;
    end get_distance_from_route_and_distance;
+   function get_length_entità_passiva(obj: move_parameters) return Float is
+   begin
+      return obj.length;
+   end get_length_entità_passiva;
    -- end get methods
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)

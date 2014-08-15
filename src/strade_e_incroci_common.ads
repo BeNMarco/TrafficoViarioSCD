@@ -34,9 +34,15 @@ package strade_e_incroci_common is
 
    type abitante is tagged private;
    type move_parameters is tagged private;
+
+   function get_length_entità_passiva(obj: move_parameters) return Float;
+
    type pedone is new move_parameters with private;
    type bici is new move_parameters with private;
    type auto is new move_parameters with private;
+
+   type entità is (pedone_entity,bici_entity,auto_entity);
+
    type list_abitanti_temp is array(Positive range <>,Positive range <>) of abitante; -- cache entità quartiere per quartiere
    type list_pedoni_temp is array(Positive range <>,Positive range <>) of pedone;
    type list_bici_temp is array(Positive range <>,Positive range <>) of bici;

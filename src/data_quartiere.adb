@@ -142,4 +142,9 @@ package body data_quartiere is
       end case;
    end get_default_value_auto;
 
+   function get_num_task return Natural is
+   begin
+      return num_task;
+   end get_num_task;
+
 end data_quartiere;

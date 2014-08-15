@@ -12,11 +12,68 @@ use remote_types;
 
 package body configuration_cache_abitanti is
 
+   procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+                               bici: list_bici_quartiere; auto: list_auto_quartiere) is
+   begin
+      server_cache_abitanti.registra_abitanti(from_id_quartiere, abitanti, pedoni, bici, auto);
+   end registra_abitanti;
+
+   procedure get_bound_quartieri(bounds: out bound_quartieri) is
+   begin
+      server_cache_abitanti.get_bound_quartieri(bounds);
+   end get_bound_quartieri;
+
+   procedure cache_quartiere_creata is
+   begin
+      server_cache_abitanti.cache_quartiere_creata;
+   end cache_quartiere_creata;
+
+   function get_abitanti_quartieri return list_abitanti_temp is
+   begin
+      return server_cache_abitanti.get_abitanti_quartieri;
+   end get_abitanti_quartieri;
+
+   function get_pedoni_quartieri return list_pedoni_temp is
+   begin
+      return server_cache_abitanti.get_pedoni_quartieri;
+   end get_pedoni_quartieri;
+
+   function get_bici_quartieri return list_bici_temp is
+   begin
+      return server_cache_abitanti.get_bici_quartieri;
+   end get_bici_quartieri;
+
+   function get_auto_quartieri return list_auto_temp is
+   begin
+      return server_cache_abitanti.get_auto_quartieri;
+   end get_auto_quartieri;
+
+   function cfg_get_min_length_entità(entity: entità) return Float is
+   begin
+      return server_cache_abitanti.get_min_length_entità(entity);
+   end cfg_get_min_length_entità;
+
    protected body cache_abitanti is
 
       procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                   bici: list_bici_quartiere; auto: list_auto_quartiere) is
       begin
+         for i in pedoni'Range loop
+            if pedoni(i).get_length_entità_passiva<min_length_pedoni then
+               min_length_pedoni:= pedoni(i).get_length_entità_passiva;
+            end if;
+         end loop;
+         for i in bici'Range loop
+            if bici(i).get_length_entità_passiva<min_length_bici then
+               min_length_bici:= bici(i).get_length_entità_passiva;
+            end if;
+         end loop;
+         for i in auto'Range loop
+            if auto(i).get_length_entità_passiva<min_length_auto then
+               min_length_auto:= auto(i).get_length_entità_passiva;
+            end if;
+         end loop;
+
          temp_abitanti(from_id_quartiere):= new list_abitanti_quartiere'(abitanti);
          temp_pedoni(from_id_quartiere):= new list_pedoni_quartiere'(pedoni);
          temp_bici(from_id_quartiere):= new list_bici_quartiere'(bici);
@@ -24,7 +81,7 @@ package body configuration_cache_abitanti is
          quartieri_registrati:= quartieri_registrati + 1;
       end registra_abitanti;
 
-      entry wait_cache_all_quartieri(bounds: out bound_quartieri) when quartieri_registrati=get_num_quartieri is
+      procedure get_bound_quartieri(bounds: out bound_quartieri) is
       begin
          for i in 1..get_num_quartieri loop
             bounds(i).from_abitanti:=temp_abitanti(i)'First;
@@ -36,7 +93,7 @@ package body configuration_cache_abitanti is
                max_to_abitanti:= bounds(i).to_abitanti;
             end if;
          end loop;
-      end wait_cache_all_quartieri;
+      end get_bound_quartieri;
 
       procedure cache_quartiere_creata is
       begin
@@ -96,6 +153,15 @@ package body configuration_cache_abitanti is
          end loop;
          return auto;
       end get_auto_quartieri;
+
+      function get_min_length_entità(entity: entità) return Float is
+      begin
+         case entity is
+            when pedone_entity => return min_length_pedoni;
+            when bici_entity => return min_length_bici;
+            when auto_entity => return min_length_auto;
+         end case;
+      end get_min_length_entità;
 
    end cache_abitanti;
 

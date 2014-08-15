@@ -39,13 +39,15 @@ package body avvio_task.utilities is
          val_id_quartiere:= get_id_quartiere;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
-         val_ptr_resource_strada:= new resource_segmento_strada;
+         val_ptr_resource_strada:= new resource_segmento_strada(num_corsie => val_num_corsie,
+                                                                length => val_lunghezza,
+                                                                max_num_auto => calculate_max_num_auto(val_lunghezza),
+                                                                max_num_pedoni => calculate_max_num_pedoni(val_lunghezza));
          array_roads(index_strada):= create_new_urbana(val_tipo => val_tipo,val_id => val_id,
                                                        val_id_quartiere => val_id_quartiere,
                                                        val_lunghezza => val_lunghezza,
                                                        val_num_corsie => val_num_corsie);
          ptr_resource_roads.all(index_strada):= val_ptr_resource_strada;
-         task_urbane(index_strada).configure(id => index_strada, resource => val_ptr_resource_strada);
       end loop;
       urbane_segmento_resources:= ptr_resource_roads;
       return array_roads;
@@ -74,7 +76,10 @@ package body avvio_task.utilities is
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+get_from_urbane-1;
          val_distance_from_road_head:= Get(Val => strada, Field => "distanza_da_from");
-         val_ptr_resource_strada:= new resource_segmento_strada;
+         val_ptr_resource_strada:= new resource_segmento_strada(num_corsie => val_num_corsie,
+                                                                length => val_lunghezza,
+                                                                max_num_auto => calculate_max_num_auto(val_lunghezza),
+                                                                max_num_pedoni => calculate_max_num_pedoni(val_lunghezza));
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
                                                                val_id_quartiere => val_id_quartiere,
                                                                val_lunghezza => val_lunghezza,
@@ -82,7 +87,6 @@ package body avvio_task.utilities is
                                                                val_id_main_strada => val_id_main_strada,
                                                                val_distance_from_road_head => val_distance_from_road_head);
          ptr_resource_roads.all(index_strada):= val_ptr_resource_strada;
-         task_ingressi(index_strada).configure(id => index_strada, resource => val_ptr_resource_strada);
       end loop;
       ingressi_segmento_resources:= ptr_resource_roads;
       return array_roads;
@@ -112,10 +116,10 @@ package body avvio_task.utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada;
+         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
          ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
-         task_incroci(incrocio).configure(id => incrocio, resource => val_ptr_resource_strada);
       end loop;
+      incroci_a_4_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_incroci_a_4;
 
@@ -143,12 +147,74 @@ package body avvio_task.utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada;
+         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
          ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
-         task_incroci(incrocio).configure(id => incrocio, resource => val_ptr_resource_strada);
       end loop;
+      incroci_a_3_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_incroci_a_3;
+
+   function create_array_rotonde_a_4(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_4 is
+      incroci: list_incroci_a_4(from..to);
+      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
+      json_strade_incrocio: JSON_Value;
+      json_array_strade_incrocio: JSON_Array;
+      json_strada: JSON_Value;
+      val_id_quartiere: Positive;
+      val_id_strada: Positive;
+      val_polo: Boolean;
+      val_ptr_resource_strada: ptr_resource_segmento_strada;
+   begin
+      for incrocio in from..to
+      loop
+         json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
+         for strada in 1..4
+         loop
+            json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
+	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+            val_id_strada:= Get(Val => json_strada, Field => "id_strada");
+            val_polo:= Get(Val => json_strada, Field => "polo");
+            val_id_strada:= val_id_strada + get_from_urbane - 1;
+            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
+         end loop;
+         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
+         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
+      end loop;
+      rotonde_a_4_segmento_resources:= ptr_resource_roads;
+      return incroci;
+   end create_array_rotonde_a_4;
+
+   function create_array_rotonde_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3 is
+      incroci: list_incroci_a_3(from..to);
+      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
+      json_strade_incrocio: JSON_Value;
+      json_array_strade_incrocio: JSON_Array;
+      json_strada: JSON_Value;
+      val_id_quartiere: Positive;
+      val_id_strada: Positive;
+      val_polo: Boolean;
+      val_ptr_resource_strada: ptr_resource_segmento_strada;
+   begin
+      for incrocio in from..to
+      loop
+         json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
+         for strada in 1..3
+         loop
+            json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
+	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+            val_id_strada:= Get(Val => json_strada, Field => "id_strada");
+            val_polo:= Get(Val => json_strada, Field => "polo");
+            val_id_strada:= val_id_strada + get_from_urbane - 1;
+            incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
+         end loop;
+         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
+         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
+      end loop;
+      rotonde_a_3_segmento_resources:= ptr_resource_roads;
+      return incroci;
+   end create_array_rotonde_a_3;
 
    procedure print_percorso(route: percorso) is
    begin
@@ -158,5 +224,33 @@ package body avvio_task.utilities is
       end loop;
       Put("]");
    end print_percorso;
+
+   procedure configure_tasks is
+   begin
+      for index_strada in get_from_urbane..get_to_urbane loop
+         task_urbane(index_strada).configure(id => index_strada, resource => urbane_segmento_resources(index_strada));
+      end loop;
+
+      for index_strada in get_from_ingressi..get_to_ingressi loop
+         task_ingressi(index_strada).configure(id => index_strada, resource => ingressi_segmento_resources(index_strada));
+      end loop;
+
+      for index_incrocio in get_from_incroci_a_4..get_to_incroci_a_4 loop
+         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_4_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
+         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_4_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_incroci_a_3..get_to_incroci_a_3 loop
+         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_3_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
+         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_3_segmento_resources(index_incrocio));
+      end loop;
+
+   end;
 
 end avvio_task.utilities;

@@ -7,12 +7,31 @@ use strade_e_incroci_common;
 use global_data;
 
 package configuration_cache_abitanti is
+   pragma Remote_Call_Interface;
 
-   protected type cache_abitanti is new cache_abitanti_interface with
+   procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+                               bici: list_bici_quartiere; auto: list_auto_quartiere);
 
-        procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+   procedure get_bound_quartieri(bounds: out bound_quartieri);
+
+   procedure cache_quartiere_creata;
+
+   function get_abitanti_quartieri return list_abitanti_temp;
+
+   function get_pedoni_quartieri return list_pedoni_temp;
+
+   function get_bici_quartieri return list_bici_temp;
+
+   function get_auto_quartieri return list_auto_temp;
+
+   function cfg_get_min_length_entità(entity: entità) return Float;
+
+private
+
+   protected type cache_abitanti is
+      procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                     bici: list_bici_quartiere; auto: list_auto_quartiere);
-      entry wait_cache_all_quartieri(bounds: out bound_quartieri);
+      procedure get_bound_quartieri(bounds: out bound_quartieri);
       procedure cache_quartiere_creata;
 
       -- metodi di get possono essere invocati in qualunque ordine
@@ -22,6 +41,7 @@ package configuration_cache_abitanti is
       function get_pedoni_quartieri return list_pedoni_temp;
       function get_bici_quartieri return list_bici_temp;
       function get_auto_quartieri return list_auto_temp;
+      function get_min_length_entità(entity: entità) return Float;
    private
       temp_abitanti: access list_abitanti_quartieri:= new list_abitanti_quartieri(1..get_num_quartieri);
       temp_pedoni: access list_pedoni_quartieri:= new list_pedoni_quartieri(1..get_num_quartieri);
@@ -31,9 +51,11 @@ package configuration_cache_abitanti is
       min_from_abitanti: Natural:= Natural'Last;
       max_to_abitanti: Natural:= 0;
       abitanti_quartieri_registrati: Natural:= 0;
+      min_length_pedoni: Float:= Float'Last;
+      min_length_bici: Float:= Float'Last;
+      min_length_auto: Float:= Float'Last;
    end cache_abitanti;
 
-   type ptr_cache_abitanti is access cache_abitanti;
-
+   server_cache_abitanti: cache_abitanti;
 
 end configuration_cache_abitanti;

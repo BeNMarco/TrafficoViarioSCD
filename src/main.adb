@@ -1,7 +1,4 @@
 --pragma Priority_Specific_Dispatching(Round_Robin_Within_Priorities,1,10);
--- NOTA: avvio_task.ads fa partire i task; risorse_strade_e_incroci.initiliaze.ads configura i task precedentemente
---       avviati => risorse_strade_e_incroci.initiliaze dipende da avvio_task; risorse_strade_e_incroci.initiliaze deve seguire avvio_task
---       nella lista delle dipendenze.
 
 with GNATCOLL.JSON;
 with Ada.Text_IO;
@@ -10,7 +7,8 @@ with JSON_Helper;
 with strade_e_incroci_common;
 with the_name_server;
 with remote_types;
-with risorse_strade_e_incroci.initiliaze;
+with resource_map_inventory;
+with risorse_strade_e_incroci;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -19,6 +17,7 @@ use JSON_Helper;
 use strade_e_incroci_common;
 use the_name_server;
 use remote_types;
+use risorse_strade_e_incroci;
 
 procedure main is
 

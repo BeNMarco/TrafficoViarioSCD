@@ -8,8 +8,6 @@ use gps_utilities;
 use the_name_server;
 use global_data;
 
-
-
 package configuration_server_parameter is
    pragma Elaborate_Body;
 

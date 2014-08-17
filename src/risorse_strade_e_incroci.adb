@@ -2,55 +2,45 @@ with Ada.Text_IO;
 
 with strade_e_incroci_common;
 with remote_types;
+with resource_map_inventory;
+with risorse_mappa_utilities;
 
 use Ada.Text_IO;
 
 use strade_e_incroci_common;
 use remote_types;
+use resource_map_inventory;
+use risorse_mappa_utilities;
 
 package body risorse_strade_e_incroci is
 
-   protected body wait_all_quartieri is
-      procedure all_quartieri_set is
-      begin
-         segnale:= True;
-      end all_quartieri_set;
-
-      entry wait_quartieri when segnale=True is
-      begin
-         segnale:= False;
-      end wait_quartieri;
-
-      entry wait_all_task_quartieri when segnale is
-      begin
-         num_task_registrati:= num_task_registrati+1;
-         if num_task_registrati=get_num_task then
-            segnale:= False;
-         end if;
-      end wait_all_task_quartieri;
-
-   end wait_all_quartieri;
-
-   function get_min_length_entità(entity: entità) return Float is
+   procedure configure_tasks is
    begin
-      case entity is
-         when pedone_entity => return min_length_pedoni;
-         when bici_entity => return min_length_bici;
-         when auto_entity => return min_length_auto;
-      end case;
-   end get_min_length_entità;
+      for index_strada in get_from_urbane..get_to_urbane loop
+         task_urbane(index_strada).configure(id => index_strada, resource => urbane_segmento_resources(index_strada));
+      end loop;
 
-   function calculate_max_num_auto(len: Positive) return Positive is
-   begin
-      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
-      return Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)));
-   end calculate_max_num_auto;
+      for index_strada in get_from_ingressi..get_to_ingressi loop
+         task_ingressi(index_strada).configure(id => index_strada, resource => ingressi_segmento_resources(index_strada));
+      end loop;
 
-   function calculate_max_num_pedoni(len: Positive) return Positive is
-   begin
-      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
-      return Positive(Float'Rounding(Float(len)/get_min_length_entità(pedone_entity)));
-   end calculate_max_num_pedoni;
+      for index_incrocio in get_from_incroci_a_4..get_to_incroci_a_4 loop
+         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_4_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
+         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_4_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_incroci_a_3..get_to_incroci_a_3 loop
+         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_3_segmento_resources(index_incrocio));
+      end loop;
+
+      for index_incrocio in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
+         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_3_segmento_resources(index_incrocio));
+      end loop;
+
+   end;
 
    protected body location_abitanti is
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
@@ -69,17 +59,12 @@ package body risorse_strade_e_incroci is
          mailbox:= resource;
       end configure;
 
-      waiting_object.wait_all_task_quartieri;
+      wait_settings_all_quartieri;
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       Put_Line(Positive'Image(id_task));
    end core_avanzamento_urbane;
 
-   protected body resource_segmento_strada is
-      procedure prova is
-      begin
-      	Put_Line("backtohome");
-      end prova;
-   end resource_segmento_strada;
-
+begin
+   configure_tasks;
 end risorse_strade_e_incroci;

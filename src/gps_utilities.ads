@@ -55,9 +55,8 @@ package gps_utilities is
 
 
    protected type registro_strade_resource is new gps_interface with
-      procedure registra_urbane_quartiere(id_quartiere: Positive; urbane: strade_urbane_features);
-      procedure registra_ingressi_quartiere(id_quartiere: Positive; ingressi: strade_ingresso_features);
-      procedure registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
+
+      procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                        rotonde_a_3: list_incroci_a_3);
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
@@ -71,7 +70,6 @@ package gps_utilities is
       cache_ingressi: ingressi_quartiere(1..get_num_quartieri);
       hash_urbane_quartieri: hash_quartieri_strade(1..get_num_quartieri);
       grafo: grafo_mappa(1..get_num_quartieri);
-      num_urbane_quartieri_registrate: Natural:= 0;
       num_incroci_quartieri_registrati: Natural:= 0;
       min_first_incroci: Natural:= 0;
       max_last_incroci: Natural:= 0;

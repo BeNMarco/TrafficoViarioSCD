@@ -67,20 +67,6 @@ package body gps_utilities is
    end create_list_percorso;
 
    protected body registro_strade_resource is
-      procedure registra_urbane_quartiere(id_quartiere: Positive; urbane: strade_urbane_features) is
-      begin
-         cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
-         hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
---         if urbane'Length > max_urbane_size then
---            max_urbane_size:= urbane'Length;
---         end if;
-         num_urbane_quartieri_registrate:= num_urbane_quartieri_registrate + 1;
-      end registra_urbane_quartiere;
-
-      procedure registra_ingressi_quartiere(id_quartiere: Positive; ingressi: strade_ingresso_features) is
-      begin
-         cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
-      end registra_ingressi_quartiere;
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso is
          array_route: percorso(1..size);
@@ -361,9 +347,8 @@ package body gps_utilities is
          return create_percorso(route => create_array_percorso(size_route,ptr_route), distance => min_distanza);
       end calcola_percorso;
 
-      procedure registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
-                                       incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                       rotonde_a_3: list_incroci_a_3) is
+      procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
+                                           incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3) is
          incrocio_a_4: list_road_incrocio_a_4;
          incrocio_a_3: list_road_incrocio_a_3;
          rotonda_a_4: list_road_incrocio_a_4;
@@ -387,6 +372,12 @@ package body gps_utilities is
          adiacente_4: adiacente;
          index_to_place: Positive :=1;
       begin
+
+         cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
+         hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
+
+         cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
+
          if num_incroci_quartieri_registrati = 0 then
             min_first_incroci:= Natural'Last;
             max_last_incroci:= Natural'First;
@@ -553,7 +544,7 @@ package body gps_utilities is
             Put_Line("Effettuata registrazione nodi grafo");
             print_grafo;
          end if;
-      end registra_incroci_quartiere;
+      end registra_mappa_quartiere;
 
    end registro_strade_resource;
 

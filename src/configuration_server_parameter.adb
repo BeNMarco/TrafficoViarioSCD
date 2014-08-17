@@ -3,14 +3,12 @@ with Ada.Text_IO;
 with global_data;
 with remote_types;
 with gps_utilities;
-with configuration_cache_abitanti;
 with the_name_server;
 
 use Ada.Text_IO;
 
 use remote_types;
 use gps_utilities;
-use configuration_cache_abitanti;
 use the_name_server;
 use global_data;
 

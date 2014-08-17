@@ -6,5 +6,8 @@ package global_data is
 
    function get_num_quartieri return Positive;
    num_quartieri: constant Positive:=1;
+   min_length_pedoni: constant Float:= 0.5;
+   min_length_bici: constant Float:= 1.5;
+   min_length_auto: constant Float:= 3.0;
 
 end global_data;

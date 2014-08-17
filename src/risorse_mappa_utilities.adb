@@ -3,22 +3,41 @@ with Ada.Text_IO;
 
 with remote_types;
 with strade_e_incroci_common;
-with risorse_strade_e_incroci;
 with JSON_Helper;
-with avvio_task;
 with data_quartiere;
+with global_data;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
 
 use strade_e_incroci_common;
 use remote_types;
-use risorse_strade_e_incroci;
 use JSON_Helper;
-use avvio_task;
 use data_quartiere;
+use global_data;
 
-package body avvio_task.utilities is
+package body risorse_mappa_utilities is
+
+   function get_min_length_entità(entity: entità) return Float is
+   begin
+      case entity is
+         when pedone_entity => return min_length_pedoni;
+         when bici_entity => return min_length_bici;
+         when auto_entity => return min_length_auto;
+      end case;
+   end get_min_length_entità;
+
+   function calculate_max_num_auto(len: Positive) return Positive is
+   begin
+      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
+      return Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)));
+   end calculate_max_num_auto;
+
+   function calculate_max_num_pedoni(len: Positive) return Positive is
+   begin
+      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
+      return Positive(Float'Rounding(Float(len)/get_min_length_entità(pedone_entity)));
+   end calculate_max_num_pedoni;
 
    function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features is
       array_roads: strade_urbane_features(from..to);
@@ -225,32 +244,11 @@ package body avvio_task.utilities is
       Put("]");
    end print_percorso;
 
-   procedure configure_tasks is
-   begin
-      for index_strada in get_from_urbane..get_to_urbane loop
-         task_urbane(index_strada).configure(id => index_strada, resource => urbane_segmento_resources(index_strada));
-      end loop;
+   protected body resource_segmento_strada is
+      procedure prova is
+      begin
+      	Put_Line("backtohome");
+      end prova;
+   end resource_segmento_strada;
 
-      for index_strada in get_from_ingressi..get_to_ingressi loop
-         task_ingressi(index_strada).configure(id => index_strada, resource => ingressi_segmento_resources(index_strada));
-      end loop;
-
-      for index_incrocio in get_from_incroci_a_4..get_to_incroci_a_4 loop
-         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_4_segmento_resources(index_incrocio));
-      end loop;
-
-      for index_incrocio in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
-         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_4_segmento_resources(index_incrocio));
-      end loop;
-
-      for index_incrocio in get_from_incroci_a_3..get_to_incroci_a_3 loop
-         task_incroci(index_incrocio).configure(id => index_incrocio, resource => incroci_a_3_segmento_resources(index_incrocio));
-      end loop;
-
-      for index_incrocio in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
-         task_rotonde(index_incrocio).configure(id => index_incrocio, resource => rotonde_a_3_segmento_resources(index_incrocio));
-      end loop;
-
-   end;
-
-end avvio_task.utilities;
+end risorse_mappa_utilities;

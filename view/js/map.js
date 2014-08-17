@@ -28,7 +28,7 @@ function pathOffset(path, offset, precision, style, start, end){
 	if (end < path.length){
 		len +=1;
 	}
-	len = path.length;
+	//len = path.length;
 	var copy = new Path();
 	if(typeof style !== 'undefined'){
 		copy.strokeColor = style.strokeColor;
@@ -42,12 +42,6 @@ function pathOffset(path, offset, precision, style, start, end){
 	//recommended precision: Math.ceil(path.length)
 	for (var i = 0; i < precision + 1; i++) {
 		var pos = i / precision * len;
-		if(pos > path.length){
-			console.log("wtf!");
-		}
-		if(pos+start > path.length){
-			console.log("wtf start!");
-		}
 		var point = path.getPointAt(pos+start);
 		var normal = path.getNormalAt(pos+start);
 		normal.length = offset;
@@ -92,6 +86,19 @@ function Street(obj){
 	this.guidingPath.smooth();
 	this.path = null;
 	this.name = obj.nome ? obj.nome : "";
+	this.type = 'standard';
+	this.sideStreets = {true:{},false:{}};
+}
+
+Street.prototype.reposition = function(){
+	this.guidingPath = new Path();
+	this.guidingPath.add(new Point(this.from[0],this.from[1]));
+	this.guidingPath.add(new Point(this.to[0],this.to[1]));
+	this.guidingPath.smooth();
+}
+
+Street.prototype.setType = function(newType){
+	this.type = newType;
 }
 
 Street.prototype.draw = function(style){
@@ -102,7 +109,6 @@ Street.prototype.draw = function(style){
 	this.guidingPath.strokeWidth = style.lineWidth;
 	this.guidingPath.moveAbove(this.path);
 	//this.guidingPath.fullySelected = true;
-	console.log("lunghezza strada "+this.id+": "+this.guidingPath.length);
 
 	// drawing the separation lines
 	var precision = Math.ceil(this.guidingPath.length);
@@ -113,8 +119,25 @@ Street.prototype.draw = function(style){
 	}
 
 	// drawing the pedestrian lines
-	pathOffset(this.guidingPath, this.nLanes*style.laneWidth, precision);
-	pathOffset(this.guidingPath, -this.nLanes*style.laneWidth, precision);
+	var pedestrianPaths = {true: [], false: []};
+
+	for(side in this.sideStreets){
+		pedestrianPaths[side][0] = {start:0, end:this.guidingPath.length, type:'pavement'};
+		var prev = 0;
+		for(index in this.sideStreets[side]){
+			var curStr = this.sideStreets[side][index]
+			var crossStart = curStr.entranceDistance - curStr.nLanes*style.laneWidth;
+			var crossEnd = curStr.entranceDistance + curStr.nLanes*style.laneWidth;
+			pedestrianPaths[side][prev].end = crossStart;
+			prev++;
+			pedestrianPaths[side][prev] = {start: crossStart, end:crossEnd, type:'zebra'};
+			prev++;
+			pedestrianPaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'pavement'};
+		}	
+	}
+	
+	this.drawPedestrianLines(pedestrianPaths, style, precision);
+
 	if(this.id != ""){
 		var signPath = pathOffset(this.guidingPath, this.nLanes+style.laneWidth + 4*style.pavementWidth, precision, {strokeWidth:0, strokColo:'black', dashArray: null});
 		var startPoint = signPath.getPointAt(signPath.length/3);
@@ -122,9 +145,28 @@ Street.prototype.draw = function(style){
 		text.content = this.id;
 	}
 	this.path.sendToBack();
+}
 
-	if(this.id == 11){
-		console.log(this.path.lastSegment);
+Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
+	//console.log(pedPath);
+	var st = {
+		pavement: {
+			strokeWidth: style.lineWidth,
+			strokeColor: style.lineColor,
+			dashArray: null,
+		},
+		zebra: {
+			strokeWidth: style.pavementWidth,
+			strokeColor: style.lineColor,
+			dashArray: style.zebraDash,
+		}
+	}
+	for(side in pedPath){
+		for(seg in pedPath[side]){
+			var offset = (this.nLanes*style.laneWidth + (pedPath[side][seg].type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? 1 : -1);
+			console.log("drawing "+pedPath[side][seg].type+" from "+pedPath[side][seg].start+" to "+pedPath[side][seg].end+" with offset "+offset);
+			pathOffset(this.guidingPath, offset, precision, st[pedPath[side][seg].type],pedPath[side][seg].start, pedPath[side][seg].end);
+		}
 	}
 }
 
@@ -141,6 +183,10 @@ Street.prototype.adjustCrossroadLink = function(newPoint, edge, centerPoint){
 		var len = this.guidingPath.segments.length;
 		this.guidingPath.lastSegment.handleIn.length = (this.guidingPath.segments[len-2].point.subtract(this.guidingPath.segments[len-1].point)).length/2;
 	}
+}
+
+Street.prototype.addSideStreet = function(sideStreet){
+	this.sideStreets[sideStreet.entranceSide][sideStreet.entranceDistance] = sideStreet;
 }
 
 
@@ -168,23 +214,27 @@ function Crossroad(obj){
 *	Links the streets to the crossroad
 * 	
 **/
-Crossroad.prototype.linkStreets = function(streets){
+Crossroad.prototype.linkStreets = function(streets, district){
 	var firstIn = null;
 	var polo = true;
 	var entr = 0;
 	for (var i = 0; i < this.streetsRef.length; i ++) {
 		entr++;
 		if (this.streetsRef[i] != null){
-			var tmpStreet = streets[this.streetsRef[i].id_strada];
+			var tmpStreet = null;
+			if (this.streetsRef[i].quartiere == district){
+				tmpStreet = streets[this.streetsRef[i].id_strada];
+			}
 			this.streets[i] = tmpStreet;
 
-			if(firstIn == null){
+			if(firstIn == null && tmpStreet != null){
 				this.firstEntrance = entr;
 				firstIn = tmpStreet;
 				polo = this.streetsRef[i].polo;	
 			}
+
 			// getting the number of lanes per direction
-			if (tmpStreet.nLanes > this.lanesNumber[i%2]){
+			if (tmpStreet != null && tmpStreet.nLanes > this.lanesNumber[i%2]){
 				this.lanesNumber[i%2] = tmpStreet.nLanes;
 			}
 
@@ -217,13 +267,13 @@ Crossroad.prototype.draw = function(style){
 	this.group.addChild(path);
 
 	var halfW = 0.5*style.pavementWidth;	
-	for (var i = 0; i < this.streets.length; i++) {
+	for (var i = 0; i < this.streetsRef.length; i++) {
 		var st = {color: style.lineColor, width: style.pavementWidth, dash: style.zebraDash};
 		var ped = style.pavementWidth/2;
 
 		var g = new Group();
 
-		if(this.streets[i] == null){
+		if(this.streetsRef[i] == null){
 			// if there is no street we draw the pavement
 
 			ped = 0;
@@ -244,7 +294,7 @@ Crossroad.prototype.draw = function(style){
 					style,
 					2000
 				);
-				this.trafficLights[this.streets[i].id+"s"+i+"l"+(a)] = t;
+				this.trafficLights[this.streetsRef[i].id+"s"+i+"l"+(a)] = t;
 				g.addChild(t.path);
 			}
 		}
@@ -299,7 +349,7 @@ function TrafficLight(state, position, style, yellowDelay){
 	this.path = new Path.Circle(position, ((style.laneWidth/2)-2));
 	this.path.fillColor = this.state;
 	this.path.strokeColor = 'black';
-	this.path.strokeWidth = 1;
+	this.path.strokeWidth = style.lineWidth;
 }
 
 TrafficLight.prototype.switchState = function(){
@@ -325,8 +375,7 @@ function setTrafficLight(tl, state){
 **/
 function Place(obj){
 	this.entranceStreetId = obj.idstrada;
-	this.entranceStreetPole = obj.latostrada;
-	this.id = obj.id;
+	this.id = obj.id_luogo;
 	this.maxCar = obj.capienza_macchine;
 	this.maxPerson = obj.capienza_persone;
 	this.maxBike = obj.capienza_bici;
@@ -343,13 +392,17 @@ Place.prototype.setEnteringStreet = function(street){
 }
 
 Place.prototype.draw = function(style){
-	var center = this.entranceStreetPole ? this.entranceStreet.guidingPath.firstSegment.point : this.entranceStreet.guidingPath.lastSegment.point;
+	var center = this.entranceStreet.guidingPath.lastSegment.point;
 
 	var placePath = new Path.Rectangle(new Point(), new Size(this.placeWidth, this.placeHeight));
 	placePath.strokeWidth = 1;
 	placePath.strokeColor = 'grey';
 	placePath.fillColor = 'white';
 	placePath.position = center;
+
+	var startPoint = new Point(center.x-(this.placeWidth/2), center.y+this.placeHeight+5);
+	var text = new PointText(startPoint);
+	text.content = this.placeName;
 	/*
 	var pathCenter = new Point(this.placeWidth/2,this.placeHeight/2);
 
@@ -369,6 +422,7 @@ Place.prototype.draw = function(style){
 **/
 function Map(){
 	this.streets = {},
+	this.entranceStreets = {},
 	this.crossroads = {},
 	this.pavements = {},
 	this.places = {},
@@ -380,19 +434,33 @@ Map.prototype.setStyle = function(newStyle){
 }
 
 Map.prototype.load = function(obj){
+	this.objData = obj;
+	this.id = obj.info.id;
 	this.streets = {};
 	this.crossroads = {};
-	for (var i = 0; i < obj.strade.length; i++) {
+	//for (var i = 0; i < obj.strade.length; i++) {
+	for(var i in obj.strade){
 		this.streets[obj.strade[i].id] = new Street(obj.strade[i]);
 	}
 	for (var i = 0; i < obj.incroci.length; i++) {
 		var c = new Crossroad(obj.incroci[i]);
-		c.linkStreets(this.streets);
+		c.linkStreets(this.streets, this.id);
 		this.crossroads[obj.incroci[i].id] = c;
+	}
+	//for(var i = 0; i < obj.strade_ingresso.length; i++){
+	for(var i in obj.strade_ingresso){
+		obj.strade_ingresso[i]['from'] = 0;
+		obj.strade_ingresso[i]['to'] = 0;
+		var str = new Street(obj.strade_ingresso[i]);
+		str.mainStreet = obj.strade_ingresso[i].strada_confinante;
+		str.entranceSide = obj.strade_ingresso[i].polo;
+		str.entranceDistance = obj.strade_ingresso[i].distanza_da_from;
+		str.setType('entrance');
+		this.entranceStreets[str.id] = str;
+		this.streets[str.mainStreet].addSideStreet(str);
 	}
 	for(var i = 0; i < obj.luoghi.length; i++){
 		var p = new Place(obj.luoghi[i]);
-		p.setEnteringStreet(this.streets[p.entranceStreetId]);
 		this.places[obj.luoghi[i].id] = p;
 	}
 }
@@ -404,9 +472,35 @@ Map.prototype.draw = function(){
 	for (var i in this.streets) {
 		this.streets[i].draw(this.mapStyle);
 	}
+	for (var i in this.entranceStreets){
+
+		var mainStreet = this.streets[this.entranceStreets[i].mainStreet];
+		var side = this.entranceStreets[i].entranceSide ? 1 : -1;
+
+		var refPoint = mainStreet.guidingPath.getPointAt(this.entranceStreets[i].entranceDistance);
+		var normalFrom = mainStreet.guidingPath.getNormalAt(this.entranceStreets[i].entranceDistance);
+		normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
+		
+		var normalTo = mainStreet.guidingPath.getNormalAt(this.entranceStreets[i].entranceDistance);
+		normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + this.entranceStreets[i].len);	
+		
+		this.entranceStreets[i].from = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
+		this.entranceStreets[i].to = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
+		this.entranceStreets[i].reposition();
+		this.entranceStreets[i].draw(this.mapStyle);
+	}
 	for (var i in this.places){
+		this.places[i].setEnteringStreet(this.entranceStreets[this.places[i].entranceStreetId]);
 		this.places[i].draw(this.mapStyle);
 	}
+}
+
+Map.prototype.getUpdatedData = function(){
+	var l = this.objData.strade.length;
+	for(var i =0; i < l; i++){
+		this.objData.strade[i].lunghezza = s.this.streets[this.objData.strade[i].id].guidingPath.length;
+	}
+	return this.objData;
 }
 
 /*

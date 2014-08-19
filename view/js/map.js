@@ -88,6 +88,7 @@ function Street(obj){
 	this.name = obj.nome ? obj.nome : "";
 	this.type = 'standard';
 	this.sideStreets = {true:{},false:{}};
+	this.sideStreetsEntrancePaths = {};
 }
 
 Street.prototype.reposition = function(){
@@ -135,6 +136,54 @@ Street.prototype.draw = function(style){
 			pedestrianPaths[side][prev] = {start: crossStart, end:crossEnd, type:'zebra'};
 			prev++;
 			pedestrianPaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'pavement'};
+
+			var enteringPath = new Path();
+			var exitingPath = new Path();
+			var enterHandlePoint = null;
+			var exitHandlePoint = null;
+
+			if(side == 'false'){
+				enteringPath.add(this.getPositionAt(crossStart, side, 1).position);
+				enteringPath.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+				exitingPath.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+				exitingPath.add(this.getPositionAt(crossEnd, side, 1).position);
+
+				enterHandlePoint = this.getPositionAt(crossStart+0.5*style.laneWidth, side, 1).position;
+				exitHandlePoint = this.getPositionAt(crossEnd-0.5*style.laneWidth, side, 1).position;				
+			} else {
+				exitingPath.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+				exitingPath.add(this.getPositionAt(crossStart, side, 1).position);
+				enteringPath.add(this.getPositionAt(crossEnd, side, 1).position);
+				enteringPath.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+
+				enterHandlePoint = this.getPositionAt(crossEnd-0.5*style.laneWidth, side, 1).position;
+				exitHandlePoint = this.getPositionAt(crossStart+0.5*style.laneWidth, side, 1).position;
+			}
+
+			enteringPath.firstSegment.handleOut = enterHandlePoint.subtract(enteringPath.firstSegment.point);
+			enteringPath.firstSegment.handleOut.length = 0.8*enteringPath.firstSegment.handleOut.length;
+			enteringPath.lastSegment.handleIn = enterHandlePoint.subtract(enteringPath.lastSegment.point);
+			enteringPath.lastSegment.handleIn.length = 0.5*enteringPath.lastSegment.handleIn.length;
+			enteringPath.smooth();
+			this.sideStreetsEntrancePaths["M"+this.id+"-S"+curStr.id] = {id:"M"+this.id+"-S"+curStr.id, principale: this.id, laterale:curStr.id, verso:'entrata', path:enteringPath};
+
+			exitingPath.firstSegment.handleOut = exitHandlePoint.subtract(exitingPath.firstSegment.point);
+			exitingPath.firstSegment.handleOut.length = 0.5*exitingPath.firstSegment.handleOut.length;
+			exitingPath.lastSegment.handleIn = exitHandlePoint.subtract(exitingPath.lastSegment.point);
+			exitingPath.lastSegment.handleIn.length = 0.8*exitingPath.lastSegment.handleIn.length;
+			exitingPath.smooth();
+			this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath};;
+
+			if(style.debug){
+				exitingPath.fullySelected = true;
+				exitingPath.strokeWidth = 2;
+				enteringPath.fullySelected = true;
+				enteringPath.strokeWidth = 2;
+				var c1 = new Path.Circle(exitingPath.getPointAt(1), 0.5);
+				c1.fillColor = 'blue';
+				var c2 = new Path.Circle(enteringPath.getPointAt(1), 0.5);
+				c2.fillColor = 'red';
+			}
 		}	
 	}
 	
@@ -194,7 +243,19 @@ Street.prototype.getPositionAt = function(distance, side, lane){
 	var loc = this.guidingPath.getLocationAt(distance);
 
 	var offset = lane < 0 ? this.nLanes*this.laneWidth + 0.5*this.pavementWidth : (lane+0.5)*this.laneWidth;
-	offset = side ? offset : -offset;
+	offset = side == 'true' ? offset : -offset;
+
+	var normal = this.guidingPath.getNormalAt(distance);
+	normal.length = offset;
+
+	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+}
+
+Street.prototype.getSidestreetPositionAt = function(distance, side){
+	var loc = this.guidingPath.getLocationAt(distance);
+
+	var offset = this.nLanes*this.laneWidth + this.pavementWidth;
+	offset = side == 'true' ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
 	normal.length = offset;
@@ -473,12 +534,14 @@ Place.prototype.setEnteringStreet = function(street){
 
 Place.prototype.draw = function(style){
 	var center = this.entranceStreet.guidingPath.lastSegment.point;
+	var angle = (center.subtract(this.entranceStreet.guidingPath.firstSegment.point)).angle+90;
 
 	var placePath = new Path.Rectangle(new Point(), new Size(this.placeWidth, this.placeHeight));
 	placePath.strokeWidth = 1;
 	placePath.strokeColor = 'grey';
 	placePath.fillColor = 'white';
 	placePath.position = center;
+	placePath.rotate(angle);
 
 	var startPoint = new Point(center.x, center.y-(this.placeHeight/2)-7);
 	this.nameLabel.position = startPoint;
@@ -560,7 +623,6 @@ Map.prototype.resetData = function(){
 
 Map.prototype.load = function(obj){
 	if(typeof this.startLoadingCallback === 'function'){
-		console.log(this.startLoadingCallback);
 		this.startLoadingCallback();
 	}
 	this.resetData();
@@ -643,6 +705,18 @@ Map.prototype.getUpdatedData = function(){
 	// for(var i = 0; i < l; i++){ 
 	for(var i in this.objData.strade){ 	
 		this.objData.strade[i].lunghezza = this.streets[this.objData.strade[i].id].guidingPath.length;
+		this.objData.strade[i].traiettorie_ingresso = [];
+		var sE = this.streets[this.objData.strade[i].id].sideStreetsEntrancePaths;
+		for(var c in sE){
+			var toAdd = {
+				id : sE[c].id,
+				principale : sE[c].principale,
+				laterale : sE[c].laterale,
+				verso : sE[c].verso,
+				lunghezza : sE[c].path.length,
+			}
+			this.objData.strade[i].traiettorie_ingresso.push(toAdd);
+		}
 	}/*
 	for(var i in this.objData.incroci_a_3){
 		this.objData.incroci_a_3[i].strade.splice(this.objData.incroci_a_3[i].strade.indexOf(null),1);

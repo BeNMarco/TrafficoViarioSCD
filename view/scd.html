@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
 	<script type="text/javascript" src="js/paper-full.js"></script>
 	<script type="text/javascript" src="js/quartiere1.js"></script>
-	<script type="text/javascript" src="js/quartiere2_updated.js"></script>
+	<script type="text/javascript" src="js/quartiere2.js"></script>
 	<script type="text/javascript" src="js/quartiere3.js"></script>
 	<script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/entities.js"></script>
@@ -17,14 +17,14 @@
 	<script type="text/javascript">
 		myMap = new Map();
 		mapLayer = null;
-		test = quartiere1;
+		test = quartiere2;
 		paper.install(window);
 
 		var style = new MapStyle();
 			style.laneWidth = 7;
 			style.pavementWidth = 3;
 			style.lineWidth = 0.3;
-			style.debug = true;
+			style.debug = false;
 
 		var dDialog = null;
 		var quartieri = null;

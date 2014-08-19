@@ -4,18 +4,30 @@
 	<meta charset="UTF-8">
 	<title>Space</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
 	<script type="text/javascript" src="js/paper-full.js"></script>
-	<script type="text/javascript" src="js/mapDrive.js"></script>
-	<script type="text/javascript" src="js/data.js"></script>
+	<script type="text/javascript" src="js/quartiere1.js"></script>
+	<script type="text/javascript" src="js/quartiere2_updated.js"></script>
+	<script type="text/javascript" src="js/quartiere3.js"></script>
 	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/entities.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
+	<script type="text/javascript" src="js/utils/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript">
-		var myMap = new Map();
-
+		myMap = new Map();
+		mapLayer = null;
+		test = quartiere1;
 		paper.install(window);
 
+		var style = new MapStyle();
+			style.laneWidth = 7;
+			style.pavementWidth = 3;
+			style.lineWidth = 0.3;
+			style.debug = true;
 
+		var dDialog = null;
+		var quartieri = null;
 		function traslladar(a,b){
 			var center = paper.project.view.center;
 			var desX = (a.x - b.x);
@@ -38,19 +50,34 @@
 		}
 
 		onload = function(e){
+			loadingDialog = $('#loadingDialog').dialog({dialogClass:'no-close'});
 
+			quartieri = {
+				quartiere1: quartiere1,
+				quartiere2: quartiere2,
+				quartiere3: quartiere3,
+			}
 			paper.setup("canvas");
-			
-			myMap.load(quartiere_2);
-			var style = new MapStyle();
-			style.laneWidth = 5;
-			style.pavementWidth = 2;
-			style.lineWidth = 0.2;
+
+			myMap.load(test);
 			myMap.setStyle(style);
 			myMap.draw();
-			secondLayer = new Layer();
+			mapLayer = project.activeLayer;
+			//secondLayer = new Layer();
 			view.draw();
 
+			/*
+			var entStyle = new EntitiesStyle();
+
+			entStyle.carShape.args.size = [5,8];
+			var carOne = new Car();
+			carOne.draw(entStyle);
+			carOne.hide();
+			var newPos = myMap.streets[23].getPositionAt(50, true, 0);
+			carOne.move(newPos.position, newPos.angle);
+			carOne.show();
+			*/
+			
 			var myTool = new Tool();
         	myTool.onMouseDown = function(event) {
 				path = new Point();
@@ -70,6 +97,29 @@
 				event.deltaY > 0 ? zoomIn() : zoomOut();
 			});
 
+			$('#dataDialog').dialog({autoOpen: false, resizable: false, width: 800, height: 600});
+
+			$('#getData').on('click', function(){
+				$('#dataDialog p').text(JSON.stringify(myMap.getUpdatedData(), null, '\t'));
+				$('#dataDialog').dialog("open");
+			});
+			$("#mapSelector").on('change', function(){
+				console.log("selezionato "+this.value);
+				project.clear();
+				myMap.load(quartieri[this.value]);
+				myMap.setStyle(style);
+				myMap.draw();
+			});
+			
+			myMap.onStartLoading(function() {
+				loadingDialog.dialog("open");
+				$('#outputData').text("Started loading and drawing");
+			});
+
+			myMap.onFinishDrawing(function() {
+				loadingDialog.dialog("close");
+				$('#outputData').text("Map ready");
+			});
 		}
 
 	</script>
@@ -84,6 +134,23 @@
 	</p>-->
 	
 	<div id="canvas-wrap">
+		<div id="dataDialog" style="overflow:auto;">
+			<p style="font-size:10pt;"></p>
+		</div>
+		<div id="loadingDialog">
+			<p>Please wait!<br />Loading and drawing the map</p>
+		</div>
+		
+		<form>
+		<label for="mapSelector">Seleziona il quartiere</label>
+		<select id="mapSelector">
+			<option value="quartiere1">Quartiere 1</option>
+			<option value="quartiere2">Quartiere 2</option>
+			<option value="quartiere3">Quartiere 3</option>
+		</select>
+		<span id="debug"><a id="getData" href="#">Get data</a> - </span>
+		<span id="debugOutput"></span>
+		</form>
 		<canvas id="canvas" resize hidpi="off" style="background-color:#F0EDE5;"></canvas>
 		<div id="zoom-controls-div">
 			<p><a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a id="zoomOutBtn" href="#" onClick="zoomOut()">-</a></p>

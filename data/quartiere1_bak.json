@@ -1,0 +1,41 @@
+{
+"strade":[{"id": 1,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 2,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 3,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 4,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 5,"lunghezza": 50,"from":[10,15],"to":[30,15],"numcorsie":2},{"id": 6,"lunghezza": 734,"from":[10,15],"to":[30,15],"numcorsie":2}],
+
+"strade_ingresso":[{"id": 1,"lunghezza": 50,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20},
+{"id": 2,"lunghezza": 50,"numcorsie":1,"strada_confinante":4,"polo":true,"distanza_da_from":20}],
+
+"incroci_a_4":[[{"id_quartiere":1,"id_strada":1,"polo":false},
+{"id_quartiere":1,"id_strada":2,"polo":false},
+{"id_quartiere":1,"id_strada":3,"polo":false},
+{"id_quartiere":1,"id_strada":4,"polo":false}],
+[{"id_quartiere":1,"id_strada":1,"polo":true},
+{"id_quartiere":1,"id_strada":2,"polo":true},
+{"id_quartiere":1,"id_strada":3,"polo":true},
+{"id_quartiere":1,"id_strada":5,"polo":false}]],
+
+"incroci_a_3":[],
+
+"rotonde_a_4":[],
+
+"rotonde_a_3":[],
+
+"luoghi":[{"id_luogo": 2,"nome":"banca","tipologia":"lavoro","capienza_macchine":40,"capienza_persone":80,"capienza_bici":25},
+{"id_luogo": 1,"nome":"casaRossi","tipologia":"casa"}],
+
+"default_pedoni":{"desired_velocity": 5.0,"time_headway": 0.5,"max_acceleration": 0.3,"comfortable_deceleration": 3.0,"s0": 2.0,"length": 0.5},
+"default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
+"default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
+
+"pedoni":[{"id_abitante":1}],
+
+"auto":[{"id_abitante":1}],
+
+"bici":[{"id_abitante":1}],
+
+"abitanti":[{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}]
+
+}
+
+
+
+

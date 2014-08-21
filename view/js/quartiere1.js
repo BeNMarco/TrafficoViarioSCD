@@ -1,994 +1,1419 @@
 var quartiere1 = {
-  "info":{
-    "id":1,
-    "larghezza":2000,
-    "altezza":1500,
-    "riferimento":null
+  "info": {
+    "id": 1,
+    "larghezza": 2000,
+    "altezza": 1500,
+    "riferimento": null
   },
-  "strade":[
+  "strade": [
     {
-      "id":1,
-      "lunghezza":466.44354207678106,
-      "from":[
+      "id": 1,
+      "lunghezza": 466.44354207678106,
+      "from": [
         0,
         300
       ],
-      "to":[
+      "to": [
         300,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":2,
-      "lunghezza":166,
-      "from":[
+      "id": 2,
+      "lunghezza": 166,
+      "from": [
         300,
         0
       ],
-      "to":[
+      "to": [
         500,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":3,
-      "lunghezza":366,
-      "from":[
+      "id": 3,
+      "lunghezza": 366,
+      "from": [
         500,
         0
       ],
-      "to":[
+      "to": [
         900,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":4,
-      "lunghezza":66,
-      "from":[
+      "id": 4,
+      "lunghezza": 66,
+      "from": [
         900,
         0
       ],
-      "to":[
+      "to": [
         1000,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":5,
-      "lunghezza":366,
-      "from":[
+      "id": 5,
+      "lunghezza": 366,
+      "from": [
         1000,
         0
       ],
-      "to":[
+      "to": [
         1400,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":6,
-      "lunghezza":366,
-      "from":[
+      "id": 6,
+      "lunghezza": 366,
+      "from": [
         1400,
         0
       ],
-      "to":[
+      "to": [
         1800,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":7,
-      "lunghezza":166,
-      "from":[
+      "id": 7,
+      "lunghezza": 166,
+      "from": [
         1800,
         0
       ],
-      "to":[
+      "to": [
         2000,
         0
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":8,
-      "lunghezza":266,
-      "from":[
+      "id": 8,
+      "lunghezza": 266,
+      "from": [
         0,
         300
       ],
-      "to":[
+      "to": [
         0,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":9,
-      "lunghezza":466,
-      "from":[
+      "id": 9,
+      "lunghezza": 466,
+      "from": [
         0,
         600
       ],
-      "to":[
+      "to": [
         0,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":10,
-      "lunghezza":383,
-      "from":[
+      "id": 10,
+      "lunghezza": 383,
+      "from": [
         0,
         1100
       ],
-      "to":[
+      "to": [
         0,
         1500
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":11,
-      "lunghezza":266,
-      "from":[
+      "id": 11,
+      "lunghezza": 266,
+      "from": [
         2000,
         0
       ],
-      "to":[
+      "to": [
         2000,
         300
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":12,
-      "lunghezza":266,
-      "from":[
+      "id": 12,
+      "lunghezza": 266,
+      "from": [
         2000,
         300
       ],
-      "to":[
+      "to": [
         2000,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":13,
-      "lunghezza":466,
-      "from":[
+      "id": 13,
+      "lunghezza": 466,
+      "from": [
         2000,
         600
       ],
-      "to":[
+      "to": [
         2000,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":14,
-      "lunghezza":383,
-      "from":[
+      "id": 14,
+      "lunghezza": 383,
+      "from": [
         2000,
         1100
       ],
-      "to":[
+      "to": [
         2000,
         1500
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":15,
-      "lunghezza":466,
-      "from":[
+      "id": 15,
+      "lunghezza": 466,
+      "from": [
         0,
         1100
       ],
-      "to":[
+      "to": [
         500,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":16,
-      "lunghezza":966,
-      "from":[
+      "id": 16,
+      "lunghezza": 966,
+      "from": [
         500,
         1100
       ],
-      "to":[
+      "to": [
         1500,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":17,
-      "lunghezza":366,
-      "from":[
+      "id": 17,
+      "lunghezza": 366,
+      "from": [
         500,
         1100
       ],
-      "to":[
+      "to": [
         500,
         1500
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":18,
-      "lunghezza":966,
-      "from":[
+      "id": 18,
+      "lunghezza": 966,
+      "from": [
         500,
         1500
       ],
-      "to":[
+      "to": [
         1500,
         1500
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":19,
-      "lunghezza":366,
-      "from":[
+      "id": 19,
+      "lunghezza": 366,
+      "from": [
         1500,
         1100
       ],
-      "to":[
+      "to": [
         1500,
         1500
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":20,
-      "lunghezza":466,
-      "from":[
+      "id": 20,
+      "lunghezza": 466,
+      "from": [
         1500,
         600
       ],
-      "to":[
+      "to": [
         1500,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":21,
-      "lunghezza":466,
-      "from":[
+      "id": 21,
+      "lunghezza": 466,
+      "from": [
         1500,
         1100
       ],
-      "to":[
+      "to": [
         2000,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":22,
-      "lunghezza":466,
-      "from":[
+      "id": 22,
+      "lunghezza": 466,
+      "from": [
         1500,
         600
       ],
-      "to":[
+      "to": [
         2000,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":23,
-      "lunghezza":281.2363027487136,
-      "from":[
+      "id": 23,
+      "lunghezza": 281.2363027487136,
+      "from": [
         1800,
         0
       ],
-      "to":[
+      "to": [
         1650,
         250
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":24,
-      "lunghezza":321.6743934208883,
-      "from":[
+      "id": 24,
+      "lunghezza": 321.6743934208883,
+      "from": [
         1650,
         250
       ],
-      "to":[
+      "to": [
         2000,
         300
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":25,
-      "lunghezza":363.6219611563082,
-      "from":[
+      "id": 25,
+      "lunghezza": 363.6219611563082,
+      "from": [
         1650,
         250
       ],
-      "to":[
+      "to": [
         1500,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":26,
-      "lunghezza":384.3078230785546,
-      "from":[
+      "id": 26,
+      "lunghezza": 384.3078230785546,
+      "from": [
         1400,
         0
       ],
-      "to":[
+      "to": [
         1650,
         250
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":27,
-      "lunghezza":881.6806229931107,
-      "from":[
+      "id": 27,
+      "lunghezza": 881.6806229931107,
+      "from": [
         1000,
         0
       ],
-      "to":[
+      "to": [
         1500,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":28,
-      "lunghezza":552.618683818597,
-      "from":[
+      "id": 28,
+      "lunghezza": 552.618683818597,
+      "from": [
         900,
         0
       ],
-      "to":[
+      "to": [
         700,
         450
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":29,
-      "lunghezza":480.00872002328435,
-      "from":[
+      "id": 29,
+      "lunghezza": 480.00872002328435,
+      "from": [
         500,
         0
       ],
-      "to":[
+      "to": [
         700,
         450
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":30,
-      "lunghezza":673.3897231972169,
-      "from":[
+      "id": 30,
+      "lunghezza": 673.3897231972169,
+      "from": [
         300,
         0
       ],
-      "to":[
+      "to": [
         700,
         450
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":31,
-      "lunghezza":368.04671047850036,
-      "from":[
+      "id": 31,
+      "lunghezza": 368.04671047850036,
+      "from": [
         400,
         600
       ],
-      "to":[
+      "to": [
         700,
         450
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":32,
-      "lunghezza":555.8322145259649,
-      "from":[
+      "id": 32,
+      "lunghezza": 555.8322145259649,
+      "from": [
         0,
         300
       ],
-      "to":[
+      "to": [
         400,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":33,
-      "lunghezza":366,
-      "from":[
+      "id": 33,
+      "lunghezza": 366,
+      "from": [
         0,
         600
       ],
-      "to":[
+      "to": [
         400,
         600
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     },
     {
-      "id":34,
-      "lunghezza":481.18651822370555,
-      "from":[
+      "id": 34,
+      "lunghezza": 481.18651822370555,
+      "from": [
         400,
         600
       ],
-      "to":[
+      "to": [
         500,
         1100
       ],
-      "numcorsie":2
+      "numcorsie": 2,
+      "traiettorie_ingresso": []
     }
   ],
-  "incroci_a_4":[
+  "incroci_a_4": [
     {
-      "id":"i1",
-      "strade":[
+      "id": "i1",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":34,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 34,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":16,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 16,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":17,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 17,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":15,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 15,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     },
     {
-      "id":"i2",
-      "strade":[
+      "id": "i2",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":20,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 20,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":21,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 21,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":19,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 19,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":16,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 16,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     },
     {
-      "id":"i6",
-      "strade":[
+      "id": "i6",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":25,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 25,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":22,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 22,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":20,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 20,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":27,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 27,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     },
     {
-      "id":"i7",
-      "strade":[
+      "id": "i7",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":23,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 23,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":24,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 24,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":25,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 25,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":26,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 26,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     },
     {
-      "id":"i14",
-      "strade":[
+      "id": "i14",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":29,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 29,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":28,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 28,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":31,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 31,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":30,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 30,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     },
     {
-      "id":"i18",
-      "strade":[
+      "id": "i18",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":32,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 32,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":31,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 31,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":34,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 34,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":33,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 33,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ]
     }
   ],
-  "incroci_a_3":[
+  "incroci_a_3": [
     {
-      "id":"i3",
-      "strade":[
+      "id": "i3",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":13,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 13,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":14,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 14,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":21,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 21,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":1
+      "strada_mancante": 1
     },
     {
-      "id":"i4",
-      "strade":[
+      "id": "i4",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":12,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 12,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":13,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 13,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":22,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 22,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":1
+      "strada_mancante": 1
     },
     {
-      "id":"i5",
-      "strade":[
+      "id": "i5",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":11,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 11,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":12,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 12,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":24,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 24,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":1
+      "strada_mancante": 1
     },
     {
-      "id":"i8",
-      "strade":[
+      "id": "i8",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":7,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 7,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":23,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 23,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":6,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 6,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i9",
-      "strade":[
+      "id": "i9",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":6,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 6,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":26,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 26,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":5,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 5,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i10",
-      "strade":[
+      "id": "i10",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":5,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 5,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":27,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 27,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":4,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 4,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i11",
-      "strade":[
+      "id": "i11",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":4,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 4,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":28,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 28,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":3,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 3,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i12",
-      "strade":[
+      "id": "i12",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":3,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 3,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":29,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 29,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":2,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 2,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i13",
-      "strade":[
+      "id": "i13",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":2,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 2,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":30,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 30,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":1,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 1,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i15",
-      "strade":[
+      "id": "i15",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":1,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 1,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":32,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 32,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":8,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 8,
+          "tipo_strada": "urbana",
+          "polo": true
         }
       ],
-      "strada_mancante":3
+      "strada_mancante": 3
     },
     {
-      "id":"i16",
-      "strade":[
+      "id": "i16",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":8,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 8,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":33,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 33,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":9,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 9,
+          "tipo_strada": "urbana",
+          "polo": true
         }
       ],
-      "strada_mancante":3
+      "strada_mancante": 3
     },
     {
-      "id":"i17",
-      "strade":[
+      "id": "i17",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":9,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 9,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":15,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 15,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":10,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 10,
+          "tipo_strada": "urbana",
+          "polo": true
         }
       ],
-      "strada_mancante":3
+      "strada_mancante": 3
     },
     {
-      "id":"i19",
-      "strade":[
+      "id": "i19",
+      "strade": [
         {
-          "quartiere":3,
-          "id_strada":1,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 3,
+          "id_strada": 1,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":11,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 11,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":7,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 7,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":0
+      "strada_mancante": 0
     },
     {
-      "id":"i20",
-      "strade":[
+      "id": "i20",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":17,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 17,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":1,
-          "id_strada":18,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 1,
+          "id_strada": 18,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":2,
-          "id_strada":3,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 2,
+          "id_strada": 3,
+          "tipo_strada": "urbana",
+          "polo": true
         }
       ],
-      "strada_mancante":3
+      "strada_mancante": 3
     },
     {
-      "id":"i21",
-      "strade":[
+      "id": "i21",
+      "strade": [
         {
-          "quartiere":1,
-          "id_strada":19,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 19,
+          "tipo_strada": "urbana",
+          "polo": false
         },
         {
-          "quartiere":2,
-          "id_strada":11,
-          "tipo_strada":"urbana",
-          "polo":true
+          "quartiere": 2,
+          "id_strada": 11,
+          "tipo_strada": "urbana",
+          "polo": true
         },
         {
-          "quartiere":1,
-          "id_strada":18,
-          "tipo_strada":"urbana",
-          "polo":false
+          "quartiere": 1,
+          "id_strada": 18,
+          "tipo_strada": "urbana",
+          "polo": false
         }
       ],
-      "strada_mancante":1
+      "strada_mancante": 1
     }
   ],
-  "luoghi":[
-
-  ],
-  "dimensioni_incrocio":34
+  "luoghi": [],
+  "dimensioni_incrocio": 34,
+  "traiettorie_incrocio_a_3": {
+    "0": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        }
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505802372
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014606155
+          }
+        ]
+      }
+    },
+    "1": {},
+    "2": {
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514607
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.601238131610856
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        }
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        }
+      }
+    },
+    "3": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        }
+      }
+    }
+  },
+  "traiettorie_incrocio_a_4": {
+    "0": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.22656717951471
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.07561250580214
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605938
+          }
+        ]
+      }
+    },
+    "1": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514802
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505801974
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605817
+          }
+        ]
+      }
+    },
+    "2": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.22656717951471
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.07561250580214
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605938
+          }
+        ]
+      }
+    },
+    "3": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514802
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505801974
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605817
+          }
+        ]
+      }
+    }
+  }
 }

@@ -3,28 +3,43 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Space</title>
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="css/style.css">
+	<!--
 	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
-	<script type="text/javascript" src="js/paper-full.js"></script>
+	<link rel="stylesheet" href="js/themes/smoothness/jquery-ui.min.css">
+	<link rel="stylesheet" href="js/themes/smoothness/jquery.ui.theme.css">
+	-->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
 	<script type="text/javascript" src="js/quartiere1.js"></script>
 	<script type="text/javascript" src="js/quartiere2.js"></script>
 	<script type="text/javascript" src="js/quartiere3.js"></script>
 	<script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/entities.js"></script>
+	<script type="text/javascript" src="js/utils/paper-full.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
-	<script type="text/javascript" src="js/utils/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+	<!-- <script type="text/javascript" src="js/utils/jquery-ui.min.js"></script> -->
 	<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript">
 		myMap = new Map();
+		//myMap.onStartLoading(openLoadingDialog);
+		myMap.onFinishDrawing(closeLoadingDialog);
+		//myMap.setProgressNotifier(setProgressText);
+		myMap.onMapReady(carTest);
 		mapLayer = null;
 		test = quartiere2;
+
+		entStyle = new EntitiesStyle();
+
 		paper.install(window);
 
 		var style = new MapStyle();
 			style.laneWidth = 7;
 			style.pavementWidth = 3;
 			style.lineWidth = 0.3;
-			style.debug = false;
+			style.debug = true;
 
 		var dDialog = null;
 		var quartieri = null;
@@ -49,34 +64,94 @@
 			myMap.switchTrafficLights();
 		}
 
+		function openLoadingDialog(){
+			console.log("openLoadingDialog fired");
+			$('#loadingMessage').html("Please wait!<br />Loading and drawing the map");
+			$('#loadingDialog').modal('show');
+				//$('#outputData').text("Started loading and drawing");
+		}
+
+		function closeLoadingDialog(){
+			$('#loadingDialog').modal('hide');
+			//$('#loadingDialog .progress-label').text("");
+			//$('#loadingDialog').dialog('destroy');
+		}
+
+		function setProgressText(text){
+			console.log("notified "+text);
+			$('#loadingMessage').html(text);
+		}
+
+		function update(event) {
+			// the number of times the frame event was fired:
+			console.log(event.count);
+
+			// The total amount of time passed since
+			// the first frame event in seconds:
+			console.log(event.time);
+
+			// The time passed in seconds since the last frame event:
+			console.log(event.delta);
+		}
+
+		function carTest(){
+			entStyle.carShape.args.size = [3.5,5];
+			var carOne = new Car();
+			carOne.draw(entStyle);
+			carOne.hide();
+			var newPos = myMap.crossroads['i1'].getPositionAt(10, 1, 'left');
+			carOne.move(newPos.position, newPos.angle);
+			carOne.show();
+
+			var car2 = new Car();
+			car2.draw(entStyle);
+			car2.hide();
+			var p1 = myMap.streets['1'].getPositionAt(150, true, 0);
+			car2.move(p1.position, p1.angle);
+			car2.show();
+
+			var car3 = new Car();
+			car3.draw(entStyle);
+			car3.hide();
+			var p2 = myMap.streets['1'].getPositionAt(150, false, 1);
+			car3.move(p2.position, p2.angle);
+			car3.show();
+		}
+
 		onload = function(e){
-			loadingDialog = $('#loadingDialog').dialog({dialogClass:'no-close'});
+
+			$('#loadingDialog').modal({
+				backdrop: 'static',
+				keyboard:false,
+				show:false,
+			});
+
+			$('#dataDialog').modal({
+				show: false,
+			});
 
 			quartieri = {
 				quartiere1: quartiere1,
 				quartiere2: quartiere2,
 				quartiere3: quartiere3,
 			}
-			paper.setup("canvas");
+			paper.setup(document.getElementById("canvas"));
+			//loadingDialog.dialog('open');
+			$('#outputData').text("Started loading and drawing");
+			$('#loadingDialog').modal('show');
 
-			myMap.load(test);
 			myMap.setStyle(style);
-			myMap.draw();
+			openLoadingDialog();
+			var val = this.value;
+			setTimeout(function(){
+				myMap.load(test);
+				myMap.draw();
+			}, 10);
 			mapLayer = project.activeLayer;
 			//secondLayer = new Layer();
 			view.draw();
+			//view.onFrame = update;
 
-			/*
-			var entStyle = new EntitiesStyle();
-
-			entStyle.carShape.args.size = [5,8];
-			var carOne = new Car();
-			carOne.draw(entStyle);
-			carOne.hide();
-			var newPos = myMap.streets[23].getPositionAt(50, true, 0);
-			carOne.move(newPos.position, newPos.angle);
-			carOne.show();
-			*/
 			
 			var myTool = new Tool();
         	myTool.onMouseDown = function(event) {
@@ -97,28 +172,28 @@
 				event.deltaY > 0 ? zoomIn() : zoomOut();
 			});
 
-			$('#dataDialog').dialog({autoOpen: false, resizable: false, width: 800, height: 600});
+			
 
 			$('#getData').on('click', function(){
-				$('#dataDialog p').text(JSON.stringify(myMap.getUpdatedData(), null, '\t'));
-				$('#dataDialog').dialog("open");
-			});
-			$("#mapSelector").on('change', function(){
-				console.log("selezionato "+this.value);
-				project.clear();
-				myMap.load(quartieri[this.value]);
-				myMap.setStyle(style);
-				myMap.draw();
-			});
-			
-			myMap.onStartLoading(function() {
-				loadingDialog.dialog("open");
-				$('#outputData').text("Started loading and drawing");
+				//console.log(JSON.stringify(myMap.getUpdatedData(), null, 2));
+				$('#jsonDataArea').text(JSON.stringify(myMap.getUpdatedData(), null, 2));
+				$('#dataDialog').modal("show");
 			});
 
-			myMap.onFinishDrawing(function() {
-				loadingDialog.dialog("close");
-				$('#outputData').text("Map ready");
+			$('#viewDialog').on('click', function(){
+				console.log("opening dialog");
+				openLoadingDialog();
+			});
+
+			$("#mapSelector").on('change', function(){
+				openLoadingDialog();
+				console.log("selezionato "+this.value);
+				project.clear();
+				var val = this.value;
+				setTimeout(function(){
+					myMap.load(quartieri[val]);
+					myMap.draw();
+				}, 1);
 			});
 		}
 
@@ -134,13 +209,55 @@
 	</p>-->
 	
 	<div id="canvas-wrap">
-		<div id="dataDialog" style="overflow:auto;">
+
+
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog" aria-labelledby="myDataDialogLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myDataDialogLabel">Json Data</h4>
+		      </div>
+		      <div class="modal-body">
+		        <pre id="jsonDataArea" style="overflow:auto; max-height:500px;"></pre>
+		      </div>
+		      <!--
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		      -->
+		    </div>
+		  </div>
+		</div>
+
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog" aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title" id="myLoadingDialogLabel">Loading...</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p id="loadingMessage"></p>
+		        <div class="progress">
+				  <div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+				    <span class="sr-only">Loading</span>
+				  </div>
+				</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!--
+		<div id="dialog" style="overflow:auto;">
 			<p style="font-size:10pt;"></p>
 		</div>
-		<div id="loadingDialog">
-			<p>Please wait!<br />Loading and drawing the map</p>
+		<div id="loadingDialog" title="Loading map">
+			<div class="progress-label">Starting loading...</div>
+			<div id="progressbar"></div>
 		</div>
-		
+		-->
 		<form>
 		<label for="mapSelector">Seleziona il quartiere</label>
 		<select id="mapSelector">
@@ -149,6 +266,7 @@
 			<option value="quartiere3">Quartiere 3</option>
 		</select>
 		<span id="debug"><a id="getData" href="#">Get data</a> - </span>
+		<span id="debugq"><a id="viewDialog" href="#">Open Dialog</a> - </span>
 		<span id="debugOutput"></span>
 		</form>
 		<canvas id="canvas" resize hidpi="off" style="background-color:#F0EDE5;"></canvas>

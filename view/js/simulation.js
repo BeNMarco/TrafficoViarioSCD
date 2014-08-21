@@ -11,7 +11,9 @@ state = {
 	],
 }
 
-function Simulation(map, objects, requiredStatesToStart){
+
+
+function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.stateCache = [];
 	this.map = map;
 	this.objects = objects;
@@ -31,7 +33,7 @@ Simulation.prototype.onReady = function(callback){
 Simulation.prototype.addState = function(state){
 	this.stateCache.push(state);
 	this.receivedStates++;
-	if(this.receivedStates == this.requiredStates & (typeof this.readyCallback === 'function')){
+	if(this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
 		this.readyCallback();
 	}
 }

@@ -173,4 +173,22 @@ package body strade_e_incroci_common is
       return ptr_auto;
    end create_auto;
 
+   function create_estremo_urbana(id_quartiere: Natural; id_incrocio: Natural) return estremo_urbana is
+      estremo: estremo_urbana;
+   begin
+      estremo.id_quartiere:= id_quartiere;
+      estremo.id_incrocio:= id_incrocio;
+      return estremo;
+   end create_estremo_urbana;
+
+   function get_id_quartiere_estremo_urbana(obj: estremo_urbana) return Natural is
+   begin
+      return obj.id_quartiere;
+   end get_id_quartiere_estremo_urbana;
+
+   function get_id_incrocio_estremo_urbana(obj: estremo_urbana) return Natural is
+   begin
+      return obj.id_incrocio;
+   end get_id_incrocio_estremo_urbana;
+
 end strade_e_incroci_common;

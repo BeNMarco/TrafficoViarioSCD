@@ -1,6 +1,10 @@
 with Text_IO;
 
+with strade_e_incroci_common;
+
 use Text_IO;
+
+use strade_e_incroci_common;
 
 package body gps_utilities is
 
@@ -88,7 +92,6 @@ package body gps_utilities is
          loop
             for j in grafo(i)'Range
             loop
-
                for z in 1..4
                loop
                   Put_Line("Nodo:(" & Integer'Image(i) & "," & Integer'Image(j) & "), adiacente:[quartiere_spigolo:" & Integer'Image(grafo(i)(j)(z).get_id_quartiere_strada) & ",id_spigolo:"
@@ -97,6 +100,16 @@ package body gps_utilities is
             end loop;
          end loop;
       end print_grafo;
+
+      function get_estremi_urbana(id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is
+         estremi: estremi_incrocio;
+         return_estremi: estremi_urbana;
+      begin
+         estremi:= hash_urbane_quartieri(id_quartiere)(id_urbana);
+         return_estremi(1):= create_estremo_urbana(estremi(1).id_quartiere,estremi(1).id_incrocio);
+         return_estremi(2):= create_estremo_urbana(estremi(2).id_quartiere,estremi(2).id_incrocio);
+         return return_estremi;
+      end get_estremi_urbana;
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is

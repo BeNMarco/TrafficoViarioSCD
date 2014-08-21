@@ -46,14 +46,6 @@ package gps_utilities is
    function create_new_adiacente(val_id_quartiere_strada: Natural; val_id_strada: Natural;
                                  val_id_quartiere_adiacente: Natural; val_id_adiacente: Natural) return adiacente;
 
-   -- begin get methods index_incrocio
-   function get_id_quartiere_index_incroci(incrocio: index_incroci) return Natural;
-   function get_id_incrocio_index_incroci(incrocio: index_incroci) return Natural;
-   function get_polo_index_incroci(incrocio: index_incroci) return Boolean;
-   -- end get methods index_incrocio
-
-
-
    protected type registro_strade_resource is new gps_interface with
 
       procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
@@ -61,6 +53,7 @@ package gps_utilities is
                                        rotonde_a_3: list_incroci_a_3);
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance;
+      function get_estremi_urbana(id_quartiere: Positive; id_urbana: Positive) return estremi_urbana;
    private
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;
@@ -79,6 +72,12 @@ package gps_utilities is
    type ptr_registro_strade_resource is access all registro_strade_resource;
 
    function create_list_percorso(segmento: tratto; next_percorso: ptr_percorso) return ptr_percorso;
+
+   -- begin get methods index_incrocio
+   function get_id_quartiere_index_incroci(incrocio: index_incroci) return Natural;
+   function get_id_incrocio_index_incroci(incrocio: index_incroci) return Natural;
+   function get_polo_index_incroci(incrocio: index_incroci) return Boolean;
+   -- end get methods index_incrocio
 
 private
 

@@ -24,12 +24,6 @@ package strade_e_incroci_common is
    type list_incroci_a_3 is array(Positive range <>) of list_road_incrocio_a_3;
    -- end incroci
 
-   type bound_abitanti is record
-      from_abitanti: Natural:= 0;
-      to_abitanti: Natural:= 0;
-   end record;
-   type bound_quartieri is array(Positive range <>) of bound_abitanti;
-
    type move_settings is (desired_velocity,time_headway,max_acceleration,comfortable_deceleration,s0,length,num_posti);
 
    type abitante is tagged private;
@@ -68,7 +62,9 @@ package strade_e_incroci_common is
 
    type means_of_carrying is (walking, bike, car, autobus);
    type stato_percorso is tagged private;
-   --type array_stato_abitanti is array(Positive range <>) of stato_abitante;
+
+   type estremo_urbana is tagged private;
+   type estremi_urbana is array(Positive range 1..2) of estremo_urbana;
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features;
@@ -99,6 +95,11 @@ package strade_e_incroci_common is
                         time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
                         s0: Float; length: Float; num_posti: Positive) return auto;
 
+   function create_estremo_urbana(id_quartiere: Natural; id_incrocio: Natural) return estremo_urbana;
+
+   function get_id_quartiere_estremo_urbana(obj: estremo_urbana) return Natural;
+   function get_id_incrocio_estremo_urbana(obj: estremo_urbana) return Natural;
+
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural;
 
@@ -115,6 +116,11 @@ package strade_e_incroci_common is
    function get_distance_from_route_and_distance(route: route_and_distance) return Natural;
 
 private
+
+   type estremo_urbana is tagged record
+      id_quartiere: Natural;
+      id_incrocio: Natural;
+   end record;
 
    type rt_strada_features is tagged record
       tipo: type_strade;

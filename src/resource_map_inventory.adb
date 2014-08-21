@@ -3,14 +3,21 @@ with remote_types;
 with the_name_server;
 with risorse_passive_utilities;
 with configuration_synchronized_package;
+with mailbox_risorse_attive;
 
 use global_data;
 use remote_types;
 use the_name_server;
 use risorse_passive_utilities;
 use configuration_synchronized_package;
+use mailbox_risorse_attive;
 
 package body resource_map_inventory is
+
+   function get_synchronization_tasks_partition_object return ptr_synchronization_tasks is
+   begin
+      return synchronization_tasks_partition;
+   end get_synchronization_tasks_partition_object;
 
    protected body wait_all_quartieri is
       procedure all_quartieri_set is
@@ -77,14 +84,73 @@ package body resource_map_inventory is
 
    end quartiere_utilities;
 
+   function create_risorse return set_resources is
+      set: set_resources(1..get_num_task);
+   begin
+      for i in get_from_urbane..get_to_urbane loop
+         set(i):= ptr_rt_segmento(get_urbane_segmento_resources(i));
+      end loop;
+      for i in get_from_ingressi..get_to_ingressi loop
+         set(i):= ptr_rt_segmento(get_ingressi_segmento_resources(i));
+      end loop;
+      for i in get_from_incroci_a_4..get_to_incroci_a_4 loop
+         set(i):= ptr_rt_segmento(get_incroci_a_4_segmento_resources(i));
+      end loop;
+      for i in get_from_incroci_a_3..get_to_incroci_a_3 loop
+         set(i):= ptr_rt_segmento(get_incroci_a_3_segmento_resources(i));
+      end loop;
+      for i in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
+         set(i):= ptr_rt_segmento(get_rotonde_a_4_segmento_resources(i));
+      end loop;
+      for i in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
+         set(i):= ptr_rt_segmento(get_rotonde_a_3_segmento_resources(i));
+      end loop;
+      return set;
+   end create_risorse;
+
+   function get_urbana_from_id(index: Positive) return strada_urbana_features is
+   begin
+      return urbane_features(index);
+   end get_urbana_from_id;
+   function get_ingresso_from_id(index: Positive) return strada_ingresso_features is
+   begin
+      return ingressi_features(index);
+   end get_ingresso_from_id;
+   function get_incrocio_a_4_from_id(index: Positive) return list_road_incrocio_a_4 is
+   begin
+      return incroci_a_4(index);
+   end get_incrocio_a_4_from_id;
+   function get_incrocio_a_3_from_id(index: Positive) return list_road_incrocio_a_3 is
+   begin
+      return incroci_a_3(index);
+   end get_incrocio_a_3_from_id;
+   function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4 is
+   begin
+      return rotonde_a_4(index);
+   end get_rotonda_a_4_from_id;
+   function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3 is
+   begin
+      return rotonde_a_3(index);
+   end get_rotonda_a_3_from_id;
+
    local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
    local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
    local_bici: list_bici_quartiere:= create_array_bici(get_json_bici,get_from_abitanti,get_to_abitanti);
    local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
    registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
+   registro_risorse: set_resources(1..get_num_task);
 begin
    -- registrazione dell'oggetto che gestisce la sincronizzazione con tutti i quartieri
    registra_attesa_quartiere_obj(get_id_quartiere, ptr_rt_wait_all_quartieri(waiting_object));
+   -- end
+
+   -- crea mailbox task
+   create_mailbox_entità(urbane_features,ingressi_features,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
+   registro_risorse:= create_risorse;
+   -- end
+
+   -- registrazione risorse segmenti
+   registra_risorse_quartiere(get_id_quartiere,registro_risorse);
    -- end
 
    --begin first checkpoint to get all ref of quartieri

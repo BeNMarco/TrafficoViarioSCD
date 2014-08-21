@@ -21,7 +21,6 @@ use risorse_strade_e_incroci;
 
 procedure main is
 
-
    --gps: ptr_gps_interface;
    --percor: access route_and_distance;
 begin

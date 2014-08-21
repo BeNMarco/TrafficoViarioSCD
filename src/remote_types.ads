@@ -19,12 +19,22 @@ package remote_types is
 
    -- begin resource segmenti
    type rt_segmento is limited interface;
-   type ptr_rt_segmento_strade is access all rt_segmento'Class;
-   -- end resource segmenti
+   type ptr_rt_segmento is access all rt_segmento'Class;
+   procedure wait_turno(obj: access rt_segmento) is abstract;
+   procedure delta_terminate(obj: access rt_segmento) is abstract;
+   function there_are_autos_to_move(obj: access rt_segmento) return Boolean is abstract;
+   function there_are_pedoni_or_bici_to_move(obj: access rt_segmento) return Boolean is abstract;
+   type set_resources is array(Positive range <>) of ptr_rt_segmento;
 
    type rt_wait_all_quartieri is limited interface;
    type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;
    procedure all_quartieri_set(obj: access rt_wait_all_quartieri) is abstract;
+
+   type rt_task_synchronization is limited interface;
+   type ptr_rt_task_synchronization is access all rt_task_synchronization'Class;
+   procedure all_task_partition_are_ready(obj: access rt_task_synchronization) is abstract;
+   procedure wait_task_partitions(obj: access rt_task_synchronization) is abstract;
+   procedure reset(obj: access rt_task_synchronization) is abstract;
 
    -- begin gps
    type gps_interface is limited interface;
@@ -34,6 +44,7 @@ package remote_types is
                                         rotonde_a_3: list_incroci_a_3) is abstract;
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
                              to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is abstract;
+   function get_estremi_urbana(obj: access gps_interface; id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is abstract;
    -- end gps
 
 private

@@ -18,36 +18,13 @@ use global_data;
 
 package body risorse_mappa_utilities is
 
-   function get_min_length_entità(entity: entità) return Float is
-   begin
-      case entity is
-         when pedone_entity => return min_length_pedoni;
-         when bici_entity => return min_length_bici;
-         when auto_entity => return min_length_auto;
-      end case;
-   end get_min_length_entità;
-
-   function calculate_max_num_auto(len: Positive) return Positive is
-   begin
-      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
-      return Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)));
-   end calculate_max_num_auto;
-
-   function calculate_max_num_pedoni(len: Positive) return Positive is
-   begin
-      --Put_Line(Positive'Image(Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)))));
-      return Positive(Float'Rounding(Float(len)/get_min_length_entità(pedone_entity)));
-   end calculate_max_num_pedoni;
-
    function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features is
       array_roads: strade_urbane_features(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       val_tipo: type_strade;
       val_id: Positive;
       val_id_quartiere: Positive;
       val_lunghezza: Natural;
       val_num_corsie: Positive;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
       strada: JSON_Value;
    begin
       for index_strada in from..to
@@ -58,29 +35,21 @@ package body risorse_mappa_utilities is
          val_id_quartiere:= get_id_quartiere;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
-         val_ptr_resource_strada:= new resource_segmento_strada(num_corsie => val_num_corsie,
-                                                                length => val_lunghezza,
-                                                                max_num_auto => calculate_max_num_auto(val_lunghezza),
-                                                                max_num_pedoni => calculate_max_num_pedoni(val_lunghezza));
          array_roads(index_strada):= create_new_urbana(val_tipo => val_tipo,val_id => val_id,
                                                        val_id_quartiere => val_id_quartiere,
                                                        val_lunghezza => val_lunghezza,
                                                        val_num_corsie => val_num_corsie);
-         ptr_resource_roads.all(index_strada):= val_ptr_resource_strada;
       end loop;
-      urbane_segmento_resources:= ptr_resource_roads;
       return array_roads;
    end create_array_urbane;
 
    function create_array_ingressi(json_roads: JSON_array; from: Natural; to: Natural) return strade_ingresso_features is
       array_roads: strade_ingresso_features(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       val_tipo: type_strade;
       val_id: Positive;
       val_id_quartiere: Positive;
       val_lunghezza: Natural;
       val_num_corsie: Positive;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
       val_id_main_strada : Positive;
       val_distance_from_road_head : Natural;
       strada: JSON_Value;
@@ -95,32 +64,24 @@ package body risorse_mappa_utilities is
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+get_from_urbane-1;
          val_distance_from_road_head:= Get(Val => strada, Field => "distanza_da_from");
-         val_ptr_resource_strada:= new resource_segmento_strada(num_corsie => val_num_corsie,
-                                                                length => val_lunghezza,
-                                                                max_num_auto => calculate_max_num_auto(val_lunghezza),
-                                                                max_num_pedoni => calculate_max_num_pedoni(val_lunghezza));
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
-                                                               val_id_quartiere => val_id_quartiere,
-                                                               val_lunghezza => val_lunghezza,
-                                                               val_num_corsie => val_num_corsie,
-                                                               val_id_main_strada => val_id_main_strada,
-                                                               val_distance_from_road_head => val_distance_from_road_head);
-         ptr_resource_roads.all(index_strada):= val_ptr_resource_strada;
+                                                         val_id_quartiere => val_id_quartiere,
+                                                         val_lunghezza => val_lunghezza,
+                                                         val_num_corsie => val_num_corsie,
+                                                         val_id_main_strada => val_id_main_strada,
+                                                         val_distance_from_road_head => val_distance_from_road_head);
       end loop;
-      ingressi_segmento_resources:= ptr_resource_roads;
       return array_roads;
    end create_array_ingressi;
 
    function create_array_incroci_a_4(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_4 is
       incroci: list_incroci_a_4(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
       json_array_strade_incrocio: JSON_Array;
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
       val_polo: Boolean;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
       loop
@@ -135,23 +96,18 @@ package body risorse_mappa_utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
-         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
       end loop;
-      incroci_a_4_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_incroci_a_4;
 
    function create_array_incroci_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3 is
       incroci: list_incroci_a_3(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
       json_array_strade_incrocio: JSON_Array;
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
       val_polo: Boolean;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
       loop
@@ -166,23 +122,18 @@ package body risorse_mappa_utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
-         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
       end loop;
-      incroci_a_3_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_incroci_a_3;
 
    function create_array_rotonde_a_4(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_4 is
       incroci: list_incroci_a_4(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
       json_array_strade_incrocio: JSON_Array;
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
       val_polo: Boolean;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
       loop
@@ -197,23 +148,18 @@ package body risorse_mappa_utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
-         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
       end loop;
-      rotonde_a_4_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_rotonde_a_4;
 
    function create_array_rotonde_a_3(json_incroci: JSON_array; from: Natural; to: Natural) return list_incroci_a_3 is
       incroci: list_incroci_a_3(from..to);
-      ptr_resource_roads: ptr_resource_segmenti_strade:= new resource_segmenti_strade(from..to);
       json_strade_incrocio: JSON_Value;
       json_array_strade_incrocio: JSON_Array;
       json_strada: JSON_Value;
       val_id_quartiere: Positive;
       val_id_strada: Positive;
       val_polo: Boolean;
-      val_ptr_resource_strada: ptr_resource_segmento_strada;
    begin
       for incrocio in from..to
       loop
@@ -228,10 +174,7 @@ package body risorse_mappa_utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
-         val_ptr_resource_strada:= new resource_segmento_strada(1,1,1,1); --TO DO
-         ptr_resource_roads.all(incrocio):= val_ptr_resource_strada;
       end loop;
-      rotonde_a_3_segmento_resources:= ptr_resource_roads;
       return incroci;
    end create_array_rotonde_a_3;
 
@@ -243,12 +186,5 @@ package body risorse_mappa_utilities is
       end loop;
       Put("]");
    end print_percorso;
-
-   protected body resource_segmento_strada is
-      procedure prova is
-      begin
-      	Put_Line("backtohome");
-      end prova;
-   end resource_segmento_strada;
 
 end risorse_mappa_utilities;

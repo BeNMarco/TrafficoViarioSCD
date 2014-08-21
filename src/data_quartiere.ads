@@ -39,6 +39,7 @@ package data_quartiere is
    function get_default_value_pedoni(value: move_settings) return Float;
    function get_default_value_bici(value: move_settings) return Float;
    function get_default_value_auto(value: move_settings) return Float;
+   function get_num_abitanti return Positive;
    function get_num_task return Natural;
 
 private

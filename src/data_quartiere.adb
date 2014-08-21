@@ -142,6 +142,11 @@ package body data_quartiere is
       end case;
    end get_default_value_auto;
 
+   function get_num_abitanti return Positive is
+   begin
+      return size_json_abitanti;
+   end get_num_abitanti;
+
    function get_num_task return Natural is
    begin
       return num_task;

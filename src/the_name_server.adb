@@ -44,4 +44,42 @@ package body the_name_server is
       end get_ref_rt_quartieri;
    end registro_ref_quartieri;
 
+   protected body registro_risorse_strade is
+
+      procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources) is
+      begin
+         registro(id_quartiere):= new set_resources'(set);
+      end registra_risorse_quartiere;
+
+      function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento is
+      begin
+         return registro(id_quartiere)(id_risorsa);
+      end get_id_risorsa_quartiere;
+
+   end registro_risorse_strade;
+
+   procedure registra_synchronization_tasks_object(obj: ptr_rt_task_synchronization) is
+   begin
+      task_synchronization_obj:= obj;
+   end registra_synchronization_tasks_object;
+
+   function get_synchronization_tasks_object return ptr_rt_task_synchronization is
+   begin
+      loop
+         delay until (Clock + 1.0);
+         exit when task_synchronization_obj/=null;
+      end loop;
+      return task_synchronization_obj;
+   end get_synchronization_tasks_object;
+
+   procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources) is
+   begin
+      registro_risorse_strade.registra_risorse_quartiere(id_quartiere,set);
+   end registra_risorse_quartiere;
+
+   function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento is
+   begin
+      return registro_risorse_strade.get_id_risorsa_quartiere(id_quartiere,id_risorsa);
+   end get_id_risorsa_quartiere;
+
 end the_name_server;

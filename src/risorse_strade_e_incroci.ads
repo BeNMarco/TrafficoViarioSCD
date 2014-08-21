@@ -25,20 +25,38 @@ package risorse_strade_e_incroci is
 
    type ptr_location_abitanti is access location_abitanti;
 
+   type estremi_urbane is array(Positive range 1..2) of ptr_rt_segmento;
+
+   function get_estremi_incroci(id_urbana: Positive) return estremi_urbane;
+
    type core_avanzamento is limited interface;
 
-   procedure configure(entity: access core_avanzamento; id: Positive; resource: ptr_resource_segmento_strada) is abstract;
+   procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
 
    task type core_avanzamento_urbane is new core_avanzamento with
-      entry configure(id: Positive; resource: ptr_resource_segmento_strada);
+      entry configure(id: Positive);
    end core_avanzamento_urbane;
 
+   task type core_avanzamento_ingressi is new core_avanzamento with
+      entry configure(id: Positive);
+   end core_avanzamento_ingressi;
+
+   task type core_avanzamento_rotonde is new core_avanzamento with
+      entry configure(id: Positive);
+   end core_avanzamento_rotonde;
+
+   task type core_avanzamento_incroci is new core_avanzamento with
+      entry configure(id: Positive);
+   end core_avanzamento_incroci;
+
    type task_container_urbane is array(Positive range <>) of core_avanzamento_urbane;
-   type task_container_ingressi is array(Positive range <>) of core_avanzamento_urbane;
-   type task_container_rotonde is array(Positive range <>) of core_avanzamento_urbane;
-   type task_container_incroci is array(Positive range <>) of core_avanzamento_urbane;
+   type task_container_ingressi is array(Positive range <>) of core_avanzamento_ingressi;
+   type task_container_rotonde is array(Positive range <>) of core_avanzamento_rotonde;
+   type task_container_incroci is array(Positive range <>) of core_avanzamento_incroci;
 
    procedure configure_tasks;
+
+   procedure synchronization_with_delta;
 
 private
 
@@ -46,5 +64,7 @@ private
    task_ingressi: task_container_ingressi(get_from_ingressi..get_to_ingressi);
    task_incroci: task_container_incroci(get_from_incroci_a_4..get_to_incroci_a_3);
    task_rotonde: task_container_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_3);
+
+   synchronization_tasks_partitions: ptr_rt_task_synchronization:= get_synchronization_tasks_object;
 
 end risorse_strade_e_incroci;

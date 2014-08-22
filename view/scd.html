@@ -64,6 +64,22 @@
 			myMap.switchTrafficLights();
 		}
 
+		function selectText( containerid ) {
+
+	        var node = document.getElementById( containerid );
+
+	        if ( document.selection ) {
+	            var range = document.body.createTextRange();
+	            range.moveToElementText( node  );
+	            range.select();
+	        } else if ( window.getSelection ) {
+	            var range = document.createRange();
+	            range.selectNodeContents( node );
+	            window.getSelection().removeAllRanges();
+	            window.getSelection().addRange( range );
+	        }
+	    }
+
 		function openLoadingDialog(){
 			console.log("openLoadingDialog fired");
 			$('#loadingMessage').html("Please wait!<br />Loading and drawing the map");
@@ -221,12 +237,9 @@
 		      <div class="modal-body">
 		        <pre id="jsonDataArea" style="overflow:auto; max-height:500px;"></pre>
 		      </div>
-		      <!--
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Save changes</button>
+		        <button type="button" class="btn btn-primary" onClick="selectText('jsonDataArea')">Select all</button>
 		      </div>
-		      -->
 		    </div>
 		  </div>
 		</div>

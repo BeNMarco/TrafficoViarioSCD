@@ -1382,5 +1382,6 @@ var quartiere1 = {
       }
     }
   },
-  "traiettorie_ingresso": null
+  "traiettorie_ingresso": null,
+  "larghezza_marciapiede": 3
 }

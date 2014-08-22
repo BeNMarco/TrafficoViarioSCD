@@ -1234,5 +1234,6 @@ var quartiere3 = {
       "lunghezza": 25.62944058169156,
       "intersezione": 17.329114618417627
     }
-  }
+  },
+  "larghezza_marciapiede": 3
 }

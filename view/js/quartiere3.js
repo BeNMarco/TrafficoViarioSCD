@@ -1228,11 +1228,34 @@ var quartiere3 = {
     },
     "entrata_ritorno": {
       "lunghezza": 25.629440581681955,
-      "intersezione": 8.3003259632599
+      "intersezioni": [
+        {
+          "traiettoria": "uscita_ritorno_1",
+          "distanza": 8.3003259632599
+        },
+        {
+          "traiettoria": "uscita_ritorno_2",
+          "distanza": 5.9717224263961395
+        }
+      ]
     },
-    "uscita_ritorno": {
+    "uscita_ritorno_1": {
       "lunghezza": 25.62944058169156,
-      "intersezione": 17.329114618417627
+      "intersezioni": [
+        {
+          "traiettoria": "entrata_ritorno",
+          "distanza": 17.329114618417627
+        }
+      ]
+    },
+    "uscita_ritorno_2": {
+      "lunghezza": 32.02998249101707,
+      "intersezioni": [
+        {
+          "traiettoria": "entrata_ritorno",
+          "distanza": 18.651512490536806
+        }
+      ]
     }
   },
   "larghezza_marciapiede": 3

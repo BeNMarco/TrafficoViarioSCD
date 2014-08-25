@@ -1,16 +1,21 @@
 with GNATCOLL.JSON;
+with Ada.Directories;
 
 with JSON_Helper;
---with risorse_strade_e_incroci;
 with strade_e_incroci_common;
+with the_name_server;
+with partition_name;
+
 use GNATCOLL.JSON;
+use Ada.Directories;
 
 use JSON_Helper;
---use risorse_strade_e_incroci;
 use strade_e_incroci_common;
+use the_name_server;
+use partition_name;
 
 package data_quartiere is
-
+pragma Elaborate_Body;
    function get_id_quartiere return Positive;
    function get_json_urbane return JSON_Array;
    function get_json_ingressi return JSON_Array;
@@ -44,9 +49,13 @@ package data_quartiere is
 
 private
 
-   id_quartiere: Positive:= 1;  -- TO CHANGE X OGNI QUARTIERE MAGARI COME INPUT DAL JSON quartiere.json
+   --name_quartiere: str_quartieri:= get_name_partition;
 
-   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "data/quartiere1.json");
+   dir: String:= Current_Directory;
+   id_mappa: str_quartieri:= get_id_mappa;
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/" & str_quartieri'Image(id_mappa) & ".json");
+
+   id_quartiere: Positive:= Get(Val => json_quartiere, Field => "id_quartiere");
 
    json_urbane: JSON_Array:= Get(Val => json_quartiere, Field => "strade");
    json_ingressi: JSON_Array:= Get(Val => json_quartiere, Field => "strade_ingresso");

@@ -1,0 +1,396 @@
+{
+  "dimensioni_incrocio": 34.0,
+  "traiettorie_incrocio_a_3": {
+    "0": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        }
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505802372
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014606155
+          }
+        ]
+      }
+    },
+    "1": {},
+    "2": {
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514607
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.601238131610856
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        }
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        }
+      }
+    },
+    "3": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        }
+      }
+    }
+  },
+  "traiettorie_incrocio_a_4": {
+    "0": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.22656717951471
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.07561250580214
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605938
+          }
+        ]
+      }
+    },
+    "1": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514802
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505801974
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605817
+          }
+        ]
+      }
+    },
+    "2": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.22656717951471
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.07561250580214
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 2,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605938
+          }
+        ]
+      }
+    },
+    "3": {
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 2,
+          "corsia": 1
+        }
+      },
+      "sinistra": {
+        "lunghezza": 34.11869819125671,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 0,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "ditto_1",
+            "distanza": 20.226567179514802
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 27.60123813161098
+          }
+        ]
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 16.075612505801974
+          }
+        ]
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "strada": 3,
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "strada": 1,
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 13.898317014605817
+          }
+        ]
+      }
+    }
+  }
+}

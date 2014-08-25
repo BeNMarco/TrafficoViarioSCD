@@ -82,6 +82,7 @@ package body risorse_strade_e_incroci is
       mailbox: ptr_resource_segmento_urbana;
       estremi_incroci: estremi_urbane;
    begin
+      Put_Line("waiting task");
       accept configure(id: Positive) do
          id_task:= id;
          mailbox:= get_urbane_segmento_resources(id);
@@ -108,6 +109,7 @@ package body risorse_strade_e_incroci is
          delay 3.0; --simulazione lavoro
       end if;
       mailbox.delta_terminate;
+      -- set all entità passive a TRUE
       -- END LOOP;
 
       Put_Line(Positive'Image(id_task));
@@ -130,6 +132,7 @@ package body risorse_strade_e_incroci is
       -- loop
       synchronization_with_delta;
       resource_main_strada.wait_turno;
+      --quando l'abitante è arrivato occorre invocare l'asincrono abitante_is_arrived del tipo del quartiere del luogo arrivo che muoverà nuovamente l'abitante
       -- end loop;
 
       Put_Line(Positive'Image(id_task));
@@ -153,7 +156,7 @@ package body risorse_strade_e_incroci is
       if id_task=9 then
          delay 4.0; --simula lavoro
       else
-         delay 10.0;
+         delay 15.0;
       end if;
 
       mailbox.delta_terminate;

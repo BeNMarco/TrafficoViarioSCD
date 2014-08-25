@@ -1,6 +1,8 @@
 with remote_types;
+with global_data;
 
 use remote_types;
+use global_data;
 
 package synchronized_task_partitions is
 
@@ -11,6 +13,9 @@ package synchronized_task_partitions is
    private
       num_partition_ready: Natural:= 0;
       num_reset: Natural:= 0;
+      gestori_semafori: handler_semafori(1..num_quartieri):= (others => null);  -- non può essere inizializzato ora
+      initialized_gestori_semafori: Boolean:= False;
+      num_delta_semafori_before_change: Natural:= 0;
    end task_synchronization;
 
    type ptr_task_synchronization is access all task_synchronization;

@@ -1,8 +1,10 @@
 with remote_types;
 with global_data;
+with partition_name;
 
 use remote_types;
 use global_data;
+use partition_name;
 
 package the_name_server is
    pragma Remote_Call_Interface;
@@ -25,6 +27,11 @@ package the_name_server is
 
    function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento;
 
+   procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere);
+   function get_gestori_quartiere return handler_semafori;
+
+   function get_id_mappa return str_quartieri;
+
 private
 
    protected registro_ref_quartieri is
@@ -40,6 +47,19 @@ private
    private
       registro: risorse_quartieri(1..num_quartieri);
    end registro_risorse_strade;
+
+   protected registro_gestori_semafori is
+      procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere);
+      function get_gestori_quartiere return handler_semafori;
+   private
+      registro: handler_semafori(1..num_quartieri);
+   end registro_gestori_semafori;
+
+   protected get_my_mappa is
+      procedure registra_mappa(id: out Positive);
+   private
+      num_mappa: Natural:=0;
+   end get_my_mappa;
 
    gps: ptr_gps_interface:= null;
 

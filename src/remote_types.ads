@@ -17,6 +17,11 @@ package remote_types is
                                bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
+   type rt_handler_semafori_quartiere is abstract tagged limited private;
+   type ptr_rt_handler_semafori_quartiere is access all rt_handler_semafori_quartiere'Class;
+   type handler_semafori is array(Positive range <>) of ptr_rt_handler_semafori_quartiere;
+   procedure change_semafori(obj: rt_handler_semafori_quartiere) is abstract;
+
    -- begin resource segmenti
    type rt_segmento is limited interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
@@ -39,7 +44,9 @@ package remote_types is
    -- begin gps
    type gps_interface is limited interface;
    type ptr_gps_interface is access all gps_interface'Class;
-   procedure registra_mappa_quartiere(obj: access gps_interface; id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
+   procedure registra_strade_quartiere(obj: access gps_interface; id_quartiere: Positive; urbane: strade_urbane_features;
+                                       ingressi: strade_ingresso_features) is abstract;
+   procedure registra_incroci_quartiere(obj: access gps_interface; id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
                                         incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                         rotonde_a_3: list_incroci_a_3) is abstract;
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
@@ -47,6 +54,15 @@ package remote_types is
    function get_estremi_urbana(obj: access gps_interface; id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is abstract;
    -- end gps
 
+   type rt_quartiere_entities_life is limited interface;
+   type ptr_rt_quartiere_entities_life is access all rt_quartiere_entities_life'Class;
+   pragma Asynchronous(ptr_rt_quartiere_entities_life);
+   procedure abitante_is_arrived(obj: ptr_rt_quartiere_entities_life; id_quartiere: Positive; id_abitante: Positive) is abstract;
+   -- to set an asynchronus procedure you must have all IN parameter
+   -- to set a synchronus procedure you must have IN-OUT parameters
+
 private
-   type rt_server_finalize_configuration is abstract tagged limited null record;
+   --type rt_server_finalize_configuration is abstract tagged limited null record;
+   type rt_handler_semafori_quartiere is abstract tagged limited null record;
+   type rt_q is abstract tagged limited null record;
 end remote_types;

@@ -1,7 +1,7 @@
 
 package body strade_e_incroci_common is
 
-   function get_lunghezza_road(road: rt_strada_features) return Natural is
+   function get_lunghezza_road(road: rt_strada_features) return Float is
    begin
       return road.lunghezza;
    end get_lunghezza_road;
@@ -19,7 +19,7 @@ package body strade_e_incroci_common is
       return road.id_main_strada;
    end get_id_main_strada_ingresso;
 
-   function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Natural is
+   function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Float is
    begin
       return road.distance_from_road_head;
    end get_distance_from_road_head_ingresso;
@@ -49,7 +49,7 @@ package body strade_e_incroci_common is
    begin
       return route.route;
    end get_percorso_from_route_and_distance;
-   function get_distance_from_route_and_distance(route: route_and_distance) return Natural is
+   function get_distance_from_route_and_distance(route: route_and_distance) return Float is
    begin
       return route.distance_from_start;
    end get_distance_from_route_and_distance;
@@ -57,6 +57,26 @@ package body strade_e_incroci_common is
    begin
       return obj.length;
    end get_length_entità_passiva;
+   function get_id_abitante_from_abitante(residente: abitante) return Natural is
+   begin
+      return residente.id_abitante;
+   end get_id_abitante_from_abitante;
+   function get_id_quartiere_from_abitante(residente: abitante) return Natural is
+   begin
+      return residente.id_quartiere;
+   end get_id_quartiere_from_abitante;
+   function get_id_luogo_casa_from_abitante(residente: abitante) return Natural is
+   begin
+      return residente.id_luogo_casa;
+   end get_id_luogo_casa_from_abitante;
+   function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural is
+   begin
+      return residente.id_quartiere_luogo_lavoro;
+   end get_id_quartiere_luogo_lavoro_from_abitante;
+   function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural is
+   begin
+      return residente.id_luogo_lavoro;
+   end get_id_luogo_lavoro_from_abitante;
    -- end get methods
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
@@ -70,7 +90,7 @@ package body strade_e_incroci_common is
    end create_new_road_incrocio;
 
    function create_new_urbana(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
-                              val_lunghezza: Natural;val_num_corsie: Positive) return strada_urbana_features is
+                              val_lunghezza: Float;val_num_corsie: Positive) return strada_urbana_features is
       ptr_strada: strada_urbana_features;
    begin
       ptr_strada.id:= val_id;
@@ -82,8 +102,8 @@ package body strade_e_incroci_common is
    end create_new_urbana;
 
    function create_new_ingresso(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
-                                val_lunghezza: Natural;val_num_corsie: Positive;val_id_main_strada: Positive;
-                                val_distance_from_road_head: Natural) return strada_ingresso_features is
+                                val_lunghezza: Float;val_num_corsie: Positive;val_id_main_strada: Positive;
+                                val_distance_from_road_head: Float) return strada_ingresso_features is
       ptr_strada: strada_ingresso_features;
    begin
       ptr_strada.id:= val_id;
@@ -104,7 +124,7 @@ package body strade_e_incroci_common is
       return ptr_tratto;
    end create_tratto;
 
-   function create_percorso(route: percorso; distance: Natural) return route_and_distance is
+   function create_percorso(route: percorso; distance: Float) return route_and_distance is
       ptr_percorso: route_and_distance(route'Length);
    begin
       ptr_percorso.route:= route;
@@ -119,7 +139,7 @@ package body strade_e_incroci_common is
       ptr_abitante.id_abitante:= id_abitante;
       ptr_abitante.id_quartiere:= id_quartiere;
       ptr_abitante.id_luogo_casa:= id_luogo_casa;
-      ptr_abitante.id_quaritere_luogo_lavoro:= id_quartiere_luogo_lavoro;
+      ptr_abitante.id_quartiere_luogo_lavoro:= id_quartiere_luogo_lavoro;
       ptr_abitante.id_luogo_lavoro:= id_luogo_lavoro;
       return ptr_abitante;
    end create_abitante;

@@ -6,6 +6,7 @@ with the_name_server;
 with risorse_mappa_utilities;
 with synchronization_task_partition;
 with mailbox_risorse_attive;
+with handle_semafori;
 
 use data_quartiere;
 use strade_e_incroci_common;
@@ -15,6 +16,7 @@ use the_name_server;
 use risorse_mappa_utilities;
 use synchronization_task_partition;
 use mailbox_risorse_attive;
+use handle_semafori;
 
 package resource_map_inventory is
 
@@ -42,10 +44,13 @@ package resource_map_inventory is
 
    type ptr_location_abitanti is access location_abitanti;
 
+   function get_locate_abitanti_quartiere return ptr_location_abitanti;
+
    protected type quartiere_utilities is new rt_quartiere_utilities with
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
       procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                   bici: list_bici_quartiere; auto: list_auto_quartiere);
+      function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;
    private
 
       entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
@@ -60,6 +65,8 @@ package resource_map_inventory is
 
    type ptr_quartiere_utilities is access all quartiere_utilities;
 
+   function get_quartiere_utilities_obj return ptr_quartiere_utilities;
+
    type ptr_strade_urbane_features is access all strade_urbane_features;
 
    function get_urbana_from_id(index: Positive) return strada_urbana_features;
@@ -70,6 +77,7 @@ package resource_map_inventory is
    function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
 
 private
+
    quartiere_cfg: ptr_quartiere_utilities:= new quartiere_utilities;
    waiting_object: ptr_wait_all_quartieri:= new wait_all_quartieri;
 
@@ -98,5 +106,7 @@ private
    gps: ptr_gps_interface:= get_server_gps;
 
    synchronization_tasks_partition: ptr_synchronization_tasks:= new synchronization_tasks;
+
+   semafori_quartiere_obj: ptr_handler_semafori_quartiere:= new handler_semafori_quartiere;
 
 end resource_map_inventory;

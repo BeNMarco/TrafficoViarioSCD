@@ -20,8 +20,7 @@ var quartiere3 = {
         500,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 2,
@@ -34,8 +33,7 @@ var quartiere3 = {
         500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 3,
@@ -48,8 +46,7 @@ var quartiere3 = {
         500,
         2300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 4,
@@ -62,8 +59,7 @@ var quartiere3 = {
         500,
         3000
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 5,
@@ -76,8 +72,7 @@ var quartiere3 = {
         500,
         750
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 6,
@@ -90,23 +85,7 @@ var quartiere3 = {
         500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": [
-        {
-          "id": "M6-S17",
-          "principale": 6,
-          "laterale": 17,
-          "verso": "entrata",
-          "lunghezza": 8.244247817347107
-        },
-        {
-          "id": "S17-M6",
-          "principale": 6,
-          "laterale": 17,
-          "verso": "uscita",
-          "lunghezza": 8.2442478173374
-        }
-      ]
+      "numcorsie": 2
     },
     {
       "id": 7,
@@ -119,8 +98,7 @@ var quartiere3 = {
         500,
         2300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 8,
@@ -133,8 +111,7 @@ var quartiere3 = {
         500,
         3000
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 9,
@@ -147,8 +124,7 @@ var quartiere3 = {
         2000,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 10,
@@ -161,233 +137,7 @@ var quartiere3 = {
         1500,
         750
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": [
-        {
-          "id": "M10-S1",
-          "principale": 10,
-          "laterale": 1,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337058
-        },
-        {
-          "id": "S1-M10",
-          "principale": 10,
-          "laterale": 1,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337563
-        },
-        {
-          "id": "M10-S2",
-          "principale": 10,
-          "laterale": 2,
-          "verso": "entrata",
-          "lunghezza": 8.244247817170947
-        },
-        {
-          "id": "S2-M10",
-          "principale": 10,
-          "laterale": 2,
-          "verso": "uscita",
-          "lunghezza": 8.244247817237163
-        },
-        {
-          "id": "M10-S3",
-          "principale": 10,
-          "laterale": 3,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337735
-        },
-        {
-          "id": "S3-M10",
-          "principale": 10,
-          "laterale": 3,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337229
-        },
-        {
-          "id": "M10-S4",
-          "principale": 10,
-          "laterale": 4,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337556
-        },
-        {
-          "id": "S4-M10",
-          "principale": 10,
-          "laterale": 4,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337229
-        },
-        {
-          "id": "M10-S5",
-          "principale": 10,
-          "laterale": 5,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337014
-        },
-        {
-          "id": "S5-M10",
-          "principale": 10,
-          "laterale": 5,
-          "verso": "uscita",
-          "lunghezza": 8.244247817336882
-        },
-        {
-          "id": "M10-S6",
-          "principale": 10,
-          "laterale": 6,
-          "verso": "entrata",
-          "lunghezza": 8.24424781700806
-        },
-        {
-          "id": "S6-M10",
-          "principale": 10,
-          "laterale": 6,
-          "verso": "uscita",
-          "lunghezza": 8.244247817162641
-        },
-        {
-          "id": "M10-S7",
-          "principale": 10,
-          "laterale": 7,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337623
-        },
-        {
-          "id": "S7-M10",
-          "principale": 10,
-          "laterale": 7,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337053
-        },
-        {
-          "id": "M10-S8",
-          "principale": 10,
-          "laterale": 8,
-          "verso": "entrata",
-          "lunghezza": 8.244247816539387
-        },
-        {
-          "id": "S8-M10",
-          "principale": 10,
-          "laterale": 8,
-          "verso": "uscita",
-          "lunghezza": 8.24424781719836
-        },
-        {
-          "id": "M10-S9",
-          "principale": 10,
-          "laterale": 9,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337131
-        },
-        {
-          "id": "S9-M10",
-          "principale": 10,
-          "laterale": 9,
-          "verso": "uscita",
-          "lunghezza": 8.24424781733697
-        },
-        {
-          "id": "M10-S10",
-          "principale": 10,
-          "laterale": 10,
-          "verso": "entrata",
-          "lunghezza": 8.244247817237833
-        },
-        {
-          "id": "S10-M10",
-          "principale": 10,
-          "laterale": 10,
-          "verso": "uscita",
-          "lunghezza": 8.244247817171274
-        },
-        {
-          "id": "M10-S11",
-          "principale": 10,
-          "laterale": 11,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337419
-        },
-        {
-          "id": "S11-M10",
-          "principale": 10,
-          "laterale": 11,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337822
-        },
-        {
-          "id": "M10-S12",
-          "principale": 10,
-          "laterale": 12,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337419
-        },
-        {
-          "id": "S12-M10",
-          "principale": 10,
-          "laterale": 12,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337735
-        },
-        {
-          "id": "M10-S13",
-          "principale": 10,
-          "laterale": 13,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337268
-        },
-        {
-          "id": "S13-M10",
-          "principale": 10,
-          "laterale": 13,
-          "verso": "uscita",
-          "lunghezza": 8.244247817336117
-        },
-        {
-          "id": "M10-S14",
-          "principale": 10,
-          "laterale": 14,
-          "verso": "entrata",
-          "lunghezza": 8.24424781716252
-        },
-        {
-          "id": "S14-M10",
-          "principale": 10,
-          "laterale": 14,
-          "verso": "uscita",
-          "lunghezza": 8.244247817008063
-        },
-        {
-          "id": "M10-S15",
-          "principale": 10,
-          "laterale": 15,
-          "verso": "entrata",
-          "lunghezza": 8.244247817337623
-        },
-        {
-          "id": "S15-M10",
-          "principale": 10,
-          "laterale": 15,
-          "verso": "uscita",
-          "lunghezza": 8.244247817337053
-        },
-        {
-          "id": "M10-S16",
-          "principale": 10,
-          "laterale": 16,
-          "verso": "entrata",
-          "lunghezza": 8.244247817197524
-        },
-        {
-          "id": "S16-M10",
-          "principale": 10,
-          "laterale": 16,
-          "verso": "uscita",
-          "lunghezza": 8.244247816540549
-        }
-      ]
+      "numcorsie": 2
     },
     {
       "id": 11,
@@ -400,51 +150,7 @@ var quartiere3 = {
         2000,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": [
-        {
-          "id": "M11-S18",
-          "principale": 11,
-          "laterale": 18,
-          "verso": "entrata",
-          "lunghezza": 8.244247817187247
-        },
-        {
-          "id": "S18-M11",
-          "principale": 11,
-          "laterale": 18,
-          "verso": "uscita",
-          "lunghezza": 8.244247817229297
-        },
-        {
-          "id": "M11-S19",
-          "principale": 11,
-          "laterale": 19,
-          "verso": "entrata",
-          "lunghezza": 8.244247817670148
-        },
-        {
-          "id": "S19-M11",
-          "principale": 11,
-          "laterale": 19,
-          "verso": "uscita",
-          "lunghezza": 8.244247817550002
-        },
-        {
-          "id": "M11-S20",
-          "principale": 11,
-          "laterale": 20,
-          "verso": "entrata",
-          "lunghezza": 8.24424781745824
-        },
-        {
-          "id": "S20-M11",
-          "principale": 11,
-          "laterale": 20,
-          "verso": "uscita",
-          "lunghezza": 8.244247817504109
-        }
-      ]
+      "numcorsie": 2
     },
     {
       "id": 12,
@@ -457,8 +163,7 @@ var quartiere3 = {
         1200,
         2300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 13,
@@ -471,8 +176,7 @@ var quartiere3 = {
         1200,
         2300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 14,
@@ -485,8 +189,7 @@ var quartiere3 = {
         1200,
         2300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     }
   ],
   "incroci_a_4": [
@@ -1515,5 +1218,45 @@ var quartiere3 = {
         ]
       }
     }
-  }
+  },
+  "traiettorie_ingresso": {
+    "entrata_andata": {
+      "lunghezza": 8.244247817347107
+    },
+    "uscita_andata": {
+      "lunghezza": 8.244247817347107
+    },
+    "entrata_ritorno": {
+      "lunghezza": 25.629440581681955,
+      "intersezioni": [
+        {
+          "traiettoria": "uscita_ritorno_1",
+          "distanza": 8.3003259632599
+        },
+        {
+          "traiettoria": "uscita_ritorno_2",
+          "distanza": 5.9717224263961395
+        }
+      ]
+    },
+    "uscita_ritorno_1": {
+      "lunghezza": 25.62944058169156,
+      "intersezioni": [
+        {
+          "traiettoria": "entrata_ritorno",
+          "distanza": 17.329114618417627
+        }
+      ]
+    },
+    "uscita_ritorno_2": {
+      "lunghezza": 32.02998249101707,
+      "intersezioni": [
+        {
+          "traiettoria": "entrata_ritorno",
+          "distanza": 18.651512490536806
+        }
+      ]
+    }
+  },
+  "larghezza_marciapiede": 3
 }

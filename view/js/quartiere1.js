@@ -17,8 +17,7 @@ var quartiere1 = {
         300,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 2,
@@ -31,8 +30,7 @@ var quartiere1 = {
         500,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 3,
@@ -45,8 +43,7 @@ var quartiere1 = {
         900,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 4,
@@ -59,8 +56,7 @@ var quartiere1 = {
         1000,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 5,
@@ -73,8 +69,7 @@ var quartiere1 = {
         1400,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 6,
@@ -87,8 +82,7 @@ var quartiere1 = {
         1800,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 7,
@@ -101,8 +95,7 @@ var quartiere1 = {
         2000,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 8,
@@ -115,8 +108,7 @@ var quartiere1 = {
         0,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 9,
@@ -129,8 +121,7 @@ var quartiere1 = {
         0,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 10,
@@ -143,8 +134,7 @@ var quartiere1 = {
         0,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 11,
@@ -157,8 +147,7 @@ var quartiere1 = {
         2000,
         300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 12,
@@ -171,8 +160,7 @@ var quartiere1 = {
         2000,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 13,
@@ -185,8 +173,7 @@ var quartiere1 = {
         2000,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 14,
@@ -199,8 +186,7 @@ var quartiere1 = {
         2000,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 15,
@@ -213,8 +199,7 @@ var quartiere1 = {
         500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 16,
@@ -227,8 +212,7 @@ var quartiere1 = {
         1500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 17,
@@ -241,8 +225,7 @@ var quartiere1 = {
         500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 18,
@@ -255,8 +238,7 @@ var quartiere1 = {
         1500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 19,
@@ -269,8 +251,7 @@ var quartiere1 = {
         1500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 20,
@@ -283,8 +264,7 @@ var quartiere1 = {
         1500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 21,
@@ -297,8 +277,7 @@ var quartiere1 = {
         2000,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 22,
@@ -311,8 +290,7 @@ var quartiere1 = {
         2000,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 23,
@@ -325,8 +303,7 @@ var quartiere1 = {
         1650,
         250
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 24,
@@ -339,8 +316,7 @@ var quartiere1 = {
         2000,
         300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 25,
@@ -353,8 +329,7 @@ var quartiere1 = {
         1500,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 26,
@@ -367,8 +342,7 @@ var quartiere1 = {
         1650,
         250
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 27,
@@ -381,8 +355,7 @@ var quartiere1 = {
         1500,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 28,
@@ -395,8 +368,7 @@ var quartiere1 = {
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 29,
@@ -409,8 +381,7 @@ var quartiere1 = {
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 30,
@@ -423,8 +394,7 @@ var quartiere1 = {
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 31,
@@ -437,8 +407,7 @@ var quartiere1 = {
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 32,
@@ -451,8 +420,7 @@ var quartiere1 = {
         400,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 33,
@@ -465,8 +433,7 @@ var quartiere1 = {
         400,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 34,
@@ -479,8 +446,7 @@ var quartiere1 = {
         500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     }
   ],
   "incroci_a_4": [
@@ -1415,5 +1381,7 @@ var quartiere1 = {
         ]
       }
     }
-  }
+  },
+  "traiettorie_ingresso": null,
+  "larghezza_marciapiede": 3
 }

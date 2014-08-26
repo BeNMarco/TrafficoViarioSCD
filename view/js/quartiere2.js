@@ -626,30 +626,6 @@ var quartiere2 = {
       "id": "i12",
       "strade": [
         {
-          "quartiere": 2,
-          "id_strada": 21,
-          "tipo_strada": "urbana",
-          "polo": false
-        },
-        {
-          "quartiere": 2,
-          "id_strada": 22,
-          "tipo_strada": "urbana",
-          "polo": false
-        },
-        {
-          "quartiere": 2,
-          "id_strada": 20,
-          "tipo_strada": "urbana",
-          "polo": false
-        }
-      ],
-      "strada_mancante": 2
-    },
-    {
-      "id": "i12",
-      "strade": [
-        {
           "quartiere": 1,
           "id_strada": 14,
           "tipo_strada": "urbana",

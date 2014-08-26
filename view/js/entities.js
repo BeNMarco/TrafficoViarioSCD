@@ -20,10 +20,12 @@ function Car(id){
 	this.driver = null;
 	this.path = new Path();
 	this.currentPosition = null;
+	this.angle = 90;
 }
 
 Car.prototype.show = function(){
 	this.path.visible = true;
+	this.path.bringToFront();
 }
 
 Car.prototype.hide = function(){
@@ -37,5 +39,6 @@ Car.prototype.draw = function(style){
 
 Car.prototype.move = function(pos, angle){
 	this.path.position = pos;
-	this.path.rotation = angle;
+	this.path.rotate(angle-this.angle);
+	this.angle=angle;
 }

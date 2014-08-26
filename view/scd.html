@@ -16,7 +16,9 @@
 	<script type="text/javascript" src="js/quartiere2.js"></script>
 	<script type="text/javascript" src="js/quartiere3.js"></script>
 	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/simulation.js"></script>
 	<script type="text/javascript" src="js/entities.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/utils/paper-full.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
 	<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
@@ -27,9 +29,16 @@
 		//myMap.onStartLoading(openLoadingDialog);
 		myMap.onFinishDrawing(closeLoadingDialog);
 		//myMap.setProgressNotifier(setProgressText);
-		myMap.onMapReady(carTest);
+		//myMap.onMapReady(carTest);
+
+		myObjects = {cars:{}};
+
+		simulation = null;
+
 		mapLayer = null;
-		test = quartiere1;
+		test = 2;
+		curDistrict = test;
+		myState = [];
 
 		entStyle = new EntitiesStyle();
 
@@ -109,13 +118,13 @@
 			// The time passed in seconds since the last frame event:
 			console.log(event.delta);
 		}
-
+		/*
 		function carTest(){
 			entStyle.carShape.args.size = [3.5,5];
 			var carOne = new Car();
 			carOne.draw(entStyle);
 			carOne.hide();
-			var newPos = myMap.crossroads['i1'].getPositionAt(10, 1, 'left');
+			var newPos = myMap.crossroads['i1'].getPositionAt(10, 34, curDistrict,'left');
 			carOne.move(newPos.position, newPos.angle);
 			carOne.show();
 
@@ -133,8 +142,16 @@
 			car3.move(p2.position, p2.angle);
 			car3.show();
 		}
-
+*/
 		onload = function(e){
+
+			quartieri = {
+				1: quartiere1,
+				2: quartiere2,
+				3: quartiere3,
+			}
+
+			entStyle.carShape.args.size = [3.5,5];
 
 			$('#loadingDialog').modal({
 				backdrop: 'static',
@@ -145,12 +162,6 @@
 			$('#dataDialog').modal({
 				show: false,
 			});
-
-			quartieri = {
-				quartiere1: quartiere1,
-				quartiere2: quartiere2,
-				quartiere3: quartiere3,
-			}
 			paper.setup(document.getElementById("canvas"));
 			//loadingDialog.dialog('open');
 			$('#outputData').text("Started loading and drawing");
@@ -160,14 +171,13 @@
 			openLoadingDialog();
 			var val = this.value;
 			setTimeout(function(){
-				myMap.load(test);
+				myMap.load(quartieri[curDistrict]);
 				myMap.draw();
 			}, 10);
 			mapLayer = project.activeLayer;
-			//secondLayer = new Layer();
+			secondLayer = new Layer();
 			view.draw();
 			//view.onFrame = update;
-
 			
 			var myTool = new Tool();
         	myTool.onMouseDown = function(event) {
@@ -196,16 +206,44 @@
 				$('#dataDialog').modal("show");
 			});
 
-			$('#viewDialog').on('click', function(){
-				console.log("opening dialog");
-				openLoadingDialog();
+			$('#action1').on('click', function(){
+				craftStatesForCar(state, 1, route2, myMap, 10, 1000);
+				console.log(state);
 			});
 
+
+			$('#action2').on('click', function(){
+				var c1 = new Car(1);
+				c1.draw(entStyle);
+				myObjects.cars['1'] = c1;
+				var c2 = new Car(2);
+				c2.draw(entStyle);
+				myObjects.cars['2'] = c2;
+
+				myState = [];
+				craftStatesForCar(myState, 1, route2, myMap, 15, 1000);
+				craftStatesForCar(myState, 2, route3, myMap, 15, 1000);
+				simulation = new Simulation(myMap, myObjects, 4, 1000);
+				console.log(myState);
+				for(var i in myState){
+					simulation.addState(myState[i]);
+				}
+				simulation.init();
+				view.onFrame = function(event){
+					simulation.updateState(event.delta*1000);
+				}
+			});
+
+			$('#action3').on('click', function(){
+				view.onFrame = null;
+			});
+			
 			$("#mapSelector").on('change', function(){
 				openLoadingDialog();
 				console.log("selezionato "+this.value);
 				project.clear();
 				var val = this.value;
+				curDistrict = val;
 				setTimeout(function(){
 					myMap.load(quartieri[val]);
 					myMap.draw();
@@ -274,12 +312,14 @@
 		<form>
 		<label for="mapSelector">Seleziona il quartiere</label>
 		<select id="mapSelector">
-			<option value="quartiere1">Quartiere 1</option>
-			<option value="quartiere2">Quartiere 2</option>
-			<option value="quartiere3">Quartiere 3</option>
+			<option value="1">Quartiere 1</option>
+			<option value="2">Quartiere 2</option>
+			<option value="3">Quartiere 3</option>
 		</select>
 		<span id="debug"><a id="getData" href="#">Get data</a> - </span>
-		<span id="debugq"><a id="viewDialog" href="#">Open Dialog</a> - </span>
+		<span id="debugq"><a id="action1" href="#">Generate states</a> - </span>
+		<span><a id="action2" href="#">Start simulation</a> - </span>
+		<span><a id="action3" href="#">Reset simulation</a> - </span>
 		<span id="debugOutput"></span>
 		</form>
 		<canvas id="canvas" resize hidpi="off" style="background-color:#F0EDE5;"></canvas>

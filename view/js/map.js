@@ -117,8 +117,12 @@ Street.prototype.draw = function(style){
 	var precision = Math.ceil(this.guidingPath.length);
 	var sepStyle = {strokeWidth: style.lineWidth, strokeColor:style.lineColor, dashArray: style.dashArray};
 	for(var i = 1; i < this.nLanes; i++){
-		pathOffset(this.guidingPath, (i)*style.laneWidth, precision, sepStyle);
-		pathOffset(this.guidingPath, -(i)*style.laneWidth, precision, sepStyle);
+		var p1 = pathOffset(this.guidingPath, (i)*style.laneWidth, precision, sepStyle);
+		//p1.rasterize();
+		//p1.remove();
+		var p2 = pathOffset(this.guidingPath, -(i)*style.laneWidth, precision, sepStyle);
+		//p2.rasterize();
+		//p2.remove();
 	}
 
 	// drawing the pedestrian lines
@@ -279,7 +283,9 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 	for(side in pedPath){
 		for(seg in pedPath[side]){
 			var offset = (this.nLanes*style.laneWidth + (pedPath[side][seg].type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? 1 : -1);
-			pathOffset(this.guidingPath, offset, precision, st[pedPath[side][seg].type],pedPath[side][seg].start, pedPath[side][seg].end);
+			var p = pathOffset(this.guidingPath, offset, precision, st[pedPath[side][seg].type],pedPath[side][seg].start, pedPath[side][seg].end);
+			//p.rasterize();
+			//p.remove();
 		}
 	}
 }
@@ -332,6 +338,7 @@ Street.prototype.addSideStreet = function(sideStreet){
 }
 
 Street.prototype.getPositionAt = function(distance, side, lane, drive){
+	//console.log(distance+"/"+this.guidingPath.length);
 	drive = typeof drive === 'undefined' ? true : false;
 	if (typeof side === 'string'){
 		side = (side === 'true');
@@ -345,9 +352,20 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	offset = side ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
-	normal.length = offset;
+	try{
+		normal.length = offset;
+	} catch(err){
+		console.log(distance+"/"+this.guidingPath.length);
+		console.log(normal);
+	}
 
-	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+}
+
+Street.prototype.getPositionAtEntranceCrossing = function(distance, crossingPath){
+	var loc = this.sideStreetsEntrancePaths[crossingPaths].getLocationAt(distance);
+
+	return {angle:loc.tangent.angle, position: loc.point};
 }
 
 Street.prototype.getSidestreetPositionAt = function(distance, side){
@@ -376,6 +394,7 @@ Street.prototype.getSidestreetPositionAt = function(distance, side){
 function Crossroad(obj){
 	this.id = obj.id;
 	this.streetsRef = obj.strade.slice();
+	this.streetsMap = {};
 	this.lanesNumber = [2,2];
 	this.streets = [];
 	this.center = null;
@@ -474,9 +493,9 @@ Crossroad.prototype.draw = function(style){
 		this.pedestrianPaths[i] = pP;
 
 		var g = new Group();
-		//var check = new Path.Circle(new Point(this.center.x-style.laneWidth*1.5, this.center.y-style.laneWidth*1.5), 1);
-		//check.fillColor = 'red';
+
 		this.crossingPaths[i] = {};	
+
 		if(this.streetsRef[i] == null){
 			// if there is no street we draw the pavement
 
@@ -487,10 +506,6 @@ Crossroad.prototype.draw = function(style){
 		} else {
 			// otherwise we draw the zebra crossing (it is the defaul so no need to customize the style)
 			// but we draw the traffic lights and the cross trajectors
-
-			/*
-				ADD HERE THE CODE TO CREATE THE PATHS
-			*/
 
 			// paths that leads to the other side of the crossroad
 			var debgArr = []
@@ -629,11 +644,27 @@ Crossroad.prototype.draw = function(style){
 	}
 }
 
-Crossroad.prototype.getPositionAt = function(distance, enteringStreet, direction){
-	var loc = this.crossingPaths[enteringStreet-1][direction].path.getLocationAt(distance);
+Crossroad.prototype.getEntranceStreetNumber = function(streetId, district){
+	//console.log("asking to crossroad "+this.id+" street "+streetId+" form district "+district);
+	for (var i = 0; i < this.streetsRef.length; i ++){
+		if(this.streetsRef[i] != null && streetId == this.streetsRef[i].id_strada && district == this.streetsRef[i].quartiere){
+			return i;
+		}
+	}
+	return null;
+}
 
+Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, direction){
+	return this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path;
+}
 
-	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x, loc.point.y)};
+Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDistrict, direction){
+	try{
+		var loc = this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.getLocationAt(distance);
+	}catch(err){
+		throw "The crossroad "+this.id+" does not have the street "+enteringStreet+" form the district "+streetDistrict;
+	}
+	return {angle: loc.tangent.angle, position: loc.point};
 }
 
 Crossroad.prototype.switchTrafficLights = function(){

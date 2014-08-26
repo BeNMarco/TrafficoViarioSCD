@@ -4,6 +4,7 @@ with the_name_server;
 with risorse_passive_utilities;
 with configuration_synchronized_package;
 with mailbox_risorse_attive;
+with handle_semafori;
 
 use global_data;
 use remote_types;
@@ -11,6 +12,7 @@ use the_name_server;
 use risorse_passive_utilities;
 use configuration_synchronized_package;
 use mailbox_risorse_attive;
+use handle_semafori;
 
 package body resource_map_inventory is
 
@@ -62,6 +64,11 @@ package body resource_map_inventory is
       end wait_cfg;
    end waiting_cfg;
 
+   function get_locate_abitanti_quartiere return ptr_location_abitanti is
+   begin
+      return locate_abitanti_quartiere;
+   end get_locate_abitanti_quartiere;
+
    protected body quartiere_utilities is
 
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is
@@ -82,7 +89,23 @@ package body resource_map_inventory is
          waiting_cfg.incrementa_num_quartieri_abitanti;
       end registra_abitanti;
 
+      function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante is
+         ab: abitante;
+      begin
+         return ab;
+      end get_abitante_quartiere;
+
+      function get_classi_locate_abitanti return gps_abitanti_quartieri is
+      begin
+         return rt_classi_locate_abitanti;
+      end get_classi_locate_abitanti;
+
    end quartiere_utilities;
+
+   function get_quartiere_utilities_obj return ptr_quartiere_utilities is
+   begin
+      return quartiere_cfg;
+   end get_quartiere_utilities_obj;
 
    function create_risorse return set_resources is
       set: set_resources(1..get_num_task);
@@ -139,9 +162,16 @@ package body resource_map_inventory is
    local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
    registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
    registro_risorse: set_resources(1..get_num_task);
+   mio: Natural:= 0;
 begin
    -- registrazione dell'oggetto che gestisce la sincronizzazione con tutti i quartieri
    registra_attesa_quartiere_obj(get_id_quartiere, ptr_rt_wait_all_quartieri(waiting_object));
+   if get_id_quartiere=2 then
+      mio:= 1;
+   else
+      mio:= 2;
+   end if;
+
    -- end
 
    -- crea mailbox task
@@ -152,6 +182,8 @@ begin
    -- registrazione risorse segmenti
    registra_risorse_quartiere(get_id_quartiere,registro_risorse);
    -- end
+
+   registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
 
    --begin first checkpoint to get all ref of quartieri
    registra_quartiere(get_id_quartiere,ptr_rt_quartiere_utilitites(quartiere_cfg));
@@ -167,8 +199,10 @@ begin
       registro_ref_rt_quartieri(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
    end loop;
 
-   gps.registra_mappa_quartiere(get_id_quartiere,urbane_features,ingressi_features,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
+   gps.registra_strade_quartiere(get_id_quartiere,urbane_features,ingressi_features);
+   gps.registra_incroci_quartiere(get_id_quartiere,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
    waiting_cfg.incrementa_resource_mappa_quartieri;
 
    --waiting_cfg_quartieri.wait_cfg;
+
 end resource_map_inventory;

@@ -1,5 +1,4 @@
 
-
 package body data_quartiere is
 
    function get_id_quartiere return Positive is

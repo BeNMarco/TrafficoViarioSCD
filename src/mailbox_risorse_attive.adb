@@ -1,6 +1,10 @@
+with Text_IO;
+
 with remote_types;
 with data_quartiere;
 with global_data;
+
+use Text_IO;
 
 use remote_types;
 use data_quartiere;
@@ -17,8 +21,8 @@ package body mailbox_risorse_attive is
       end case;
    end get_min_length_entità;
 
-   function calculate_max_num_auto(len: Positive) return Positive is
-      num: Positive:= Positive(Float'Rounding(Float(len)/get_min_length_entità(auto_entity)));
+   function calculate_max_num_auto(len: Float) return Positive is
+      num: Positive:= Positive(Float'Rounding(len/get_min_length_entità(auto_entity)));
    begin
       if num>get_num_abitanti then
          return get_num_abitanti;
@@ -27,7 +31,7 @@ package body mailbox_risorse_attive is
       end if;
    end calculate_max_num_auto;
 
-   function calculate_max_num_pedoni(len: Positive) return Positive is
+   function calculate_max_num_pedoni(len: Float) return Positive is
       num: Positive:= Positive(Float'Rounding(Float(len)/get_min_length_entità(pedone_entity)));
    begin
       if num>get_num_abitanti then
@@ -97,6 +101,12 @@ package body mailbox_risorse_attive is
       begin
          null;
       end delta_terminate;
+      procedure registra_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is
+      begin
+         -- gestire struttura per muovere entità
+         null;
+      end registra_abitante_to_move;
+
       function there_are_autos_to_move return Boolean is
       begin
          return False;
@@ -131,6 +141,11 @@ package body mailbox_risorse_attive is
       begin
          finish_delta_incrocio:= True;
       end delta_terminate;
+
+      procedure change_verso_semafori_verdi is
+      begin
+         verso_semafori_verdi:= not verso_semafori_verdi;
+      end change_verso_semafori_verdi;
 
       function there_are_autos_to_move return Boolean is
       begin
@@ -213,6 +228,11 @@ package body mailbox_risorse_attive is
       return rotonde_a_3_segmento_resources(index);
    end get_rotonde_a_3_segmento_resources;
 
+   function get_ingressi_urbana(id_urbana: Positive) return ptr_id_ingressi_urbane is
+   begin
+      return ingressi_urbane(id_urbana);
+   end get_ingressi_urbana;
+
    type num_ingressi_urbana is array(Positive range <>) of Natural;
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
                                    incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
@@ -228,11 +248,12 @@ package body mailbox_risorse_attive is
       ptr_resource_rotonde_a_4: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_4);
       ptr_resource_rotonde_a_3: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_3..get_to_rotonde_a_3);
       ingressi_per_urbana: num_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => 0);
+      index_ingressi: id_ingressi_urbane(get_from_urbane..get_to_urbane):= (others => 1);
    begin
 
       for i in get_from_ingressi..get_to_ingressi loop
          val_ptr_resource_ingresso:= new resource_segmento_ingresso(id_risorsa => ingressi(i).get_id_road,
-                                                                    length => ingressi(i).get_lunghezza_road,
+                                                                    --length => ingressi(i).get_lunghezza_road,
                                                                     max_num_auto => calculate_max_num_auto(ingressi(i).get_lunghezza_road),
                                                                     max_num_pedoni => calculate_max_num_pedoni(ingressi(i).get_lunghezza_road));
          ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso):= ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso)+1;
@@ -242,7 +263,7 @@ package body mailbox_risorse_attive is
 
       for i in get_from_urbane..get_to_urbane loop
          val_ptr_resource_urbana:= new resource_segmento_urbana(id_risorsa => urbane(i).get_id_road,
-                                                                length => urbane(i).get_lunghezza_road,
+                                                                --length => urbane(i).get_lunghezza_road,
                                                                 num_ingressi => ingressi_per_urbana(urbane(i).get_id_road),
                                                                 max_num_auto => calculate_max_num_auto(urbane(i).get_lunghezza_road),
                                                                 max_num_pedoni => calculate_max_num_pedoni(urbane(i).get_lunghezza_road));
@@ -250,26 +271,42 @@ package body mailbox_risorse_attive is
       end loop;
       urbane_segmento_resources:= ptr_resource_urbane;
 
+      for i in ingressi_per_urbana'Range loop
+         if ingressi_per_urbana(i)=0 then
+            ingressi_urbane(i):= null;
+         else
+            ingressi_urbane(i):= new id_ingressi_urbane(1..ingressi_per_urbana(i));
+         end if;
+      end loop;
+
+      for i in ingressi'Range loop
+         if ingressi_urbane(ingressi(i).get_id_main_strada_ingresso)/= null then
+            ingressi_urbane(ingressi(i).get_id_main_strada_ingresso)(index_ingressi(ingressi(i).get_id_main_strada_ingresso)):= i;
+            index_ingressi(ingressi(i).get_id_main_strada_ingresso):= index_ingressi(ingressi(i).get_id_main_strada_ingresso)+1;
+            --Put_Line("ingresso" & Positive'Image(i) & " in urbana" & Positive'Image(ingressi(i).get_id_main_strada_ingresso));
+         end if;
+      end loop;
+
       for i in get_from_incroci_a_4..get_to_incroci_a_4 loop
-         val_ptr_resource_incrocio:= new resource_segmento_incrocio(i,1,1,1); --TO DO
+         val_ptr_resource_incrocio:= new resource_segmento_incrocio(i,1,1); --TO DO
          ptr_resource_incroci_a_4(i):= val_ptr_resource_incrocio;
       end loop;
       incroci_a_4_segmento_resources:= ptr_resource_incroci_a_4;
 
       for i in get_from_incroci_a_3..get_to_incroci_a_3 loop
-         val_ptr_resource_incrocio:= new resource_segmento_incrocio(i,1,1,1); --TO DO
+         val_ptr_resource_incrocio:= new resource_segmento_incrocio(i,1,1); --TO DO
          ptr_resource_incroci_a_3(i):= val_ptr_resource_incrocio;
       end loop;
       incroci_a_3_segmento_resources:= ptr_resource_incroci_a_3;
 
       for i in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
-         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1,1); --TO DO
+         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1); --TO DO
          ptr_resource_rotonde_a_4(i):= val_ptr_resource_rotonda;
       end loop;
       rotonde_a_4_segmento_resources:= ptr_resource_rotonde_a_4;
 
       for i in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
-         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1,1); --TO DO
+         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1); --TO DO
          ptr_resource_rotonde_a_3(i):= val_ptr_resource_rotonda;
       end loop;
       rotonde_a_3_segmento_resources:= ptr_resource_rotonde_a_3;

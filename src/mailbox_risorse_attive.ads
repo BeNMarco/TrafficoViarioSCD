@@ -1,8 +1,10 @@
 with remote_types;
 with strade_e_incroci_common;
+with data_quartiere;
 
 use remote_types;
 use strade_e_incroci_common;
+use data_quartiere;
 
 package mailbox_risorse_attive is
 
@@ -18,7 +20,7 @@ package mailbox_risorse_attive is
    --	altri range analoghi a road_state
    type number_entity is array (Positive range <>,Positive range <>) of Natural;
 
-   protected type resource_segmento_urbana(id_risorsa: Positive; length: Positive; num_ingressi: Natural; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+   protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
       function there_are_autos_to_move return Boolean;
@@ -35,31 +37,39 @@ package mailbox_risorse_attive is
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
-   protected type resource_segmento_ingresso(id_risorsa: Positive; length: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+   protected type resource_segmento_ingresso(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
+      procedure registra_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
+   private
+      main_strada: road_state(1..2,1..2,1..max_num_auto);
+      marciapiedi: road_state(1..2,1..2,1..max_num_pedoni);
+      main_strada_number_entity: number_entity(1..2,1..2):= (others => (others => 0));
+      marciapiedi_num_pedoni_bici: number_entity(1..2,1..2):= (others => (others => 0));
    end resource_segmento_ingresso;
    type ptr_resource_segmento_ingresso is access all resource_segmento_ingresso;
    type resource_segmenti_ingressi is array(Positive range <>) of ptr_resource_segmento_ingresso;
    type ptr_resource_segmenti_ingressi is access all resource_segmenti_ingressi;
 
-   protected type resource_segmento_incrocio(id_risorsa: Positive; length: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+   protected type resource_segmento_incrocio(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
+      procedure change_verso_semafori_verdi;
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
    private
       function get_num_urbane_to_wait return Positive;
       num_urbane_ready: Natural:= 0;
       finish_delta_incrocio: Boolean:= False;
+      verso_semafori_verdi: Boolean:= True;
    end resource_segmento_incrocio;
    type ptr_resource_segmento_incrocio is access all resource_segmento_incrocio;
    type resource_segmenti_incroci is array(Positive range <>) of ptr_resource_segmento_incrocio;
    type ptr_resource_segmenti_incroci is access all resource_segmenti_incroci;
 
-   protected type resource_segmento_rotonda(id_risorsa: Positive; length: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+   protected type resource_segmento_rotonda(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
       function there_are_autos_to_move return Boolean;
@@ -70,8 +80,8 @@ package mailbox_risorse_attive is
    type ptr_resource_segmenti_rotonde is access all resource_segmenti_rotonde;
 
    function get_min_length_entità(entity: entità) return Float;
-   function calculate_max_num_auto(len: Positive) return Positive;
-   function calculate_max_num_pedoni(len: Positive) return Positive;
+   function calculate_max_num_auto(len: Float) return Positive;
+   function calculate_max_num_pedoni(len: Float) return Positive;
 
    function get_urbane_segmento_resources(index: Positive) return ptr_resource_segmento_urbana;
    function get_ingressi_segmento_resources(index: Positive) return ptr_resource_segmento_ingresso;
@@ -81,6 +91,11 @@ package mailbox_risorse_attive is
    function get_rotonde_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
    function get_rotonde_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
    function get_rotonde_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
+
+   type id_ingressi_urbane is array(Positive range <>) of Positive;
+   type ptr_id_ingressi_urbane is access all id_ingressi_urbane;
+   type ingressi_of_urbane is array(Positive range <>) of ptr_id_ingressi_urbane;
+   function get_ingressi_urbana(id_urbana: Positive) return ptr_id_ingressi_urbane;
 
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
                                    incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
@@ -106,4 +121,6 @@ private
    incroci_a_3_segmento_resources: ptr_resource_segmenti_incroci;
    rotonde_a_4_segmento_resources: ptr_resource_segmenti_rotonde;
    rotonde_a_3_segmento_resources: ptr_resource_segmenti_rotonde;
+   ingressi_urbane: ingressi_of_urbane(get_from_urbane..get_to_urbane);
+
 end mailbox_risorse_attive;

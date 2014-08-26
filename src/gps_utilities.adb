@@ -116,7 +116,7 @@ package body gps_utilities is
          coda_nodi: dijkstra_nodi(1..get_num_quartieri,min_first_incroci..max_last_incroci);
          to_consider: index_to_consider(1..numero_globale_incroci);
          num_elementi_lista: Natural:= 0;
-         min_index_lista: Natural:= Natural'Last;
+         min_index_lista: Float:= Float'Last;
          last_index_lista: Natural:= 0;
          min_ottimo: Natural:= 0;
          size_route: Natural:= 0;
@@ -143,10 +143,10 @@ package body gps_utilities is
          adiacenti: list_adiacenti;
          spigolo: strada_urbana_features;
          index: Positive:= 1;
-         distanza_estremo_1: Natural;
-         distanza_estremo_2: Natural;
-         distanza: Natural;
-         min_distanza: Natural:= Natural'Last;
+         distanza_estremo_1: Float;
+         distanza_estremo_2: Float;
+         distanza: Float;
+         min_distanza: Float:= Float'Last;
          change_route: Boolean:= False;
          estremo_partenza: index_incroci;
          estremo_arrivo: index_incroci;
@@ -186,14 +186,14 @@ package body gps_utilities is
                to_consider(1).id_incrocio:= id_incrocio_partenza;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_quartiere:= 0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_incrocio:= 0;
-               coda_nodi(id_quartiere_partenza,id_incrocio_partenza).distanza:= 0;
+               coda_nodi(id_quartiere_partenza,id_incrocio_partenza).distanza:= 0.0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).in_coda:= True;
                num_elementi_lista:= num_elementi_lista + 1;
                last_index_lista:= 1;
                loop
                   exit when num_elementi_lista = 0;
                   -- begin trova il minimo
-                  min_index_lista:= Natural'Last;
+                  min_index_lista:= Float'Last;
                   for i in 1..last_index_lista loop
                      if to_consider(i).id_quartiere/=0 then
                         if coda_nodi(to_consider(i).id_quartiere,to_consider(i).id_incrocio).distanza<min_index_lista then
@@ -234,9 +234,9 @@ package body gps_utilities is
                estremi:= hash_urbane_quartieri(to_id_quartiere)(ingresso_arrivo.get_id_main_strada_ingresso);
                estremo_1_arrivo:= estremi(1);
                estremo_2_arrivo:= estremi(2);
-               distanza_estremo_1:= Natural'Last;
-               distanza_estremo_2:= Natural'Last;
-               distanza:= Natural'Last;
+               distanza_estremo_1:= Float'Last;
+               distanza_estremo_2:= Float'Last;
+               distanza:= Float'Last;
                estremo_arrivo:= estremo_1_arrivo;
                for indice in 1..2 loop
                   -- calcolo distanza_estremo
@@ -309,14 +309,14 @@ package body gps_utilities is
                         end if;
                      end if;
                   end if;
-                  Put_Line("DISTANZA:" & Integer'Image(distanza));
+                  Put_Line("DISTANZA:" & Float'Image(distanza));
                   if indice=1 then
                      distanza_estremo_1:=distanza;
                   else
                      distanza_estremo_2:=distanza;
                   end if;
                   estremo_arrivo:= estremo_2_arrivo;
-                  distanza:= Natural'Last;
+                  distanza:= Float'Last;
                end loop;
 
                change_route:= False;
@@ -360,8 +360,19 @@ package body gps_utilities is
          return create_percorso(route => create_array_percorso(size_route,ptr_route), distance => min_distanza);
       end calcola_percorso;
 
-      procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
-                                           incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3) is
+      procedure registra_strade_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
+                                          ingressi: strade_ingresso_features) is
+      begin
+         cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
+         hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
+
+         cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
+         num_strade_quartieri:= num_strade_quartieri+1;
+      end registra_strade_quartiere;
+
+      entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
+                                       incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
+                                       rotonde_a_3: list_incroci_a_3) when num_strade_quartieri=get_num_quartieri is
          incrocio_a_4: list_road_incrocio_a_4;
          incrocio_a_3: list_road_incrocio_a_3;
          rotonda_a_4: list_road_incrocio_a_4;
@@ -383,13 +394,9 @@ package body gps_utilities is
          adiacente_2: adiacente;
          adiacente_3: adiacente;
          adiacente_4: adiacente;
-         index_to_place: Positive :=1;
+         index_to_place: Positive := 1;
+         mio: natural;
       begin
-
-         cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
-         hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
-
-         cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
 
          if num_incroci_quartieri_registrati = 0 then
             min_first_incroci:= Natural'Last;
@@ -401,7 +408,8 @@ package body gps_utilities is
          if rotonde_a_3'Last>max_last_incroci then
             max_last_incroci:= incroci_a_4'Last;
          end if;
-         -- elaborzione incroci a 4
+         -- elaborazione incroci a 4
+         Put_Line("costruzione" & Positive'Image(id_quartiere));
          for incrocio in incroci_a_4'Range loop
             incrocio_a_4:= incroci_a_4(incrocio);
             for road in 1..4 loop
@@ -420,8 +428,14 @@ package body gps_utilities is
             end loop;
          end loop;
          -- elaborazione incroci a 3
+         Put_Line("costruzione" & Positive'Image(id_quartiere));
          for incrocio in incroci_a_3'Range loop
             incrocio_a_3:= incroci_a_3(incrocio);
+            if incrocio=38 and id_quartiere=2 then
+               mio:=1;
+            else
+               mio:=2;
+            end if;
             for road in 1..3 loop
                incrocio_features:= incrocio_a_3(road);
                val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
@@ -437,6 +451,7 @@ package body gps_utilities is
                end if;
             end loop;
          end loop;
+         Put_Line("costruzione" & Positive'Image(id_quartiere));
          -- elaborazione rotonde a 4
          for rotonda in rotonde_a_4'Range loop
             rotonda_a_4:= rotonde_a_4(rotonda);
@@ -473,13 +488,14 @@ package body gps_utilities is
                end if;
             end loop;
          end loop;
-
          grafo(id_quartiere):= new nodi_quartiere(incroci_a_4'First..rotonde_a_3'Last);
          numero_globale_incroci:= numero_globale_incroci + grafo(id_quartiere)'Length;
 
          num_incroci_quartieri_registrati:= num_incroci_quartieri_registrati + 1;
+         Put_Line("incroci registrati" & Positive'Image(num_incroci_quartieri_registrati));
          if num_incroci_quartieri_registrati = get_num_quartieri then
             -- il grafo può essere costruito
+            Put_Line("costruzione grafo");
             for quartiere in hash_urbane_quartieri'Range loop
                quartiere_strade:= hash_urbane_quartieri(quartiere);
                for strada in quartiere_strade'Range loop
@@ -557,7 +573,7 @@ package body gps_utilities is
             Put_Line("Effettuata registrazione nodi grafo");
             print_grafo;
          end if;
-      end registra_mappa_quartiere;
+      end registra_incroci_quartiere;
 
    end registro_strade_resource;
 

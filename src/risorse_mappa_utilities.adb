@@ -23,7 +23,7 @@ package body risorse_mappa_utilities is
       val_tipo: type_strade;
       val_id: Positive;
       val_id_quartiere: Positive;
-      val_lunghezza: Natural;
+      val_lunghezza: Float;
       val_num_corsie: Positive;
       strada: JSON_Value;
    begin
@@ -37,7 +37,7 @@ package body risorse_mappa_utilities is
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          array_roads(index_strada):= create_new_urbana(val_tipo => val_tipo,val_id => val_id,
                                                        val_id_quartiere => val_id_quartiere,
-                                                       val_lunghezza => val_lunghezza,
+                                                       val_lunghezza => Float(val_lunghezza),
                                                        val_num_corsie => val_num_corsie);
       end loop;
       return array_roads;
@@ -48,10 +48,10 @@ package body risorse_mappa_utilities is
       val_tipo: type_strade;
       val_id: Positive;
       val_id_quartiere: Positive;
-      val_lunghezza: Natural;
+      val_lunghezza: Float;
       val_num_corsie: Positive;
       val_id_main_strada : Positive;
-      val_distance_from_road_head : Natural;
+      val_distance_from_road_head : Float;
       strada: JSON_Value;
    begin
       for index_strada in from..to
@@ -66,7 +66,7 @@ package body risorse_mappa_utilities is
          val_distance_from_road_head:= Get(Val => strada, Field => "distanza_da_from");
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
                                                          val_id_quartiere => val_id_quartiere,
-                                                         val_lunghezza => val_lunghezza,
+                                                         val_lunghezza => Float(val_lunghezza),
                                                          val_num_corsie => val_num_corsie,
                                                          val_id_main_strada => val_id_main_strada,
                                                          val_distance_from_road_head => val_distance_from_road_head);
@@ -86,11 +86,12 @@ package body risorse_mappa_utilities is
       for incrocio in from..to
       loop
          json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_strade_incrocio:= Get(Val => json_strade_incrocio, Field => "strade");
          json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
          for strada in 1..4
          loop
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
-	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+	    val_id_quartiere:= Get(Val => json_strada, Field => "quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + get_from_urbane - 1;
@@ -112,11 +113,12 @@ package body risorse_mappa_utilities is
       for incrocio in from..to
       loop
          json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_strade_incrocio:= Get(Val => json_strade_incrocio, Field => "strade");
          json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
          for strada in 1..3
          loop
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
-	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+	    val_id_quartiere:= Get(Val => json_strada, Field => "quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + get_from_urbane - 1;
@@ -138,11 +140,12 @@ package body risorse_mappa_utilities is
       for incrocio in from..to
       loop
          json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_strade_incrocio:= Get(Val => json_strade_incrocio, Field => "strade");
          json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
          for strada in 1..4
          loop
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
-	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+	    val_id_quartiere:= Get(Val => json_strada, Field => "quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + get_from_urbane - 1;
@@ -164,11 +167,12 @@ package body risorse_mappa_utilities is
       for incrocio in from..to
       loop
          json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         json_strade_incrocio:= Get(Val => json_strade_incrocio, Field => "strade");
          json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
          for strada in 1..3
          loop
             json_strada:= Get(Arr => json_array_strade_incrocio,Index => strada);
-	    val_id_quartiere:= Get(Val => json_strada, Field => "id_quartiere");
+	    val_id_quartiere:= Get(Val => json_strada, Field => "quartiere");
             val_id_strada:= Get(Val => json_strada, Field => "id_strada");
             val_polo:= Get(Val => json_strada, Field => "polo");
             val_id_strada:= val_id_strada + get_from_urbane - 1;

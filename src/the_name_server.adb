@@ -1,10 +1,12 @@
 with Text_IO;
 with Ada.Calendar;
 with remote_types;
+with partition_name;
 
 use Text_IO;
 use Ada.Calendar;
 use remote_types;
+use partition_name;
 
 package body the_name_server is
 
@@ -81,5 +83,51 @@ package body the_name_server is
    begin
       return registro_risorse_strade.get_id_risorsa_quartiere(id_quartiere,id_risorsa);
    end get_id_risorsa_quartiere;
+
+   procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
+   begin
+      registro_gestori_semafori.registra_gestore_semafori(id_quartiere,handler_semafori_quartiere);
+   end registra_gestore_semafori;
+   function get_gestori_quartiere return handler_semafori is
+   begin
+      return registro_gestori_semafori.get_gestori_quartiere;
+   end get_gestori_quartiere;
+
+   function get_id_mappa return str_quartieri is
+      pragma Warnings(off);
+      id: Positive;
+   begin
+      get_my_mappa.registra_mappa(id);
+      Put_Line(Natural'Image(id));
+      if id=1 then
+         return quartiere1;
+      elsif id=2 then
+         return quartiere2;
+      elsif id=3 then
+         return quartiere3;
+      end if;
+      pragma Warnings(on);
+   end get_id_mappa;
+
+   protected body registro_gestori_semafori is
+      procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
+      begin
+         registro(id_quartiere):= handler_semafori_quartiere;
+      end registra_gestore_semafori;
+
+      function get_gestori_quartiere return handler_semafori is
+      begin
+         return registro;
+      end get_gestori_quartiere;
+
+   end registro_gestori_semafori;
+
+   protected body get_my_mappa is
+      procedure registra_mappa(id: out Positive) is
+      begin
+         num_mappa:= num_mappa+1;
+         id:= num_mappa;
+      end registra_mappa;
+   end get_my_mappa;
 
 end the_name_server;

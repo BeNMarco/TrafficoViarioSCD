@@ -109,10 +109,12 @@ package body risorse_mappa_utilities is
       val_id_quartiere: Positive;
       val_id_strada: Positive;
       val_polo: Boolean;
+      val_mancante: Positive;
    begin
       for incrocio in from..to
       loop
          json_strade_incrocio:= Get(Arr => json_incroci,Index => incrocio-from+1);
+         val_mancante:= Get(Val => json_strade_incrocio, Field => "strada_mancante")+1;
          json_strade_incrocio:= Get(Val => json_strade_incrocio, Field => "strade");
          json_array_strade_incrocio:= Get(Val => json_strade_incrocio);
          for strada in 1..3
@@ -124,6 +126,7 @@ package body risorse_mappa_utilities is
             val_id_strada:= val_id_strada + get_from_urbane - 1;
             incroci(incrocio)(strada):= create_new_road_incrocio(val_id_quartiere,val_id_strada,val_polo);
          end loop;
+         indici_strada_mancanti(incrocio):= val_mancante;
       end loop;
       return incroci;
    end create_array_incroci_a_3;
@@ -181,6 +184,11 @@ package body risorse_mappa_utilities is
       end loop;
       return incroci;
    end create_array_rotonde_a_3;
+
+   function get_mancante_incrocio_a_3(id_incrocio: Positive) return Positive is
+   begin
+      return indici_strada_mancanti(id_incrocio);
+   end get_mancante_incrocio_a_3;
 
    procedure print_percorso(route: percorso) is
    begin

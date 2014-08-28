@@ -25,10 +25,6 @@ package risorse_strade_e_incroci is
 
    type ptr_location_abitanti is access location_abitanti;
 
-   type estremi_urbane is array(Positive range 1..2) of ptr_rt_segmento;
-
-   function get_estremi_incroci(id_urbana: Positive) return estremi_urbane;
-
    type core_avanzamento is limited interface;
 
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
@@ -56,7 +52,7 @@ package risorse_strade_e_incroci is
 
    procedure configure_tasks;
 
-   procedure synchronization_with_delta;
+   procedure synchronization_with_delta(id: Positive);
 
 private
 

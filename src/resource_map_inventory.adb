@@ -1,3 +1,5 @@
+with ada.Text_IO;
+
 with global_data;
 with remote_types;
 with the_name_server;
@@ -5,6 +7,8 @@ with risorse_passive_utilities;
 with configuration_synchronized_package;
 with mailbox_risorse_attive;
 with handle_semafori;
+
+use Ada.Text_IO;
 
 use global_data;
 use remote_types;
@@ -50,18 +54,38 @@ package body resource_map_inventory is
       begin
          num_classi_locate_abitanti:= num_classi_locate_abitanti+1;
       end incrementa_classi_locate_abitanti;
+
       procedure incrementa_num_quartieri_abitanti is
       begin
          num_abitanti_quartieri_registrati:= num_abitanti_quartieri_registrati+1;
       end incrementa_num_quartieri_abitanti;
+
       procedure incrementa_resource_mappa_quartieri is
       begin
          num_quartieri_resource_registrate:= num_quartieri_resource_registrate+1;
       end incrementa_resource_mappa_quartieri;
+
       entry wait_cfg when num_classi_locate_abitanti=get_num_quartieri and num_abitanti_quartieri_registrati=get_num_quartieri and num_quartieri_resource_registrate=get_num_quartieri is
+         estremi: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
       begin
-         null;
+         if inventory_estremi_is_set=False then
+            estremi:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
+            for i in get_from_urbane..get_to_urbane loop
+               if estremi(i,1).get_id_quartiere_estremo_urbana/=0 then
+                  inventory_estremi(i,1):= get_id_risorsa_quartiere(estremi(i,1).get_id_quartiere_estremo_urbana,estremi(i,1).get_id_incrocio_estremo_urbana);
+               else
+                  inventory_estremi(i,1):= null;
+               end if;
+               if estremi(i,2).get_id_quartiere_estremo_urbana/=0 then
+                  inventory_estremi(i,2):= get_id_risorsa_quartiere(estremi(i,2).get_id_quartiere_estremo_urbana,estremi(i,2).get_id_incrocio_estremo_urbana);
+               else
+                  inventory_estremi(i,2):= null;
+               end if;
+            end loop;
+            inventory_estremi_is_set:= True;
+         end if;
       end wait_cfg;
+
    end waiting_cfg;
 
    function get_locate_abitanti_quartiere return ptr_location_abitanti is
@@ -88,6 +112,11 @@ package body resource_map_inventory is
 
          waiting_cfg.incrementa_num_quartieri_abitanti;
       end registra_abitanti;
+
+      procedure registra_mappa(id_quartiere: Positive) is
+      begin
+         waiting_cfg.incrementa_resource_mappa_quartieri;
+      end registra_mappa;
 
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante is
          ab: abitante;
@@ -155,6 +184,13 @@ package body resource_map_inventory is
    begin
       return rotonde_a_3(index);
    end get_rotonda_a_3_from_id;
+   function get_estremi_urbana(id_urbana: Positive) return estremi_strada_urbana is
+      estremi: estremi_strada_urbana;
+   begin
+      estremi(1):= inventory_estremi(id_urbana,1);
+      estremi(2):= inventory_estremi(id_urbana,2);
+      return estremi;
+   end get_estremi_urbana;
 
    local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
    local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
@@ -162,16 +198,9 @@ package body resource_map_inventory is
    local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
    registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
    registro_risorse: set_resources(1..get_num_task);
-   mio: Natural:= 0;
 begin
    -- registrazione dell'oggetto che gestisce la sincronizzazione con tutti i quartieri
    registra_attesa_quartiere_obj(get_id_quartiere, ptr_rt_wait_all_quartieri(waiting_object));
-   if get_id_quartiere=2 then
-      mio:= 1;
-   else
-      mio:= 2;
-   end if;
-
    -- end
 
    -- crea mailbox task
@@ -185,6 +214,8 @@ begin
 
    registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
 
+   registra_local_synchronized_obj(get_id_quartiere,ptr_rt_synchronization_tasks(synchronization_tasks_partition));
+
    --begin first checkpoint to get all ref of quartieri
    registra_quartiere(get_id_quartiere,ptr_rt_quartiere_utilitites(quartiere_cfg));
    set_attesa_for_quartiere(get_id_quartiere);
@@ -194,15 +225,15 @@ begin
 
    registro_ref_rt_quartieri:= get_ref_rt_quartieri;
 
+   gps.registra_strade_quartiere(get_id_quartiere,urbane_features,ingressi_features);
+   gps.registra_incroci_quartiere(get_id_quartiere,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
+
    for i in registro_ref_rt_quartieri'Range loop
       registro_ref_rt_quartieri(i).registra_classe_locate_abitanti_quartiere(id_quartiere => get_id_quartiere, location_abitanti => ptr_rt_location_abitanti(locate_abitanti_quartiere));
       registro_ref_rt_quartieri(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
+      registro_ref_rt_quartieri(i).registra_mappa(get_id_quartiere);
    end loop;
 
-   gps.registra_strade_quartiere(get_id_quartiere,urbane_features,ingressi_features);
-   gps.registra_incroci_quartiere(get_id_quartiere,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
-   waiting_cfg.incrementa_resource_mappa_quartieri;
-
-   --waiting_cfg_quartieri.wait_cfg;
+   --Put_Line("exit" & Positive'Image(get_id_quartiere));
 
 end resource_map_inventory;

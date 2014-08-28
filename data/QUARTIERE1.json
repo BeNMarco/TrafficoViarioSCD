@@ -1,5 +1,5 @@
-{
-"id_quartiere" : 1,
+ {
+"id_quartiere": 1,
   "strade": [
     {
       "id": 1,
@@ -12,8 +12,7 @@
         300,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 2,
@@ -26,8 +25,7 @@
         500,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 3,
@@ -40,8 +38,7 @@
         900,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 4,
@@ -54,8 +51,7 @@
         1000,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 5,
@@ -68,8 +64,7 @@
         1400,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 6,
@@ -82,8 +77,7 @@
         1800,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 7,
@@ -96,8 +90,7 @@
         2000,
         0
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 8,
@@ -110,8 +103,7 @@
         0,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 9,
@@ -124,8 +116,7 @@
         0,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 10,
@@ -138,8 +129,7 @@
         0,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 11,
@@ -152,8 +142,7 @@
         2000,
         300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 12,
@@ -166,8 +155,7 @@
         2000,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 13,
@@ -180,8 +168,7 @@
         2000,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 14,
@@ -194,8 +181,7 @@
         2000,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 15,
@@ -208,8 +194,7 @@
         500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 16,
@@ -222,8 +207,7 @@
         1500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 17,
@@ -236,8 +220,7 @@
         500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 18,
@@ -250,8 +233,7 @@
         1500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 19,
@@ -264,8 +246,7 @@
         1500,
         1500
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 20,
@@ -278,8 +259,7 @@
         1500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 21,
@@ -292,8 +272,7 @@
         2000,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 22,
@@ -306,8 +285,7 @@
         2000,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 23,
@@ -320,8 +298,7 @@
         1650,
         250
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 24,
@@ -334,8 +311,7 @@
         2000,
         300
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 25,
@@ -348,8 +324,7 @@
         1500,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 26,
@@ -362,8 +337,7 @@
         1650,
         250
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 27,
@@ -376,8 +350,7 @@
         1500,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 28,
@@ -390,8 +363,7 @@
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 29,
@@ -404,8 +376,7 @@
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 30,
@@ -418,8 +389,7 @@
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 31,
@@ -432,8 +402,7 @@
         700,
         450
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 32,
@@ -446,8 +415,7 @@
         400,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 33,
@@ -460,8 +428,7 @@
         400,
         600
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     },
     {
       "id": 34,
@@ -474,12 +441,10 @@
         500,
         1100
       ],
-      "numcorsie": 2,
-      "traiettorie_ingresso": []
+      "numcorsie": 2
     }
   ],
-"strade_ingresso":[{"id": 1,"lunghezza": 50.0,"numcorsie":1,"strada_confinante":1,"polo":true,"distanza_da_from":20.0},
-{"id": 2,"lunghezza": 50.0,"numcorsie":1,"strada_confinante":4,"polo":true,"distanza_da_from":20.0}],
+"strade_ingresso": [],
   "incroci_a_4": [
     {
       "id": "i1",
@@ -1018,11 +983,7 @@
       "strada_mancante": 1
     }
   ],
- 
-"luoghi": [],
-
-"incroci_a_3":[],
-
+  "luoghi": [],
 "rotonde_a_4":[],
 
 "rotonde_a_3":[],

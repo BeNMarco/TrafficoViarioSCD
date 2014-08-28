@@ -64,7 +64,7 @@ package strade_e_incroci_common is
    type stato_percorso is tagged private;
 
    type estremo_urbana is tagged private;
-   type estremi_urbana is array(Positive range 1..2) of estremo_urbana;
+   type estremi_strade_urbane is array(Positive range <>,Positive range <>) of estremo_urbana;
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features;

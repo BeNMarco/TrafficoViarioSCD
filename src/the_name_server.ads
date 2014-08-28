@@ -17,7 +17,13 @@ package the_name_server is
 
    function get_ref_rt_quartieri return registro_quartieri;
 
+   procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks);
+
+   function get_ref_local_synchronized_obj return registro_local_synchronized_obj;
+
    procedure registra_synchronization_tasks_object(obj: ptr_rt_task_synchronization);
+
+   procedure stam;
 
    function get_synchronization_tasks_object return ptr_rt_task_synchronization;
 
@@ -60,6 +66,13 @@ private
    private
       num_mappa: Natural:=0;
    end get_my_mappa;
+
+   protected registro_local_synchronized_objects is
+      procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks);
+      function get_ref_local_synchronized_obj return registro_local_synchronized_obj;
+   private
+      registro: registro_local_synchronized_obj(1..num_quartieri);
+   end registro_local_synchronized_objects;
 
    gps: ptr_gps_interface:= null;
 

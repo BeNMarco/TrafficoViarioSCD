@@ -1,8 +1,14 @@
-with Text_IO;
+with Ada.Text_IO;
+--with Ada.Task_Identification;
+--with Ada.Dynamic_Priorities;
+--with System;
 
 with strade_e_incroci_common;
 
-use Text_IO;
+use Ada.Text_IO;
+--use Ada.Task_Identification;
+--use Ada.Dynamic_Priorities;
+--use System;
 
 use strade_e_incroci_common;
 
@@ -101,15 +107,22 @@ package body gps_utilities is
          end loop;
       end print_grafo;
 
-      function get_estremi_urbana(id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is
+      function get_estremi_strade_urbane(id_quartiere: Positive) return estremi_strade_urbane is
          estremi: estremi_incrocio;
-         return_estremi: estremi_urbana;
+         hash_strade: access hash_quartiere_strade:= hash_urbane_quartieri(id_quartiere);
+         return_estremi: estremi_strade_urbane(hash_strade'First..hash_strade'Last,1..2);
       begin
-         estremi:= hash_urbane_quartieri(id_quartiere)(id_urbana);
-         return_estremi(1):= create_estremo_urbana(estremi(1).id_quartiere,estremi(1).id_incrocio);
-         return_estremi(2):= create_estremo_urbana(estremi(2).id_quartiere,estremi(2).id_incrocio);
+         --Put_Line("estremi urbana" & Any_Priority'Image(Get_Priority(Ada.Task_Identification.Current_Task)));
+         --Put_Line("estremi id urbana " & Positive'Image(id_urbana));
+
+         for i in hash_strade'Range loop
+            estremi:= hash_urbane_quartieri(id_quartiere)(i);
+            return_estremi(i,1):= create_estremo_urbana(estremi(1).id_quartiere,estremi(1).id_incrocio);
+            return_estremi(i,2):= create_estremo_urbana(estremi(2).id_quartiere,estremi(2).id_incrocio);
+         end loop;
+
          return return_estremi;
-      end get_estremi_urbana;
+      end get_estremi_strade_urbane;
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is
@@ -395,7 +408,6 @@ package body gps_utilities is
          adiacente_3: adiacente;
          adiacente_4: adiacente;
          index_to_place: Positive := 1;
-         mio: natural;
       begin
 
          if num_incroci_quartieri_registrati = 0 then
@@ -431,11 +443,6 @@ package body gps_utilities is
          Put_Line("costruzione" & Positive'Image(id_quartiere));
          for incrocio in incroci_a_3'Range loop
             incrocio_a_3:= incroci_a_3(incrocio);
-            if incrocio=38 and id_quartiere=2 then
-               mio:=1;
-            else
-               mio:=2;
-            end if;
             for road in 1..3 loop
                incrocio_features:= incrocio_a_3(road);
                val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
@@ -571,6 +578,7 @@ package body gps_utilities is
                end loop;
             end loop;
             Put_Line("Effettuata registrazione nodi grafo");
+            num_strade_quartieri:= 0;
             print_grafo;
          end if;
       end registra_incroci_quartiere;

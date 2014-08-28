@@ -50,6 +50,7 @@ package resource_map_inventory is
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
       procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                   bici: list_bici_quartiere; auto: list_auto_quartiere);
+      procedure registra_mappa(id_quartiere: Positive);
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;
    private
 
@@ -76,6 +77,9 @@ package resource_map_inventory is
    function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
    function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
 
+   type estremi_strada_urbana is array(Positive range 1..2) of ptr_rt_segmento;
+   function get_estremi_urbana(id_urbana: Positive) return estremi_strada_urbana;
+
 private
 
    quartiere_cfg: ptr_quartiere_utilities:= new quartiere_utilities;
@@ -90,6 +94,7 @@ private
       num_classi_locate_abitanti: Natural:= 0;
       num_abitanti_quartieri_registrati: Natural:= 0;
       num_quartieri_resource_registrate: Natural:= 0;
+      inventory_estremi_is_set: Boolean:= False;
    end waiting_cfg;
 
    urbane_features: strade_urbane_features:= create_array_urbane(json_roads => get_json_urbane, from => get_from_urbane, to => get_to_urbane);
@@ -108,5 +113,7 @@ private
    synchronization_tasks_partition: ptr_synchronization_tasks:= new synchronization_tasks;
 
    semafori_quartiere_obj: ptr_handler_semafori_quartiere:= new handler_semafori_quartiere;
+
+   inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
 
 end resource_map_inventory;

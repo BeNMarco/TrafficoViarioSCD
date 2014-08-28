@@ -51,7 +51,7 @@ private
 
    --name_quartiere: str_quartieri:= get_name_partition;
 
-   dir: String:= Current_Directory;
+   --dir: String:= Current_Directory;
    id_mappa: str_quartieri:= get_id_mappa;
    json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/" & str_quartieri'Image(id_mappa) & ".json");
 

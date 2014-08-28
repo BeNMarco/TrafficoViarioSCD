@@ -17,9 +17,8 @@ package body the_name_server is
 
    function get_server_gps return ptr_gps_interface is
    begin
-      loop
+      while gps=null loop
          delay until (Clock + 1.0);
-         exit when gps/=null;
       end loop;
       return gps;
    end get_server_gps;
@@ -33,6 +32,16 @@ package body the_name_server is
    begin
       return registro_ref_quartieri.get_ref_rt_quartieri;
    end get_ref_rt_quartieri;
+
+   procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks) is
+   begin
+      registro_local_synchronized_objects.registra_local_synchronized_obj(id_quartiere,obj);
+   end registra_local_synchronized_obj;
+
+   function get_ref_local_synchronized_obj return registro_local_synchronized_obj is
+   begin
+      return registro_local_synchronized_objects.get_ref_local_synchronized_obj;
+   end get_ref_local_synchronized_obj;
 
    protected body registro_ref_quartieri is
       procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites) is
@@ -129,5 +138,26 @@ package body the_name_server is
          id:= num_mappa;
       end registra_mappa;
    end get_my_mappa;
+
+   protected body registro_local_synchronized_objects is
+
+      procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks) is
+      begin
+         registro(id_quartiere):= obj;
+      end registra_local_synchronized_obj;
+
+      function get_ref_local_synchronized_obj return registro_local_synchronized_obj is
+      begin
+         return registro;
+      end get_ref_local_synchronized_obj;
+
+   end registro_local_synchronized_objects;
+
+   procedure stam is
+   begin
+      Put_Line("stocazzo");
+      get_synchronization_tasks_object.all_task_partition_are_ready;
+   end stam;
+
 
 end the_name_server;

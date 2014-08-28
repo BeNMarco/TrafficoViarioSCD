@@ -1,5 +1,6 @@
 {
   "dimensioni_incrocio": 34.0,
+ "larghezza_marciapiede": 3,
   "traiettorie_incrocio_a_3": {
     "0": {
       "destra": {
@@ -62,7 +63,7 @@
         },
         "intersezioni": [
           {
-            "traiettoria": "ditto_1",
+            "traiettoria": "dritto_1",
             "distanza": 20.226567179514607
           },
           {

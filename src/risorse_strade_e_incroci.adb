@@ -1,4 +1,7 @@
 with Ada.Text_IO;
+--with Ada.Task_Identification;
+--with Ada.Dynamic_Priorities;
+--with System;
 
 with strade_e_incroci_common;
 with remote_types;
@@ -6,8 +9,12 @@ with resource_map_inventory;
 with risorse_mappa_utilities;
 with the_name_server;
 with mailbox_risorse_attive;
+with synchronization_task_partition;
 
 use Ada.Text_IO;
+--use Ada.Task_Identification;
+--use Ada.Dynamic_Priorities;
+--use System;
 
 use strade_e_incroci_common;
 use remote_types;
@@ -15,6 +22,7 @@ use resource_map_inventory;
 use risorse_mappa_utilities;
 use the_name_server;
 use mailbox_risorse_attive;
+use synchronization_task_partition;
 
 package body risorse_strade_e_incroci is
 
@@ -45,11 +53,11 @@ package body risorse_strade_e_incroci is
       end loop;
    end;
 
-   procedure synchronization_with_delta is
+   procedure synchronization_with_delta(id: Positive) is
+      synch_obj: ptr_synchronization_tasks:= get_synchronization_tasks_partition_object;
    begin
-      get_synchronization_tasks_partition_object.registra_task;
-      synchronization_tasks_partitions.wait_task_partitions;
-      get_synchronization_tasks_partition_object.reset;
+      synch_obj.registra_task(id);
+      synch_obj.wait_tasks_partitions;
    end synchronization_with_delta;
 
    protected body location_abitanti is
@@ -59,64 +67,45 @@ package body risorse_strade_e_incroci is
       end set_percorso_abitante;
    end location_abitanti;
 
-   function get_estremi_incroci(id_urbana: Positive) return estremi_urbane is
-      estremi: estremi_urbana;
-      return_estremi: estremi_urbane;
-   begin
-      estremi:= get_server_gps.get_estremi_urbana(get_id_quartiere,id_urbana);
-      if estremi(1).get_id_quartiere_estremo_urbana/=0 then
-         return_estremi(1):= get_id_risorsa_quartiere(estremi(1).get_id_quartiere_estremo_urbana,estremi(1).get_id_incrocio_estremo_urbana);
-      else
-         return_estremi(1):= null;
-      end if;
-      if estremi(2).get_id_quartiere_estremo_urbana/=0 then
-         return_estremi(2):= get_id_risorsa_quartiere(estremi(2).get_id_quartiere_estremo_urbana,estremi(2).get_id_incrocio_estremo_urbana);
-      else
-         return_estremi(2):= null;
-      end if;
-      return return_estremi;
-   end;
-
    task body core_avanzamento_urbane is
-      id_task: Positive;--mail_box: ptr_resource_segmento_strada:= resource;
+      id_task: Positive;
       mailbox: ptr_resource_segmento_urbana;
-      estremi_incroci: estremi_urbane;
+      array_estremi_strada_urbana: estremi_strada_urbana:= (others => null);
    begin
-      Put_Line("waiting task");
       accept configure(id: Positive) do
          id_task:= id;
          mailbox:= get_urbane_segmento_resources(id);
       end configure;
+      -- Put_Line("configurato" & Positive'Image(id_task) & "id quartiere" & Positive'Image(get_id_quartiere));
 
       wait_settings_all_quartieri;
-      -- Ora i task e le risorse di tutti i quartieri sono attivi
-      estremi_incroci:= get_estremi_incroci(id_task); -- DOPO la wait sicuramente i riferimenti remoti sono settati
+      array_estremi_strada_urbana:= get_estremi_urbana(id_task);
 
       -- BEGIN LOOP
-      synchronization_with_delta;
+      synchronization_with_delta(id_task);
       -- aspetta che finiscano gli incroci
-      if estremi_incroci(1)/=null then
-         estremi_incroci(1).wait_turno;
+      if array_estremi_strada_urbana(1)/=null then
+         array_estremi_strada_urbana(1).wait_turno;
       end if;
-      if estremi_incroci(2)/=null then
-         estremi_incroci(2).wait_turno;
+      if array_estremi_strada_urbana(2)/=null then
+         array_estremi_strada_urbana(2).wait_turno;
       end if;
       -- fine wait; gli incroci hanno fatto l'avanzamento
       if mailbox.there_are_pedoni_or_bici_to_move then -- muovi pedoni
-         delay 3.0; --simulazione lavoro
+         delay 2.0; --simulazione lavoro
       end if;
       if mailbox.there_are_autos_to_move then -- muovi pedoni
-         delay 3.0; --simulazione lavoro
+         delay 2.0; --simulazione lavoro
       end if;
       mailbox.delta_terminate;
       -- set all entità passive a TRUE
       -- END LOOP;
 
-      Put_Line(Positive'Image(id_task));
+      Put_Line("Fine task urbana" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_urbane;
 
    task body core_avanzamento_ingressi is
-      id_task: Positive;--mail_box: ptr_resource_segmento_strada:= resource;
+      id_task: Positive;
       mailbox: ptr_resource_segmento_ingresso;
       resource_main_strada: ptr_resource_segmento_urbana;
    begin
@@ -130,16 +119,16 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       -- loop
-      synchronization_with_delta;
+      synchronization_with_delta(id_task);
       resource_main_strada.wait_turno;
       --quando l'abitante è arrivato occorre invocare l'asincrono abitante_is_arrived del tipo del quartiere del luogo arrivo che muoverà nuovamente l'abitante
       -- end loop;
 
-      Put_Line(Positive'Image(id_task));
+      Put_Line("Fine task ingresso" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_ingressi;
 
    task body core_avanzamento_incroci is
-      id_task: Positive;--mail_box: ptr_resource_segmento_strada:= resource;
+      id_task: Positive;
       mailbox: ptr_resource_segmento_incrocio;
    begin
       accept configure(id: Positive) do
@@ -151,24 +140,16 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       -- loop
-      synchronization_with_delta;
-      Put_Line("inizio lavoto" & Positive'Image(id_task));
-      if id_task=9 then
-         delay 4.0; --simula lavoro
-      else
-         delay 15.0;
-      end if;
-
+      synchronization_with_delta(id_task);
+      delay 5.0;
       mailbox.delta_terminate;
-
-      Put_Line("fine lavoro" & Positive'Image(id_task));
       -- end loop;
 
-      Put_Line(Positive'Image(id_task));
+      Put_Line("Fine task incrocio" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_incroci;
 
    task body core_avanzamento_rotonde is
-      id_task: Positive;--mail_box: ptr_resource_segmento_strada:= resource;
+      id_task: Positive;
       mailbox: ptr_resource_segmento_rotonda;
    begin
       accept configure(id: Positive) do
@@ -177,13 +158,14 @@ package body risorse_strade_e_incroci is
       end configure;
 
       wait_settings_all_quartieri;
+      Put_Line(Positive'Image(id_task));
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       -- loop
-      synchronization_with_delta;
+      synchronization_with_delta(id_task);
       -- end loop;
 
-      Put_Line(Positive'Image(id_task));
+      Put_Line("Fine task" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_rotonde;
 
 begin

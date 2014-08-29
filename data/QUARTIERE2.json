@@ -282,7 +282,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,
-      "distanza_da_from": 200,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     },
@@ -292,17 +292,7 @@
       "numcorsie": 1,
       "strada_confinante": 4,
       "polo": true,
-      "distanza_da_from": 150,
-      "from": 0,
-      "to": 0
-    },
-    {
-      "id": 4,
-      "lunghezza": 50.0,
-      "numcorsie": 1,
-      "strada_confinante": 4,
-      "polo": true,
-      "distanza_da_from": 320,
+      "distanza_da_from": 150.0,
       "from": 0,
       "to": 0
     },
@@ -311,18 +301,28 @@
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 4,
-      "polo": false,
-      "distanza_da_from": 200,
+      "polo": true,
+      "distanza_da_from": 320.0,
       "from": 0,
       "to": 0
     },
     {
-      "id": 18,
+      "id": 4,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 4,
+      "polo": false,
+      "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 5,
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 18,
       "polo": true,
-      "distanza_da_from": 100,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     }
@@ -702,6 +702,32 @@
       "capienza_macchine": 500,
       "capienza_persone": 5000,
       "capienza_bici": 500
+    },
+    {
+      "id_luogo": 4,
+      "nome": "Zoo",
+      "tipologia": "svago",
+      "idstrada": 4,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 500,
+      "capienza_persone": 5000,
+      "capienza_bici": 500
+    },
+    {
+      "id_luogo": 5,
+      "nome": "Disco",
+      "tipologia": "svago",
+      "idstrada": 5,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 500,
+      "capienza_persone": 5000,
+      "capienza_bici": 500
     }
   ],
 "rotonde_a_4":[],
@@ -718,5 +744,5 @@
 
 "bici":[{"id_abitante":1}],
 
-"abitanti":[{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}]
+"abitanti":[{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3}]
 }

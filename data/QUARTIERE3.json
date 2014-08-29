@@ -373,7 +373,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 200,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     },
@@ -383,7 +383,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 300,
+      "distanza_da_from": 300.0,
       "from": 0,
       "to": 0
     },
@@ -393,7 +393,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 400,
+      "distanza_da_from": 400.0,
       "from": 0,
       "to": 0
     },
@@ -403,7 +403,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 500,
+      "distanza_da_from": 500.0,
       "from": 0,
       "to": 0
     },
@@ -413,7 +413,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 600,
+      "distanza_da_from": 600.0,
       "from": 0,
       "to": 0
     },
@@ -423,7 +423,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 700,
+      "distanza_da_from": 700.0,
       "from": 0,
       "to": 0
     },
@@ -433,7 +433,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 800,
+      "distanza_da_from": 800.0,
       "from": 0,
       "to": 0
     },
@@ -443,7 +443,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 900,
+      "distanza_da_from": 900.0,
       "from": 0,
       "to": 0
     },
@@ -453,7 +453,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 200,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     },
@@ -463,7 +463,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 300,
+      "distanza_da_from": 300.0,
       "from": 0,
       "to": 0
     },
@@ -473,7 +473,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 400,
+      "distanza_da_from": 400.0,
       "from": 0,
       "to": 0
     },
@@ -483,7 +483,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 500,
+      "distanza_da_from": 500.0,
       "from": 0,
       "to": 0
     },
@@ -493,7 +493,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 600,
+      "distanza_da_from": 600.0,
       "from": 0,
       "to": 0
     },
@@ -503,7 +503,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 700,
+      "distanza_da_from": 700.0,
       "from": 0,
       "to": 0
     },
@@ -513,7 +513,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 800,
+      "distanza_da_from": 800.0,
       "from": 0,
       "to": 0
     },
@@ -523,7 +523,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 900,
+      "distanza_da_from": 900.0,
       "from": 0,
       "to": 0
     },
@@ -533,7 +533,7 @@
       "numcorsie": 1,
       "strada_confinante": 6,
       "polo": true,
-      "distanza_da_from": 350,
+      "distanza_da_from": 350.0,
       "from": 0,
       "to": 0
     },
@@ -543,7 +543,7 @@
       "numcorsie": 1,
       "strada_confinante": 11,
       "polo": true,
-      "distanza_da_from": 150,
+      "distanza_da_from": 150.0,
       "from": 0,
       "to": 0
     },
@@ -553,7 +553,7 @@
       "numcorsie": 1,
       "strada_confinante": 11,
       "polo": true,
-      "distanza_da_from": 350,
+      "distanza_da_from": 350.0,
       "from": 0,
       "to": 0
     },
@@ -563,7 +563,7 @@
       "numcorsie": 1,
       "strada_confinante": 11,
       "polo": true,
-      "distanza_da_from": 500,
+      "distanza_da_from": 500.0,
       "from": 0,
       "to": 0
     }
@@ -815,6 +815,19 @@
       "capienza_macchine": 10,
       "capienza_persone": 20,
       "capienza_bici": 0
+    },
+    {
+      "id_luogo": 20,
+      "nome": "Da Jimmy",
+      "tipologia": "ristorazione",
+      "idstrada": 20,
+      "dimensioni": [
+        80,
+        80
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 20,
+      "capienza_bici": 0
     }
   ],
 "rotonde_a_4":[],
@@ -831,5 +844,5 @@
 
 "bici":[{"id_abitante":1}],
 
-"abitanti":[{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}]
+"abitanti":[{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4}]
 }

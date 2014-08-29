@@ -57,7 +57,7 @@ package body risorse_mappa_utilities is
       for index_strada in from..to
       loop
          strada:= Get(Arr => json_roads,Index => index_strada-from+1);
-         val_tipo:= urbana;
+         val_tipo:= ingresso;
          val_id:= index_strada;--Get(Val => strada, Field => "id");
          val_id_quartiere:= get_id_quartiere;  -- TO DO
          val_lunghezza:= Get(Val => strada, Field => "lunghezza");
@@ -185,10 +185,92 @@ package body risorse_mappa_utilities is
       return incroci;
    end create_array_rotonde_a_3;
 
+   function create_traiettorie_incrocio(json_traiettorie: JSON_Value) return traiettorie_incrocio is
+      traiettorie: traiettorie_incrocio;
+      traiettoria_destra: JSON_Value;
+      traiettoria_sinistra: JSON_Value;
+      traiettoria_dritto_1: JSON_Value;
+      traiettoria_dritto_2: JSON_Value;
+      strada_partenza: JSON_Value;
+      strada_arrivo: JSON_Value;
+      intersezioni: JSON_Array;
+      intersezione: JSON_Value;
+      array_intersezioni: ptr_intersezioni_incrocio:= null;
+   begin
+      traiettoria_destra:= Get(Val => json_traiettorie, Field => "destra");
+      traiettoria_sinistra:= Get(Val => json_traiettorie, Field => "sinistra");
+      traiettoria_dritto_1:= Get(Val => json_traiettorie, Field => "dritto_1");
+      traiettoria_dritto_2:= Get(Val => json_traiettorie, Field => "dritto_2");
+
+      strada_partenza:= Get(Val => traiettoria_destra, Field => "strada_partenza");
+      strada_arrivo:= Get(Val => traiettoria_destra, Field => "strada_arrivo");
+      traiettorie(destra):= create_traiettoria_incrocio(Get(Val => traiettoria_destra, Field => "lunghezza"),
+                                                        Get(Val => strada_partenza, Field => "corsia"),
+                                                        Get(Val => strada_arrivo, Field => "corsia"),
+                                                        null);
+
+      strada_partenza:= Get(Val => traiettoria_sinistra, Field => "strada_partenza");
+      strada_arrivo:= Get(Val => traiettoria_sinistra, Field => "strada_arrivo");
+      intersezioni:= Get(Val => traiettoria_sinistra, Field => "intersezioni");
+      array_intersezioni:= new intersezioni_incrocio(1..2);
+      intersezione:= Get(Arr => intersezioni,Index => 1);
+      array_intersezioni(1):= create_intersezione_incrocio(dritto_1,Get(Val => intersezione, Field => "distanza"));
+      intersezione:= Get(Arr => intersezioni,Index => 2);
+      array_intersezioni(2):= create_intersezione_incrocio(dritto_2,Get(Val => intersezione, Field => "distanza"));
+      traiettorie(sinistra):= create_traiettoria_incrocio(Get(Val => traiettoria_sinistra, Field => "lunghezza"),
+                                                          Get(Val => strada_partenza, Field => "corsia"),
+                                                          Get(Val => strada_arrivo, Field => "corsia"),
+                                                          array_intersezioni);
+
+      strada_partenza:= Get(Val => traiettoria_dritto_1, Field => "strada_partenza");
+      strada_arrivo:= Get(Val => traiettoria_dritto_1, Field => "strada_arrivo");
+      intersezioni:= Get(Val => traiettoria_dritto_1, Field => "intersezioni");
+      array_intersezioni:= new intersezioni_incrocio(1..1);
+      intersezione:= Get(Arr => intersezioni,Index => 1);
+      array_intersezioni(1):= create_intersezione_incrocio(sinistra,Get(Val => intersezione, Field => "distanza"));
+      traiettorie(dritto_1):= create_traiettoria_incrocio(Get(Val => traiettoria_dritto_1, Field => "lunghezza"),
+                                                          Get(Val => strada_partenza, Field => "corsia"),
+                                                          Get(Val => strada_arrivo, Field => "corsia"),
+                                                          array_intersezioni);
+
+      strada_partenza:= Get(Val => traiettoria_dritto_2, Field => "strada_partenza");
+      strada_arrivo:= Get(Val => traiettoria_dritto_2, Field => "strada_arrivo");
+      intersezioni:= Get(Val => traiettoria_dritto_2, Field => "intersezioni");
+      array_intersezioni:= new intersezioni_incrocio(1..1);
+      intersezione:= Get(Arr => intersezioni,Index => 1);
+      array_intersezioni(1):= create_intersezione_incrocio(sinistra,Get(Val => intersezione, Field => "distanza"));
+      traiettorie(dritto_2):= create_traiettoria_incrocio(Get(Val => traiettoria_dritto_2, Field => "lunghezza"),
+                                                          Get(Val => strada_partenza, Field => "corsia"),
+                                                          Get(Val => strada_arrivo, Field => "corsia"),
+                                                          array_intersezioni);
+
+      return traiettorie;
+
+   end create_traiettorie_incrocio;
+
    function get_mancante_incrocio_a_3(id_incrocio: Positive) return Positive is
    begin
       return indici_strada_mancanti(id_incrocio);
    end get_mancante_incrocio_a_3;
+
+   function create_traiettoria_incrocio(lunghezza: Float; corsia_arrivo: id_corsie; corsia_partenza: id_corsie;
+                                        intersezioni: ptr_intersezioni_incrocio) return traiettoria_incrocio is
+      traiettoria: traiettoria_incrocio;
+   begin
+      traiettoria.lunghezza:= lunghezza;
+      traiettoria.corsia_arrivo:= corsia_arrivo;
+      traiettoria.corsia_partenza:= corsia_partenza;
+      traiettoria.intersezioni:= intersezioni;
+      return traiettoria;
+   end create_traiettoria_incrocio;
+
+   function create_intersezione_incrocio(traiettoria: traiettoria_incroci_type; distanza: Float) return intersezione_incrocio is
+      intersezione: intersezione_incrocio;
+   begin
+      intersezione.traiettoria:= traiettoria;
+      intersezione.distanza:= distanza;
+      return intersezione;
+   end create_intersezione_incrocio;
 
    procedure print_percorso(route: percorso) is
    begin

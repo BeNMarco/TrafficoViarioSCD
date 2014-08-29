@@ -1,31 +1,27 @@
 {
 "dimensioni_incrocio": 34.0,
-"larghezza_marciapiede": 3,
+"larghezza_marciapiede": 3.0,
 "traiettorie_incroci": {
       "destra": {
         "lunghezza": 11.71392999506322,
         "strada_partenza": {
-          "strada": 0,
           "corsia": 1
         },
         "strada_arrivo": {
-          "strada": 3,
           "corsia": 1
         }
       },
       "sinistra": {
         "lunghezza": 34.11869819125671,
         "strada_partenza": {
-          "strada": 0,
           "corsia": 2
         },
         "strada_arrivo": {
-          "strada": 1,
           "corsia": 2
         },
         "intersezioni": [
           {
-            "traiettoria": "ditto_1",
+            "traiettoria": "dritto_1",
             "distanza": 20.22656717951471
           },
           {
@@ -37,11 +33,9 @@
       "dritto_1": {
         "lunghezza": 34.0,
         "strada_partenza": {
-          "strada": 0,
           "corsia": 1
         },
         "strada_arrivo": {
-          "strada": 2,
           "corsia": 1
         },
         "intersezioni": [
@@ -54,11 +48,9 @@
       "dritto_2": {
         "lunghezza": 34.0,
         "strada_partenza": {
-          "strada": 0,
           "corsia": 2
         },
         "strada_arrivo": {
-          "strada": 2,
           "corsia": 2
         },
         "intersezioni": [

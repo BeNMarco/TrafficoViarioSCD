@@ -4,6 +4,10 @@ package strade_e_incroci_common is
 
    type type_strade is (urbana,ingresso);
 
+   subtype id_corsie is Positive range 1..2;
+
+   type traiettoria_incroci_type is (destra,sinistra,dritto_1,dritto_2);
+
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;
    function get_id_quartiere_road(road: rt_strada_features) return Positive;

@@ -35,6 +35,8 @@ begin
    --gps.registra_urbane_quartiere(1, urbane_features);
    --gps.registra_ingressi_quartiere(1,ingressi_features);
    --gps.registra_incroci_quartiere(1,incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3);
+   percor:= new route_and_distance'(gps.calcola_percorso(1,5,1,6));
+   print_percorso(percor.get_percorso_from_route_and_distance);
    percor:= new route_and_distance'(gps.calcola_percorso(1,1,1,3));
    print_percorso(percor.get_percorso_from_route_and_distance);
    percor:= new route_and_distance'(gps.calcola_percorso(1,1,2,2));

@@ -18,6 +18,12 @@ package risorse_mappa_utilities is
    type traiettoria_incrocio is tagged private;
    type traiettorie_incrocio is array(traiettoria_incroci_type range traiettoria_incroci_type'First..traiettoria_incroci_type'Last) of traiettoria_incrocio;
 
+   type intersezione_ingresso is tagged private;
+   type intersezioni_ingresso is array(Positive range <>) of intersezione_ingresso;
+   type ptr_intersezioni_ingresso is access intersezioni_ingresso;
+   type traiettoria_ingresso is tagged private;
+   type traiettorie_ingresso is array(traiettoria_ingressi_type range traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last) of traiettoria_ingresso;
+
    function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features;
 
    function create_array_ingressi(json_roads: JSON_array; from: Natural; to: Natural) return strade_ingresso_features;
@@ -34,9 +40,15 @@ package risorse_mappa_utilities is
    function create_traiettorie_incrocio(json_traiettorie: JSON_Value) return traiettorie_incrocio;
 
    function create_traiettoria_incrocio(lunghezza: Float; corsia_arrivo: id_corsie; corsia_partenza: id_corsie;
-                                           intersezioni: ptr_intersezioni_incrocio) return traiettoria_incrocio;
+                                        intersezioni: ptr_intersezioni_incrocio) return traiettoria_incrocio;
 
    function create_intersezione_incrocio(traiettoria: traiettoria_incroci_type; distanza: Float) return intersezione_incrocio;
+
+   function create_intersezione_ingresso(traiettoria: traiettoria_ingressi_type; distanza: Float) return intersezione_ingresso;
+
+   function create_traiettoria_ingresso(lunghezza: Float; intersezioni: ptr_intersezioni_ingresso) return traiettoria_ingresso;
+
+   function create_traiettorie_ingresso(json_traiettorie: JSON_Value) return traiettorie_ingresso;
 
    procedure print_percorso(route: percorso);
 
@@ -58,6 +70,16 @@ private
       corsia_arrivo: id_corsie;
       corsia_partenza: id_corsie;
       intersezioni: ptr_intersezioni_incrocio;
+   end record;
+
+   type intersezione_ingresso is tagged record
+      traiettoria: traiettoria_ingressi_type;
+      distanza: Float;
+   end record;
+
+   type traiettoria_ingresso is tagged record
+      lunghezza: Float;
+      intersezioni: ptr_intersezioni_ingresso;
    end record;
 
 end risorse_mappa_utilities;

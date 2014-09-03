@@ -42,16 +42,15 @@ package body mailbox_risorse_attive is
    end calculate_max_num_pedoni;
 
    protected body resource_segmento_urbana is
-
       function there_are_autos_to_move return Boolean is
       begin
          for i in 1..2 loop
             for j in 1..2 loop
                if main_strada_number_entity(i,j)/=0 then
                   for z in max_num_auto-main_strada_number_entity(i,j)..max_num_auto loop
-                     if main_strada(i,j,z).to_move_in_delta then
-                        return True;
-                     end if;
+                     --if main_strada(i,j,z).to_move_in_delta then
+                        return False;
+                     --end if;
                   end loop;
                end if;
             end loop;
@@ -65,9 +64,9 @@ package body mailbox_risorse_attive is
             for j in 1..2 loop
                if marciapiedi_num_pedoni_bici(i,j)/=0 then
                   for z in max_num_pedoni-marciapiedi_num_pedoni_bici(i,j)..max_num_pedoni loop
-                     if marciapiedi(i,j,z).to_move_in_delta then
-                        return True;
-                     end if;
+                     --if marciapiedi(i,j,z).to_move_in_delta then
+                        return False;
+                     --end if;
                   end loop;
                end if;
             end loop;
@@ -89,6 +88,11 @@ package body mailbox_risorse_attive is
          finish_delta_urbana:= True;
       end delta_terminate;
 
+      procedure configure(risorsa: strada_urbana_features) is
+      begin
+         risorsa_features:= risorsa;
+      end configure;
+
    end resource_segmento_urbana;
 
    protected body resource_segmento_ingresso is
@@ -96,26 +100,194 @@ package body mailbox_risorse_attive is
       begin
          null;
       end wait_turno;
-
       procedure delta_terminate is
       begin
          null;
       end delta_terminate;
-      procedure registra_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is
+
+      procedure set_move_parameters_entity_on_main_strada(range_1: Positive; num_entity: Positive;
+                                                          speed: Float; step_to_advance: Float) is
+         node: ptr_list_posizione_abitanti_on_road:= null;
       begin
-         -- gestire struttura per muovere entità
-         null;
+         node:= slide_list(road,range_1,num_entity);
+         if speed>0.0 then
+            node.posizione_abitante.current_speed:= speed;
+         end if;
+         if step_to_advance>0.0 then
+            if node.posizione_abitante.where_now+step_to_advance>risorsa_features.get_lunghezza_road then
+               node.posizione_abitante.where_next:= risorsa_features.get_lunghezza_road;
+            else
+               node.posizione_abitante.where_next:= node.posizione_abitante.where_now+step_to_advance;
+            end if;
+         end if;
+      end set_move_parameters_entity_on_main_strada;
+
+      function slide_list(type_structure: data_structures_types; range_1: Positive; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road is
+         list: ptr_list_posizione_abitanti_on_road:= null;
+         current_node: ptr_list_posizione_abitanti_on_road:= null;
+      begin
+         case type_structure is
+            when road =>
+               list:= main_strada(range_1,1);
+            when sidewalk =>
+               list:= marciapiedi(range_1,1);
+         end case;
+         for i in 1..index_to_slide loop
+            if list=null then
+               return null;
+            else
+               current_node:= list;
+               list:= list.all.next;
+            end if;
+         end loop;
+         return current_node;
+      end slide_list;
+
+      procedure registra_abitante_to_move(type_structure: data_structures_types; begin_speed: Float; posix: Float) is
+         list_abitanti: ptr_list_posizione_abitanti_on_road:= new list_posizione_abitanti_on_road;
+      begin
+         case type_structure is
+            when road =>
+               if main_strada_temp/=null then
+                  list_abitanti.next:= main_strada(2,1);
+                  main_strada(2,1):= list_abitanti;
+                  list_abitanti.posizione_abitante.id_abitante:= main_strada_temp.posizione_abitante.id_abitante;
+                  list_abitanti.posizione_abitante.id_quartiere:= main_strada_temp.posizione_abitante.id_quartiere;
+                  list_abitanti.posizione_abitante.where_now:= 0.0;
+                  if posix>risorsa_features.get_lunghezza_road then
+                     list_abitanti.posizione_abitante.where_next:= risorsa_features.get_lunghezza_road;
+                  else
+                     list_abitanti.posizione_abitante.where_next:= posix;
+                  end if;
+                  list_abitanti.posizione_abitante.current_speed:= begin_speed;
+                  list_abitanti.posizione_abitante.to_move_in_delta:= True;
+                  main_strada_temp:= main_strada_temp.next;
+                  main_strada_number_entity(2,1):= main_strada_number_entity(2,1)+1;
+               end if;
+            when sidewalk =>
+               null;
+         end case;
       end registra_abitante_to_move;
+
+      procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is
+         list_abitanti: ptr_list_posizione_abitanti_on_road:= new list_posizione_abitanti_on_road;
+         last_node: ptr_list_posizione_abitanti_on_road:= null;
+      begin
+         list_abitanti.posizione_abitante.id_abitante:= id_abitante;
+         list_abitanti.posizione_abitante.id_quartiere:= id_quartiere;
+         case mezzo is
+            when walking | autobus | bike =>
+               if marciapiedi_temp=null then
+                  marciapiedi_temp:= list_abitanti;
+               else
+                  last_node:= marciapiedi_temp;
+                  while last_node.next/=null loop
+                     last_node:= last_node.next;
+                  end loop;
+                  last_node.next:= list_abitanti;
+               end if;
+            when car =>
+               if main_strada_temp=null then
+                  main_strada_temp:= list_abitanti;
+               else
+                  last_node:= main_strada_temp;
+                  while last_node.next/=null loop
+                     last_node:= last_node.next;
+                  end loop;
+                  last_node.next:= list_abitanti;
+               end if;
+         end case;
+      end new_abitante_to_move;
+
+      procedure update_position_entity(type_structure: data_structures_types; range_1: Positive; index_entity: Positive) is
+         nodo: ptr_list_posizione_abitanti_on_road:= null;
+      begin
+         case type_structure is
+            when road =>
+               nodo:= slide_list(road,range_1,index_entity);
+            when sidewalk =>
+               nodo:= slide_list(sidewalk,range_1,index_entity);
+         end case;
+         nodo.posizione_abitante.where_now:= nodo.posizione_abitante.where_next;
+      end update_position_entity;
+
+      function get_main_strada(range_1: Positive) return ptr_list_posizione_abitanti_on_road is
+      begin
+         return main_strada(range_1,1);
+      end get_main_strada;
+
+      function get_marciapiede(range_1: Positive) return ptr_list_posizione_abitanti_on_road is
+      begin
+         return marciapiedi(range_1,1);
+      end get_marciapiede;
+
+      function get_number_entity_strada(range_1: Positive) return Natural is
+      begin
+         return main_strada_number_entity(range_1,1);
+      end get_number_entity_strada;
+
+      function get_number_entity_marciapiede(range_1: Positive) return Natural is
+      begin
+         return marciapiedi_number_entity(range_1,1);
+      end get_number_entity_marciapiede;
+
+      function get_temp_main_strada return ptr_list_posizione_abitanti_on_road is
+      begin
+         return main_strada_temp;
+      end get_temp_main_strada;
+
+      function get_temp_marciapiede return ptr_list_posizione_abitanti_on_road is
+      begin
+         return marciapiedi_temp;
+      end get_temp_marciapiede;
+
+      function get_posix_first_entity(type_structure: data_structures_types; range_1: Positive) return Float is
+      begin
+         case type_structure is
+            when road =>
+               return main_strada(range_1,1).posizione_abitante.where_now;
+            when sidewalk =>
+               return marciapiedi(range_1,1).posizione_abitante.where_now;
+         end case;
+      end get_posix_first_entity;
 
       function there_are_autos_to_move return Boolean is
       begin
+         for i in 1..2 loop
+            for j in 1..1 loop
+               if main_strada_number_entity(i,j)/=0 then
+                  loop
+                     exit when main_strada(i,j)=null;
+                     if main_strada(i,j).posizione_abitante.to_move_in_delta then
+                        return True;
+                     end if;
+                  end loop;
+               end if;
+            end loop;
+         end loop;
          return False;
       end there_are_autos_to_move;
       function there_are_pedoni_or_bici_to_move return Boolean is
       begin
+         for i in 1..2 loop
+            for j in 1..1 loop
+               if marciapiedi_number_entity(i,j)/=0 then
+                  loop
+                     exit when marciapiedi(i,j)=null;
+                     if marciapiedi(i,j).posizione_abitante.to_move_in_delta then
+                        return True;
+                     end if;
+                  end loop;
+               end if;
+            end loop;
+         end loop;
          return False;
       end there_are_pedoni_or_bici_to_move;
 
+      procedure configure(risorsa: strada_ingresso_features) is
+      begin
+         risorsa_features:= risorsa;
+      end configure;
    end resource_segmento_ingresso;
 
    protected body resource_segmento_incrocio is
@@ -232,6 +404,54 @@ package body mailbox_risorse_attive is
    begin
       return ingressi_urbane(id_urbana);
    end get_ingressi_urbana;
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   begin
+      return obj.id_abitante;
+   end get_id_abitante_posizione_abitanti;
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   begin
+      return obj.id_quartiere;
+   end get_id_quartiere_posizione_abitanti;
+   function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.where_next;
+   end get_where_next_posizione_abitanti;
+   function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.where_now;
+   end get_where_now_posizione_abitanti;
+   function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.current_speed;
+   end get_current_speed_abitante;
+   function get_to_move_in_delta_posizione_abitanti(obj: posizione_abitanti_on_road) return Boolean is
+   begin
+      return obj.to_move_in_delta;
+   end get_to_move_in_delta_posizione_abitanti;
+   procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float) is
+   begin
+      obj.current_speed:= speed;
+   end set_current_speed_abitante;
+   procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float) is
+   begin
+      obj.where_next:= where_next;
+   end set_where_next_abitante;
+   procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float) is
+   begin
+      obj.where_now:= where_now;
+   end set_where_now_abitante;
+   procedure set_to_move_in_delta(obj: in out posizione_abitanti_on_road; to_move_in_delta: Boolean) is
+   begin
+      obj.to_move_in_delta:= to_move_in_delta;
+   end set_to_move_in_delta;
+   function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class is
+   begin
+      return obj.posizione_abitante;
+   end get_posizione_abitanti_from_list_posizione_abitanti;
+   function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road is
+   begin
+      return obj.next;
+   end get_next_from_list_posizione_abitanti;
 
    type num_ingressi_urbana is array(Positive range <>) of Natural;
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
@@ -253,9 +473,9 @@ package body mailbox_risorse_attive is
 
       for i in get_from_ingressi..get_to_ingressi loop
          val_ptr_resource_ingresso:= new resource_segmento_ingresso(id_risorsa => ingressi(i).get_id_road,
-                                                                    --length => ingressi(i).get_lunghezza_road,
                                                                     max_num_auto => calculate_max_num_auto(ingressi(i).get_lunghezza_road),
                                                                     max_num_pedoni => calculate_max_num_pedoni(ingressi(i).get_lunghezza_road));
+         val_ptr_resource_ingresso.configure(ingressi(i));
          ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso):= ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso)+1;
          ptr_resource_ingressi(i):= val_ptr_resource_ingresso;
       end loop;
@@ -263,10 +483,10 @@ package body mailbox_risorse_attive is
 
       for i in get_from_urbane..get_to_urbane loop
          val_ptr_resource_urbana:= new resource_segmento_urbana(id_risorsa => urbane(i).get_id_road,
-                                                                --length => urbane(i).get_lunghezza_road,
                                                                 num_ingressi => ingressi_per_urbana(urbane(i).get_id_road),
                                                                 max_num_auto => calculate_max_num_auto(urbane(i).get_lunghezza_road),
                                                                 max_num_pedoni => calculate_max_num_pedoni(urbane(i).get_lunghezza_road));
+         val_ptr_resource_urbana.configure(urbane(i));
          ptr_resource_urbane(i):= val_ptr_resource_urbana;
       end loop;
       urbane_segmento_resources:= ptr_resource_urbane;
@@ -320,10 +540,14 @@ package body mailbox_risorse_attive is
    begin
       return obj.id_quartiere;
    end get_id_quartiere_from_posizione;
-   function get_where_from_posizione(obj: posizione_abitanti_on_road) return Float is
+   function get_new_posizione(obj: posizione_abitanti_on_road) return Float is
    begin
-      return obj.where;
-   end get_where_from_posizione;
+      return obj.where_next;
+   end get_new_posizione;
+   function get_old_posizione(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.where_now;
+   end get_old_posizione;
    function get_to_move_in_delta(obj: posizione_abitanti_on_road) return Boolean is
    begin
       return obj.to_move_in_delta;

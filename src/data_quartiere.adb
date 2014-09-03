@@ -33,6 +33,10 @@ package body data_quartiere is
    begin
       return json_traiettorie_incrocio;
    end get_json_traiettorie_incrocio;
+   function get_json_traiettorie_ingresso return JSON_Value is
+   begin
+      return json_traiettorie_ingresso;
+   end get_json_traiettorie_ingresso;
    function get_from_urbane return Natural is
    begin
       return from_urbane;

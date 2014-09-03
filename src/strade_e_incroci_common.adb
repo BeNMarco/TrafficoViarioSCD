@@ -24,6 +24,11 @@ package body strade_e_incroci_common is
       return road.distance_from_road_head;
    end get_distance_from_road_head_ingresso;
 
+   function get_polo_ingresso(road: strada_ingresso_features) return Boolean is
+   begin
+      return road.polo;
+   end get_polo_ingresso;
+
       -- begin get methods
    function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive is
    begin
@@ -53,6 +58,34 @@ package body strade_e_incroci_common is
    begin
       return route.distance_from_start;
    end get_distance_from_route_and_distance;
+   function get_id_abitante_entità_passiva(obj: move_parameters) return Positive is
+   begin
+      return obj.id_abitante;
+   end get_id_abitante_entità_passiva;
+   function get_id_quartiere_abitante_entità_passiva(obj: move_parameters) return Positive is
+   begin
+      return obj.id_quartiere;
+   end get_id_quartiere_abitante_entità_passiva;
+   function get_desired_velocity(obj: move_parameters) return Float is
+   begin
+      return obj.desired_velocity;
+   end get_desired_velocity;
+   function get_time_headway(obj: move_parameters) return Float is
+   begin
+      return obj.time_headway;
+   end get_time_headway;
+   function get_max_acceleration(obj: move_parameters) return Float is
+   begin
+      return obj.max_acceleration;
+   end get_max_acceleration;
+   function get_comfortable_deceleration(obj: move_parameters) return Float is
+   begin
+      return obj.comfortable_deceleration;
+   end get_comfortable_deceleration;
+   function get_s0(obj: move_parameters) return Float is
+   begin
+      return obj.s0;
+   end get_s0;
    function get_length_entità_passiva(obj: move_parameters) return Float is
    begin
       return obj.length;
@@ -103,7 +136,7 @@ package body strade_e_incroci_common is
 
    function create_new_ingresso(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
                                 val_lunghezza: Float;val_num_corsie: Positive;val_id_main_strada: Positive;
-                                val_distance_from_road_head: Float) return strada_ingresso_features is
+                                val_distance_from_road_head: Float; polo: Boolean) return strada_ingresso_features is
       ptr_strada: strada_ingresso_features;
    begin
       ptr_strada.id:= val_id;
@@ -113,6 +146,7 @@ package body strade_e_incroci_common is
       ptr_strada.num_corsie:= val_num_corsie;
       ptr_strada.id_main_strada:= val_id_main_strada;
       ptr_strada.distance_from_road_head:= val_distance_from_road_head;
+      ptr_strada.polo:= polo;
       return ptr_strada;
    end create_new_ingresso;
 

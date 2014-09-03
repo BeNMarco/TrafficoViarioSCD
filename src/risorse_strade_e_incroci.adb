@@ -1,4 +1,5 @@
 with Ada.Text_IO;
+with Ada.Numerics.Elementary_Functions;
 --with Ada.Task_Identification;
 --with Ada.Dynamic_Priorities;
 --with System;
@@ -12,6 +13,7 @@ with mailbox_risorse_attive;
 with synchronization_task_partition;
 
 use Ada.Text_IO;
+use Ada.Numerics.Elementary_Functions;
 --use Ada.Task_Identification;
 --use Ada.Dynamic_Priorities;
 --use System;
@@ -25,6 +27,60 @@ use mailbox_risorse_attive;
 use synchronization_task_partition;
 
 package body risorse_strade_e_incroci is
+
+   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: Float; distance_to_stop_line: Float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: Float; next_abitante_velocity: Float) return Float is
+      residente: move_parameters;
+      delta_speed: Float:= 0.0;
+      free_road_coeff: Float;
+      time_gap: Float;
+      break_gap: Float;
+      safe_distance: Float;
+      busy_road_coeff: Float;
+      safe_intersection_distance: Float;
+      intersection_coeff: Float;
+      coeff: Float;
+   begin
+      case mezzo is
+         when walking | autobus =>
+            residente:= move_parameters(get_quartiere_utilities_obj.all.get_pedone_quartiere(id_quartiere_abitante,id_abitante));
+         when bike =>
+            residente:= move_parameters(get_quartiere_utilities_obj.all.get_bici_quartiere(id_quartiere_abitante,id_abitante));
+         when car =>
+            residente:= move_parameters(get_quartiere_utilities_obj.all.get_auto_quartiere(id_quartiere_abitante,id_abitante));
+      end case;
+      if next_id_quartiere_abitante/=0 then
+         delta_speed:= abitante_velocity-next_abitante_velocity;
+      else
+         delta_speed:= abitante_velocity;
+      end if;
+      free_road_coeff:= (abitante_velocity/residente.get_desired_velocity)**4;
+      time_gap:= abitante_velocity*residente.get_time_headway;
+      break_gap:= abitante_velocity*delta_speed/(2.0 * Sqrt(residente.get_max_acceleration*residente.get_comfortable_deceleration));
+      safe_distance:= residente.get_s0 + time_gap + break_gap;
+      if next_entity_distance=0.0 then
+         busy_road_coeff:= 0.0;
+      else
+         busy_road_coeff:= (safe_distance/next_entity_distance)**2;
+      end if;
+
+      -- begin parameters not in the IDM models:
+      safe_intersection_distance:= 1.0 + time_gap + (abitante_velocity**2)/(2.0*residente.get_comfortable_deceleration);
+      intersection_coeff:= (safe_intersection_distance/distance_to_stop_line)**2;
+      -- end parameters
+
+      coeff:= 1.0 - free_road_coeff - busy_road_coeff - intersection_coeff;
+      return residente.get_max_acceleration*coeff;
+   end calculate_acceleration;
+
+   function calculate_new_speed(current_speed: Float; acceleration: Float) return Float is
+   begin
+      return current_speed + acceleration * delta_value;
+   end calculate_new_speed;
+
+   function calculate_new_step(new_speed: Float; acceleration: Float) return Float is
+   begin
+      return new_speed * delta_value + 0.5 * acceleration * delta_value**2;
+   end calculate_new_step;
 
    procedure configure_tasks is
    begin
@@ -82,7 +138,7 @@ package body risorse_strade_e_incroci is
       array_estremi_strada_urbana:= get_estremi_urbana(id_task);
 
       -- BEGIN LOOP
-      synchronization_with_delta(id_task);
+      --synchronization_with_delta(id_task);
       -- aspetta che finiscano gli incroci
       if array_estremi_strada_urbana(1)/=null then
          array_estremi_strada_urbana(1).wait_turno;
@@ -108,6 +164,18 @@ package body risorse_strade_e_incroci is
       id_task: Positive;
       mailbox: ptr_resource_segmento_ingresso;
       resource_main_strada: ptr_resource_segmento_urbana;
+      list_abitanti: ptr_list_posizione_abitanti_on_road:= null;
+      acceleration: Float:= 0.0;
+      new_speed: Float:= 0.0;
+      new_step: Float:= 0.0;
+      distance_to_next: Float:= 0.0;
+      new_requests: ptr_list_posizione_abitanti_on_road:= null;
+      residente: move_parameters;
+      pragma Warnings(off);
+      default_pos_abitanti: posizione_abitanti_on_road;
+      pragma Warnings(on);
+      current_posizione_abitante: posizione_abitanti_on_road'Class:= default_pos_abitanti;
+      next_posizione_abitante: posizione_abitanti_on_road'Class:= default_pos_abitanti;
    begin
       accept configure(id: Positive) do
          id_task:= id;
@@ -118,12 +186,102 @@ package body risorse_strade_e_incroci is
       wait_settings_all_quartieri;
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
-      -- loop
-      synchronization_with_delta(id_task);
-      resource_main_strada.wait_turno;
+      if id_task=35 and get_id_quartiere=1 then
+         delay 2.0;
+      loop
+      --synchronization_with_delta(id_task);
+      --resource_main_strada.wait_turno;
+      if mailbox.there_are_autos_to_move then
+         list_abitanti:= mailbox.get_main_strada(2);
+         for i in 1..mailbox.get_number_entity_strada(2) loop
+            mailbox.update_position_entity(road,2,i);
+            current_posizione_abitante:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
+            if list_abitanti.all.get_next_from_list_posizione_abitanti/=null then
+               next_posizione_abitante:= list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
+               distance_to_next:= next_posizione_abitante.get_old_posizione-move_parameters(get_quartiere_utilities_obj.all.get_auto_quartiere(next_posizione_abitante.get_id_quartiere_posizione_abitanti,next_posizione_abitante.get_id_abitante_posizione_abitanti)).get_length_entità_passiva-current_posizione_abitante.get_old_posizione;
+               if distance_to_next<=0.0 then acceleration:= 0.0;
+               else
+               acceleration:= calculate_acceleration(mezzo => car,
+                                                     id_abitante => current_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     id_quartiere_abitante => current_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_entity_distance => distance_to_next,
+                                                     distance_to_stop_line => get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_old_posizione+1.0,
+                                                     next_id_quartiere_abitante => next_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_id_abitante => next_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     abitante_velocity => current_posizione_abitante.get_current_speed_abitante,
+                                                     next_abitante_velocity => next_posizione_abitante.get_current_speed_abitante);
+               end if;
+            else
+               acceleration:= calculate_acceleration(mezzo => car,
+                                                     id_abitante => current_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     id_quartiere_abitante => current_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_entity_distance => 0.0,
+                                                     distance_to_stop_line => get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_old_posizione+1.0,
+                                                     next_id_quartiere_abitante => 0,
+                                                     next_id_abitante => 0,
+                                                     abitante_velocity => current_posizione_abitante.get_current_speed_abitante,
+                                                     next_abitante_velocity =>0.0);
+            end if;
+            new_speed:= calculate_new_speed(current_posizione_abitante.get_current_speed_abitante,acceleration);
+            new_step:= calculate_new_step(new_speed,acceleration);
+            mailbox.set_move_parameters_entity_on_main_strada(range_1 => 2,num_entity => i,speed => new_speed,step_to_advance => new_step);
+            --Put_Line("new_speed" & Float'Image(new_speed) & " new_step" & Float'Image(new_step));
+            Put_Line("advance num car" & Positive'Image(i) & Float'Image(current_posizione_abitante.get_where_next_posizione_abitanti));
+            list_abitanti:= list_abitanti.all.get_next_from_list_posizione_abitanti;
+            delay 1.0;
+         end loop;
+      end if;
+      new_requests:= mailbox.get_temp_main_strada;
+      if new_requests/=null then
+         loop
+            list_abitanti:= mailbox.get_main_strada(2);
+            current_posizione_abitante:= new_requests.all.get_posizione_abitanti_from_list_posizione_abitanti;
+            if mailbox.get_number_entity_strada(2)/=0 then
+               next_posizione_abitante:= list_abitanti.all.get_posizione_abitanti_from_list_posizione_abitanti;
+               distance_to_next:= next_posizione_abitante.get_old_posizione-move_parameters(get_quartiere_utilities_obj.all.get_auto_quartiere(next_posizione_abitante.get_id_quartiere_posizione_abitanti,next_posizione_abitante.get_id_abitante_posizione_abitanti)).get_length_entità_passiva-current_posizione_abitante.get_old_posizione;
+               if distance_to_next<=0.0 then acceleration:= 0.0;
+               else
+               acceleration:= calculate_acceleration(mezzo => car,
+                                                     id_abitante => current_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     id_quartiere_abitante => current_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_entity_distance => distance_to_next,
+                                                     distance_to_stop_line => get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_old_posizione+1.0,
+                                                     next_id_quartiere_abitante => next_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_id_abitante => next_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     abitante_velocity => current_posizione_abitante.get_current_speed_abitante,
+                                                     next_abitante_velocity => next_posizione_abitante.get_current_speed_abitante);
+               end if;
+            else
+               acceleration:= calculate_acceleration(mezzo => car,
+                                                     id_abitante => current_posizione_abitante.get_id_abitante_posizione_abitanti,
+                                                     id_quartiere_abitante => current_posizione_abitante.get_id_quartiere_posizione_abitanti,
+                                                     next_entity_distance => 0.0,
+                                                     distance_to_stop_line => get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_old_posizione+1.0,
+                                                     next_id_quartiere_abitante => 0,
+                                                     next_id_abitante => 0,
+                                                     abitante_velocity => current_posizione_abitante.get_current_speed_abitante,
+                                                     next_abitante_velocity =>0.0);
+            end if;
+            new_speed:= calculate_new_speed(0.0,acceleration);
+            new_step:= calculate_new_step(new_speed,acceleration);
+            residente:= move_parameters(get_quartiere_utilities_obj.all.get_auto_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti,current_posizione_abitante.get_id_abitante_posizione_abitanti));
+            if new_speed<0.0 then
+               new_speed:= 0.0;
+            end if;
+            if new_step<0.0 then
+               new_step:= 0.0;
+            end if;
+            mailbox.registra_abitante_to_move(road,new_speed,new_step);
+            new_requests:= mailbox.get_temp_main_strada;
+            exit when residente.get_length_entità_passiva-new_step>=0.0 or new_requests=null;
+         end loop;
+      end if;
+      --if new_step/=0.0 then
+      --end if;
       --quando l'abitante è arrivato occorre invocare l'asincrono abitante_is_arrived del tipo del quartiere del luogo arrivo che muoverà nuovamente l'abitante
-      -- end loop;
-
+      exit when new_step=250.0;
+      end loop;
+      end if;
       Put_Line("Fine task ingresso" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_ingressi;
 
@@ -140,7 +298,7 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       -- loop
-      synchronization_with_delta(id_task);
+      --synchronization_with_delta(id_task);
       delay 5.0;
       mailbox.delta_terminate;
       -- end loop;
@@ -162,7 +320,7 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       -- loop
-      synchronization_with_delta(id_task);
+      --synchronization_with_delta(id_task);
       -- end loop;
 
       Put_Line("Fine task" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));

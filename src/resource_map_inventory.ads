@@ -52,6 +52,9 @@ package resource_map_inventory is
                                   bici: list_bici_quartiere; auto: list_auto_quartiere);
       procedure registra_mappa(id_quartiere: Positive);
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;
+      function get_pedone_quartiere(id_quartiere: Positive; id_abitante: Positive) return pedone;
+      function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici;
+      function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
    private
 
       entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
@@ -105,7 +108,7 @@ private
    rotonde_a_3: list_incroci_a_3:= create_array_rotonde_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
 
    traiettorie_incroci: traiettorie_incrocio:= create_traiettorie_incrocio(json_traiettorie => get_json_traiettorie_incrocio);
-
+   traiettorie_ingressi: traiettorie_ingresso:= create_traiettorie_ingresso(json_traiettorie => get_json_traiettorie_ingresso);
    -- classe utilizzata per settare la posizione corrente di un abitante, per settare il percorso, per ottenere il percorso
    locate_abitanti_quartiere: ptr_location_abitanti:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
 

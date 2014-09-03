@@ -7,6 +7,7 @@ package strade_e_incroci_common is
    subtype id_corsie is Positive range 1..2;
 
    type traiettoria_incroci_type is (destra,sinistra,dritto_1,dritto_2);
+   type traiettoria_ingressi_type is (entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno_1,uscita_ritorno_2);
 
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;
@@ -33,6 +34,13 @@ package strade_e_incroci_common is
    type abitante is tagged private;
    type move_parameters is tagged private;
 
+   function get_id_abitante_entità_passiva(obj: move_parameters) return Positive;
+   function get_id_quartiere_abitante_entità_passiva(obj: move_parameters) return Positive;
+   function get_desired_velocity(obj: move_parameters) return Float;
+   function get_time_headway(obj: move_parameters) return Float;
+   function get_max_acceleration(obj: move_parameters) return Float;
+   function get_comfortable_deceleration(obj: move_parameters) return Float;
+   function get_s0(obj: move_parameters) return Float;
    function get_length_entità_passiva(obj: move_parameters) return Float;
 
    type pedone is new move_parameters with private;
@@ -78,7 +86,7 @@ package strade_e_incroci_common is
 
    function create_new_ingresso(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
                                 val_lunghezza: Float;val_num_corsie: Positive;val_id_main_strada: Positive;
-                                val_distance_from_road_head: Float) return strada_ingresso_features;
+                                val_distance_from_road_head: Float; polo: Boolean) return strada_ingresso_features;
 
    function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto;
 
@@ -106,6 +114,7 @@ package strade_e_incroci_common is
 
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Float;
+   function get_polo_ingresso(road: strada_ingresso_features) return Boolean;
 
    -- begin get methods road_incrocio_features
    function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive;
@@ -146,6 +155,7 @@ private
       id_main_strada : Positive; 	-- strada principale dalla quale si ha la strada d'ingresso
       					-- si tratta sempre di una strada locale e non remota
       distance_from_road_head : Float; -- distanza dalle coordinate from della strada principale
+      polo: Boolean;
    end record;
 
    type road_incrocio_features is tagged record

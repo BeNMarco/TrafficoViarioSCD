@@ -447,7 +447,7 @@
 "strade_ingresso": [
     {
       "id": 1,
-      "lunghezza": 50.0,
+      "lunghezza": 10.0,
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,

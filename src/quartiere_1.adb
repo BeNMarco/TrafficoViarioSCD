@@ -13,6 +13,7 @@ with risorse_strade_e_incroci;
 with start_simulation;
 with data_quartiere;
 with risorse_mappa_utilities;
+with mailbox_risorse_attive;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -25,6 +26,7 @@ use risorse_strade_e_incroci;
 use start_simulation;
 use data_quartiere;
 use risorse_mappa_utilities;
+use mailbox_risorse_attive;
 
 procedure quartiere_1 is
 
@@ -41,5 +43,12 @@ begin
    print_percorso(percor.get_percorso_from_route_and_distance);
    percor:= new route_and_distance'(gps.calcola_percorso(1,1,2,2));
    print_percorso(percor.get_percorso_from_route_and_distance);
+
+   if get_id_quartiere=1 then
+      get_ingressi_segmento_resources(35).new_abitante_to_move(1,get_from_abitanti,car);
+      get_ingressi_segmento_resources(35).new_abitante_to_move(1,get_from_abitanti+1,car);
+   end if;
+
+
    null;
 end quartiere_1;

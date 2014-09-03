@@ -24,6 +24,7 @@ pragma Elaborate_Body;
    function get_json_rotonde_a_4 return JSON_Array;
    function get_json_rotonde_a_3 return JSON_Array;
    function get_json_traiettorie_incrocio return JSON_Value;
+   function get_json_traiettorie_ingresso return JSON_Value;
    function get_from_urbane return Natural;
    function get_to_urbane return Natural;
    function get_from_ingressi return Natural;
@@ -56,6 +57,7 @@ private
    id_mappa: str_quartieri:= get_id_mappa;
    json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/" & str_quartieri'Image(id_mappa) & ".json");
    json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_incroci.json");
+   json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_ingressi.json");
 
    id_quartiere: Positive:= Get(Val => json_quartiere, Field => "id_quartiere");
 
@@ -121,8 +123,8 @@ private
    default_length_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("length");
    default_num_posti_auto: Positive:= Get(Val => json_quartiere, Field => "default_auto").Get("num_posti");
 
-   json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incroci");
-
+   json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incrocio");
+   json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
 
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 

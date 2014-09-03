@@ -119,10 +119,28 @@ package body resource_map_inventory is
       end registra_mappa;
 
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante is
-         ab: abitante;
+         entità: abitante:= entità_abitanti(id_quartiere)(id_abitante);
       begin
-         return ab;
+         return entità;
       end get_abitante_quartiere;
+
+      function get_pedone_quartiere(id_quartiere: Positive; id_abitante: Positive) return pedone is
+         entità: pedone:= entità_pedoni(id_quartiere)(id_abitante);
+      begin
+         return entità;
+      end get_pedone_quartiere;
+
+      function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici is
+         entità: bici:= entità_bici(id_quartiere)(id_abitante);
+      begin
+         return entità;
+      end get_bici_quartiere;
+
+      function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto is
+         entità: auto:= entità_auto(id_quartiere)(id_abitante);
+      begin
+         return entità;
+      end get_auto_quartiere;
 
       function get_classi_locate_abitanti return gps_abitanti_quartieri is
       begin

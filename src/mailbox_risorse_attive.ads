@@ -9,11 +9,29 @@ use data_quartiere;
 package mailbox_risorse_attive is
 
    type posizione_abitanti_on_road is tagged private;
-   type road_state is array (Positive range <>,Positive range <>,Positive range <>) of posizione_abitanti_on_road;
+   type data_structures_types is (road,sidewalk);
+
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
+   function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
+   function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
+   function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
+   function get_to_move_in_delta_posizione_abitanti(obj: posizione_abitanti_on_road) return Boolean;
+   procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float);
+   procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float);
+   procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float);
+   procedure set_to_move_in_delta(obj: in out posizione_abitanti_on_road; to_move_in_delta: Boolean);
+
+   type list_posizione_abitanti_on_road is tagged private;
+   type ptr_list_posizione_abitanti_on_road is access list_posizione_abitanti_on_road;
+
+   function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class;
+   function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
+
+   type road_state is array (Positive range <>,Positive range <>) of ptr_list_posizione_abitanti_on_road;
    --road_state spec
    --	range1: indica i versi della strada, verso strada: 1 => verso polo true -> verso polo false; verso strada: 2 => verso polo false -> verso polo true
    --	range2: num corsie per senso di marcia
-   --	range3: numero massimo di macchine che possono circolare su quel pezzo di strada
    --type sidewalks_state is array (Positive range <>,Positive range <>,Positive range <>,Positive range <>) of posizione_abitanti_on_road;
    --sidewalks_state spec
    --	range1: marciapiede lato strada: verso 1: marciapiede lato polo true -> polo false; verso 2: marciapiede lato polo false -> polo true;
@@ -25,11 +43,14 @@ package mailbox_risorse_attive is
       procedure delta_terminate;
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
+
+      procedure configure(risorsa: strada_urbana_features);
    private
+      risorsa_features: strada_urbana_features;
       finish_delta_urbana: Boolean:= False;
       num_ingressi_ready: Natural:= 0;
-      main_strada: road_state(1..2,1..2,1..max_num_auto);
-      marciapiedi: road_state(1..2,1..2,1..max_num_pedoni);
+      main_strada: road_state(1..2,1..2);
+      marciapiedi: road_state(1..2,1..2);
       main_strada_number_entity: number_entity(1..2,1..2):= (others => (others => 0));
       marciapiedi_num_pedoni_bici: number_entity(1..2,1..2):= (others => (others => 0));
    end resource_segmento_urbana;
@@ -40,14 +61,34 @@ package mailbox_risorse_attive is
    protected type resource_segmento_ingresso(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
-      procedure registra_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
+
+      procedure set_move_parameters_entity_on_main_strada(range_1: Positive; num_entity: Positive;
+                                                          speed: Float; step_to_advance: Float);
+      procedure registra_abitante_to_move(type_structure: data_structures_types; begin_speed: Float; posix: Float);
+      procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
+      procedure update_position_entity(type_structure: data_structures_types; range_1: Positive; index_entity: Positive);
+
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
+
+      function get_main_strada(range_1: Positive) return ptr_list_posizione_abitanti_on_road;
+      function get_marciapiede(range_1: Positive) return ptr_list_posizione_abitanti_on_road;
+      function get_number_entity_strada(range_1: Positive) return Natural;
+      function get_number_entity_marciapiede(range_1: Positive) return Natural;
+      function get_temp_main_strada return ptr_list_posizione_abitanti_on_road;
+      function get_temp_marciapiede return ptr_list_posizione_abitanti_on_road;
+      function get_posix_first_entity(type_structure: data_structures_types; range_1: Positive) return Float;
+
+      procedure configure(risorsa: strada_ingresso_features);
    private
-      main_strada: road_state(1..2,1..2,1..max_num_auto);
-      marciapiedi: road_state(1..2,1..2,1..max_num_pedoni);
-      main_strada_number_entity: number_entity(1..2,1..2):= (others => (others => 0));
-      marciapiedi_num_pedoni_bici: number_entity(1..2,1..2):= (others => (others => 0));
+      risorsa_features: strada_ingresso_features;
+      function slide_list(type_structure: data_structures_types; range_1: Positive; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
+      main_strada: road_state(1..2,1..1);
+      marciapiedi: road_state(1..2,1..1);
+      main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
+      marciapiedi_temp: ptr_list_posizione_abitanti_on_road:= null;
+      main_strada_number_entity: number_entity(1..2,1..1):= (others => (others => 0));
+      marciapiedi_number_entity: number_entity(1..2,1..1):= (others => (others => 0));
    end resource_segmento_ingresso;
    type ptr_resource_segmento_ingresso is access all resource_segmento_ingresso;
    type resource_segmenti_ingressi is array(Positive range <>) of ptr_resource_segmento_ingresso;
@@ -103,7 +144,8 @@ package mailbox_risorse_attive is
 
    function get_id_abitante_from_posizione(obj: posizione_abitanti_on_road) return Positive;
    function get_id_quartiere_from_posizione(obj: posizione_abitanti_on_road) return Positive;
-   function get_where_from_posizione(obj: posizione_abitanti_on_road) return Float;
+   function get_new_posizione(obj: posizione_abitanti_on_road) return Float;
+   function get_old_posizione(obj: posizione_abitanti_on_road) return Float;
    function get_to_move_in_delta(obj: posizione_abitanti_on_road) return Boolean;
 
 private
@@ -111,8 +153,15 @@ private
    type posizione_abitanti_on_road is tagged record
       id_abitante: Positive;
       id_quartiere: Positive;
-      where: Float; -- posizione nella strada corrente dal punto di entrata
+      where_next: Float:= 0.0; -- posizione nella strada corrente dal punto di entrata
+      where_now: Float:= 0.0;
+      current_speed: Float:= 0.0;
       to_move_in_delta: Boolean:= True;
+   end record;
+
+   type list_posizione_abitanti_on_road is tagged record
+      posizione_abitante: posizione_abitanti_on_road;
+      next: ptr_list_posizione_abitanti_on_road:= null;
    end record;
 
    urbane_segmento_resources: ptr_resource_segmenti_urbane;

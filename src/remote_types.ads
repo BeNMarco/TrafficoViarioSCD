@@ -8,6 +8,10 @@ package remote_types is
    -- tipi usati per ottenere informazioni sul percorso che un certo abitante deve intraprendere
    type rt_location_abitanti is synchronized interface;
    type ptr_rt_location_abitanti is access all rt_location_abitanti'Class;
+   procedure set_percorso_abitante(obj: access rt_location_abitanti; id_abitante: Positive; percorso: route_and_distance) is abstract;
+   procedure set_position_abitante_to_next(obj: access rt_location_abitanti; id_abitante: Positive) is abstract;
+   function get_next(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
+   function get_current_position(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
    type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
 
    type rt_quartiere_utilities is synchronized interface;

@@ -7,7 +7,7 @@ package strade_e_incroci_common is
    subtype id_corsie is Positive range 1..2;
 
    type traiettoria_incroci_type is (destra,sinistra,dritto_1,dritto_2);
-   type traiettoria_ingressi_type is (entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno_1,uscita_ritorno_2);
+   type traiettoria_ingressi_type is (entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno_1,uscita_ritorno_2,diritto,uscita_ritorno);
 
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;
@@ -88,7 +88,7 @@ package strade_e_incroci_common is
                                 val_lunghezza: Float;val_num_corsie: Positive;val_id_main_strada: Positive;
                                 val_distance_from_road_head: Float; polo: Boolean) return strada_ingresso_features;
 
-   function create_tratto(id_quartiere: Positive; id_tratto: Positive) return tratto;
+   function create_tratto(id_quartiere: Natural; id_tratto: Natural) return tratto;
 
    function create_percorso(route: percorso; distance: Float) return route_and_distance;
 
@@ -107,10 +107,11 @@ package strade_e_incroci_common is
                         time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
                         s0: Float; length: Float; num_posti: Positive) return auto;
 
-   function create_estremo_urbana(id_quartiere: Natural; id_incrocio: Natural) return estremo_urbana;
+   function create_estremo_urbana(id_quartiere: Natural; id_incrocio: Natural; polo: Boolean) return estremo_urbana;
 
    function get_id_quartiere_estremo_urbana(obj: estremo_urbana) return Natural;
    function get_id_incrocio_estremo_urbana(obj: estremo_urbana) return Natural;
+   function get_polo_estremo_urbana(obj: estremo_urbana) return Boolean;
 
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return Float;
@@ -128,8 +129,8 @@ package strade_e_incroci_common is
    function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural;
    function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural;
 
-   function get_id_quartiere_tratto(segmento: tratto) return Positive;
-   function get_id_tratto(segmento: tratto) return Positive;
+   function get_id_quartiere_tratto(segmento: tratto) return Natural;
+   function get_id_tratto(segmento: tratto) return Natural;
 
    function get_percorso_from_route_and_distance(route: route_and_distance) return percorso;
    function get_distance_from_route_and_distance(route: route_and_distance) return Float;
@@ -139,6 +140,7 @@ private
    type estremo_urbana is tagged record
       id_quartiere: Natural;
       id_incrocio: Natural;
+      polo: Boolean;
    end record;
 
    type rt_strada_features is tagged record
@@ -165,8 +167,8 @@ private
    end record;
 
    type tratto is tagged record
-      id_quartiere: Positive;
-      id_tratto: Positive;
+      id_quartiere: Natural;
+      id_tratto: Natural;
    end record;
 
    type route_and_distance(size_percorso:Natural) is tagged record

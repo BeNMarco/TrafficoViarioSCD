@@ -35,11 +35,20 @@ package resource_map_inventory is
 
    type ptr_route_and_distance is access all route_and_distance'Class;
    type percorso_abitanti is array(Positive range <>) of ptr_route_and_distance;
+   type array_position_abitanti is array(Positive range <>) of Positive;
 
    protected type location_abitanti(num_abitanti: Positive) is new rt_location_abitanti with
+
         procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
+        procedure set_position_abitante_to_next(id_abitante: Positive);
+
+      function get_next(id_abitante: Positive) return tratto;
+      function get_current_position(id_abitante: Positive) return tratto;
+      function get_number_steps_to_finish_route(id_abitante: Positive) return Natural;
+
    private
-      percorsi: percorso_abitanti(1..num_abitanti):= (others => null);
+      percorsi: percorso_abitanti(get_from_abitanti..get_to_abitanti):= (others => null);
+      position_abitanti: array_position_abitanti(get_from_abitanti..get_to_abitanti):= (others => 1);
    end location_abitanti;
 
    type ptr_location_abitanti is access location_abitanti;
@@ -55,6 +64,7 @@ package resource_map_inventory is
       function get_pedone_quartiere(id_quartiere: Positive; id_abitante: Positive) return pedone;
       function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici;
       function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
+      function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
    private
 
       entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
@@ -73,14 +83,10 @@ package resource_map_inventory is
 
    type ptr_strade_urbane_features is access all strade_urbane_features;
 
-   function get_urbana_from_id(index: Positive) return strada_urbana_features;
-   function get_ingresso_from_id(index: Positive) return strada_ingresso_features;
-   function get_incrocio_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
-   function get_incrocio_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
-   function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
-   function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
+   type estremi_resource_strada_urbana is array(Positive range 1..2) of ptr_rt_segmento;
+   type estremi_strada_urbana is array(Positive range 1..2) of estremo_urbana;
 
-   type estremi_strada_urbana is array(Positive range 1..2) of ptr_rt_segmento;
+   function get_resource_estremi_urbana(id_urbana: Positive) return estremi_resource_strada_urbana;
    function get_estremi_urbana(id_urbana: Positive) return estremi_strada_urbana;
 
 private
@@ -100,15 +106,6 @@ private
       inventory_estremi_is_set: Boolean:= False;
    end waiting_cfg;
 
-   urbane_features: strade_urbane_features:= create_array_urbane(json_roads => get_json_urbane, from => get_from_urbane, to => get_to_urbane);
-   ingressi_features: strade_ingresso_features:= create_array_ingressi(json_roads => get_json_ingressi, from => get_from_ingressi, to => get_to_ingressi);
-   incroci_a_4: list_incroci_a_4:= create_array_incroci_a_4(json_incroci => get_json_incroci_a_4, from => get_from_incroci_a_4, to => get_to_incroci_a_4);
-   incroci_a_3: list_incroci_a_3:= create_array_incroci_a_3(json_incroci => get_json_incroci_a_3, from => get_from_incroci_a_3, to => get_to_incroci_a_3);
-   rotonde_a_4: list_incroci_a_4:= create_array_rotonde_a_4(json_incroci => get_json_rotonde_a_4, from => get_from_rotonde_a_4, to => get_to_rotonde_a_4);
-   rotonde_a_3: list_incroci_a_3:= create_array_rotonde_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
-
-   traiettorie_incroci: traiettorie_incrocio:= create_traiettorie_incrocio(json_traiettorie => get_json_traiettorie_incrocio);
-   traiettorie_ingressi: traiettorie_ingresso:= create_traiettorie_ingresso(json_traiettorie => get_json_traiettorie_ingresso);
    -- classe utilizzata per settare la posizione corrente di un abitante, per settare il percorso, per ottenere il percorso
    locate_abitanti_quartiere: ptr_location_abitanti:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
 
@@ -120,5 +117,7 @@ private
    semafori_quartiere_obj: ptr_handler_semafori_quartiere:= new handler_semafori_quartiere;
 
    inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
+
+   inventory_estremi_urbane: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
 
 end resource_map_inventory;

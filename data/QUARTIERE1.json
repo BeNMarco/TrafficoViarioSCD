@@ -450,8 +450,8 @@
       "lunghezza": 10.0,
       "numcorsie": 1,
       "strada_confinante": 1,
-      "polo": true,
-      "distanza_da_from": 200.0,
+      "polo": false,
+      "distanza_da_from": 5.0,
       "from": 0,
       "to": 0
     },

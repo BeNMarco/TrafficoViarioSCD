@@ -3,12 +3,14 @@ with Text_IO;
 with remote_types;
 with data_quartiere;
 with global_data;
+with risorse_passive_data;
 
 use Text_IO;
 
 use remote_types;
 use data_quartiere;
 use global_data;
+use risorse_passive_data;
 
 package body mailbox_risorse_attive is
 
@@ -47,11 +49,11 @@ package body mailbox_risorse_attive is
          for i in 1..2 loop
             for j in 1..2 loop
                if main_strada_number_entity(i,j)/=0 then
-                  for z in max_num_auto-main_strada_number_entity(i,j)..max_num_auto loop
+                  --for z in max_num_auto-main_strada_number_entity(i,j)..max_num_auto loop
                      --if main_strada(i,j,z).to_move_in_delta then
                         return False;
                      --end if;
-                  end loop;
+                  --end loop;
                end if;
             end loop;
          end loop;
@@ -63,11 +65,11 @@ package body mailbox_risorse_attive is
          for i in 1..2 loop
             for j in 1..2 loop
                if marciapiedi_num_pedoni_bici(i,j)/=0 then
-                  for z in max_num_pedoni-marciapiedi_num_pedoni_bici(i,j)..max_num_pedoni loop
+                  --for z in max_num_pedoni-marciapiedi_num_pedoni_bici(i,j)..max_num_pedoni loop
                      --if marciapiedi(i,j,z).to_move_in_delta then
                         return False;
                      --end if;
-                  end loop;
+                  --end loop;
                end if;
             end loop;
          end loop;
@@ -88,10 +90,68 @@ package body mailbox_risorse_attive is
          finish_delta_urbana:= True;
       end delta_terminate;
 
-      procedure configure(risorsa: strada_urbana_features) is
+      procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
+                          list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana) is
+         list: ptr_list_ingressi_per_urbana;
       begin
          risorsa_features:= risorsa;
+         list:= list_ingressi;
+         for i in 1..num_ingressi loop
+            index_ingressi(i):= list.id_ingresso;
+            list:= list.next;
+         end loop;
+         list:= list_ingressi_polo_false;
+         for i in 1..num_ingressi_polo_false loop
+            ordered_ingressi_polo_false(i):= list_ingressi_polo_false.id_ingresso;
+            list:= list.next;
+         end loop;
+         list:= list_ingressi_polo_true;
+         for i in 1..num_ingressi_polo_true loop
+            ordered_ingressi_polo_true(i):= list_ingressi_polo_true.id_ingresso;
+            list:= list.next;
+         end loop;
       end configure;
+
+      procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type;
+                                               id_quartiere_abitante: Positive; id_abitante: Positive) is
+         index: Natural:= get_index_ingresso(id_ingresso);
+         list: ptr_list_posizione_abitanti_on_road:= null;
+         place_abitante: posizione_abitanti_on_road;
+         new_abitante_to_add: ptr_list_posizione_abitanti_on_road:= new list_posizione_abitanti_on_road;
+         prec_list: ptr_list_posizione_abitanti_on_road:= null;
+      begin
+         if index/=0 then
+            list:= set_traiettorie_ingressi(index,type_traiettoria);
+            place_abitante.id_abitante:= id_abitante;
+            place_abitante.id_quartiere:= id_quartiere_abitante;
+            new_abitante_to_add.posizione_abitante:= place_abitante;
+            new_abitante_to_add.next:= null;
+            while list/=null loop
+               prec_list:= list;
+               list:= list.next;
+            end loop;
+            if prec_list=null then
+               set_traiettorie_ingressi(index,type_traiettoria):= new_abitante_to_add;
+            else
+               prec_list.next:= new_abitante_to_add;
+            end if;
+         end if;
+      end aggiungi_entità_from_ingresso;
+
+      function get_index_ingresso(index: Positive) return Natural is
+      begin
+         for i in 1..num_ingressi loop
+            if index_ingressi(i)=index then
+               return i;
+            end if;
+         end loop;
+         return 0;
+      end get_index_ingresso;
+
+      function get_ordered_ingressi_from_polo_true_urbana return indici_ingressi is
+      begin
+         return index_ingressi;
+      end get_ordered_ingressi_from_polo_true_urbana;
 
    end resource_segmento_urbana;
 
@@ -149,8 +209,8 @@ package body mailbox_risorse_attive is
          case type_structure is
             when road =>
                if main_strada_temp/=null then
-                  list_abitanti.next:= main_strada(2,1);
-                  main_strada(2,1):= list_abitanti;
+                  list_abitanti.next:= main_strada(index_inizio_moto,1);
+                  main_strada(index_inizio_moto,1):= list_abitanti;
                   list_abitanti.posizione_abitante.id_abitante:= main_strada_temp.posizione_abitante.id_abitante;
                   list_abitanti.posizione_abitante.id_quartiere:= main_strada_temp.posizione_abitante.id_quartiere;
                   list_abitanti.posizione_abitante.where_now:= 0.0;
@@ -162,7 +222,7 @@ package body mailbox_risorse_attive is
                   list_abitanti.posizione_abitante.current_speed:= begin_speed;
                   list_abitanti.posizione_abitante.to_move_in_delta:= True;
                   main_strada_temp:= main_strada_temp.next;
-                  main_strada_number_entity(2,1):= main_strada_number_entity(2,1)+1;
+                  main_strada_number_entity(index_inizio_moto,1):= main_strada_number_entity(index_inizio_moto,1)+1;
                end if;
             when sidewalk =>
                null;
@@ -251,6 +311,11 @@ package body mailbox_risorse_attive is
          end case;
       end get_posix_first_entity;
 
+      function get_index_inizio_moto return Positive is
+      begin
+         return index_inizio_moto;
+      end get_index_inizio_moto;
+
       function there_are_autos_to_move return Boolean is
       begin
          for i in 1..2 loop
@@ -284,9 +349,10 @@ package body mailbox_risorse_attive is
          return False;
       end there_are_pedoni_or_bici_to_move;
 
-      procedure configure(risorsa: strada_ingresso_features) is
+      procedure configure(risorsa: strada_ingresso_features; inizio_moto: Positive) is
       begin
          risorsa_features:= risorsa;
+         index_inizio_moto:= inizio_moto;
       end configure;
    end resource_segmento_ingresso;
 
@@ -454,6 +520,46 @@ package body mailbox_risorse_attive is
    end get_next_from_list_posizione_abitanti;
 
    type num_ingressi_urbana is array(Positive range <>) of Natural;
+   type num_ingressi_urbana_per_polo is array(Positive range <>,Positive range <>) of Natural;
+
+   procedure update_list_ingressi(lista: ptr_list_ingressi_per_urbana; new_node: ptr_list_ingressi_per_urbana; structure: ingressi_type_structure; indice_ingresso: Positive) is
+      prec_list_ingressi: ptr_list_ingressi_per_urbana;
+      list: ptr_list_ingressi_per_urbana:= lista;
+   begin
+      if list=null then
+         case structure is
+            when not_ordered =>
+               id_ingressi_per_urbana(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+            when ordered_polo_true =>
+               id_ingressi_per_urbana_polo_true(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+            when ordered_polo_false =>
+               id_ingressi_per_urbana_polo_false(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+         end case;
+      else
+         prec_list_ingressi:= null;
+         while list/=null and then get_ingresso_from_id(list.id_ingresso).get_distance_from_road_head_ingresso<get_ingresso_from_id(indice_ingresso).get_distance_from_road_head_ingresso loop
+            prec_list_ingressi:= list;
+            list:= list.next;
+         end loop;
+         if prec_list_ingressi=null then
+            case structure is
+            when not_ordered =>
+               new_node.next:= id_ingressi_per_urbana(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso);
+               id_ingressi_per_urbana(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+            when ordered_polo_true =>
+               new_node.next:= id_ingressi_per_urbana_polo_true(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso);
+               id_ingressi_per_urbana_polo_true(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+            when ordered_polo_false =>
+               new_node.next:= id_ingressi_per_urbana_polo_false(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso);
+               id_ingressi_per_urbana_polo_false(get_ingresso_from_id(indice_ingresso).get_id_main_strada_ingresso):= new_node;
+            end case;
+         else
+            new_node.next:= list;
+            prec_list_ingressi.next:= new_node;
+         end if;
+      end if;
+   end update_list_ingressi;
+
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
                                    incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
                                     rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3) is
@@ -468,15 +574,33 @@ package body mailbox_risorse_attive is
       ptr_resource_rotonde_a_4: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_4);
       ptr_resource_rotonde_a_3: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_3..get_to_rotonde_a_3);
       ingressi_per_urbana: num_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => 0);
+      ingressi_per_urbana_per_polo: num_ingressi_urbana_per_polo(get_from_urbane..get_to_urbane,1..2):= (others => (others => 0));
       index_ingressi: id_ingressi_urbane(get_from_urbane..get_to_urbane):= (others => 1);
+      node_ingressi: ptr_list_ingressi_per_urbana;
+      node_ordered_ingressi: ptr_list_ingressi_per_urbana;
+      index_inizio_moto: Positive;
    begin
 
       for i in get_from_ingressi..get_to_ingressi loop
+         node_ingressi:= new list_ingressi_per_urbana;
+         node_ordered_ingressi:= new list_ingressi_per_urbana;
          val_ptr_resource_ingresso:= new resource_segmento_ingresso(id_risorsa => ingressi(i).get_id_road,
                                                                     max_num_auto => calculate_max_num_auto(ingressi(i).get_lunghezza_road),
                                                                     max_num_pedoni => calculate_max_num_pedoni(ingressi(i).get_lunghezza_road));
-         val_ptr_resource_ingresso.configure(ingressi(i));
+         node_ordered_ingressi.id_ingresso:=i;
+         if ingressi(i).get_polo_ingresso then
+            index_inizio_moto:= 1;
+            ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,1):= ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,1)+1;
+            update_list_ingressi(id_ingressi_per_urbana_polo_true(ingressi(i).get_id_main_strada_ingresso),node_ordered_ingressi,ordered_polo_true,i);
+         else
+            index_inizio_moto:= 2;
+            ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,2):= ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,2)+1;
+            update_list_ingressi(id_ingressi_per_urbana_polo_false(ingressi(i).get_id_main_strada_ingresso),node_ordered_ingressi,ordered_polo_false,i);
+         end if;
+         val_ptr_resource_ingresso.configure(ingressi(i),index_inizio_moto);
          ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso):= ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso)+1;
+         node_ingressi.id_ingresso:= i;
+         update_list_ingressi(id_ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso),node_ingressi,not_ordered,i);
          ptr_resource_ingressi(i):= val_ptr_resource_ingresso;
       end loop;
       ingressi_segmento_resources:= ptr_resource_ingressi;
@@ -484,9 +608,9 @@ package body mailbox_risorse_attive is
       for i in get_from_urbane..get_to_urbane loop
          val_ptr_resource_urbana:= new resource_segmento_urbana(id_risorsa => urbane(i).get_id_road,
                                                                 num_ingressi => ingressi_per_urbana(urbane(i).get_id_road),
-                                                                max_num_auto => calculate_max_num_auto(urbane(i).get_lunghezza_road),
-                                                                max_num_pedoni => calculate_max_num_pedoni(urbane(i).get_lunghezza_road));
-         val_ptr_resource_urbana.configure(urbane(i));
+                                                                num_ingressi_polo_true => ingressi_per_urbana_per_polo(urbane(i).get_id_road,1),
+                                                                num_ingressi_polo_false => ingressi_per_urbana_per_polo(urbane(i).get_id_road,2));
+         val_ptr_resource_urbana.configure(urbane(i),id_ingressi_per_urbana(i),id_ingressi_per_urbana_polo_true(i),id_ingressi_per_urbana_polo_false(i));
          ptr_resource_urbane(i):= val_ptr_resource_urbana;
       end loop;
       urbane_segmento_resources:= ptr_resource_urbane;
@@ -552,5 +676,10 @@ package body mailbox_risorse_attive is
    begin
       return obj.to_move_in_delta;
    end get_to_move_in_delta;
+
+   function get_list_ingressi_urbana(id_urbana: Positive) return ptr_list_ingressi_per_urbana is
+   begin
+      return id_ingressi_per_urbana(id_urbana);
+   end get_list_ingressi_urbana;
 
 end mailbox_risorse_attive;

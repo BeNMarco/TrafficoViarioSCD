@@ -10,3 +10,7 @@ quartiere1
 ior.txt
 quartiere_1
 partitions/
+view/partitions/
+view/dsa/
+*dsa-nameserver.sh
+*ns.txt

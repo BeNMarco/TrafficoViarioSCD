@@ -29,7 +29,7 @@ package body start_simulation is
             resource_segmento:= get_id_risorsa_quartiere(residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante);
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
             get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante, to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante));
-            get_ingressi_segmento_resources(residente.get_id_luogo_casa_from_abitante).registra_abitante_to_move(id_quartiere => get_id_quartiere,id_abitante => i,mezzo => car);
+            --get_ingressi_segmento_resources(residente.get_id_luogo_casa_from_abitante).registra_abitante_to_move(road,);
          end loop;
       end start_entity_to_move;
 

@@ -5,7 +5,7 @@ obj/
 main
 dsa
 bin
-centralized_server
+configuration_server
 quartiere1
 ior.txt
 quartiere_1

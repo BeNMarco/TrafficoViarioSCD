@@ -56,7 +56,7 @@ package gps_utilities is
                                            rotonde_a_3: list_incroci_a_3);
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance;
-      function get_estremi_urbana(id_quartiere: Positive; id_urbana: Positive) return estremi_urbana;
+      function get_estremi_strade_urbane(id_quartiere: Positive) return estremi_strade_urbane;
    private
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;

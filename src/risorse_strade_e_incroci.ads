@@ -60,6 +60,7 @@ package risorse_strade_e_incroci is
    function calculate_new_speed(current_speed: Float; acceleration: Float) return Float;
    function calculate_new_step(new_speed: Float; acceleration: Float) return Float;
    function calculate_traiettoria_to_follow_from_ingresso(id_quartiere_abitante: Positive; id_abitante: Positive; id_ingresso: Positive; ingressi: indici_ingressi) return traiettoria_ingressi_type;
+   function calculate_trajectory_to_follow_on_main_strada_from_ingresso(id_quartiere_abitante: Positive; id_abitante: Positive; from_ingresso: Positive; traiettoria_type: traiettoria_ingressi_type) return trajectory_to_follow;
 
 private
    task_urbane: task_container_urbane(get_from_urbane..get_to_urbane);

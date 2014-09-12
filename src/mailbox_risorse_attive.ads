@@ -8,6 +8,7 @@ use data_quartiere;
 
 package mailbox_risorse_attive is
 
+   type trajectory_to_follow is tagged private;
    type posizione_abitanti_on_road is tagged private;
    type data_structures_types is (road,sidewalk);
 
@@ -19,11 +20,13 @@ package mailbox_risorse_attive is
    function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
-   function get_to_move_in_delta_posizione_abitanti(obj: posizione_abitanti_on_road) return Boolean;
+   function get_in_overtaken(obj: posizione_abitanti_on_road) return Boolean;
+   function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class;
+
    procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float);
    procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float);
    procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float);
-   procedure set_to_move_in_delta(obj: in out posizione_abitanti_on_road; to_move_in_delta: Boolean);
+   procedure set_in_overtaken(obj: in out posizione_abitanti_on_road; in_overtaken: Boolean);
 
    type list_posizione_abitanti_on_road is tagged private;
    type ptr_list_posizione_abitanti_on_road is access list_posizione_abitanti_on_road;
@@ -31,34 +34,53 @@ package mailbox_risorse_attive is
    function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class;
    function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
 
-   type road_state is array (Positive range <>,Positive range <>) of ptr_list_posizione_abitanti_on_road;
-   type number_entity is array (Positive range <>,Positive range <>) of Natural;
+   type road_state is array (Boolean range <>,Positive range <>) of ptr_list_posizione_abitanti_on_road;
+   type number_entity is array (Boolean range <>,Positive range <>) of Natural;
    type indici_ingressi is array (Positive range <>) of Positive;
+   type ptr_indici_ingressi is access indici_ingressi;
+   type ordered_indici_ingressi is array (Boolean range <>) of ptr_indici_ingressi;
    type array_traiettorie_ingressi is array (Positive range <>,traiettoria_ingressi_type range <>) of ptr_list_posizione_abitanti_on_road;
+
+   type ingressi_type is (not_ordered,ordered_polo_true,ordered_polo_false);
+   type ingressi_in_svolta is array(Positive range <>) of traiettoria_ingressi_type;
+   type ptr_ingressi_in_svolta is access ingressi_in_svolta;
+   type ordered_ingressi_in_svolta is array(Boolean range <>) of ptr_ingressi_in_svolta;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
-      procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive);
+      procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
+      procedure set_move_parameters_entity_on_traiettoria_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float);
 
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
-      function get_ordered_ingressi_from_polo_true_urbana return indici_ingressi;
+      function get_ordered_ingressi_from_polo(polo: Boolean) return ptr_indici_ingressi;
+      function is_index_ingresso_in_svolta(ingresso: Positive; traiettoria: traiettoria_ingressi_type) return Boolean;
+      function get_ingressi_ordered_by_distance return indici_ingressi;
+      function get_index_ingresso_from_key(key: Positive; ingressi_structure_type: ingressi_type) return Natural;
+      function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
+      function get_abitante_from_ingresso(ingresso_key: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
+      function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
+      function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
+      function can_abitante_continue_move(distance: Float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
+      function get_abitanti_on_road(range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
+
+      function get_num_ingressi_polo(polo: Boolean) return Natural;
+      function get_num_ingressi return Natural;
    private
-      function get_index_ingresso(index: Positive) return Natural;
       index_ingressi: indici_ingressi(1..num_ingressi);
-      ordered_ingressi_polo_true: indici_ingressi(1..num_ingressi_polo_true);
-      ordered_ingressi_polo_false: indici_ingressi(1..num_ingressi_polo_false);
+      ordered_ingressi_polo: ordered_indici_ingressi(False..True):= (False => new indici_ingressi(1..num_ingressi_polo_false),True => new indici_ingressi(1..num_ingressi_polo_true));
+      ordered_ingressi_polo_svolta: ordered_ingressi_in_svolta(False..True):= (False => new ingressi_in_svolta(1..num_ingressi_polo_false),True => new ingressi_in_svolta(1..num_ingressi_polo_true));
       set_traiettorie_ingressi: array_traiettorie_ingressi(1..num_ingressi,traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last);
       risorsa_features: strada_urbana_features;
       finish_delta_urbana: Boolean:= False;
       num_ingressi_ready: Natural:= 0;
-      main_strada: road_state(1..2,1..2); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
-      marciapiedi: road_state(1..2,1..2);
-      main_strada_number_entity: number_entity(1..2,1..2):= (others => (others => 0));
-      marciapiedi_num_pedoni_bici: number_entity(1..2,1..2):= (others => (others => 0));
+      main_strada: road_state(False..True,1..2); -- RANGE1=1 percorrenza macchine da estremo false a estremo true; VICEVERSA per RANGE1=2
+      marciapiedi: road_state(False..True,1..2);
+      main_strada_number_entity: number_entity(False..True,1..2):= (others => (others => 0));
+      marciapiedi_num_pedoni_bici: number_entity(False..True,1..2):= (others => (others => 0));
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
@@ -68,35 +90,36 @@ package mailbox_risorse_attive is
       entry wait_turno;
       procedure delta_terminate;
 
-      procedure set_move_parameters_entity_on_main_strada(range_1: Positive; num_entity: Positive;
+      procedure set_move_parameters_entity_on_main_strada(range_1: Boolean; num_entity: Positive;
                                                           speed: Float; step_to_advance: Float);
       procedure registra_abitante_to_move(type_structure: data_structures_types; begin_speed: Float; posix: Float);
       procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
-      procedure update_position_entity(type_structure: data_structures_types; range_1: Positive; index_entity: Positive);
+      procedure update_position_entity(type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
 
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
 
-      function get_main_strada(range_1: Positive) return ptr_list_posizione_abitanti_on_road;
-      function get_marciapiede(range_1: Positive) return ptr_list_posizione_abitanti_on_road;
-      function get_number_entity_strada(range_1: Positive) return Natural;
-      function get_number_entity_marciapiede(range_1: Positive) return Natural;
+      function get_main_strada(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
+      function get_marciapiede(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
+      function get_number_entity_strada(range_1: Boolean) return Natural;
+      function get_number_entity_marciapiede(range_1: Boolean) return Natural;
       function get_temp_main_strada return ptr_list_posizione_abitanti_on_road;
       function get_temp_marciapiede return ptr_list_posizione_abitanti_on_road;
-      function get_posix_first_entity(type_structure: data_structures_types; range_1: Positive) return Float;
-      function get_index_inizio_moto return Positive;
+      function get_posix_first_entity(type_structure: data_structures_types; range_1: Boolean) return Float;
+      function get_index_inizio_moto return Boolean;
+      function get_first_abitante_to_exit_from_urbana return ptr_list_posizione_abitanti_on_road;
 
-      procedure configure(risorsa: strada_ingresso_features; inizio_moto: Positive);
+      procedure configure(risorsa: strada_ingresso_features; inizio_moto: Boolean);
    private
-      index_inizio_moto: Positive;
+      index_inizio_moto: Boolean;
       risorsa_features: strada_ingresso_features;
-      function slide_list(type_structure: data_structures_types; range_1: Positive; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
-      main_strada: road_state(1..2,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
-      marciapiedi: road_state(1..2,1..1);
+      function slide_list(type_structure: data_structures_types; range_1: Boolean; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
+      main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
+      marciapiedi: road_state(False..True,1..1);
       main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
       marciapiedi_temp: ptr_list_posizione_abitanti_on_road:= null;
-      main_strada_number_entity: number_entity(1..2,1..1):= (others => (others => 0));
-      marciapiedi_number_entity: number_entity(1..2,1..1):= (others => (others => 0));
+      main_strada_number_entity: number_entity(False..True,1..1):= (others => (others => 0));
+      marciapiedi_number_entity: number_entity(False..True,1..1):= (others => (others => 0));
    end resource_segmento_ingresso;
    type ptr_resource_segmento_ingresso is access all resource_segmento_ingresso;
    type resource_segmenti_ingressi is array(Positive range <>) of ptr_resource_segmento_ingresso;
@@ -150,22 +173,27 @@ package mailbox_risorse_attive is
                                    incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
                                     rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3);
 
-   function get_id_abitante_from_posizione(obj: posizione_abitanti_on_road) return Positive;
-   function get_id_quartiere_from_posizione(obj: posizione_abitanti_on_road) return Positive;
-   function get_new_posizione(obj: posizione_abitanti_on_road) return Float;
-   function get_old_posizione(obj: posizione_abitanti_on_road) return Float;
-   function get_to_move_in_delta(obj: posizione_abitanti_on_road) return Boolean;
+   function create_trajectory_to_follow(corsia_to_go: Natural; ingresso_to_go: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow;
+
+   function get_corsia_to_go_trajectory(obj: trajectory_to_follow) return Natural;
+   function get_ingresso_to_go_trajectory(obj: trajectory_to_follow) return Natural;
+   function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type;
 
    type array_index_ingressi_urbana is array(Positive range <>) of ptr_list_ingressi_per_urbana;
+   type array_index_ingressi_urbana_per_polo is array(Positive range <>, Boolean range <>) of ptr_list_ingressi_per_urbana;
 
    function get_list_ingressi_urbana(id_urbana: Positive) return ptr_list_ingressi_per_urbana;
 
-   type ingressi_type_structure is (not_ordered,ordered_polo_true,ordered_polo_false);
-
    procedure update_list_ingressi(lista: ptr_list_ingressi_per_urbana; new_node: ptr_list_ingressi_per_urbana;
-                                  structure: ingressi_type_structure; indice_ingresso: Positive);
+                                  structure: ingressi_type; indice_ingresso: Positive);
 
 private
+
+   type trajectory_to_follow is tagged record
+      corsia_to_go: Natural:= 0;
+      ingresso_to_go: Natural:= 0;
+      traiettoria_incrocio_to_follow: traiettoria_incroci_type:= empty;
+   end record;
 
    type posizione_abitanti_on_road is tagged record
       id_abitante: Positive;
@@ -173,7 +201,8 @@ private
       where_next: Float:= 0.0; -- posizione nella strada corrente dal punto di entrata
       where_now: Float:= 0.0;
       current_speed: Float:= 0.0;
-      to_move_in_delta: Boolean:= True;
+      in_overtaken: Boolean:= False;
+      destination: trajectory_to_follow;
    end record;
 
    type list_posizione_abitanti_on_road is tagged record
@@ -195,7 +224,6 @@ private
    ingressi_urbane: ingressi_of_urbane(get_from_urbane..get_to_urbane);
 
    id_ingressi_per_urbana: array_index_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => null);
-   id_ingressi_per_urbana_polo_true: array_index_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => null);
-   id_ingressi_per_urbana_polo_false: array_index_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => null);
+   id_ingressi_per_urbana_per_polo: array_index_ingressi_urbana_per_polo(get_from_urbane..get_to_urbane,False..True):= (others =>(others => null));
 
 end mailbox_risorse_attive;

@@ -11,6 +11,7 @@ package remote_types is
    procedure set_percorso_abitante(obj: access rt_location_abitanti; id_abitante: Positive; percorso: route_and_distance) is abstract;
    procedure set_position_abitante_to_next(obj: access rt_location_abitanti; id_abitante: Positive) is abstract;
    function get_next(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
+   function get_next_road(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
    function get_current_position(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
    type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
 
@@ -20,6 +21,9 @@ package remote_types is
    procedure registra_abitanti(obj: access rt_quartiere_utilities; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
    procedure registra_mappa(obj: access rt_quartiere_utilities; id_quartiere: Positive) is abstract;
+   procedure get_cfg_incrocio(obj: access rt_quartiere_utilities; id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural) is abstract;
+   function get_type_entity(obj: access rt_quartiere_utilities; id_entità: Positive) return entity_type is abstract;
+   function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Positive is abstract;
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
    type rt_handler_semafori_quartiere is abstract tagged limited private;

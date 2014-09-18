@@ -26,6 +26,8 @@ package risorse_passive_data is
    function get_rotonde_a_4 return list_incroci_a_4;
    function get_rotonde_a_3 return list_incroci_a_3;
 
+   function get_distance_from_polo_percorrenza(road: strada_ingresso_features) return Float;
+
    function get_traiettoria_ingresso(type_traiettoria: traiettoria_ingressi_type) return traiettoria_ingresso;
 
    protected type quartiere_utilities is new rt_quartiere_utilities with

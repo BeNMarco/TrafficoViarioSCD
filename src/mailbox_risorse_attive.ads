@@ -21,6 +21,8 @@ package mailbox_risorse_attive is
    function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
    function get_in_overtaken(obj: posizione_abitanti_on_road) return Boolean;
+   function get_distance_at_witch_begin_overtaken(obj: posizione_abitanti_on_road) return Float;
+   function get_distance_on_overtaking_trajectory(obj: posizione_abitanti_on_road) return Float;
    function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class;
 
    procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float);
@@ -30,6 +32,8 @@ package mailbox_risorse_attive is
 
    type list_posizione_abitanti_on_road is tagged private;
    type ptr_list_posizione_abitanti_on_road is access list_posizione_abitanti_on_road;
+
+   function calculate_bound_to_overtake(abitante: ptr_list_posizione_abitanti_on_road) return Float;
 
    function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class;
    function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
@@ -53,6 +57,8 @@ package mailbox_risorse_attive is
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
       procedure set_move_parameters_entity_on_traiettoria_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float);
+      procedure set_move_parameters_entity_on_main_road(polo: Boolean; num_corsia: id_corsie; speed: Float; step: Float);
+      procedure set_car_overtaken(value_overtaken: Boolean; car: in out ptr_list_posizione_abitanti_on_road);
 
       function there_are_autos_to_move return Boolean;
       function there_are_pedoni_or_bici_to_move return Boolean;
@@ -66,6 +72,11 @@ package mailbox_risorse_attive is
       function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: Float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function get_abitanti_on_road(range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
+      function get_number_entity(structure: data_structures_types; polo: Boolean; num_corsia: id_corsie) return Natural;
+      function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return Float;
+      function can_car_overtake(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; to_corsia: id_corsie) return Boolean;
+      function there_are_cars_moving_across_next_ingressi(car: ptr_list_posizione_abitanti_on_road; polo: Boolean) return Boolean;
+      function car_can_initiate_overtaken_on_road(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
 
       function get_num_ingressi_polo(polo: Boolean) return Natural;
       function get_num_ingressi return Natural;
@@ -173,8 +184,9 @@ package mailbox_risorse_attive is
                                    incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
                                     rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3);
 
-   function create_trajectory_to_follow(corsia_to_go: Natural; ingresso_to_go: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow;
+   function create_trajectory_to_follow(from_corsia: Natural; corsia_to_go: Natural; ingresso_to_go: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow;
 
+   function get_departure_corsia(obj: trajectory_to_follow) return Natural;
    function get_corsia_to_go_trajectory(obj: trajectory_to_follow) return Natural;
    function get_ingresso_to_go_trajectory(obj: trajectory_to_follow) return Natural;
    function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type;
@@ -190,6 +202,7 @@ package mailbox_risorse_attive is
 private
 
    type trajectory_to_follow is tagged record
+      departure_corsia: Natural;
       corsia_to_go: Natural:= 0;
       ingresso_to_go: Natural:= 0;
       traiettoria_incrocio_to_follow: traiettoria_incroci_type:= empty;
@@ -202,6 +215,8 @@ private
       where_now: Float:= 0.0;
       current_speed: Float:= 0.0;
       in_overtaken: Boolean:= False;
+      distance_at_witch_begin_overtaken: Float:= 0.0;
+      distance_on_overtaking_trajectory: Float:= 0.0;
       destination: trajectory_to_follow;
    end record;
 

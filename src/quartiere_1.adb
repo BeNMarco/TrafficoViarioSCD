@@ -14,6 +14,7 @@ with start_simulation;
 with data_quartiere;
 with risorse_mappa_utilities;
 with mailbox_risorse_attive;
+with risorse_passive_data;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -28,6 +29,7 @@ use start_simulation;
 use data_quartiere;
 use risorse_mappa_utilities;
 use mailbox_risorse_attive;
+use risorse_passive_data;
 
 procedure quartiere_1 is
 

@@ -10,25 +10,12 @@
       "lunghezza": 25.629440581681415,
       "intersezioni": [
         {
-          "traiettoria": "uscita_ritorno_1",
-          "distanza": 8.30032596325536
-        },
-        {
-          "traiettoria": "uscita_ritorno_2",
+          "traiettoria": "uscita_ritorno",
           "distanza": 5.971722426392999
         }
       ]
     },
-    "uscita_ritorno_1": {
-      "lunghezza": 25.6294405816816,
-      "intersezioni": [
-        {
-          "traiettoria": "entrata_ritorno",
-          "distanza": 17.329114618420533
-        }
-      ]
-    },
-    "uscita_ritorno_2": {
+    "uscita_ritorno": {
       "lunghezza": 32.02998249100802,
       "intersezioni": [
         {

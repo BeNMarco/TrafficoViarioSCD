@@ -3,11 +3,12 @@ package strade_e_incroci_common is
    pragma Pure;
 
    type type_strade is (urbana,ingresso);
+   type entity_type is (empty,urbana,ingresso,incrocio_a_4,incrocio_a_3,rotonda_a_4);
 
    subtype id_corsie is Positive range 1..2;
 
-   type traiettoria_incroci_type is (destra,sinistra,dritto_1,dritto_2);
-   type traiettoria_ingressi_type is (entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno_1,uscita_ritorno_2,diritto,uscita_ritorno);
+   type traiettoria_incroci_type is (empty,destra,sinistra,dritto_1,dritto_2,dritto);
+   type traiettoria_ingressi_type is (empty,entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno);
 
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;

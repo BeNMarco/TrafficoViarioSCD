@@ -209,8 +209,9 @@ package body risorse_mappa_utilities is
       traiettoria_entrata_andata: JSON_Value;
       traiettoria_uscita_andata: JSON_Value;
       traiettoria_entrata_ritorno: JSON_Value;
-      traiettoria_uscita_ritorno_1: JSON_Value;
-      traiettoria_uscita_ritorno_2: JSON_Value;
+      traiettoria_uscita_ritorno: JSON_Value;
+      --traiettoria_uscita_ritorno_1: JSON_Value;
+      --traiettoria_uscita_ritorno_2: JSON_Value;
       intersezioni: JSON_Array;
       intersezione: JSON_Value;
       array_intersezioni: ptr_intersezioni_ingresso:= null;
@@ -218,32 +219,40 @@ package body risorse_mappa_utilities is
       traiettoria_entrata_andata:= Get(Val => json_traiettorie, Field => "entrata_andata");
       traiettoria_uscita_andata:= Get(Val => json_traiettorie, Field => "uscita_andata");
       traiettoria_entrata_ritorno:= Get(Val => json_traiettorie, Field => "entrata_ritorno");
-      traiettoria_uscita_ritorno_1:= Get(Val => json_traiettorie, Field => "uscita_ritorno_1");
-      traiettoria_uscita_ritorno_2:= Get(Val => json_traiettorie, Field => "uscita_ritorno_2");
+      traiettoria_uscita_ritorno:= Get(Val => json_traiettorie, Field => "uscita_ritorno");
+      --traiettoria_uscita_ritorno_1:= Get(Val => json_traiettorie, Field => "uscita_ritorno_1");
+      --traiettoria_uscita_ritorno_2:= Get(Val => json_traiettorie, Field => "uscita_ritorno_2");
 
       traiettorie(entrata_andata):= create_traiettoria_ingresso(Get(Val => traiettoria_entrata_andata, Field => "lunghezza"),null);
 
       traiettorie(uscita_andata):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_andata, Field => "lunghezza"),null);
 
       intersezioni:= Get(Val => traiettoria_entrata_ritorno, Field => "intersezioni");
-      array_intersezioni:= new intersezioni_ingresso(1..2);
+      --array_intersezioni:= new intersezioni_ingresso(1..2);
+      array_intersezioni:= new intersezioni_ingresso(1..1);
       intersezione:= Get(Arr => intersezioni,Index => 1);
-      array_intersezioni(1):= create_intersezione_ingresso(uscita_ritorno_1,Get(Val => intersezione, Field => "distanza"));
-      intersezione:= Get(Arr => intersezioni,Index => 2);
-      array_intersezioni(2):= create_intersezione_ingresso(uscita_ritorno_2,Get(Val => intersezione, Field => "distanza"));
+      array_intersezioni(1):= create_intersezione_ingresso(uscita_ritorno,Get(Val => intersezione, Field => "distanza"));
+      --intersezione:= Get(Arr => intersezioni,Index => 2);
+      --array_intersezioni(2):= create_intersezione_ingresso(uscita_ritorno_2,Get(Val => intersezione, Field => "distanza"));
       traiettorie(entrata_ritorno):= create_traiettoria_ingresso(Get(Val => traiettoria_entrata_ritorno, Field => "lunghezza"),array_intersezioni);
 
-      intersezioni:= Get(Val => traiettoria_uscita_ritorno_1, Field => "intersezioni");
+      intersezioni:= Get(Val => traiettoria_uscita_ritorno, Field => "intersezioni");
       array_intersezioni:= new intersezioni_ingresso(1..1);
       intersezione:= Get(Arr => intersezioni,Index => 1);
       array_intersezioni(1):= create_intersezione_ingresso(entrata_ritorno,Get(Val => intersezione, Field => "distanza"));
-      traiettorie(uscita_ritorno_1):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno_1, Field => "lunghezza"),array_intersezioni);
+      traiettorie(uscita_ritorno):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno, Field => "lunghezza"),array_intersezioni);
 
-      intersezioni:= Get(Val => traiettoria_uscita_ritorno_2, Field => "intersezioni");
-      array_intersezioni:= new intersezioni_ingresso(1..1);
-      intersezione:= Get(Arr => intersezioni,Index => 1);
-      array_intersezioni(1):= create_intersezione_ingresso(entrata_ritorno,Get(Val => intersezione, Field => "distanza"));
-      traiettorie(uscita_ritorno_2):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno_2, Field => "lunghezza"),array_intersezioni);
+      --intersezioni:= Get(Val => traiettoria_uscita_ritorno_1, Field => "intersezioni");
+      --array_intersezioni:= new intersezioni_ingresso(1..1);
+      --intersezione:= Get(Arr => intersezioni,Index => 1);
+      --array_intersezioni(1):= create_intersezione_ingresso(entrata_ritorno,Get(Val => intersezione, Field => "distanza"));
+      --traiettorie(uscita_ritorno_1):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno_1, Field => "lunghezza"),array_intersezioni);
+
+      --intersezioni:= Get(Val => traiettoria_uscita_ritorno_2, Field => "intersezioni");
+      --array_intersezioni:= new intersezioni_ingresso(1..1);
+      --intersezione:= Get(Arr => intersezioni,Index => 1);
+      --array_intersezioni(1):= create_intersezione_ingresso(entrata_ritorno,Get(Val => intersezione, Field => "distanza"));
+      --traiettorie(uscita_ritorno_2):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno_2, Field => "lunghezza"),array_intersezioni);
 
       return traiettorie;
    end create_traiettorie_ingresso;
@@ -334,6 +343,23 @@ package body risorse_mappa_utilities is
       intersezione.distanza:= distanza;
       return intersezione;
    end create_intersezione_incrocio;
+
+   function get_lunghezza(obj: traiettoria_ingresso) return Float is
+   begin
+      return obj.lunghezza;
+   end get_lunghezza;
+   function get_intersezioni(obj: traiettoria_ingresso) return ptr_intersezioni_ingresso is
+   begin
+      return obj.intersezioni;
+   end get_intersezioni;
+   function get_traiettoria_intersezione(obj: intersezione_ingresso) return traiettoria_ingressi_type is
+   begin
+      return obj.traiettoria;
+   end get_traiettoria_intersezione;
+   function get_distanza_intersezione(obj: intersezione_ingresso) return Float is
+   begin
+      return obj.distanza;
+   end get_distanza_intersezione;
 
    procedure print_percorso(route: percorso) is
    begin

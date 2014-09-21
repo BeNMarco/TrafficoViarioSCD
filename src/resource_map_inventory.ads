@@ -31,83 +31,15 @@ package resource_map_inventory is
 
    type ptr_wait_all_quartieri is access wait_all_quartieri;
 
-   procedure wait_settings_all_quartieri;
-
-   type ptr_route_and_distance is access all route_and_distance'Class;
-   type percorso_abitanti is array(Positive range <>) of ptr_route_and_distance;
-   type array_position_abitanti is array(Positive range <>) of Positive;
-
-   protected type location_abitanti(num_abitanti: Positive) is new rt_location_abitanti with
-
-        procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
-        procedure set_position_abitante_to_next(id_abitante: Positive);
-
-      function get_next(id_abitante: Positive) return tratto;
-      function get_current_position(id_abitante: Positive) return tratto;
-      function get_number_steps_to_finish_route(id_abitante: Positive) return Natural;
-
-   private
-      percorsi: percorso_abitanti(get_from_abitanti..get_to_abitanti):= (others => null);
-      position_abitanti: array_position_abitanti(get_from_abitanti..get_to_abitanti):= (others => 1);
-   end location_abitanti;
-
-   type ptr_location_abitanti is access location_abitanti;
-
-   function get_locate_abitanti_quartiere return ptr_location_abitanti;
-
-   protected type quartiere_utilities is new rt_quartiere_utilities with
-      procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
-      procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
-                                  bici: list_bici_quartiere; auto: list_auto_quartiere);
-      procedure registra_mappa(id_quartiere: Positive);
-      function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;
-      function get_pedone_quartiere(id_quartiere: Positive; id_abitante: Positive) return pedone;
-      function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici;
-      function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
-      function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
-   private
-
-      entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
-      entità_pedoni: list_pedoni_quartieri(1..get_num_quartieri);
-      entità_bici: list_bici_quartieri(1..get_num_quartieri);
-      entità_auto: list_auto_quartieri(1..get_num_quartieri);
-
-      -- array i quali oggetti sono del tipo ptr_rt_location_abitanti per ottenere le informazioni esposte sopra per gps_abitanti
-      rt_classi_locate_abitanti: gps_abitanti_quartieri(1..get_num_quartieri);
-
-   end quartiere_utilities;
-
-   type ptr_quartiere_utilities is access all quartiere_utilities;
-
-   function get_quartiere_utilities_obj return ptr_quartiere_utilities;
-
    type ptr_strade_urbane_features is access all strade_urbane_features;
 
-   type estremi_resource_strada_urbana is array(Positive range 1..2) of ptr_rt_segmento;
-   type estremi_strada_urbana is array(Positive range 1..2) of estremo_urbana;
-
-   function get_resource_estremi_urbana(id_urbana: Positive) return estremi_resource_strada_urbana;
-   function get_estremi_urbana(id_urbana: Positive) return estremi_strada_urbana;
+   function get_quartiere_cfg(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
 
 private
 
-   quartiere_cfg: ptr_quartiere_utilities:= new quartiere_utilities;
+   registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
+
    waiting_object: ptr_wait_all_quartieri:= new wait_all_quartieri;
-
-   protected waiting_cfg is
-      procedure incrementa_classi_locate_abitanti;
-      procedure incrementa_num_quartieri_abitanti;
-      procedure incrementa_resource_mappa_quartieri;
-      entry wait_cfg;
-   private
-      num_classi_locate_abitanti: Natural:= 0;
-      num_abitanti_quartieri_registrati: Natural:= 0;
-      num_quartieri_resource_registrate: Natural:= 0;
-      inventory_estremi_is_set: Boolean:= False;
-   end waiting_cfg;
-
-   -- classe utilizzata per settare la posizione corrente di un abitante, per settare il percorso, per ottenere il percorso
-   locate_abitanti_quartiere: ptr_location_abitanti:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
 
    -- server gps
    gps: ptr_gps_interface:= get_server_gps;
@@ -115,9 +47,5 @@ private
    synchronization_tasks_partition: ptr_synchronization_tasks:= new synchronization_tasks;
 
    semafori_quartiere_obj: ptr_handler_semafori_quartiere:= new handler_semafori_quartiere;
-
-   inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
-
-   inventory_estremi_urbane: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
 
 end resource_map_inventory;

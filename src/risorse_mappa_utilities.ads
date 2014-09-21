@@ -56,6 +56,11 @@ package risorse_mappa_utilities is
 
    function get_mancante_incrocio_a_3(id_incrocio: Positive) return Positive;
 
+   function get_lunghezza(obj: traiettoria_ingresso) return Float;
+   function get_intersezioni(obj: traiettoria_ingresso) return ptr_intersezioni_ingresso;
+   function get_traiettoria_intersezione(obj: intersezione_ingresso) return traiettoria_ingressi_type;
+   function get_distanza_intersezione(obj: intersezione_ingresso) return Float;
+
 private
 
    indici_strada_mancanti: list_mancanti_incroci_a_3(get_from_incroci_a_3..get_to_incroci_a_3);

@@ -18,7 +18,7 @@ package body Home_Page is
     end Clone;
 
     overriding function Dispatch
-     (Handler : in Home_Page_Handler;
+     (This : in Home_Page_Handler;
       Request : in Status.Data) return Response.Data
     is
       URI : constant String := Status.URI (Request);

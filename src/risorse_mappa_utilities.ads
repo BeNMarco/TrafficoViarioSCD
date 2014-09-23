@@ -54,7 +54,7 @@ package risorse_mappa_utilities is
 
    type list_mancanti_incroci_a_3 is array(Positive range <>) of Positive;
 
-   function get_mancante_incrocio_a_3(id_incrocio: Positive) return Positive;
+   function get_mancante_incrocio_a_3(id_incrocio: Positive) return Natural;
 
    function get_lunghezza(obj: traiettoria_ingresso) return Float;
    function get_intersezioni(obj: traiettoria_ingresso) return ptr_intersezioni_ingresso;

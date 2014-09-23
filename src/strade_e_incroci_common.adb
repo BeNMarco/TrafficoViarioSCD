@@ -249,4 +249,153 @@ package body strade_e_incroci_common is
       return obj.polo;
    end get_polo_estremo_urbana;
 
+   function get_departure_corsia(obj: trajectory_to_follow) return Natural is
+   begin
+      return obj.departure_corsia;
+   end get_departure_corsia;
+   function get_corsia_to_go_trajectory(obj: trajectory_to_follow) return Natural is
+   begin
+      return obj.corsia_to_go;
+   end get_corsia_to_go_trajectory;
+   function get_ingresso_to_go_trajectory(obj: trajectory_to_follow) return Natural is
+   begin
+      return obj.ingresso_to_go;
+   end get_ingresso_to_go_trajectory;
+   function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type is
+   begin
+      return obj.traiettoria_incrocio_to_follow;
+   end get_traiettoria_incrocio_to_follow;
+   function get_from_ingresso(obj: trajectory_to_follow) return Positive is
+   begin
+      return obj.from_ingresso;
+   end get_from_ingresso;
+
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   begin
+      return obj.id_abitante;
+   end get_id_abitante_posizione_abitanti;
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   begin
+      return obj.id_quartiere;
+   end get_id_quartiere_posizione_abitanti;
+   function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.where_next;
+   end get_where_next_posizione_abitanti;
+   function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.where_now;
+   end get_where_now_posizione_abitanti;
+   function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.current_speed;
+   end get_current_speed_abitante;
+   function get_in_overtaken(obj: posizione_abitanti_on_road) return Boolean is
+   begin
+      return obj.in_overtaken;
+   end get_in_overtaken;
+   function get_distance_at_witch_begin_overtaken(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.distance_at_witch_begin_overtaken;
+   end get_distance_at_witch_begin_overtaken;
+   function get_distance_on_overtaking_trajectory(obj: posizione_abitanti_on_road) return Float is
+   begin
+      return obj.distance_on_overtaking_trajectory;
+   end get_distance_on_overtaking_trajectory;
+    function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class is
+   begin
+      return obj.destination;
+   end get_destination;
+   function get_flag_overtake_next_corsia(obj: posizione_abitanti_on_road) return Boolean is
+   begin
+      return obj.can_pass_corsia;
+   end get_flag_overtake_next_corsia;
+   function get_came_from_ingresso(obj: posizione_abitanti_on_road) return Boolean is
+   begin
+      return obj.came_from_ingresso;
+   end get_came_from_ingresso;
+
+   procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float) is
+   begin
+      obj.where_next:= where_next;
+   end set_where_next_abitante;
+   procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float) is
+   begin
+      obj.where_now:= where_now;
+   end set_where_now_abitante;
+   procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float) is
+   begin
+      obj.current_speed:= speed;
+   end set_current_speed_abitante;
+   procedure set_in_overtaken(obj: in out posizione_abitanti_on_road; in_overtaken: Boolean) is
+   begin
+      obj.in_overtaken:= in_overtaken;
+   end set_in_overtaken;
+   procedure set_distance_at_witch_begin_overtaken(obj: in out posizione_abitanti_on_road; distance: Float) is
+   begin
+      obj.distance_at_witch_begin_overtaken:= distance;
+   end set_distance_at_witch_begin_overtaken;
+   procedure set_distance_on_overtaking_trajectory(obj: in out posizione_abitanti_on_road; distance: Float) is
+   begin
+      obj.distance_on_overtaking_trajectory:= distance;
+   end set_distance_on_overtaking_trajectory;
+   procedure set_destination(obj: in out posizione_abitanti_on_road; traiettoria: trajectory_to_follow'Class) is
+   begin
+      obj.destination:= trajectory_to_follow(traiettoria);
+   end set_destination;
+   procedure set_flag_overtake_next_corsia(obj: in out posizione_abitanti_on_road; flag: Boolean) is
+   begin
+      obj.can_pass_corsia:= flag;
+   end set_flag_overtake_next_corsia;
+   procedure set_came_from_ingresso(obj: in out posizione_abitanti_on_road; flag: Boolean) is
+   begin
+      obj.came_from_ingresso:= flag;
+   end set_came_from_ingresso;
+
+   function create_trajectory_to_follow(from_corsia: Natural; corsia_to_go: Natural; ingresso_to_go: Natural; from_ingresso: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow is
+      traiettoria: trajectory_to_follow;
+   begin
+      traiettoria.departure_corsia:= from_corsia;
+      traiettoria.corsia_to_go:= corsia_to_go;
+      traiettoria.ingresso_to_go:= ingresso_to_go;
+      traiettoria.from_ingresso:= from_ingresso;
+      traiettoria.traiettoria_incrocio_to_follow:= traiettoria_incrocio_to_follow;
+      return traiettoria;
+   end create_trajectory_to_follow;
+
+   function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
+                                          where_now: Float; current_speed: Float; in_overtaken: Boolean;
+                                          distance_at_witch_begin_overtaken: Float; distance_on_overtaking_trajectory: Float;
+                                          came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class is
+      abitante: posizione_abitanti_on_road;
+   begin
+      abitante.id_abitante:= id_abitante;
+      abitante.id_quartiere:= id_quartiere;
+      abitante.where_next:= where_next;
+      abitante.where_now:= where_now;
+      abitante.current_speed:= current_speed;
+      abitante.in_overtaken:= in_overtaken;
+      abitante.came_from_ingresso:= came_from_ingresso;
+      abitante.distance_at_witch_begin_overtaken:= distance_at_witch_begin_overtaken;
+      abitante.distance_on_overtaking_trajectory:= distance_on_overtaking_trajectory;
+      abitante.destination:= destination;
+      return abitante;
+   end create_new_posizione_abitante;
+
+   function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road is
+      abitante: posizione_abitanti_on_road;
+   begin
+      abitante.id_abitante:= posizione_abitante.id_abitante;
+      abitante.id_quartiere:= posizione_abitante.id_quartiere;
+      abitante.where_next:= posizione_abitante.where_next;
+      abitante.where_now:= posizione_abitante.where_now;
+      abitante.current_speed:= posizione_abitante.current_speed;
+      abitante.in_overtaken:= posizione_abitante.in_overtaken;
+      abitante.distance_at_witch_begin_overtaken:= posizione_abitante.distance_at_witch_begin_overtaken;
+      abitante.distance_on_overtaking_trajectory:= posizione_abitante.distance_on_overtaking_trajectory;
+      abitante.distance_on_overtaking_trajectory:= posizione_abitante.distance_on_overtaking_trajectory;
+      abitante.destination:= posizione_abitante.destination;
+      return abitante;
+   end create_new_posizione_abitante_from_copy;
+
 end strade_e_incroci_common;

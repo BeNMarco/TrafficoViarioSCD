@@ -320,9 +320,13 @@ package body risorse_mappa_utilities is
 
    end create_traiettorie_incrocio;
 
-   function get_mancante_incrocio_a_3(id_incrocio: Positive) return Positive is
+   function get_mancante_incrocio_a_3(id_incrocio: Positive) return Natural is
    begin
-      return indici_strada_mancanti(id_incrocio);
+      if id_incrocio>=get_from_incroci_a_3 and id_incrocio<=get_to_incroci_a_3 then
+         return indici_strada_mancanti(id_incrocio);
+      else
+         return 0;
+      end if;
    end get_mancante_incrocio_a_3;
 
    function create_traiettoria_incrocio(lunghezza: Float; corsia_arrivo: id_corsie; corsia_partenza: id_corsie;

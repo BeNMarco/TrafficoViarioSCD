@@ -101,5 +101,18 @@
 
     <h3>Status</h3>
     <p id="status"></p>
+    <ul>
+    @@TABLE@@
+       <li>
+       @@IF@@ @_REG_@ 
+       <a href="quartiere@_DISTRICT_ID_@">
+       @@END_IF@@
+       Quartiere @_DISTRICT_ID_@ @_REG_@
+       @@IF@@ @_REG_@ 
+       </a>
+       @@END_IF@@
+       </li>
+    @@END_TABLE@@
+    </ul>
   </body>
 </html>

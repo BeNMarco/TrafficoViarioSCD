@@ -1,4 +1,13 @@
 {
+  "info": {
+    "id": 2,
+    "larghezza": 2000,
+    "altezza": 3000,
+    "riferimento": {
+      "quartiere": 1,
+      "angolo": 0
+    }
+  },
 "id_quartiere": 2,
   "strade": [
     {

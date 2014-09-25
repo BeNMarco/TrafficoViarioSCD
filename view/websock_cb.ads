@@ -37,7 +37,7 @@ package WebSock_CB is
 
    --  My WebSocket, just display the messages
 
-   type Update_Websoket is new AWS.Net.WebSocket.Object with private;
+   type Update_Websoket is new Net.WebSocket.Object with private;
 
    function Websocket_Factory
      (Socket  : Net.Socket_Access;
@@ -54,6 +54,9 @@ package WebSock_CB is
 
    overriding procedure Send (Socket : in out Update_Websoket; Message : String);
    --  Send a message to the server
+
+   procedure Set_Quartiere (This: in out Update_Websoket; Q : Natural);
+   function Get_Quartiere (This: in Update_Websoket) return Natural;
 
 private
 

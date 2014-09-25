@@ -14,6 +14,8 @@ package Page_CB is
 
 	type District_Page is new Dispatchers.Handler with private;
 
+	type Acess_District_Page is access all District_Page'Class;
+
 	overriding function Dispatch
 		(This : in District_Page;
 		Request : in Status.Data) return Response.Data;

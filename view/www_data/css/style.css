@@ -3,6 +3,8 @@ body {
 	overflow: hidden;
 }
 
+#canvas{cursor:-webkit-grab; cursor: -moz-grab;}
+
 #canvas-wrap{position:relative;}
 #zoom-controls-div{position: absolute; top: 20px; left:20px;}
 #zoom-controls-div a{

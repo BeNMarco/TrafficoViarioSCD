@@ -2,6 +2,7 @@ with Ada.Text_IO;
 with Ada.Directories;
 with Ada.Direct_IO;
 with Ada.Strings.Fixed;
+with Ada.Calendar;
 
 with AWS.Server;
 with AWS.Config;
@@ -15,6 +16,7 @@ with the_name_server;
 use Ada;
 use Ada.Text_IO;
 use Ada.Strings.Fixed;
+use Ada.Calendar;
 
 use AWS;
 use AWS.Config;
@@ -36,6 +38,10 @@ procedure nameserver_starter is
   L : Natural;
   IOR : String := PolyORB.Parameters.Get_Conf ("dsa", "name_service", "");
   IOR_File : File_Type;
+  States_Filename : String := "states.json";
+  States_File : Ada.Text_IO.File_Type;
+  Ch : Character;
+  Available : Boolean;
 begin
   Put_Line("Name server is up and located at:");
   --Ada.Text_IO.Put_Line (PolyORB.Parameters.Get_Conf ("dsa", "name_service", ""));
@@ -68,7 +74,36 @@ begin
     end;
   end loop;
 
-  Put_Line("Write a string to send:");
-  Get_Line (M, L);
-  WebS.invia_aggiornamento(M (M'First .. L), 1);
+ 
+  Put_Line("Press a key to start sending...");
+  Get_Immediate (Ch);
+  Ch := 'y';
+  -- loop
+  --   Get_Line (M, L);
+  --   WebS.invia_aggiornamento("prova",1);
+  --   WebS.invia_aggiornamento(M (M'First .. L), 1);
+  --   WebS.invia_aggiornamento("prova",2);
+  --   WebS.invia_aggiornamento(M (M'First .. L), 2);
+  --   WebS.invia_aggiornamento("prova",3);
+  --   WebS.invia_aggiornamento(M (M'First .. L), 3);
+  -- end loop;
+
+  Open (File => States_File,
+                     Mode => In_File,
+                     Name => States_Filename);
+  while Ch /= 'n' loop
+    Reset(States_File);
+    while not End_Of_File (States_File) loop
+      declare
+         Line : String := Get_Line (States_File);
+      begin
+         WebS.invia_aggiornamento(Line(Line'First .. Line'Last), 2);
+         delay until (Clock + 0.3);
+      end;
+    end loop;
+    Put("Do you want to start again? [y|n] ");
+    Get_Immediate(Ch);
+    Put_Line("");
+  end loop;
+  Close (States_File);
 end nameserver_starter;

@@ -17,11 +17,13 @@ with Page_CB;
 with Websock_CB;
 with Home_Page;
 with JS_Page_Compiler;
+with Districts_Repository;
 
 use Page_CB;
 use Websock_CB;
 use Home_Page;
 use JS_Page_Compiler;
+use Districts_Repository;
 
 use Ada;
 use AWS;
@@ -34,6 +36,7 @@ package body WebServer is
    
    Admin_Dir : String := "admin_data";
    WWW_Root : String := "www_data";
+   WebSocket_Updates_URI : String := "updatesStream";
    
    --protected body WebServer_Wrapper_Type is
    overriding procedure Finalize(This : in out WebServer_Wrapper_Type) is
@@ -54,15 +57,21 @@ package body WebServer is
       Text_IO.Put_Line("Activating /quartiere" & StringID);
       Services.Dispatchers.URI.Register(This.Root, "/quartiere" & StringID, This.Page_Handler_Registry(quartiere), True);
       Server.Set(This.WS, This.Root);
+
+      This.Rcp_Registry(quartiere) := Net.WebSocket.Registry.Create (URI => "/quartiere" & StringID & "/" & WebSocket_Updates_URI);
+      Net.WebSocket.Registry.Register ("/quartiere" & StringID & "/" & WebSocket_Updates_URI, Websocket_Factory'Access);
+
    end registra_mappa_quartiere;
 
    procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural) is
    begin
-      Net.WebSocket.Registry.Send (This.Rcp, data);
+      --Net.WebSocket.Registry.Send (This.Rcp_Registry(quartiere), data);
+      if quartiere in This.Rcp_Registry'Range then
+         Net.WebSocket.Registry.Send (This.Rcp_Registry(quartiere), data);
+      end if;
    end invia_aggiornamento;
 
    procedure Init(This : in out WebServer_Wrapper_Type) is
-      MyHome_Page : Home_Page_Handler;
       JS_Compiler : JS_Page_Compiler_Handler;
    begin
       AWS.Config.Set.Reuse_Address(This.WsConfig, True);
@@ -77,16 +86,15 @@ package body WebServer is
       Text_IO.Put_Line
         ("Call me on port" & Positive'Image (AWS.Default.Server_Port));
 
+      This.Home.Set_Districts_Repository(This'Unchecked_Access);
+
       Services.Dispatchers.URI.Register_Default_Callback(This.Root, AWS.Dispatchers.Callback.Create(AWS.Services.Page_Server.Callback'Access));
-      Services.Dispatchers.URI.Register(This.Root, "/", MyHome_Page);
+      Services.Dispatchers.URI.Register(This.Root, "/", This.Home);
       Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
       Server.Start
         (This.WS, This.Root, This.WsConfig);
 
-      This.Rcp := Net.WebSocket.Registry.Create (URI => "/websock");
-
       Net.WebSocket.Registry.Control.Start;
-      Net.WebSocket.Registry.Register ("/websock", Websocket_Factory'Access);
    end Init;
 
    function Get_Max_Partitions(This : in WebServer_Wrapper_Type) return Integer is
@@ -98,6 +106,12 @@ package body WebServer is
    begin
       return This.Cur_Registered_Partitions;
    end Get_Cur_Partitions;
+
+   overriding function Get_Districts_Registry(This : in WebServer_Wrapper_Type) return Districts_Registry_Type is
+   begin
+      return This.Page_Handler_Registry;
+   end Get_Districts_Registry;
+
 
    -- procedure Clean(This : in out WebServer_Wrapper_Type) is
    -- begin

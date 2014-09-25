@@ -34,6 +34,8 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.requiredStates = requiredStatesToStart;
 	this.prevStateRemainingTime = 0;
 
+	this.running = false;
+
 	// callbacks
 	this.readyCallback = null;
 	this.finishCallbal = null;
@@ -46,8 +48,9 @@ Simulation.prototype.onReady = function(callback){
 
 Simulation.prototype.addState = function(state){
 	this.stateCache.push(state);
+	console.log("state added");
 	this.receivedStates++;
-	if(this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
+	if(!this.running && this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
 		this.readyCallback();
 	}
 }
@@ -55,6 +58,7 @@ Simulation.prototype.addState = function(state){
 Simulation.prototype.init = function(){
 	this.prevState = this.stateCache.shift();
 	this.currentState = this.stateCache.shift();
+	this.running = true;
 }
 
 Simulation.prototype.updateState = function(deltaTime){

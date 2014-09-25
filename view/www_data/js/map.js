@@ -419,33 +419,36 @@ Crossroad.prototype.linkStreets = function(streets, district){
 	var firstIn = null;
 	var polo = true;
 	var entr = 0;
+
 	for (var i = 0; i < this.streetsRef.length; i ++) {
+
 		entr++;
 		if (this.streetsRef[i] != null){
 			var tmpStreet = null;
 			if (this.streetsRef[i].quartiere == district){
+
 				tmpStreet = streets[this.streetsRef[i].id_strada];
+				if (this.center == null){
+					if(this.streetsRef[i].polo){
+						this.center = new Point(tmpStreet.from[0],tmpStreet.from[1]);
+					} else {
+						this.center = new Point(tmpStreet.to[0],tmpStreet.to[1]);
+					}
+				}
 			}
 			this.streets[i] = tmpStreet;
-
+			/*
 			if(firstIn == null && tmpStreet != null){
 				this.firstEntrance = entr;
 				firstIn = tmpStreet;
 				polo = this.streetsRef[i].polo;	
 			}
-
-			// getting the number of lanes per direction
-			/*
-			if (tmpStreet != null && tmpStreet.nLanes > this.lanesNumber[i%2]){
-				this.lanesNumber[i%2] = tmpStreet.nLanes;
-			}
 			*/
-
 		} else {
 			this.streets[i] = null;
 		}
 	}
-	
+	/*
 	// calculating the center and rotation of the crossroad
 	if(polo){
 		this.center = new Point(firstIn.from[0],firstIn.from[1]);
@@ -457,6 +460,7 @@ Crossroad.prototype.linkStreets = function(streets, district){
 		//var len = firstIn.guidingPath.segments.length;
 		//this.angle = (firstIn.guidingPath.segments[len-1].point.subtract(firstIn.guidingPath.segments[len-2].point)).angle;
 	}
+	*/
 }
 
 Crossroad.prototype.draw = function(style){

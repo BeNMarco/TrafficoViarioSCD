@@ -29,6 +29,7 @@ package body WebSock_CB is
 
    use Ada;
    use type AWS.Net.WebSocket.Kind_Type;
+   use AWS;
 
    WWW_Root : constant String := "web_elements";
 
@@ -40,6 +41,7 @@ package body WebSock_CB is
      (Socket  : Net.Socket_Access;
       Request : Status.Data) return Net.WebSocket.Object'Class is
    begin
+      Text_IO.Put_Line("Created websocket " & Status.URI(Request));
       return Update_Websoket'(Net.WebSocket.Object
                        (Net.WebSocket.Create (Socket, Request)) with C => 0);
    end Websocket_Factory;
@@ -72,7 +74,7 @@ package body WebSock_CB is
 
    overriding procedure On_Open (Socket : in out Update_Websoket; Message : String) is
    begin
-    null;
+      Text_IO.Put_Line("Web Socket opened " & Message);
    end On_Open;
 
    ----------
@@ -81,8 +83,19 @@ package body WebSock_CB is
 
    overriding procedure Send (Socket : in out Update_Websoket; Message : String) is
    begin
-    Net.WebSocket.Object (Socket).Send (Message);
+      -- Text_IO.Put_Line("Sending "&Message);
+      Net.WebSocket.Object (Socket).Send (Message);
    end Send;
+
+   procedure Set_Quartiere (This: in out Update_Websoket; Q : Natural) is
+   begin
+      This.C := Q;
+   end Set_Quartiere;
+
+   function Get_Quartiere (This: in Update_Websoket) return Natural is
+   begin
+      return This.C;
+   end Get_Quartiere;
 
    -----------
    -- W_Log --

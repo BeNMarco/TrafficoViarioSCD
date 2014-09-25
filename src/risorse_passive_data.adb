@@ -252,7 +252,7 @@ package body risorse_passive_data is
 
       procedure set_position_abitante_to_next(id_abitante: Positive) is
       begin
-         null;
+         position_abitanti(id_abitante):= position_abitanti(id_abitante)+1;
       end set_position_abitante_to_next;
 
       function get_next(id_abitante: Positive) return tratto is
@@ -275,9 +275,14 @@ package body risorse_passive_data is
          end if;
       end get_next_road;
 
-      function get_current_position(id_abitante: Positive) return tratto is
+      function get_current_tratto(id_abitante: Positive) return tratto is
       begin
          return create_tratto(0,0);
+      end get_current_tratto;
+
+      function get_current_position(id_abitante: Positive) return Positive is
+      begin
+         return position_abitanti(id_abitante);
       end get_current_position;
 
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural is
@@ -291,5 +296,39 @@ package body risorse_passive_data is
    begin
       return locate_abitanti_quartiere;
    end get_locate_abitanti_quartiere;
+
+   function get_size_incrocio(id_incrocio: Positive) return Positive is
+   begin
+      if id_incrocio>=get_from_incroci_a_3 and id_incrocio<=get_to_incroci_a_3 then
+         return 3;
+      else
+         return 4;
+      end if;
+   end get_size_incrocio;
+
+   function get_road_incrocio_from_incrocio(id_incrocio: Positive; index_road: Positive) return road_incrocio_features is
+      size_incrocio: Positive:= get_size_incrocio(id_incrocio);
+      road_incrocio: road_incrocio_features;
+   begin
+      if size_incrocio=4 then
+         road_incrocio:= get_incrocio_a_4_from_id(id_incrocio)(index_road);
+      else
+         road_incrocio:= get_incrocio_a_3_from_id(id_incrocio)(index_road);
+      end if;
+      return road_incrocio;
+   end get_road_incrocio_from_incrocio;
+
+   function get_index_road_from_incrocio(id_incrocio: Positive; id_quartiere_road: Positive; id_road: Positive) return Natural is
+      road_incrocio: road_incrocio_features;
+   begin
+      for i in 1..get_size_incrocio(id_incrocio) loop
+         road_incrocio:= get_road_incrocio_from_incrocio(id_incrocio,i);
+         if road_incrocio.get_id_quartiere_road_incrocio=id_quartiere_road and
+           road_incrocio.get_id_strada_road_incrocio=id_road then
+            return i;
+         end if;
+      end loop;
+      return 0;
+   end get_index_road_from_incrocio;
 
 end risorse_passive_data;

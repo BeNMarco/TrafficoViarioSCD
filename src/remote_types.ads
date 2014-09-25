@@ -12,7 +12,8 @@ package remote_types is
    procedure set_position_abitante_to_next(obj: access rt_location_abitanti; id_abitante: Positive) is abstract;
    function get_next(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
    function get_next_road(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
-   function get_current_position(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
+   function get_current_tratto(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
+   function get_current_position(obj: access rt_location_abitanti; id_abitante: Positive) return Positive is abstract;
    type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
 
    type rt_quartiere_utilities is synchronized interface;
@@ -34,10 +35,17 @@ package remote_types is
    -- begin resource segmenti
    type rt_segmento is synchronized interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
+
    procedure wait_turno(obj: access rt_segmento) is abstract;
    procedure delta_terminate(obj: access rt_segmento) is abstract;
    function there_are_autos_to_move(obj: access rt_segmento) return Boolean is abstract;
    function there_are_pedoni_or_bici_to_move(obj: access rt_segmento) return Boolean is abstract;
+
+   type rt_incrocio is synchronized interface and rt_segmento;
+   type ptr_rt_incrocio is access all rt_incrocio'Class;
+
+   procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;
+
    type set_resources is array(Positive range <>) of ptr_rt_segmento;
    type estremi_urbane is array(Positive range <>,Positive range <>) of ptr_rt_segmento;
 

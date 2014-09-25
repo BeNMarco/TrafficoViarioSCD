@@ -136,6 +136,46 @@ package strade_e_incroci_common is
    function get_percorso_from_route_and_distance(route: route_and_distance) return percorso;
    function get_distance_from_route_and_distance(route: route_and_distance) return Float;
 
+   type trajectory_to_follow is tagged private;
+   type posizione_abitanti_on_road is tagged private;
+
+   function get_departure_corsia(obj: trajectory_to_follow) return Natural;
+   function get_corsia_to_go_trajectory(obj: trajectory_to_follow) return Natural;
+   function get_ingresso_to_go_trajectory(obj: trajectory_to_follow) return Natural;
+   function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type;
+   function get_from_ingresso(obj: trajectory_to_follow) return Positive;
+
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
+   function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
+   function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
+   function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
+   function get_in_overtaken(obj: posizione_abitanti_on_road) return Boolean;
+   function get_distance_at_witch_begin_overtaken(obj: posizione_abitanti_on_road) return Float;
+   function get_distance_on_overtaking_trajectory(obj: posizione_abitanti_on_road) return Float;
+   function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class;
+   function get_flag_overtake_next_corsia(obj: posizione_abitanti_on_road) return Boolean;
+   function get_came_from_ingresso(obj: posizione_abitanti_on_road) return Boolean;
+
+   procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float);
+   procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float);
+   procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float);
+   procedure set_in_overtaken(obj: in out posizione_abitanti_on_road; in_overtaken: Boolean);
+   procedure set_distance_at_witch_begin_overtaken(obj: in out posizione_abitanti_on_road; distance: Float);
+   procedure set_distance_on_overtaking_trajectory(obj: in out posizione_abitanti_on_road; distance: Float);
+   procedure set_destination(obj: in out posizione_abitanti_on_road; traiettoria: trajectory_to_follow'Class);
+   procedure set_flag_overtake_next_corsia(obj: in out posizione_abitanti_on_road; flag: Boolean);
+   procedure set_came_from_ingresso(obj: in out posizione_abitanti_on_road; flag: Boolean);
+
+   function create_trajectory_to_follow(from_corsia: Natural; corsia_to_go: Natural; ingresso_to_go: Natural; from_ingresso: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow;
+
+   function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
+                                          where_now: Float; current_speed: Float; in_overtaken: Boolean;
+                                          distance_at_witch_begin_overtaken: Float; distance_on_overtaking_trajectory: Float;
+                                          came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class;
+
+   function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road;
+
 private
 
    type estremo_urbana is tagged record
@@ -208,5 +248,28 @@ private
    type auto is new move_parameters with record
       num_posti: Positive;
    end record;
+
+   type trajectory_to_follow is tagged record
+      departure_corsia: Natural;
+      corsia_to_go: Natural:= 0;
+      ingresso_to_go: Natural:= 0;
+      from_ingresso: Natural:= 0;
+      traiettoria_incrocio_to_follow: traiettoria_incroci_type:= empty;
+   end record;
+
+   type posizione_abitanti_on_road is tagged record
+      id_abitante: Positive;
+      id_quartiere: Positive;
+      where_next: Float:= 0.0; -- posizione nella strada corrente dal punto di entrata
+      where_now: Float:= 0.0;
+      current_speed: Float:= 0.0;
+      in_overtaken: Boolean:= False;
+      can_pass_corsia: Boolean:= False;
+      came_from_ingresso: Boolean:= False;
+      distance_at_witch_begin_overtaken: Float:= 0.0;
+      distance_on_overtaking_trajectory: Float:= 0.0;
+      destination: trajectory_to_follow;
+   end record;
+
 
 end strade_e_incroci_common;

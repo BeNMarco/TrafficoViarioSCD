@@ -79,7 +79,8 @@ package risorse_passive_data is
 
       function get_next(id_abitante: Positive) return tratto;
       function get_next_road(id_abitante: Positive) return tratto;
-      function get_current_position(id_abitante: Positive) return tratto;
+      function get_current_tratto(id_abitante: Positive) return tratto;
+      function get_current_position(id_abitante: Positive) return Positive;
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural;
 
    private
@@ -90,6 +91,12 @@ package risorse_passive_data is
    type ptr_location_abitanti is access location_abitanti;
 
    function get_locate_abitanti_quartiere return ptr_location_abitanti;
+
+   function get_size_incrocio(id_incrocio: Positive) return Positive;
+
+   function get_road_incrocio_from_incrocio(id_incrocio: Positive; index_road: Positive) return road_incrocio_features;
+
+   function get_index_road_from_incrocio(id_incrocio: Positive; id_quartiere_road: Positive; id_road: Positive) return Natural;
 
 private
 

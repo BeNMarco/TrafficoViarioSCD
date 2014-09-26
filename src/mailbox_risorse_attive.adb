@@ -39,7 +39,7 @@ package body mailbox_risorse_attive is
       end case;
    end get_min_length_entità;
 
-   function calculate_max_num_auto(len: Float) return Positive is
+   function calculate_max_num_auto(len: Float) return Natural is
       num: Positive:= Positive(Float'Rounding(len/get_min_length_entità(auto_entity)));
    begin
       if num>get_num_abitanti then
@@ -49,7 +49,7 @@ package body mailbox_risorse_attive is
       end if;
    end calculate_max_num_auto;
 
-   function calculate_max_num_pedoni(len: Float) return Positive is
+   function calculate_max_num_pedoni(len: Float) return Natural is
       num: Positive:= Positive(Float'Rounding(Float(len)/get_min_length_entità(pedone_entity)));
    begin
       if num>get_num_abitanti then
@@ -87,12 +87,12 @@ package body mailbox_risorse_attive is
          end loop;
          list:= list_ingressi_polo_false;
          for i in 1..num_ingressi_polo_false loop
-            ordered_ingressi_polo(False)(i):= list_ingressi_polo_false.id_ingresso;
+            ordered_ingressi_polo(False)(i):= list.id_ingresso;
             list:= list.next;
          end loop;
          list:= list_ingressi_polo_true;
          for i in reverse 1..num_ingressi_polo_true loop
-            ordered_ingressi_polo(True)(num_ingressi_polo_true-i+1):= list_ingressi_polo_true.id_ingresso;
+            ordered_ingressi_polo(True)(num_ingressi_polo_true-i+1):= list.id_ingresso;
             list:= list.next;
          end loop;
       end configure;
@@ -1537,18 +1537,22 @@ package body mailbox_risorse_attive is
       node_ingressi: ptr_list_ingressi_per_urbana;
       node_ordered_ingressi: ptr_list_ingressi_per_urbana;
       index_inizio_moto: Boolean;
+      polo_ingressi_structure: ingressi_type;
    begin
 
       for i in get_from_ingressi..get_to_ingressi loop
          node_ingressi:= new list_ingressi_per_urbana;
          node_ordered_ingressi:= new list_ingressi_per_urbana;
-         val_ptr_resource_ingresso:= new resource_segmento_ingresso(id_risorsa => ingressi(i).get_id_road,
-                                                                    max_num_auto => calculate_max_num_auto(ingressi(i).get_lunghezza_road),
-                                                                    max_num_pedoni => calculate_max_num_pedoni(ingressi(i).get_lunghezza_road));
-         node_ordered_ingressi.id_ingresso:=i;
+         val_ptr_resource_ingresso:= new resource_segmento_ingresso(id_risorsa => ingressi(i).get_id_road);
+         node_ordered_ingressi.id_ingresso:= i;
          index_inizio_moto:= ingressi(i).get_polo_ingresso;
          ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,index_inizio_moto):= ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,index_inizio_moto)+1;
-         update_list_ingressi(id_ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,index_inizio_moto),node_ordered_ingressi,ordered_polo_false,i);
+         if index_inizio_moto then
+            polo_ingressi_structure:= ordered_polo_true;
+         else
+            polo_ingressi_structure:= ordered_polo_false;
+         end if;
+         update_list_ingressi(id_ingressi_per_urbana_per_polo(ingressi(i).get_id_main_strada_ingresso,index_inizio_moto),node_ordered_ingressi,polo_ingressi_structure,i);
          val_ptr_resource_ingresso.configure(ingressi(i),index_inizio_moto);
          ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso):= ingressi_per_urbana(ingressi(i).get_id_main_strada_ingresso)+1;
          node_ingressi.id_ingresso:= i;
@@ -1558,11 +1562,13 @@ package body mailbox_risorse_attive is
       ingressi_segmento_resources:= ptr_resource_ingressi;
 
       for i in get_from_urbane..get_to_urbane loop
+         --Put_Line("begin configure urbana " & Positive'Image(i) & ", id quartiere " & Positive'Image(get_id_quartiere));
          val_ptr_resource_urbana:= new resource_segmento_urbana(id_risorsa => urbane(i).get_id_road,
                                                                 num_ingressi => ingressi_per_urbana(urbane(i).get_id_road),
                                                                 num_ingressi_polo_true => ingressi_per_urbana_per_polo(urbane(i).get_id_road,True),
                                                                 num_ingressi_polo_false => ingressi_per_urbana_per_polo(urbane(i).get_id_road,False));
          val_ptr_resource_urbana.configure(urbane(i),id_ingressi_per_urbana(i),id_ingressi_per_urbana_per_polo(i,True),id_ingressi_per_urbana_per_polo(i,False));
+         --Put_Line("end configure urbana " & Positive'Image(i) & ", id quartiere " & Positive'Image(get_id_quartiere));
          ptr_resource_urbane(i):= val_ptr_resource_urbana;
       end loop;
       urbane_segmento_resources:= ptr_resource_urbane;

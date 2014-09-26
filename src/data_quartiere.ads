@@ -1,5 +1,7 @@
 with GNATCOLL.JSON;
 with Ada.Directories;
+with Ada.Text_IO;
+with Ada.Strings.Unbounded;
 
 with JSON_Helper;
 with strade_e_incroci_common;
@@ -8,6 +10,8 @@ with partition_name;
 
 use GNATCOLL.JSON;
 use Ada.Directories;
+use Ada.Text_IO;
+use Ada.Strings.Unbounded;
 
 use JSON_Helper;
 use strade_e_incroci_common;
@@ -46,8 +50,17 @@ pragma Elaborate_Body;
    function get_default_value_pedoni(value: move_settings) return Float;
    function get_default_value_bici(value: move_settings) return Float;
    function get_default_value_auto(value: move_settings) return Float;
-   function get_num_abitanti return Positive;
+   function get_num_abitanti return Natural;
    function get_num_task return Natural;
+   function get_name_log_file return str_quartieri;
+
+
+   protected log_mio is
+       procedure configure;
+      procedure write_task_arrived(stringa: String);
+   private
+      OutFile: File_Type;
+   end log_mio;
 
 private
 
@@ -125,6 +138,8 @@ private
 
    json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incrocio");
    json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
+
+
 
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 

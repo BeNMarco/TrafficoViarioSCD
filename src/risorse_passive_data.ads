@@ -50,6 +50,7 @@ package risorse_passive_data is
       function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici;
       function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
       function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
+      function get_index_luogo_from_id_json(json_key: Positive) return Positive;
 
    private
 
@@ -79,7 +80,7 @@ package risorse_passive_data is
    type array_position_abitanti is array(Positive range <>) of Positive;
    type array_abitanti_finish_route is array(Positive range <>) of Boolean;
 
-   protected type location_abitanti(num_abitanti: Positive) is new rt_location_abitanti with
+   protected type location_abitanti(num_abitanti: Natural) is new rt_location_abitanti with
 
         procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
       procedure set_position_abitante_to_next(id_abitante: Positive);

@@ -209,6 +209,11 @@ package body risorse_passive_data is
          return rt_classi_locate_abitanti(id_quartiere);
       end get_classe_locate_abitanti;
 
+      function get_index_luogo_from_id_json(json_key: Positive) return Positive is
+      begin
+         return get_from_ingressi+json_key-1;
+      end get_index_luogo_from_id_json;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is
@@ -233,7 +238,12 @@ package body risorse_passive_data is
       end incrementa_resource_mappa_quartieri;
 
       entry wait_cfg when num_classi_locate_abitanti=get_num_quartieri and num_abitanti_quartieri_registrati=get_num_quartieri and num_quartieri_resource_registrate=get_num_quartieri is
+      var:natural;
       begin
+         if get_id_quartiere=1 then
+            var:=0;
+         end if;
+
          if inventory_estremi_is_set=False then
             inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
             for i in get_from_urbane..get_to_urbane loop

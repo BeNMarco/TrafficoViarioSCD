@@ -1,3 +1,6 @@
+with Ada.Text_IO;
+
+use Ada.Text_IO;
 
 package body data_quartiere is
 
@@ -149,7 +152,7 @@ package body data_quartiere is
       end case;
    end get_default_value_auto;
 
-   function get_num_abitanti return Positive is
+   function get_num_abitanti return Natural is
    begin
       return size_json_abitanti;
    end get_num_abitanti;
@@ -159,4 +162,29 @@ package body data_quartiere is
       return num_task;
    end get_num_task;
 
+   function get_name_log_file return str_quartieri is
+   begin
+      return id_mappa;
+   end get_name_log_file;
+
+   protected body log_mio is
+      procedure configure is
+      begin
+         Create(Outfile, Append_File, str_quartieri'Image(id_mappa) & "_log.txt");
+         --Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
+         --Put_Line(OutFile, "ciao");
+         Close(OutFile);
+      end configure;
+
+      procedure write_task_arrived(stringa: String) is
+      begin
+         Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
+         Put_Line(OutFile, stringa);
+         Close(OutFile);
+      end write_task_arrived;
+
+   end log_mio;
+
+begin
+   log_mio.configure;
 end data_quartiere;

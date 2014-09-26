@@ -96,7 +96,7 @@ package mailbox_risorse_attive is
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
-   protected type resource_segmento_ingresso(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_ingresso with
+   protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso with
       entry wait_turno;
       procedure delta_terminate;
 
@@ -173,8 +173,8 @@ package mailbox_risorse_attive is
    type ptr_resource_segmenti_rotonde is access all resource_segmenti_rotonde;
 
    function get_min_length_entità(entity: entità) return Float;
-   function calculate_max_num_auto(len: Float) return Positive;
-   function calculate_max_num_pedoni(len: Float) return Positive;
+   function calculate_max_num_auto(len: Float) return Natural;
+   function calculate_max_num_pedoni(len: Float) return Natural;
 
    function get_urbane_segmento_resources(index: Positive) return ptr_resource_segmento_urbana;
    function get_ingressi_segmento_resources(index: Positive) return ptr_resource_segmento_ingresso;

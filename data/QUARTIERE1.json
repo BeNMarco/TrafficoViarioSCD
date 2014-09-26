@@ -1138,17 +1138,13 @@
 "default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
 "default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
 
-"pedoni":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5}],
+"pedoni":[{"id_abitante":1}],
 
-"auto":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5}],
+"auto":[{"id_abitante":1}],
 
-"bici":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5}],
+"bici":[{"id_abitante":1}],
 
 "abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":3},
-{"id_abitante":3,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":4,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":5,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":2}
+{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3}
 ]
 }

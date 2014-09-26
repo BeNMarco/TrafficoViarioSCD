@@ -111,6 +111,6 @@ begin
       registro_ref_rt_quartieri(i).registra_mappa(get_id_quartiere);
    end loop;
 
-   Put_Line("exit" & Positive'Image(get_id_quartiere));
+   Put_Line("exit" & Positive'Image(get_id_quartiere) & " num task " & Positive'Image(get_num_task));
 
 end resource_map_inventory;

@@ -14,3 +14,4 @@ view/partitions/
 view/dsa/
 *dsa-nameserver.sh
 *ns.txt
+QUARTIERE*_log.txt

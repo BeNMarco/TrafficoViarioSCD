@@ -118,6 +118,16 @@ package body the_name_server is
       pragma Warnings(on);
    end get_id_mappa;
 
+   procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life) is
+   begin
+      registro_quartiere_entities_life.registra_quartiere_entities_life(id_quartiere,obj);
+   end registra_quartiere_entities_life;
+
+   function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
+   begin
+      return registro_quartiere_entities_life.get_quartiere_entities_life(id_quartiere);
+   end get_quartiere_entities_life;
+
    protected body registro_gestori_semafori is
       procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
       begin
@@ -153,11 +163,17 @@ package body the_name_server is
 
    end registro_local_synchronized_objects;
 
-   procedure stam is
-   begin
-      Put_Line("stocazzo");
-      get_synchronization_tasks_object.all_task_partition_are_ready;
-   end stam;
+   protected body registro_quartiere_entities_life is
+      procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life) is
+      begin
+         registro(id_quartiere):= obj;
+      end registra_quartiere_entities_life;
 
+      function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
+      begin
+         return registro(id_quartiere);
+      end get_quartiere_entities_life;
+
+   end registro_quartiere_entities_life;
 
 end the_name_server;

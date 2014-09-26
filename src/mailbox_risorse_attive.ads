@@ -34,8 +34,9 @@ package mailbox_risorse_attive is
    type ingressi_in_svolta is array(Positive range <>) of traiettoria_ingressi_type;
    type ptr_ingressi_in_svolta is access ingressi_in_svolta;
    type ordered_ingressi_in_svolta is array(Boolean range <>) of ptr_ingressi_in_svolta;
+   type abitanti_in_transizione_incroci_urbane is array(Boolean range False..True,id_corsie range 1..2) of posizione_abitanti_on_road;
 
-   protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_segmento with
+   protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana with
       entry wait_turno;
       procedure delta_terminate;
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
@@ -48,26 +49,32 @@ package mailbox_risorse_attive is
       procedure update_traiettorie_ingressi;
       procedure update_car_on_road;
       procedure remove_first_element_traiettoria(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type);
+      procedure insert_abitante_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie);
+      -- abitanti in transizione da incroci significa abitanti in uscita dagli incroci
+      procedure sposta_abitanti_in_transizione_da_incroci;
+      procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie);
 
-      function there_are_autos_to_move return Boolean;
-      function there_are_pedoni_or_bici_to_move return Boolean;
       function get_ordered_ingressi_from_polo(polo: Boolean) return ptr_indici_ingressi;
       function is_index_ingresso_in_svolta(ingresso: Positive; traiettoria: traiettoria_ingressi_type) return Boolean;
       function get_ingressi_ordered_by_distance return indici_ingressi;
       function get_index_ingresso_from_key(key: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_abitante_from_ingresso(ingresso_key: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
+      function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
       function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: Float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function get_abitanti_on_road(range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
       function get_number_entity(structure: data_structures_types; polo: Boolean; num_corsia: id_corsie) return Natural;
+      function calculate_distance_ingressi_from_given_distance(polo_to_consider: Boolean; in_corsia: id_corsie; car_distance: Float) return Float;
       function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return Float;
       function can_car_overtake(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; to_corsia: id_corsie) return Boolean;
       function there_are_cars_moving_across_next_ingressi(car: ptr_list_posizione_abitanti_on_road; polo: Boolean) return Boolean;
       function car_can_initiate_overtaken_on_road(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
       function there_are_overtaken_on_ingresso(ingresso: strada_ingresso_features; polo: Boolean) return Boolean; -- se polo = (polo dell'ingresso) => senso macchine to check è indicato da polo altrimenti not polo
       function car_on_same_corsia_have_overtaked(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
+
+      function get_distanza_percorsa_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
 
       function get_num_ingressi_polo(polo: Boolean) return Natural;
       function get_num_ingressi return Natural;
@@ -83,12 +90,13 @@ package mailbox_risorse_attive is
       marciapiedi: road_state(False..True,1..2);
       main_strada_number_entity: number_entity(False..True,1..2):= (others => (others => 0));
       marciapiedi_num_pedoni_bici: number_entity(False..True,1..2):= (others => (others => 0));
+      temp_abitanti_in_transizione: abitanti_in_transizione_incroci_urbane;
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
-   protected type resource_segmento_ingresso(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+   protected type resource_segmento_ingresso(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_ingresso with
       entry wait_turno;
       procedure delta_terminate;
 
@@ -100,9 +108,7 @@ package mailbox_risorse_attive is
       procedure update_position_entity(type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
       procedure update_avanzamento_car_in_urbana(distance: Float);
       procedure delete_car_in_uscita;
-
-      function there_are_autos_to_move return Boolean;
-      function there_are_pedoni_or_bici_to_move return Boolean;
+      procedure delete_car_in_entrata;
 
       function get_main_strada(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
       function get_marciapiede(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
@@ -140,12 +146,13 @@ package mailbox_risorse_attive is
       procedure delta_terminate;
       procedure change_verso_semafori_verdi;
       procedure insert_new_car(from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road);
+      procedure update_avanzamento_car(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: Float; new_speed: Float);
+      procedure update_avanzamento_cars;
 
-      function there_are_autos_to_move return Boolean;
-      function there_are_pedoni_or_bici_to_move return Boolean;
       function get_verso_semafori_verdi return Boolean;
       function get_size_incrocio return Positive;
       function get_list_car_to_move(key_incrocio: Positive; corsia: id_corsie) return ptr_list_posizione_abitanti_on_road;
+      function get_posix_first_entity(from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return Float;
    private
       function get_num_urbane_to_wait return Positive;
       num_urbane_ready: Natural:= 0;
@@ -160,8 +167,6 @@ package mailbox_risorse_attive is
    protected type resource_segmento_rotonda(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
       entry wait_turno;
       procedure delta_terminate;
-      function there_are_autos_to_move return Boolean;
-      function there_are_pedoni_or_bici_to_move return Boolean;
    end resource_segmento_rotonda;
    type ptr_resource_segmento_rotonda is access all resource_segmento_rotonda;
    type resource_segmenti_rotonde is array(Positive range <>) of ptr_resource_segmento_rotonda;
@@ -197,6 +202,7 @@ package mailbox_risorse_attive is
    function create_new_list_posizione_abitante(posizione_abitante: posizione_abitanti_on_road;
                                                next: ptr_list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
 
+   function calulate_index_road_to_go(id_incrocio: Positive; from_index: Positive; traiettoria: traiettoria_incroci_type) return Natural;
 
 private
 

@@ -16,25 +16,55 @@ use risorse_passive_data;
 
 package body start_simulation is
 
-   protected body quartiere_entities_life is
-      procedure abitante_is_arrived(id_quartiere: Positive; id_abitante: Positive) is
-      begin
-         null;
-      end abitante_is_arrived;
-      procedure start_entity_to_move is
-         residente: abitante;
-         resource_segmento: ptr_rt_segmento;
-      begin
-         -- cicla su ogni abitante e invia richiesta all'ingresso ASINCRONA
-         for i in get_from_abitanti..get_to_abitanti loop
-            residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,i);
-            resource_segmento:= get_id_risorsa_quartiere(residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante);
-            --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-            get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante, to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante));
-            --get_ingressi_segmento_resources(residente.get_id_luogo_casa_from_abitante).registra_abitante_to_move(road,);
-         end loop;
-      end start_entity_to_move;
+   procedure abitante_is_arrived(obj: quartiere_entities_life; id_abitante: Positive) is
+      resource_locate_abitanti: ptr_location_abitanti:= get_locate_abitanti_quartiere;
+      arrived_tratto: tratto;
+      residente: abitante;
+      percorso: access route_and_distance;
+   begin
+      arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
+      residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
+      -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
+      if residente.get_id_quartiere_from_abitante=arrived_tratto.get_id_quartiere_tratto and
+        residente.get_id_luogo_casa_from_abitante=arrived_tratto.get_id_tratto then
+         -- l'abitante si trova a casa
+         -- lo si manda a lavorare
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante));
+         get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+         ptr_rt_ingresso(get_id_risorsa_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante)).new_abitante_to_move(get_id_quartiere,id_abitante,car);
+      elsif residente.get_id_quartiere_luogo_lavoro_from_abitante=arrived_tratto.get_id_quartiere_tratto and
+        residente.get_id_luogo_lavoro_from_abitante=arrived_tratto.get_id_tratto then
+         -- l'abitante è a lavoro
+         -- lo si manda a casa
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante));
+         get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+         ptr_rt_ingresso(get_id_risorsa_quartiere(get_id_quartiere,residente.get_id_luogo_casa_from_abitante)).new_abitante_to_move(residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante,car);
+      else  -- lo si manda a casa cmq
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante));
+         get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+         ptr_rt_ingresso(get_id_risorsa_quartiere(get_id_quartiere,residente.get_id_luogo_casa_from_abitante)).new_abitante_to_move(residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante,car);
+      end if;
+   end abitante_is_arrived;
 
-   end quartiere_entities_life;
+   function get_quartiere_entities_life_obj return ptr_quartiere_entities_life is
+   begin
+      return quartiere_entities_life_obj;
+   end get_quartiere_entities_life_obj;
+
+   procedure start_entity_to_move is
+      residente: abitante;
+      resource_segmento: ptr_rt_segmento;
+   begin
+      -- cicla su ogni abitante e invia richiesta all'ingresso ASINCRONA
+      for i in get_from_abitanti..get_to_abitanti loop
+         residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,i);
+         resource_segmento:= get_id_risorsa_quartiere(residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante);
+         --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
+         get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante, to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante));
+         get_ingressi_segmento_resources(residente.get_id_luogo_casa_from_abitante).new_abitante_to_move(residente.get_id_quartiere_from_abitante,residente.get_id_abitante_from_abitante,car);
+      end loop;
+
+   end start_entity_to_move;
+
 
 end start_simulation;

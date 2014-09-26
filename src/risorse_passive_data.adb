@@ -31,6 +31,32 @@ package body risorse_passive_data is
       return rotonde_a_3(index);
    end get_rotonda_a_3_from_id;
 
+   function get_road_from_incrocio(index_incrocio: Positive; key_road: Positive) return road_incrocio_features is
+      pragma Warnings(off);
+      road: road_incrocio_features;
+      pragma Warnings(on);
+   begin
+      if index_incrocio>=get_from_incroci_a_4 and index_incrocio<=get_to_incroci_a_4 then
+         return get_incrocio_a_4_from_id(index_incrocio)(key_road);
+      elsif index_incrocio>=get_from_incroci_a_3 and index_incrocio<=get_to_incroci_a_3 then
+         return get_incrocio_a_3_from_id(index_incrocio)(key_road);
+      end if;
+      return road;
+   end get_road_from_incrocio;
+
+   function get_index_road_from_incrocio(id_quartiere_road: Positive; id_road: Positive; id_incrocio: Positive) return Natural is
+      road: road_incrocio_features;
+   begin
+      for i in 1..get_size_incrocio(id_incrocio) loop
+         road:= get_road_from_incrocio(id_incrocio,i);
+         if road.get_id_quartiere_road_incrocio=id_quartiere_road and road.get_id_strada_road_incrocio=id_road then
+            return i;
+         end if;
+      end loop;
+      return 0;
+   end get_index_road_from_incrocio;
+
+
    function get_urbane return strade_urbane_features is
    begin
       return urbane_features;
@@ -149,6 +175,11 @@ package body risorse_passive_data is
          return get_ingresso_from_id(id_ingresso).get_id_main_strada_ingresso;
       end get_id_main_road_from_id_ingresso;
 
+      function get_polo_ingresso(id_ingresso: Positive) return Boolean is
+      begin
+         return get_ingresso_from_id(id_ingresso).get_polo_ingresso;
+      end get_polo_ingresso;
+
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante is
          entità: abitante:= entità_abitanti(id_quartiere)(id_abitante);
       begin
@@ -245,8 +276,10 @@ package body risorse_passive_data is
    end get_estremi_urbana;
 
    protected body location_abitanti is
+
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
       begin
+         abitanti_arrived(id_abitante):= False;
          percorsi(id_abitante):= new route_and_distance'(percorso);
       end set_percorso_abitante;
 
@@ -254,6 +287,11 @@ package body risorse_passive_data is
       begin
          position_abitanti(id_abitante):= position_abitanti(id_abitante)+1;
       end set_position_abitante_to_next;
+
+      procedure set_finish_route(id_abitante: Positive) is
+      begin
+         abitanti_arrived(id_abitante):= True;
+      end set_finish_route;
 
       function get_next(id_abitante: Positive) return tratto is
          route: percorso:= percorsi(id_abitante).get_percorso_from_route_and_distance;
@@ -265,7 +303,24 @@ package body risorse_passive_data is
          end if;
       end get_next;
 
-      function get_next_road(id_abitante: Positive) return tratto is
+      function get_next_road(id_abitante: Positive; from_ingresso: Boolean) return tratto is
+         route: percorso:= percorsi(id_abitante).get_percorso_from_route_and_distance;
+         slice: Positive;
+      begin
+         if from_ingresso then
+            slice:= 2;
+         else
+            slice:= 3;
+         end if;
+
+         if position_abitanti(id_abitante)+slice<=route'Last then
+            return route(position_abitanti(id_abitante)+slice);
+         else
+            return create_tratto(0,0);
+         end if;
+      end get_next_road;
+
+      function get_next_incrocio(id_abitante: Positive) return tratto is
          route: percorso:= percorsi(id_abitante).get_percorso_from_route_and_distance;
       begin
          if position_abitanti(id_abitante)+2<=route'Last then
@@ -273,7 +328,7 @@ package body risorse_passive_data is
          else
             return create_tratto(0,0);
          end if;
-      end get_next_road;
+      end get_next_incrocio;
 
       function get_current_tratto(id_abitante: Positive) return tratto is
       begin
@@ -287,7 +342,7 @@ package body risorse_passive_data is
 
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural is
       begin
-         return 0;
+         return percorsi(id_abitante).all'Size-position_abitanti(id_abitante);
       end get_number_steps_to_finish_route;
 
    end location_abitanti;
@@ -305,30 +360,5 @@ package body risorse_passive_data is
          return 4;
       end if;
    end get_size_incrocio;
-
-   function get_road_incrocio_from_incrocio(id_incrocio: Positive; index_road: Positive) return road_incrocio_features is
-      size_incrocio: Positive:= get_size_incrocio(id_incrocio);
-      road_incrocio: road_incrocio_features;
-   begin
-      if size_incrocio=4 then
-         road_incrocio:= get_incrocio_a_4_from_id(id_incrocio)(index_road);
-      else
-         road_incrocio:= get_incrocio_a_3_from_id(id_incrocio)(index_road);
-      end if;
-      return road_incrocio;
-   end get_road_incrocio_from_incrocio;
-
-   function get_index_road_from_incrocio(id_incrocio: Positive; id_quartiere_road: Positive; id_road: Positive) return Natural is
-      road_incrocio: road_incrocio_features;
-   begin
-      for i in 1..get_size_incrocio(id_incrocio) loop
-         road_incrocio:= get_road_incrocio_from_incrocio(id_incrocio,i);
-         if road_incrocio.get_id_quartiere_road_incrocio=id_quartiere_road and
-           road_incrocio.get_id_strada_road_incrocio=id_road then
-            return i;
-         end if;
-      end loop;
-      return 0;
-   end get_index_road_from_incrocio;
 
 end risorse_passive_data;

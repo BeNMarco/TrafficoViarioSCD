@@ -27,6 +27,7 @@ procedure quartiere_3 is
    --gps: ptr_gps_interface;
    --percor: access route_and_distance;
 begin
+
    --gps:= get_server_gps;
    --gps.registra_urbane_quartiere(1, urbane_features);
    --gps.registra_ingressi_quartiere(1,ingressi_features);

@@ -23,8 +23,6 @@ package the_name_server is
 
    procedure registra_synchronization_tasks_object(obj: ptr_rt_task_synchronization);
 
-   procedure stam;
-
    function get_synchronization_tasks_object return ptr_rt_task_synchronization;
 
    type risorse_quartieri is array(Positive range <>) of access set_resources;
@@ -37,6 +35,11 @@ package the_name_server is
    function get_gestori_quartiere return handler_semafori;
 
    function get_id_mappa return str_quartieri;
+
+   type registro_quartiere_entities is array(Positive range <>) of ptr_rt_quartiere_entities_life;
+
+   procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life);
+   function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life;
 
 private
 
@@ -73,6 +76,13 @@ private
    private
       registro: registro_local_synchronized_obj(1..num_quartieri);
    end registro_local_synchronized_objects;
+
+   protected registro_quartiere_entities_life is
+      procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life);
+      function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life;
+   private
+      registro: registro_quartiere_entities(1..num_quartieri);
+   end registro_quartiere_entities_life;
 
    gps: ptr_gps_interface:= null;
 

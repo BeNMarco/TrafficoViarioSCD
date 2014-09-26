@@ -19,6 +19,10 @@ package risorse_passive_data is
    function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
    function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
 
+   function get_road_from_incrocio(index_incrocio: Positive; key_road: Positive) return road_incrocio_features;
+   function get_index_road_from_incrocio(id_quartiere_road: Positive; id_road: Positive; id_incrocio: Positive) return Natural;
+   function get_size_incrocio(id_incrocio: Positive) return Positive;
+
    function get_urbane return strade_urbane_features;
    function get_ingressi return strade_ingresso_features;
    function get_incroci_a_4 return list_incroci_a_4;
@@ -39,12 +43,14 @@ package risorse_passive_data is
 
       function get_type_entity(id_entità: Positive) return entity_type;
       function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Positive;
+      function get_polo_ingresso(id_ingresso: Positive) return Boolean;
 
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;
       function get_pedone_quartiere(id_quartiere: Positive; id_abitante: Positive) return pedone;
       function get_bici_quartiere(id_quartiere: Positive; id_abitante: Positive) return bici;
       function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
       function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
+
    private
 
       entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
@@ -71,14 +77,20 @@ package risorse_passive_data is
    type ptr_route_and_distance is access all route_and_distance'Class;
    type percorso_abitanti is array(Positive range <>) of ptr_route_and_distance;
    type array_position_abitanti is array(Positive range <>) of Positive;
+   type array_abitanti_finish_route is array(Positive range <>) of Boolean;
 
    protected type location_abitanti(num_abitanti: Positive) is new rt_location_abitanti with
 
         procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
-        procedure set_position_abitante_to_next(id_abitante: Positive);
+      procedure set_position_abitante_to_next(id_abitante: Positive);
+      procedure set_finish_route(id_abitante: Positive);
 
       function get_next(id_abitante: Positive) return tratto;
-      function get_next_road(id_abitante: Positive) return tratto;
+      -- next_road può essere a distanza 2 o distanza 3 dalla posizione della macchina
+      -- a seconda che la richiesta avvenga rispettivamente
+      -- da un ingresso o da un'incrocio
+      function get_next_road(id_abitante: Positive; from_ingresso: Boolean) return tratto;
+      function get_next_incrocio(id_abitante: Positive) return tratto;
       function get_current_tratto(id_abitante: Positive) return tratto;
       function get_current_position(id_abitante: Positive) return Positive;
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural;
@@ -86,17 +98,12 @@ package risorse_passive_data is
    private
       percorsi: percorso_abitanti(get_from_abitanti..get_to_abitanti):= (others => null);
       position_abitanti: array_position_abitanti(get_from_abitanti..get_to_abitanti):= (others => 1);
+      abitanti_arrived: array_abitanti_finish_route(get_from_abitanti..get_to_abitanti):= (others => False);
    end location_abitanti;
 
    type ptr_location_abitanti is access location_abitanti;
 
    function get_locate_abitanti_quartiere return ptr_location_abitanti;
-
-   function get_size_incrocio(id_incrocio: Positive) return Positive;
-
-   function get_road_incrocio_from_incrocio(id_incrocio: Positive; index_road: Positive) return road_incrocio_features;
-
-   function get_index_road_from_incrocio(id_incrocio: Positive; id_quartiere_road: Positive; id_road: Positive) return Natural;
 
 private
 

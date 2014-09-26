@@ -250,7 +250,7 @@ private
    end record;
 
    type trajectory_to_follow is tagged record
-      departure_corsia: Natural;
+      departure_corsia: Natural:= 0;
       corsia_to_go: Natural:= 0;
       ingresso_to_go: Natural:= 0;
       from_ingresso: Natural:= 0;

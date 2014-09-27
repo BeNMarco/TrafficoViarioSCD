@@ -63,6 +63,9 @@ package body start_simulation is
    begin
       Put_Line("avvia entità " & Positive'Image(get_from_abitanti) & " " & Positive'Image(get_to_abitanti));
       -- cicla su ogni abitante e invia richiesta all'ingresso
+
+      --wait_settings_all_quartieri;
+
       for i in get_from_abitanti..get_to_abitanti loop
          residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,i);
          --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso

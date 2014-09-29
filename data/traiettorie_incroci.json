@@ -1,6 +1,4 @@
 {
-"dimensioni_incrocio": 34.0,
-"larghezza_marciapiede": 3.0,
 "traiettorie_incrocio": {
       "destra": {
         "lunghezza": 11.71392999506322,
@@ -27,6 +25,16 @@
           {
             "traiettoria": "dritto_2",
             "distanza": 27.60123813161098
+          }
+        ],
+        "intersezioni_corsie":[
+	  { 
+	    "traiettoria": "linea_corsia",
+            "distanza": 10.323479577185475
+          },
+          { 
+	    "traiettoria": "linea_mezzaria",
+            "distanza": 19.677758440951873
           }
         ]
       },

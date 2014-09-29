@@ -29,6 +29,8 @@ pragma Elaborate_Body;
    function get_json_rotonde_a_3 return JSON_Array;
    function get_json_traiettorie_incrocio return JSON_Value;
    function get_json_traiettorie_ingresso return JSON_Value;
+   function get_json_traiettorie_cambio_corsie return JSON_Value;
+   function get_json_road_parameters return JSON_Value;
    function get_from_urbane return Natural;
    function get_to_urbane return Natural;
    function get_from_ingressi return Natural;
@@ -138,9 +140,8 @@ private
 
    json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incrocio");
    json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
-
-
-
+   json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_cambio_corsia.json");
+   json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/road_parameters.json");
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 
 end data_quartiere;

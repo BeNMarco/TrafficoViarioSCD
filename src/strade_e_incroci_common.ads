@@ -8,6 +8,7 @@ package strade_e_incroci_common is
    subtype id_corsie is Positive range 1..2;
 
    type traiettoria_incroci_type is (empty,destra,sinistra,dritto_1,dritto_2,dritto);
+   type traiettorie_intersezioni_linee_corsie is (linea_corsia,linea_mezzaria);
    type traiettoria_ingressi_type is (empty,entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno);
 
    type rt_strada_features is abstract tagged private;

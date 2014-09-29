@@ -11,16 +11,36 @@
       "intersezioni": [
         {
           "traiettoria": "uscita_ritorno",
-          "distanza": 5.971722426392999
+          "distanza": 8.271903581799446
+        }
+      ],
+      "intersezioni_corsie":[
+        {
+          "traiettoria": "linea_corsia",
+          "distanza": 15.579438682051936
+        },
+        {
+          "traiettoria": "linea_mezzaria",
+          "distanza": 7.985682353045275
         }
       ]
     },
     "uscita_ritorno": {
-      "lunghezza": 32.02998249100802,
+      "lunghezza": 25.63699493968893,
       "intersezioni": [
         {
           "traiettoria": "entrata_ritorno",
-          "distanza": 18.651512490538217
+          "distanza": 17.364427259279772
+        }
+      ],
+     "intersezioni_corsie":[
+        {
+          "traiettoria": "linea_corsia",
+          "distanza": 10.056177279365809
+        },
+        {
+          "traiettoria": "linea_mezzaria",
+          "distanza": 17.650719798739665
         }
       ]
     }

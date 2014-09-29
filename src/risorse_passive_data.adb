@@ -96,6 +96,11 @@ package body risorse_passive_data is
       return traiettorie_ingressi(type_traiettoria);
    end get_traiettoria_ingresso;
 
+   function get_traiettoria_cambio_corsia return traiettoria_cambio_corsia is
+   begin
+      return traiettorie_cambio_corsia;
+   end get_traiettoria_cambio_corsia;
+
    protected body quartiere_utilities is
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is
       begin
@@ -357,6 +362,15 @@ package body risorse_passive_data is
       return locate_abitanti_quartiere;
    end get_locate_abitanti_quartiere;
 
+   function get_larghezza_marciapiede return Float is
+   begin
+      return larghezza_marciapiede;
+   end get_larghezza_marciapiede;
+   function get_larghezza_corsia return Float is
+   begin
+      return larghezza_corsia;
+   end get_larghezza_corsia;
+
    function get_size_incrocio(id_incrocio: Positive) return Positive is
    begin
       if id_incrocio>=get_from_incroci_a_3 and id_incrocio<=get_to_incroci_a_3 then
@@ -365,5 +379,10 @@ package body risorse_passive_data is
          return 4;
       end if;
    end get_size_incrocio;
+
+   function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio is
+   begin
+      return traiettorie_incroci(traiettoria);
+   end get_traiettoria_incrocio;
 
 end risorse_passive_data;

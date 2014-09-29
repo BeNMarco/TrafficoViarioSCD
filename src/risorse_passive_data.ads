@@ -1,14 +1,19 @@
+with GNATCOLL.JSON;
+
 with risorse_mappa_utilities;
 with strade_e_incroci_common;
 with data_quartiere;
 with remote_types;
 with global_data;
+with JSON_Helper;
 
+use GNATCOLL.JSON;
 use risorse_mappa_utilities;
 use strade_e_incroci_common;
 use data_quartiere;
 use remote_types;
 use global_data;
+use JSON_Helper;
 
 package risorse_passive_data is
 
@@ -23,6 +28,8 @@ package risorse_passive_data is
    function get_index_road_from_incrocio(id_quartiere_road: Positive; id_road: Positive; id_incrocio: Positive) return Natural;
    function get_size_incrocio(id_incrocio: Positive) return Positive;
 
+   function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio;
+
    function get_urbane return strade_urbane_features;
    function get_ingressi return strade_ingresso_features;
    function get_incroci_a_4 return list_incroci_a_4;
@@ -33,6 +40,8 @@ package risorse_passive_data is
    function get_distance_from_polo_percorrenza(road: strada_ingresso_features) return Float;
 
    function get_traiettoria_ingresso(type_traiettoria: traiettoria_ingressi_type) return traiettoria_ingresso;
+
+   function get_traiettoria_cambio_corsia return traiettoria_cambio_corsia;
 
    protected type quartiere_utilities is new rt_quartiere_utilities with
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
@@ -106,6 +115,9 @@ package risorse_passive_data is
 
    function get_locate_abitanti_quartiere return ptr_location_abitanti;
 
+   function get_larghezza_marciapiede return Float;
+   function get_larghezza_corsia return Float;
+
 private
 
    protected waiting_cfg is
@@ -134,8 +146,12 @@ private
 
    traiettorie_incroci: traiettorie_incrocio:= create_traiettorie_incrocio(json_traiettorie => get_json_traiettorie_incrocio);
    traiettorie_ingressi: traiettorie_ingresso:= create_traiettorie_ingresso(json_traiettorie => get_json_traiettorie_ingresso);
+   traiettorie_cambio_corsia: traiettoria_cambio_corsia:= create_traiettoria_cambio_corsia(json_traiettorie => get_json_traiettorie_cambio_corsie);
 
    inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
    inventory_estremi_urbane: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
+
+   larghezza_marciapiede: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_marciapiede");
+   larghezza_corsia: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_corsia");
 
 end risorse_passive_data;

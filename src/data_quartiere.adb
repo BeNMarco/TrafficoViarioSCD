@@ -40,6 +40,15 @@ package body data_quartiere is
    begin
       return json_traiettorie_ingresso;
    end get_json_traiettorie_ingresso;
+   function get_json_traiettorie_cambio_corsie return JSON_Value is
+   begin
+      return json_traiettorie_cambio_corsie;
+   end get_json_traiettorie_cambio_corsie;
+   function get_json_road_parameters return JSON_Value is
+   begin
+      return json_road_parameters;
+   end get_json_road_parameters;
+
    function get_from_urbane return Natural is
    begin
       return from_urbane;

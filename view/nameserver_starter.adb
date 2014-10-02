@@ -97,7 +97,7 @@ begin
       declare
          Line : String := Get_Line (States_File);
       begin
-         WebS.invia_aggiornamento(Line(Line'First .. Line'Last), 2);
+         WebS.invia_aggiornamento(Line(Line'First .. Line'Last), 1);
          delay until (Clock + 0.3);
       end;
     end loop;

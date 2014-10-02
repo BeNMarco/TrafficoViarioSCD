@@ -362,12 +362,12 @@
       "id": 28,
       "lunghezza": 552.618683818597,
       "from": [
-        900,
-        0
-      ],
-      "to": [
         700,
         450
+      ],
+      "to": [
+        900,
+        0
       ],
       "numcorsie": 2
     },
@@ -476,7 +476,7 @@
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 28,
-      "polo": true,
+      "polo": false,
       "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
@@ -642,7 +642,7 @@
           "quartiere": 1,
           "id_strada": 28,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 1,
@@ -846,7 +846,7 @@
           "quartiere": 1,
           "id_strada": 28,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         },
         {
           "quartiere": 1,

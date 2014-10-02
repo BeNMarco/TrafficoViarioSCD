@@ -347,7 +347,7 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
-	if(drive && side){
+	if(drive && !side){
 		distance = this.guidingPath.length - distance;
 	}
 	var loc = this.guidingPath.getLocationAt(distance);
@@ -366,9 +366,12 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
 }
 
-Street.prototype.getPositionAtEntranceCrossing = function(distance, crossingPath){
-	var loc = this.sideStreetsEntrancePaths[crossingPaths].getLocationAt(distance);
-
+Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, crossingPath, distance){
+	//var loc = this.sideStreetsEntrancePaths[crossingPaths].getLocationAt(distance);
+	//console.log(side + " " + entranceDistance + " " + crossingPath + " " + distance);
+	//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
+	//console.log(distance +" on "+ this.sideStreets[side][entranceDistance].paths[crossingPath].path.length)
+	var loc = this.sideStreets[side][entranceDistance].paths[crossingPath].path.getLocationAt(distance);
 	return {angle:loc.tangent.angle, position: loc.point};
 }
 
@@ -672,6 +675,9 @@ Crossroad.prototype.getEntranceStreetNumber = function(streetId, district){
 }
 
 Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, direction){
+	//console.log(this.getEntranceStreetNumber(enteringStreet, streetDistrict));
+	//console.log(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)]);
+	//console.log(direction);
 	return this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path;
 }
 
@@ -1071,12 +1077,6 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 	}
 	enteringPaths['entrata_ritorno'].path.fullySelected = true;
 	street.guidingPath.fullySelected = true;
-	console.log(street.id);
-	console.log(side);
-	console.log(street.guidingPath);
-	console.log(enteringPaths['entrata_ritorno'].path);
-	console.log(enteringPaths['entrata_ritorno'].path.getIntersections(street.guidingPath));
-	console.log(enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.sepLines[side][1])[0].point));
 	return {
 		entrata_andata: {
 			lunghezza: enteringPaths['entrata_andata'].path.length

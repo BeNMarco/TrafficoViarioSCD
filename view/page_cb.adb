@@ -57,10 +57,10 @@ package body Page_CB is
 
     procedure Clean(This : in out District_Page) is
     begin
-      -- Put_Line("My file is " & To_String(This.JSON_File_Name));
-      if This.Initialized then
-        Delete_File(To_String(This.JSON_File_Name));
-      end if;      
+      Put_Line("My file is " & To_String(This.JSON_File_Name));
+      --if This.Initialized then
+        --Delete_File(To_String(This.JSON_File_Name));
+      --end if;      
     end Clean;
 
     overriding function Dispatch

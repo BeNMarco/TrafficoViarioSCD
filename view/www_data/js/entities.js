@@ -55,12 +55,11 @@ EntitiesRegistry.prototype.setStyle = function(style){
 }
 
 EntitiesRegistry.prototype.load = function(obj){
-	console.log(obj.auto);
 	for(i in obj.auto){
 		var c_id = obj.auto[i].id_abitante;
 		this.cars[c_id] = new Car(c_id);
+		this.cars[c_id].hide();
 	}
-	console.log(this.cars);
 }
 
 EntitiesRegistry.prototype.show = function(){

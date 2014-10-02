@@ -1,5 +1,9 @@
+with Ada.Text_IO;
+
 with the_name_server;
 with risorse_mappa_utilities;
+
+use Ada.Text_IO;
 
 use the_name_server;
 use risorse_mappa_utilities;
@@ -128,6 +132,7 @@ package body risorse_passive_data is
       procedure get_cfg_incrocio(id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural) is
          incrocio_a_3: list_road_incrocio_a_3;
          incrocio_a_4: list_road_incrocio_a_4;
+
       begin
          if id_incrocio>=get_from_incroci_a_3 and id_incrocio<=get_to_incroci_a_3 then
             incrocio_a_3:= get_incrocio_a_3_from_id(id_incrocio);
@@ -138,11 +143,15 @@ package body risorse_passive_data is
                if incrocio_a_3(i).get_id_quartiere_road_incrocio=from_road.get_id_quartiere_tratto and incrocio_a_3(i).get_id_strada_road_incrocio=from_road.get_id_tratto then
                   if id_road_mancante<=i then
                      key_road_from:= i+1;
+                  else
+                     key_road_from:= i;
                   end if;
                end if;
                if incrocio_a_3(i).get_id_quartiere_road_incrocio=to_road.get_id_quartiere_tratto and incrocio_a_3(i).get_id_strada_road_incrocio=to_road.get_id_tratto then
                   if id_road_mancante<=i then
                      key_road_to:= i+1;
+                  else
+                     key_road_to:= i;
                   end if;
                end if;
             end loop;
@@ -175,9 +184,13 @@ package body risorse_passive_data is
          end if;
       end get_type_entity;
 
-      function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Positive is
+      function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Natural is
       begin
-         return get_ingresso_from_id(id_ingresso).get_id_main_strada_ingresso;
+         if id_ingresso>=get_from_ingressi and id_ingresso<=get_to_ingressi then
+            return get_ingresso_from_id(id_ingresso).get_id_main_strada_ingresso;
+         else
+            return 0;
+         end if;
       end get_id_main_road_from_id_ingresso;
 
       function get_polo_ingresso(id_ingresso: Positive) return Boolean is
@@ -291,6 +304,7 @@ package body risorse_passive_data is
       begin
          abitanti_arrived(id_abitante):= False;
          percorsi(id_abitante):= new route_and_distance'(percorso);
+         position_abitanti(id_abitante):= 1;
       end set_percorso_abitante;
 
       procedure set_position_abitante_to_next(id_abitante: Positive) is
@@ -342,7 +356,7 @@ package body risorse_passive_data is
 
       function get_current_tratto(id_abitante: Positive) return tratto is
       begin
-         return create_tratto(0,0);
+         return percorsi(id_abitante).get_percorso_from_route_and_distance(position_abitanti(id_abitante));
       end get_current_tratto;
 
       function get_current_position(id_abitante: Positive) return Positive is
@@ -352,7 +366,7 @@ package body risorse_passive_data is
 
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural is
       begin
-         return percorsi(id_abitante).all'Size-position_abitanti(id_abitante);
+         return percorsi(id_abitante).get_percorso_from_route_and_distance'Length-position_abitanti(id_abitante);
       end get_number_steps_to_finish_route;
 
    end location_abitanti;

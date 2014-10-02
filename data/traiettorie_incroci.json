@@ -10,7 +10,7 @@
         }
       },
       "sinistra": {
-        "lunghezza": 34.11869819125671,
+        "lunghezza": 32.63980049957382,
         "strada_partenza": {
           "corsia": 2
         },
@@ -20,11 +20,11 @@
         "intersezioni": [
           {
             "traiettoria": "dritto_1",
-            "distanza": 20.22656717951471
+            "distanza": 26.06442805887287
           },
           {
             "traiettoria": "dritto_2",
-            "distanza": 27.60123813161098
+            "distanza": 18.15536731775895 
           }
         ],
         "intersezioni_corsie":[
@@ -49,7 +49,7 @@
         "intersezioni": [
           {
             "traiettoria": "sinistra",
-            "distanza": 13.898317014605938
+            "distanza": 14.349093848766858
           }
         ]
       },
@@ -64,7 +64,7 @@
         "intersezioni": [
           {
             "traiettoria": "sinistra",
-            "distanza": 16.07561250580214
+            "distanza": 17.908863181982486
           }
         ]
       }

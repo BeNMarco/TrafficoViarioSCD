@@ -51,7 +51,7 @@ package risorse_passive_data is
       procedure get_cfg_incrocio(id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural);
 
       function get_type_entity(id_entità: Positive) return entity_type;
-      function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Positive;
+      function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Natural;
       function get_polo_ingresso(id_ingresso: Positive) return Boolean;
 
       function get_abitante_quartiere(id_quartiere: Positive; id_abitante: Positive) return abitante;

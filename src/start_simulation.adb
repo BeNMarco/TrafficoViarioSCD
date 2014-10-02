@@ -32,21 +32,22 @@ package body start_simulation is
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
       -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
       if residente.get_id_quartiere_from_abitante=arrived_tratto.get_id_quartiere_tratto and
-        residente.get_id_luogo_casa_from_abitante=arrived_tratto.get_id_tratto then
+        residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1=arrived_tratto.get_id_tratto then
          -- l'abitante si trova a casa
          -- lo si manda a lavorare
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_from_ingressi-1));
       elsif residente.get_id_quartiere_luogo_lavoro_from_abitante=arrived_tratto.get_id_quartiere_tratto and
-        residente.get_id_luogo_lavoro_from_abitante=arrived_tratto.get_id_tratto then
+        residente.get_id_luogo_lavoro_from_abitante+get_from_ingressi-1=arrived_tratto.get_id_tratto then
          -- l'abitante è a lavoro
          -- lo si manda a casa
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
          get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
       else  -- lo si manda a casa cmq
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
       end if;
 
       -- Invio richiesta ASINCRONA
+      print_percorso(percorso.get_percorso_from_route_and_distance);
       get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
       ptr_rt_ingresso(get_id_risorsa_quartiere(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,car);
 
@@ -70,7 +71,8 @@ package body start_simulation is
          residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,i);
          --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
          Put_Line("request percorso");
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante, to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,
+                                                                            to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante+get_from_ingressi-1));
          Put_Line("end request percorso");
          print_percorso(percorso.get_percorso_from_route_and_distance);
          get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => percorso.all);

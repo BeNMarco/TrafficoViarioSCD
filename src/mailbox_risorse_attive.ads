@@ -42,7 +42,7 @@ package mailbox_risorse_attive is
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
-      procedure set_move_parameters_entity_on_traiettoria_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float);
+      procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float);
       procedure set_move_parameters_entity_on_main_road(current_car_in_corsia: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; speed: Float; step: Float);
       procedure set_car_overtaken(value_overtaken: Boolean; car: in out ptr_list_posizione_abitanti_on_road);
       procedure set_flag_car_can_overtake_to_next_corsia(car: in out ptr_list_posizione_abitanti_on_road; flag: Boolean);
@@ -59,7 +59,7 @@ package mailbox_risorse_attive is
       function get_ingressi_ordered_by_distance return indici_ingressi;
       function get_index_ingresso_from_key(key: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
-      function get_abitante_from_ingresso(ingresso_key: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
+      function get_abitante_from_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
       function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
       function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
@@ -73,6 +73,7 @@ package mailbox_risorse_attive is
       function car_can_initiate_overtaken_on_road(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
       function there_are_overtaken_on_ingresso(ingresso: strada_ingresso_features; polo: Boolean) return Boolean; -- se polo = (polo dell'ingresso) => senso macchine to check è indicato da polo altrimenti not polo
       function car_on_same_corsia_have_overtaked(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
+      function get_last_abitante_ingresso(key_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
 
       function get_distanza_percorsa_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
 
@@ -109,6 +110,7 @@ package mailbox_risorse_attive is
       procedure update_avanzamento_car_in_urbana(distance: Float);
       procedure delete_car_in_uscita;
       procedure delete_car_in_entrata;
+      procedure set_flag_spostamento_from_urbana_completato;
 
       function get_main_strada(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
       function get_marciapiede(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;
@@ -148,6 +150,7 @@ package mailbox_risorse_attive is
       procedure insert_new_car(from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road);
       procedure update_avanzamento_car(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: Float; new_speed: Float);
       procedure update_avanzamento_cars;
+      procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
 
       function get_verso_semafori_verdi return Boolean;
       function get_size_incrocio return Positive;

@@ -28,7 +28,7 @@ package remote_types is
    procedure get_cfg_incrocio(obj: access rt_quartiere_utilities; id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural) is abstract;
    function get_polo_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Boolean is abstract;
    function get_type_entity(obj: access rt_quartiere_utilities; id_entità: Positive) return entity_type is abstract;
-   function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Positive is abstract;
+   function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Natural is abstract;
    function get_index_luogo_from_id_json(obj: access rt_quartiere_utilities; json_key: Positive) return Positive is abstract;
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
@@ -37,7 +37,8 @@ package remote_types is
    type handler_semafori is array(Positive range <>) of ptr_rt_handler_semafori_quartiere;
    procedure change_semafori(obj: rt_handler_semafori_quartiere) is abstract;
 
-   -- begin resource segmenti
+
+      -- begin resource segmenti
    type rt_segmento is synchronized interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
 

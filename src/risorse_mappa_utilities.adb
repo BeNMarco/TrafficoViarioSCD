@@ -200,7 +200,7 @@ package body risorse_mappa_utilities is
       traiettoria: traiettoria_ingresso;
    begin
       traiettoria.lunghezza:= lunghezza;
-      traiettoria.intersezioni:= null;
+      traiettoria.intersezioni:= intersezioni;
       traiettoria.intersezioni_corsie:= intersezioni_corsie;
       return traiettoria;
    end create_traiettoria_ingresso;
@@ -375,9 +375,9 @@ package body risorse_mappa_utilities is
    begin
       return obj.lunghezza;
    end get_lunghezza;
-   function get_intersezioni(obj: traiettoria_ingresso) return ptr_intersezioni_ingresso is
+   function get_intersezioni(obj: traiettoria_ingresso) return intersezione_ingresso'Class is
    begin
-      return obj.intersezioni;
+      return obj.intersezioni(1);
    end get_intersezioni;
    function get_intersezioni_corsie(obj: traiettoria_ingresso; linea: traiettorie_intersezioni_linee_corsie) return intersezione_linee'Class is
    begin

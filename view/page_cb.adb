@@ -22,6 +22,7 @@ package body Page_CB is
   use Ada.Text_IO;
 
     WWW_Root : String := "www_data";
+    SEP : String := "/";
 
     overriding function Clone (Element : in District_Page) return District_Page is
     begin
@@ -57,10 +58,13 @@ package body Page_CB is
 
     procedure Clean(This : in out District_Page) is
     begin
-      Put_Line("My file is " & To_String(This.JSON_File_Name));
-      --if This.Initialized then
-        --Delete_File(To_String(This.JSON_File_Name));
-      --end if;      
+      Put_Line("Deleting temp file " & WWW_Root & SEP & To_String(This.JSON_File_Name));
+      if This.Initialized then
+        Delete_File(WWW_Root & SEP & To_String(This.JSON_File_Name));
+      end if;  
+    exception
+      when Directories.Name_Error => Put_Line("File "&WWW_Root & SEP & To_String(This.JSON_File_Name)&" not found");
+      when Directories.Use_Error => Put_Line("Can't delete the file " &WWW_Root & SEP & To_String(This.JSON_File_Name));
     end Clean;
 
     overriding function Dispatch

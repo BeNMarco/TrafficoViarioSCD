@@ -43,7 +43,6 @@ package body WebServer is
    begin
       for I in This.Page_Handler_Registry'Range loop
          if This.Page_Handler_Registry(I).Is_Initialized /= False then
-            Text_IO.Put_Line("Cleaning the temp files of " & Natural'Image(I));
             This.Page_Handler_Registry(I).Clean;
          end if;
       end loop;

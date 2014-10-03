@@ -23,6 +23,7 @@ state = [
 
 function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.stateCache = [];
+	this.pathCache = {cars:{}};
 	this.map = map;
 	this.objects = objects;
 	this.simulationTime = 0;
@@ -76,72 +77,72 @@ Simulation.prototype.init = function(){
 Simulation.prototype.moveObjects = function(time){
 	this.currentState.stateTime += time;
 	for(var c in this.currentState.cars){
-
+		var curCar = this.currentState.cars[c];
 		var newDistance = 0;
 		var prevPosition = 0;
 
 		// if the previous state is empty (simulation just initiated) we put the object at the position given by the state
 		if(this.prevState == null){
-			newDistance = this.currentState.cars[c].distanza;
+			newDistance = curCar.distanza;
 			console.log("previous state is null");
-			console.log(this.currentState.cars[c]);
+			console.log(curCar);
 		} 
 		// otherwise we compute the correct position
 		else {
 			// if the object switched from a place to another 
-			if(this.currentState.cars[c].where != this.prevState.cars[c].where){
+			if(curCar.where != this.prevState.cars[c].where){
 				// if the initial position in the current state is set we use it, otherwise we use 0
-				prevPosition = this.currentState.cars[c].inizio !== undefined ? this.currentState.cars[c].inizio : 0;
-				//console.log("switched to another track");
-				//console.log(this.currentState.cars[c]);
+				prevPosition = curCar.inizio !== undefined ? curCar.inizio : 0;
+
 			}
 			// otherwise simply take the position from the previous state
 			else {
 				prevPosition = this.prevState.cars[c].distanza;
-				//console.log("keep going");
-				//console.log(this.prevState.cars[c]);
 			}
-			//console.log(prevPosition);
-			newDistance = 1*prevPosition + 1*((this.currentState.cars[c].distanza - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+			newDistance = 1*prevPosition + 1*((curCar.distanza - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 		}
 
-		/*
-		console.log(this.currentState.cars[c].distanza);
-		console.log(curElapsed+"/"+this.statesDuration+"="+(curElapsed/this.statesDuration));
-		//console.log("delta_dist: "+dd);
-		*/
-		//console.log("time: "+time+ " curStateTime: "+this.currentState.stateTime);
-		//console.log("newDistance: "+newDistance);
 		var newPos = null;
-		switch(this.currentState.cars[c].where){
+		switch(curCar.where){
 			case 'strada':
-				newPos = this.map.streets[this.currentState.cars[c].id_strada].getPositionAt(newDistance, this.currentState.cars[c].polo, this.currentState.cars[c].corsia);
+				newPos = this.map.streets[curCar.id_strada].getPositionAt(newDistance, curCar.polo, curCar.corsia);
 				break;
 			case 'strada_ingresso':
-				newPos = this.map.entranceStreets[this.currentState.cars[c].id_strada].getPositionAt(newDistance, this.currentState.cars[c].polo, this.currentState.cars[c].corsia);
+				newPos = this.map.entranceStreets[curCar.id_strada].getPositionAt(newDistance, curCar.polo, curCar.corsia);
 				break;
 			case 'traiettoria_ingresso':
-				//console.log(this.currentState.cars[c]);
-				newPos = this.map.streets[this.currentState.cars[c].id_strada].getPositionAtEntrancePath(
-					this.currentState.cars[c].polo, 
-					this.currentState.cars[c].distanza_ingresso, 
-					this.currentState.cars[c].traiettoria,
+				newPos = this.map.streets[curCar.id_strada].getPositionAtEntrancePath(
+					curCar.polo, 
+					curCar.distanza_ingresso, 
+					curCar.traiettoria,
 					newDistance
 					);
 				break;
 			case 'incrocio':
-				newPos = this.map.crossroads[this.currentState.cars[c].id_incrocio].getPositionAt(
+				newPos = this.map.crossroads[curCar.id_incrocio].getPositionAt(
 					newDistance, 
-					this.currentState.cars[c].strada_ingresso, 
-					this.currentState.cars[c].quartiere, 
-					this.currentState.cars[c].direzione);
+					curCar.strada_ingresso, 
+					curCar.quartiere, 
+					curCar.direzione);
+				break;
+			case 'cambio_corsia':
+				if(this.pathCache.cars[c] === undefined || (this.pathCache.cars[c] !== undefined && this.pathCache.cars[c].idp != this.currentState.num)){
+					this.pathCache.cars[c] = this.map.streets[curCar.id_strada].getOvertakingPath(
+						curCar.distanza_inizio, 
+						curCar.polo, 
+						curCar.corsia_inizio, 
+						curCar.corsia_fine, 
+						20
+						);
+					this.pathCache.cars[c].idp = this.currentState.num;
+				}
+				var loc = this.pathCache.cars[c].getLocationAt(newDistance); 
+				newPos = {
+					position: loc.point,
+					angle: loc.tangent.angle
+				}
 				break;
 		}
-		/*
-		console.log(c);
-		console.log(this.objects.cars);
-		console.log(this.objects.cars[c]);
-		*/
 		this.objects.cars[c].move(newPos.position, newPos.angle);
 	}
 }

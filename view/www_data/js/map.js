@@ -391,6 +391,11 @@ Street.prototype.getSidestreetPositionAt = function(distance, side){
 }
 
 Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toLane, moveLength){
+	//console.log("startPosition: "+startPosition);
+	//console.log("side: "+side);
+	//console.log("fromLane: "+fromLane);
+	//console.log("toLane: "+toLane);
+	//console.log("moveLength: "+moveLength);
 	var p1 = this.getPositionAt(startPosition, side, fromLane).position;
 	var hp1 = this.getPositionAt(startPosition+0.5*moveLength, side, fromLane).position;
 	var p2 = this.getPositionAt(startPosition+moveLength, side, toLane).position;

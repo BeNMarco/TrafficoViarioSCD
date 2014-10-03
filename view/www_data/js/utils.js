@@ -16,11 +16,15 @@ var route3 = [
 ]
 
 var route4 = [
-	{tipo:'strada_ingresso', id_strada: 4, corsia:0, polo: false, inizio: 0, fine: 0, speed: 10},
-	{tipo:'traiettoria_ingresso', id_strada: 28, distanza_ingresso:380, polo:true, traiettoria:'uscita_ritorno_1', inizio: 0, fine: 0, speed: 7},
-	{tipo:'strada', id_strada: 28, corsia:0, polo:false, inizio: 179.6186838185971, fine: 0, speed: 30},
-	{tipo:'incrocio', id_incrocio:'i14', strada_ingresso: 28, quartiere:1, direzione:'straight_1', speed: 7},
-	{tipo:'strada', id_strada: 30, corsia:0, polo:false, inizio: 0, fine: 416.3897231972169, speed: 30},
+	//{tipo:'strada_ingresso', id_strada: 4, corsia:0, polo: false, inizio: 0, fine: 0, speed: 10},
+	//{tipo:'traiettoria_ingresso', id_strada: 28, distanza_ingresso:380, polo:true, traiettoria:'uscita_ritorno_1', inizio: 0, fine: 0, speed: 7},
+	//{tipo:'strada', id_strada: 28, corsia:0, polo:false, inizio: 179.6186838185971, fine: 0, speed: 30},
+	//{tipo:'incrocio', id_incrocio:'i14', strada_ingresso: 28, quartiere:1, direzione:'straight_1', speed: 7},
+	{tipo:'strada', id_strada: 30, corsia:0, polo:false, inizio: 0, fine: 200, speed: 30},
+	{tipo:'cambio_corsia', id_strada: 30, inizio: 200, lunghezza: 20, polo: false, corsia_inizio:0, corsia_fine:1, speed: 25},
+	{tipo:'strada', id_strada: 30, corsia:1, polo:false, inizio: 220, fine: 300, speed: 30},
+	{tipo:'cambio_corsia', id_strada: 30, inizio: 300, lunghezza: 20, polo: false, corsia_inizio:1, corsia_fine:0, speed: 25},
+	{tipo:'strada', id_strada: 30, corsia:0, polo:false, inizio: 330, fine: 416.3897231972169, speed: 30},
 	{tipo:'traiettoria_ingresso', id_strada: 30, distanza_ingresso:250, polo:true, traiettoria:'entrata_ritorno', inizio: 0, fine: 0, speed: 7},
 	{tipo:'strada_ingresso', id_strada: 2, corsia:0, polo:true, inizio: 0, fine: 0, speed: 10},
 ]
@@ -32,10 +36,10 @@ var route4 = [
 
 function craftStatesForCar(curState, carId, route, map, speed, stateDuration){
 	var stateNum = 0;
-	var l = 0;
-	var gl = 0;
-	var n = 0;
 	for(var i in route){
+		var l = 0;
+		var gl = 0;
+		var n = 0;
 		switch(route[i].tipo){
 			case 'strada':
 				gl = map.streets[route[i].id_strada].guidingPath.length;
@@ -162,6 +166,43 @@ function craftStatesForCar(curState, carId, route, map, speed, stateDuration){
 							quartiere:route[i].quartiere, 
 							direzione:route[i].direzione,
 						});
+					stateNum++;
+				}
+				break;
+			case 'cambio_corsia':
+				l = map.streets[route[i].id_strada].getOvertakingPath(
+					route[i].inizio, 
+					route[i].polo, 
+					route[i].corsia_inizio, 
+					route[i].corsia_fine, 
+					route[i].lunghezza).length;
+
+				n = l / route[i].speed / (stateDuration/1000);
+				var trunk = l/n;
+				var done = 0;
+				for(var c = 1; c < n; c++){
+					done += trunk;
+					addCarToState(curState, stateNum, carId, {
+						id_strada: route[i].id_strada, 
+						where: 'cambio_corsia', 
+						distanza: done,//.toFixed(2), 
+						distanza_inizio: route[i].inizio,
+						polo: route[i].polo, 
+						corsia_inizio: route[i].corsia_inizio, 
+						corsia_fine: route[i].corsia_fine,
+					});
+					stateNum++;
+				}
+				if(done < l){
+					addCarToState(curState, stateNum, carId, {
+						id_strada: route[i].id_strada, 
+						where: 'cambio_corsia', 
+						distanza: l,//.toFixed(2), 
+						distanza_inizio: route[i].inizio,
+						polo: route[i].polo, 
+						corsia_inizio: route[i].corsia_inizio, 
+						corsia_fine:route[i].corsia_fine,
+					});
 					stateNum++;
 				}
 				break;

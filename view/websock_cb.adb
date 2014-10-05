@@ -81,11 +81,11 @@ package body WebSock_CB is
    -- Send --
    ----------
 
-   overriding procedure Send (Socket : in out Update_Websoket; Message : String) is
-   begin
+   -- overriding procedure Send (Socket : in out Update_Websoket; Message : String) is
+   -- begin
       -- Text_IO.Put_Line("Sending "&Message);
-      Net.WebSocket.Object (Socket).Send (Message);
-   end Send;
+      -- Net.WebSocket.Object (Socket).Send (Message);
+   -- send Send;
 
    procedure Set_Quartiere (This: in out Update_Websoket; Q : Natural) is
    begin

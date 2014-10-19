@@ -34,6 +34,7 @@ use risorse_passive_data;
 procedure quartiere_3 is
 
 begin
+   configure_quartiere_obj;
    configure_quartiere;
    configure_tasks;
    registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));

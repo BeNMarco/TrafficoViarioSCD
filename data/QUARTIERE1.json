@@ -5,8 +5,8 @@
     "altezza": 1500,
     "riferimento": null
   },
-"id_quartiere": 1,
-  "strade": [
+  "id_quartiere": 1,
+  "strade_urbane": [
     {
       "id": 1,
       "lunghezza": 466.44354207678106,
@@ -362,12 +362,12 @@
       "id": 28,
       "lunghezza": 442.618683818597,
       "from": [
-        700,
-        450
-      ],
-      "to": [
         900,
         0
+      ],
+      "to": [
+        700,
+        450
       ],
       "numcorsie": 2
     },
@@ -450,7 +450,7 @@
       "numcorsie": 2
     }
   ],
-"strade_ingresso": [
+  "strade_ingresso": [
     {
       "id": 1,
       "lunghezza": 10.0,
@@ -476,7 +476,7 @@
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 28,
-      "polo": false,
+      "polo": true,
       "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
@@ -511,7 +511,7 @@
       "from": 0,
       "to": 0
     }
-],
+  ],
   "incroci_a_4": [
     {
       "id": "i1",

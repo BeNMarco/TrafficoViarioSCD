@@ -18,9 +18,8 @@ package body synchronization_task_partition is
       entry registra_task(id: Positive) when num_task_to_go=0 is
       begin
          num_task_ready:= num_task_ready+1;
-         if num_task_ready=get_num_task then --get_num_task then
+         if num_task_ready=get_num_task then
             num_task_ready:= 0;
-            --log_mio.write_task_arrived("i");
             global_synch_obj.all_task_partition_are_ready(get_id_quartiere);
             --log_mio.write_task_arrived("i");
             --Put_Line(Positive'Image(id));

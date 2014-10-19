@@ -118,6 +118,8 @@ package risorse_passive_data is
    function get_larghezza_marciapiede return Float;
    function get_larghezza_corsia return Float;
 
+   procedure configure_quartiere_obj;
+
 private
 
    protected waiting_cfg is
@@ -132,7 +134,7 @@ private
       inventory_estremi_is_set: Boolean:= False;
    end waiting_cfg;
 
-   quartiere_cfg: ptr_quartiere_utilities:= new quartiere_utilities;
+   quartiere_cfg: ptr_quartiere_utilities:= null;
 
    urbane_features: strade_urbane_features:= create_array_urbane(json_roads => get_json_urbane, from => get_from_urbane, to => get_to_urbane);
    ingressi_features: strade_ingresso_features:= create_array_ingressi(json_roads => get_json_ingressi, from => get_from_ingressi, to => get_to_ingressi);
@@ -142,7 +144,7 @@ private
    rotonde_a_3: list_incroci_a_3:= create_array_rotonde_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
 
       -- classe utilizzata per settare la posizione corrente di un abitante, per settare il percorso, per ottenere il percorso
-   locate_abitanti_quartiere: ptr_location_abitanti:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
+   locate_abitanti_quartiere: ptr_location_abitanti:= null;
 
    traiettorie_incroci: traiettorie_incrocio:= create_traiettorie_incrocio(json_traiettorie => get_json_traiettorie_incrocio);
    traiettorie_ingressi: traiettorie_ingresso:= create_traiettorie_ingresso(json_traiettorie => get_json_traiettorie_ingresso);

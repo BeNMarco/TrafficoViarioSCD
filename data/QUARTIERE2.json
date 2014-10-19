@@ -8,8 +8,8 @@
       "angolo": 0
     }
   },
-"id_quartiere": 2,
-  "strade": [
+  "id_quartiere": 2,
+  "strade_urbane": [
     {
       "id": 1,
       "lunghezza": 483.00000000000006,

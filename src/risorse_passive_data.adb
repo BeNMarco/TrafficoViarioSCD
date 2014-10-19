@@ -394,6 +394,12 @@ package body risorse_passive_data is
       end if;
    end get_size_incrocio;
 
+   procedure configure_quartiere_obj is
+   begin
+      quartiere_cfg:= new quartiere_utilities;
+      locate_abitanti_quartiere:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
+   end configure_quartiere_obj;
+
    function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio is
    begin
       return traiettorie_incroci(traiettoria);

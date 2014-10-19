@@ -8,8 +8,8 @@
       "angolo": 0
     }
   },
-"id_quartiere": 3,
-  "strade": [
+  "id_quartiere": 3,
+  "strade_urbane": [
     {
       "id": 1,
       "lunghezza": 483.00000000000006,
@@ -839,19 +839,19 @@
       "capienza_bici": 0
     }
   ],
-"rotonde_a_4":[],
+  "rotonde_a_4":[],
 
-"rotonde_a_3":[],
+  "rotonde_a_3":[],
 
-"default_pedoni":{"desired_velocity": 5.0,"time_headway": 0.5,"max_acceleration": 0.3,"comfortable_deceleration": 3.0,"s0": 2.0,"length": 0.5},
-"default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
-"default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
+  "default_pedoni":{"desired_velocity": 5.0,"time_headway": 0.5,"max_acceleration": 0.3,"comfortable_deceleration": 3.0,"s0": 2.0,"length": 0.5},
+  "default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
+  "default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
 
-"pedoni":[],
+  "pedoni":[], 
 
-"auto":[],
+  "auto":[],
 
-"bici":[],
+  "bici":[],
 
-"abitanti":[]
+  "abitanti":[]
 }

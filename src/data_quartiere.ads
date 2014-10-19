@@ -2,6 +2,7 @@ with GNATCOLL.JSON;
 with Ada.Directories;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
+with Polyorb.Parameters;
 
 with JSON_Helper;
 with strade_e_incroci_common;
@@ -54,29 +55,16 @@ pragma Elaborate_Body;
    function get_default_value_auto(value: move_settings) return Float;
    function get_num_abitanti return Natural;
    function get_num_task return Natural;
-   function get_name_log_file return str_quartieri;
-
-
-   protected log_mio is
-       procedure configure;
-      procedure write_task_arrived(stringa: String);
-   private
-      OutFile: File_Type;
-   end log_mio;
 
 private
 
-   --name_quartiere: str_quartieri:= get_name_partition;
-
-   --dir: String:= Current_Directory;
-   id_mappa: str_quartieri:= get_id_mappa;
-   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\p\data\" & str_quartieri'Image(id_mappa) & ".json");
-   json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\p\data\traiettorie_incroci.json");
-   json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\p\data\traiettorie_ingressi.json");
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\" & Polyorb.Parameters.Get_Conf("dsa","partition_name") & ".json");
+   json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_incroci.json");
+   json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_ingressi.json");
 
    id_quartiere: Positive:= Get(Val => json_quartiere, Field => "id_quartiere");
 
-   json_urbane: JSON_Array:= Get(Val => json_quartiere, Field => "strade");
+   json_urbane: JSON_Array:= Get(Val => json_quartiere, Field => "strade_urbane");
    json_ingressi: JSON_Array:= Get(Val => json_quartiere, Field => "strade_ingresso");
    size_json_urbane: Natural:= Length(json_urbane);
    size_json_ingressi: Natural:= Length(json_ingressi);
@@ -140,8 +128,8 @@ private
 
    json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incrocio");
    json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
-   json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\p\data\traiettorie_cambio_corsia.json");
-   json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\p\data\road_parameters.json");
+   json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_cambio_corsia.json");
+   json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\road_parameters.json");
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 
 end data_quartiere;

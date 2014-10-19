@@ -43,6 +43,8 @@ package the_name_server is
 
 private
 
+   obj_prova: ptr_rt_prova:= null;
+
    protected registro_ref_quartieri is
       procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites);
       function get_ref_rt_quartieri return registro_quartieri;

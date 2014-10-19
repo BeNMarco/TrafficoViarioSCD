@@ -76,6 +76,4 @@ private
    task_incroci: task_container_incroci(get_from_incroci_a_4..get_to_incroci_a_3);
    task_rotonde: task_container_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_3);
 
-   synchronization_tasks_partitions: ptr_rt_task_synchronization:= get_synchronization_tasks_object;
-
 end risorse_strade_e_incroci;

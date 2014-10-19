@@ -7,6 +7,7 @@ with risorse_mappa_utilities;
 with synchronization_task_partition;
 with mailbox_risorse_attive;
 with handle_semafori;
+with wait_configuration_quartieri;
 
 use data_quartiere;
 use strade_e_incroci_common;
@@ -17,35 +18,28 @@ use risorse_mappa_utilities;
 use synchronization_task_partition;
 use mailbox_risorse_attive;
 use handle_semafori;
+use wait_configuration_quartieri;
 
 package resource_map_inventory is
 
    function get_synchronization_tasks_partition_object return ptr_synchronization_tasks;
 
-   protected type wait_all_quartieri is new rt_wait_all_quartieri with
-      procedure all_quartieri_set;
-      entry wait_quartieri;
-   private
-      segnale: Boolean:= False;
-   end wait_all_quartieri;
-
-   type ptr_wait_all_quartieri is access wait_all_quartieri;
-
    type ptr_strade_urbane_features is access all strade_urbane_features;
 
    function get_quartiere_cfg(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
+
+   procedure configure_quartiere;
 
 private
 
    registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
 
-   waiting_object: ptr_wait_all_quartieri:= new wait_all_quartieri;
+   waiting_object: ptr_wait_all_quartieri:= null;--:= new wait_all_quartieri;
 
-   -- server gps
-   gps: ptr_gps_interface:= get_server_gps;
+   gps: ptr_gps_interface:= null;
 
-   synchronization_tasks_partition: ptr_synchronization_tasks:= new synchronization_tasks;
+   synchronization_tasks_partition: ptr_synchronization_tasks:= null;
 
-   semafori_quartiere_obj: ptr_handler_semafori_quartiere:= new handler_semafori_quartiere;
+   semafori_quartiere_obj: ptr_handler_semafori_quartiere:= null;--:= new handler_semafori_quartiere;
 
 end resource_map_inventory;

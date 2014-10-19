@@ -1,6 +1,12 @@
+with Ada.Text_IO;
+
 with remote_types;
+with the_name_server;
+
+use Ada.Text_IO;
 
 use remote_types;
+use the_name_server;
 
 package body configuration_synchronized_package is
 

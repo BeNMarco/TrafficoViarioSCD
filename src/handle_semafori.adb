@@ -30,7 +30,7 @@ package body handle_semafori is
 
       if from/=0 then
          for i in from..to loop
-            ptr_rt_incrocio(get_incroci_segmento_resources(i)).change_verso_semafori_verdi;
+            get_incroci_segmento_resources(i).change_verso_semafori_verdi;
          end loop;
       end if;
 

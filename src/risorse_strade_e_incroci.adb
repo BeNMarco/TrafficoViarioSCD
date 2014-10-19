@@ -1,5 +1,6 @@
 with Ada.Text_IO;
 with Ada.Numerics.Elementary_Functions;
+with Ada.Exceptions;
 --with Ada.Task_Identification;
 --with Ada.Dynamic_Priorities;
 --with System;
@@ -561,19 +562,17 @@ package body risorse_strade_e_incroci is
       --Put_Line("task " & Positive'Image(id_task) & " of quartiere " & Positive'Image(get_id_quartiere) & " is set");
       array_estremi_strada_urbana:= get_resource_estremi_urbana(id_task);
 
-
       loop
-
          synchronization_with_delta(id_task);
-         -- aspetta che finiscano gli incroci
-         log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
+         -- aspetta che finiscano gli incroci
          if array_estremi_strada_urbana(1)/=null then
             array_estremi_strada_urbana(1).wait_turno;
          end if;
          if array_estremi_strada_urbana(2)/=null then
             array_estremi_strada_urbana(2).wait_turno;
-         end if;
+	     end if;
          -- fine wait; gli incroci hanno fatto l'avanzamento
 
          mailbox.update_traiettorie_ingressi;
@@ -932,6 +931,10 @@ package body risorse_strade_e_incroci is
                can_not_overtake_now:= False;
 
                if first_corsia/=0 then
+                  if id_task=32 and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=393.89 then
+                     z:= 1;
+                  end if;
+
                   -- elaborazione corsia to go;    first_corsia è la corsia in cui la macchina è situata
                   Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task));
                   -- Put_Line("id_abitante overtaking " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_distance_on_overtaking_trajectory));
@@ -1120,8 +1123,9 @@ package body risorse_strade_e_incroci is
 
          -- spostamento abitanti da incrocio a strada
          mailbox.sposta_abitanti_in_transizione_da_incroci;
-
          mailbox.delta_terminate;
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+
       end loop;
 
       --Put_Line("Fine task urbana" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
@@ -1159,11 +1163,12 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       loop
-         synchronization_with_delta(id_task);
-         log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
-         --Put_Line("wait " & Positive'Image(get_ingresso_from_id(id_task).get_id_main_strada_ingresso) & " id quartiere " & Positive'Image(get_id_quartiere));
-         resource_main_strada.wait_turno;
 
+         synchronization_with_delta(id_task);
+         --Put_Line("wait " & Positive'Image(get_ingresso_from_id(id_task).get_id_main_strada_ingresso) & " id quartiere " & Positive'Image(get_id_quartiere));
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+
+         resource_main_strada.wait_turno;
 
          list_abitanti:= mailbox.get_main_strada(mailbox.get_index_inizio_moto);
          for i in 1..mailbox.get_number_entity_strada(mailbox.get_index_inizio_moto) loop
@@ -1324,6 +1329,8 @@ package body risorse_strade_e_incroci is
                list_abitanti:= list_abitanti.all.get_next_from_list_posizione_abitanti;
             end if;
          end loop;
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+
       end loop;
 
       --Put_Line("Fine task ingresso" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
@@ -1372,8 +1379,9 @@ package body risorse_strade_e_incroci is
       -- Ora i task e le risorse di tutti i quartieri sono attivi
 
       loop
+
          synchronization_with_delta(id_task);
-         log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
          mailbox.update_avanzamento_cars;
          for i in 1..mailbox.get_size_incrocio loop
             for j in id_corsie'Range loop
@@ -1384,10 +1392,6 @@ package body risorse_strade_e_incroci is
                end if;
                -- controlla se ci sono macchine da spostare
                while list_car/=null loop
-
-                  if id_task=53 then
-                     limite:=0.0;
-                  end if;
 
                   traiettoria_car:= list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow;
 
@@ -1948,7 +1952,10 @@ package body risorse_strade_e_incroci is
          end loop;
 
          mailbox.delta_terminate;
+         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
+
       end loop;
+
 
       --Put_Line("Fine task incrocio" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_incroci;
@@ -1973,6 +1980,4 @@ package body risorse_strade_e_incroci is
       Put_Line("Fine task" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_rotonde;
 
-begin
-   configure_tasks;
 end risorse_strade_e_incroci;

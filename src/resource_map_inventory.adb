@@ -27,18 +27,6 @@ package body resource_map_inventory is
       return synchronization_tasks_partition;
    end get_synchronization_tasks_partition_object;
 
-   protected body wait_all_quartieri is
-      procedure all_quartieri_set is
-      begin
-         segnale:= True;
-      end all_quartieri_set;
-
-      entry wait_quartieri when segnale=True is
-      begin
-         segnale:= False;
-      end wait_quartieri;
-   end wait_all_quartieri;
-
    function create_risorse return set_resources is
       set: set_resources(1..get_num_task);
    begin
@@ -68,49 +56,52 @@ package body resource_map_inventory is
       return registro_ref_rt_quartieri(id_quartiere);
    end get_quartiere_cfg;
 
-   local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
-   local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
-   local_bici: list_bici_quartiere:= create_array_bici(get_json_bici,get_from_abitanti,get_to_abitanti);
-   local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
-   registro_risorse: set_resources(1..get_num_task);
+   procedure configure_quartiere is
+      local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
+      local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
+      local_bici: list_bici_quartiere:= create_array_bici(get_json_bici,get_from_abitanti,get_to_abitanti);
+      local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
+      registro_risorse: set_resources(1..get_num_task);
+   begin
+      gps:= get_server_gps;
+      synchronization_tasks_partition:= new synchronization_tasks;
+      waiting_object:= new wait_all_quartieri;
+      semafori_quartiere_obj:= new handler_semafori_quartiere;
+      -- registrazione dell'oggetto che gestisce la sincronizzazione con tutti i quartieri
+      registra_attesa_quartiere_obj(get_id_quartiere, ptr_rt_wait_all_quartieri(waiting_object));
+      -- end
+      -- crea mailbox task
+      create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
+      registro_risorse:= create_risorse;
+      -- end
+      -- registrazione risorse segmenti
+      registra_risorse_quartiere(get_id_quartiere,registro_risorse);
+      -- end
+      registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
 
-begin
+      Put_Line("*****///////*******id quartiere " & Positive'Image(get_id_quartiere));
+      registra_local_synchronized_obj(get_id_quartiere,ptr_rt_synchronization_tasks(synchronization_tasks_partition));
 
-   -- registrazione dell'oggetto che gestisce la sincronizzazione con tutti i quartieri
-   registra_attesa_quartiere_obj(get_id_quartiere, ptr_rt_wait_all_quartieri(waiting_object));
-   -- end
+      --begin first checkpoint to get all ref of quartieri
 
-   -- crea mailbox task
-   create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
-   registro_risorse:= create_risorse;
-   -- end
+      registra_quartiere(get_id_quartiere,ptr_rt_quartiere_utilitites(get_quartiere_utilities_obj));
+      set_attesa_for_quartiere(get_id_quartiere);
+      waiting_object.wait_quartieri;
+      --ora tutti i rt_ref dei quartieri sono settati
+      -- end checkpoint
+      registro_ref_rt_quartieri:= get_ref_rt_quartieri;
 
-   -- registrazione risorse segmenti
-   registra_risorse_quartiere(get_id_quartiere,registro_risorse);
-   -- end
+      gps.registra_strade_quartiere(get_id_quartiere,get_urbane,get_ingressi);
+      gps.registra_incroci_quartiere(get_id_quartiere,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
 
-   registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
+      for i in registro_ref_rt_quartieri'Range loop
+         registro_ref_rt_quartieri(i).registra_classe_locate_abitanti_quartiere(id_quartiere => get_id_quartiere, location_abitanti => ptr_rt_location_abitanti(get_locate_abitanti_quartiere));
+         registro_ref_rt_quartieri(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
+         registro_ref_rt_quartieri(i).registra_mappa(get_id_quartiere);
+      end loop;
 
-   registra_local_synchronized_obj(get_id_quartiere,ptr_rt_synchronization_tasks(synchronization_tasks_partition));
+      Put_Line("exit" & Positive'Image(get_id_quartiere) & " num task " & Positive'Image(get_num_task));
 
-   --begin first checkpoint to get all ref of quartieri
-   registra_quartiere(get_id_quartiere,ptr_rt_quartiere_utilitites(get_quartiere_utilities_obj));
-   set_attesa_for_quartiere(get_id_quartiere);
-   waiting_object.wait_quartieri;
-   --ora tutti i rt_ref dei quartieri sono settati
-   -- end checkpoint
-
-   registro_ref_rt_quartieri:= get_ref_rt_quartieri;
-
-   gps.registra_strade_quartiere(get_id_quartiere,get_urbane,get_ingressi);
-   gps.registra_incroci_quartiere(get_id_quartiere,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
-
-   for i in registro_ref_rt_quartieri'Range loop
-      registro_ref_rt_quartieri(i).registra_classe_locate_abitanti_quartiere(id_quartiere => get_id_quartiere, location_abitanti => ptr_rt_location_abitanti(get_locate_abitanti_quartiere));
-      registro_ref_rt_quartieri(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
-      registro_ref_rt_quartieri(i).registra_mappa(get_id_quartiere);
-   end loop;
-
-   Put_Line("exit" & Positive'Image(get_id_quartiere) & " num task " & Positive'Image(get_num_task));
+   end configure_quartiere;
 
 end resource_map_inventory;

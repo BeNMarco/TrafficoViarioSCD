@@ -37,7 +37,6 @@ package remote_types is
    type handler_semafori is array(Positive range <>) of ptr_rt_handler_semafori_quartiere;
    procedure change_semafori(obj: rt_handler_semafori_quartiere) is abstract;
 
-
       -- begin resource segmenti
    type rt_segmento is synchronized interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
@@ -59,7 +58,7 @@ package remote_types is
    function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Float is abstract;
 
    procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;
-   procedure change_verso_semafori_verdi(obj: access rt_incrocio) is abstract;
+   --procedure change_verso_semafori_verdi(obj: access rt_incrocio) is abstract;
    function get_posix_first_entity(obj: access rt_incrocio; from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return Float is abstract;
 
    procedure new_abitante_to_move(obj: access rt_ingresso; id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is abstract;
@@ -69,11 +68,14 @@ package remote_types is
 
    type rt_wait_all_quartieri is synchronized interface;
    type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;
+   --pragma Asynchronous(ptr_rt_wait_all_quartieri);
    procedure all_quartieri_set(obj: access rt_wait_all_quartieri) is abstract;
 
    type rt_task_synchronization is synchronized interface;
    type ptr_rt_task_synchronization is access all rt_task_synchronization'Class;
-   procedure all_task_partition_are_ready(obj: access rt_task_synchronization) is abstract;
+   procedure all_task_partition_are_ready(obj: access rt_task_synchronization; id: Positive) is abstract;
+   --procedure wait_awake_all_partitions(obj: access rt_task_synchronization) is abstract;
+   --procedure last_task_partition_ready(obj: access rt_task_synchronization) is abstract;
 
    type rt_synchronization_tasks is synchronized interface;
    type ptr_rt_synchronization_tasks is access all rt_synchronization_tasks'Class;
@@ -102,8 +104,13 @@ package remote_types is
    -- to set an asynchronus procedure you must have all IN parameter
    -- to set a synchronus procedure you must have IN-OUT parameters
 
+   type rt_prova is abstract tagged limited private;
+   type ptr_rt_prova is access all rt_prova'Class;
+   procedure saluta(obj: rt_prova) is abstract;
+
 private
-   --type rt_server_finalize_configuration is abstract tagged limited null record;
+
    type rt_handler_semafori_quartiere is abstract tagged limited null record;
    type rt_quartiere_entities_life is abstract tagged limited null record;
+   type rt_prova is abstract tagged limited null record;
 end remote_types;

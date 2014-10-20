@@ -58,9 +58,9 @@ pragma Elaborate_Body;
 
 private
 
-   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\" & Polyorb.Parameters.Get_Conf("dsa","partition_name") & ".json");
-   json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_incroci.json");
-   json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_ingressi.json");
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/" & Polyorb.Parameters.Get_Conf("dsa","partition_name") & ".json");
+   json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_incroci.json");
+   json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_ingressi.json");
 
    id_quartiere: Positive:= Get(Val => json_quartiere, Field => "id_quartiere");
 
@@ -128,8 +128,8 @@ private
 
    json_traiettorie_incrocio: JSON_Value:= Get(Val => json_traiettorie_incroci, Field => "traiettorie_incrocio");
    json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
-   json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\traiettorie_cambio_corsia.json");
-   json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "C:\Users\Marco\Desktop\TrafficoViarioSCD\data\road_parameters.json");
+   json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/traiettorie_cambio_corsia.json");
+   json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/road_parameters.json");
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 
 end data_quartiere;

@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <title>Web Socket Demo</title>
+
+    <script type="text/javascript" src="js/utils/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+      var ws;
+      var server = window.location.host;
+
+      function updateP(id, message) {
+        var a = document.getElementById(id);
+        a.innerHTML = a.innerHTML + "<br>" + message;
+      }
+
+      function newMessage() {
+        ws.send('A message sent after 5 seconds');
+      }
+
+      function startWS() {
+          updateP('server', 'Server is ' + server);
+
+          // ws = AWS.WebSocket.open('ws://' + server + '/websock', 'data', 'status');
+          ws = new WebSocket('ws://' + server + '/websock');
+          ws.onmessage = function (event){
+            updateP('data', event.data);
+          }
+
+          if (ws != false)
+             updateP('status', "Your browser supports webSocket.");
+
+      };
+
+      onLoad = function(e){
+        console.log("prova");
+        if (window.jQuery) {  
+            console.log("Jquery loaded");
+        } else {
+            console.log("Jquery not loaded");
+        }
+      }
+
+      function myGet() {
+        console.log("called");
+        if (window.jQuery) {  
+            console.log("Jquery loaded");
+        } else {
+            console.log("Jquery not loaded");
+        }
+
+        var mapStyleUri = 'http://'+server+'/js/map_style.json';
+
+        var xhr = new XMLHttpRequest();
+        xhr.overrideMimeType("application/json");
+        xhr.open("GET", mapStyleUri, true);
+
+        xhr.onreadystatechange = function(){
+          if (xhr.readyState == 4 && xhr.status == 200){
+            console.log(xhr.responseText);
+            var jss = JSON.parse(xhr.responseText);
+            console.log(jss);
+          }
+        }
+
+        xhr.send();
+
+
+        console.log("calling "+ mapStyleUri);
+        $.getJSON(
+          mapStyleUri, 
+          {format: 'json'})
+        .done(function(data){
+            console.log("called getJSON");
+            var JSON = data;
+            //alert(JSON);
+            console.log(JSON);
+          })
+        .fail(function(err){
+          console.log(err);
+        });
+      };
+    </script>
+  </head>
+
+  <body>
+    <p>This is the main page, bellow is a simple websocket counter</p>
+    <p>Click <button onclick="myGet()" value="Here">Get JSON!</button> to start</p>
+    <p>Click <button onclick="startWS()" value="Here">Here</button> to start</p>
+
+    <p id="server"></p>
+
+    <h3>Data</h3>
+    <p id="data"></p>
+
+    <h3>From user</h3>
+    <p id="from_user"></p>
+
+    <h3>Echo</h3>
+    <p id="echo"></p>
+
+    <h3>Status</h3>
+    <p id="status"></p>
+    <ul>
+    @@TABLE@@
+       <li>
+       @@IF@@ @_REG_@ 
+       <a href="quartiere@_DISTRICT_ID_@">
+       @@END_IF@@
+       Quartiere @_DISTRICT_ID_@ @_REG_@
+       @@IF@@ @_REG_@ 
+       </a>
+       @@END_IF@@
+       </li>
+    @@END_TABLE@@
+    </ul>
+  </body>
+</html>

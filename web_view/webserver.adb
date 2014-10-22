@@ -1,5 +1,7 @@
 with remote_types;
 with Ada.Text_IO;
+with Ada.Exceptions;
+use Ada.Exceptions;
 
 with AWS.Config.Set;
 with AWS.Default;
@@ -19,6 +21,8 @@ with Home_Page;
 with JS_Page_Compiler;
 with Districts_Repository;
 
+with global_data;
+
 use Page_CB;
 use Websock_CB;
 use Home_Page;
@@ -32,10 +36,13 @@ use type AWS.Net.Socket_Access;
 
 use remote_types;
 
+with absolute_path;
+use absolute_path;
+
 package body WebServer is
    
-   Admin_Dir : String := "admin_data";
-   WWW_Root : String := "www_data";
+   Admin_Dir : String := abs_path & "web_view/admin_data";
+   WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
    
    --protected body WebServer_Wrapper_Type is
@@ -74,25 +81,30 @@ package body WebServer is
       JS_Compiler : JS_Page_Compiler_Handler;
    begin
       AWS.Config.Set.Reuse_Address(This.WsConfig, True);
-      AWS.Config.Set.WWW_Root(This.WsConfig,"www_data");
-      AWS.Config.Set.Admin_URI(This.WsConfig,"/admin_aws");
+      AWS.Config.Set.WWW_Root(This.WsConfig, abs_path & "web_view/www_data");
+      AWS.Config.Set.Admin_URI(This.WsConfig, abs_path & "web_view/admin_aws");
       AWS.Config.Set.Admin_Password(This.WsConfig, "f3378e86bbcb838a242ab29627425b93");
-      AWS.Config.Set.Status_Page(This.WsConfig, Admin_Dir & "/aws_status.thtml");
-      AWS.Config.Set.Up_Image(This.WsConfig,Admin_Dir & "/aws_up.png");
-      AWS.Config.Set.Down_Image(This.WsConfig,Admin_Dir & "/aws_down.png");
-      AWS.Config.Set.Logo_Image(This.WsConfig,Admin_Dir & "/aws_logo.png");
-
-      Text_IO.Put_Line
-        ("Call me on port" & Positive'Image (AWS.Default.Server_Port));
+      AWS.Config.Set.Status_Page(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_status.thtml");
+      AWS.Config.Set.Up_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_up.png");
+      AWS.Config.Set.Down_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_down.png");
+      AWS.Config.Set.Logo_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_logo.png");
+      AWS.Config.Set.Server_Port(This.WsConfig,12345);
 
       This.Home.Set_Districts_Repository(This'Unchecked_Access);
 
       Services.Dispatchers.URI.Register_Default_Callback(This.Root, AWS.Dispatchers.Callback.Create(AWS.Services.Page_Server.Callback'Access));
       Services.Dispatchers.URI.Register(This.Root, "/", This.Home);
       Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
-      Server.Start
-        (This.WS, This.Root, This.WsConfig);
-
+      begin
+         Server.Start(This.WS, This.Root, This.WsConfig);
+         Text_IO.Put_Line("Call me on port 12345");
+      exception
+         when Error: others =>
+            Text_IO.Put_Line("Unexpected exception: ");
+            Text_IO.Put_Line(Exception_Information(Error));
+      end;
+      
+      
       Net.WebSocket.Registry.Control.Start;
    end Init;
 

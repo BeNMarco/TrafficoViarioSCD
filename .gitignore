@@ -7,9 +7,13 @@ dsa
 bin
 configuration_server
 quartiere1
+quartiere2
+quartiere3
 ior.txt
 quartiere_1
-partitions/
+webserver_starter
+webserver
+server
 view/partitions/
 view/dsa/
 *dsa-nameserver.sh

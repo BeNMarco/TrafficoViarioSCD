@@ -31,7 +31,7 @@ use remote_types;
 
 package body webserver_remote_proxy is
    
-   Admin_Dir : String := "admin_data";
+   Admin_Dir : String := "hg";
    
    protected body WebServer_Remote_Proxy_Type is
 
@@ -63,13 +63,13 @@ package body webserver_remote_proxy is
          JS_Compiler : JS_Page_Compiler_Handler;
       begin
          AWS.Config.Set.Reuse_Address(WsConfig, True);
-         AWS.Config.Set.WWW_Root(WsConfig,"www_data");
-         AWS.Config.Set.Admin_URI(WsConfig,"/admin_aws");
+         AWS.Config.Set.WWW_Root(WsConfig,"/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/www_data");
+         AWS.Config.Set.Admin_URI(WsConfig,"/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/admin_aws");
          AWS.Config.Set.Admin_Password(WsConfig, "f3378e86bbcb838a242ab29627425b93");
-         AWS.Config.Set.Status_Page(WsConfig, Admin_Dir & "/aws_status.thtml");
-         AWS.Config.Set.Up_Image(WsConfig,Admin_Dir & "/aws_up.png");
-         AWS.Config.Set.Down_Image(WsConfig,Admin_Dir & "/aws_down.png");
-         AWS.Config.Set.Logo_Image(WsConfig,Admin_Dir & "/aws_logo.png");
+         AWS.Config.Set.Status_Page(WsConfig, Admin_Dir & "/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/aws_status.thtml");
+         AWS.Config.Set.Up_Image(WsConfig,Admin_Dir & "/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/aws_up.png");
+         AWS.Config.Set.Down_Image(WsConfig,Admin_Dir & "/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/aws_down.png");
+         AWS.Config.Set.Logo_Image(WsConfig,Admin_Dir & "/home/marcobaesso/Scrivania/TrafficoViarioSCD/web_view/aws_logo.png");
 
          Text_IO.Put_Line
            ("Call me on port" & Positive'Image (AWS.Default.Server_Port));

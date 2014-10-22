@@ -48,6 +48,10 @@ package body data_quartiere is
    begin
       return json_road_parameters;
    end get_json_road_parameters;
+   function get_json_quartiere return JSON_Value is
+   begin
+      return json_quartiere;
+   end get_json_quartiere;
 
    function get_from_urbane return Natural is
    begin

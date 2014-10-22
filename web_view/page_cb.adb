@@ -2,7 +2,6 @@ with Ada.Strings.Unbounded;
 with Ada.Directories; 
 with Ada.Text_IO;
 with Ada.Strings.Fixed;
-
 with AWS.MIME;
 with AWS.Parameters;
 with AWS.Messages;
@@ -11,9 +10,11 @@ with AWS.Templates;
 
 with Templates_Parser;
 
-
 use Ada;
 use Ada.Strings.Fixed;
+
+with absolute_path;
+use absolute_path;
 
 package body Page_CB is
 
@@ -21,7 +22,7 @@ package body Page_CB is
   use Ada.Directories;
   use Ada.Text_IO;
 
-    WWW_Root : String := "www_data";
+    WWW_Root : String := abs_path & "web_view/www_data";
     SEP : String := "/";
 
     overriding function Clone (Element : in District_Page) return District_Page is

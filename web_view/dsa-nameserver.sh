@@ -1,2 +1,0 @@
-POLYORB_DSA_NAME_SERVICE=corbaloc:iiop:1.2@localhost:8889/_NameService
-export POLYORB_DSA_NAME_SERVICE

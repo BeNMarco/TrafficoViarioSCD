@@ -14,9 +14,12 @@ use Ada;
 use Districts_Repository;
 use Templates_Parser;
 
+with absolute_path;
+use absolute_path;
+
 package body Home_Page is
 
-   WWW_Root : constant String := "www_data";
+   WWW_Root : constant String := abs_path & "web_view/www_data";
   
     overriding function Clone (This : in Home_Page_Handler) return Home_Page_Handler is
       To_Ret : Home_Page_Handler := This;

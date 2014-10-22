@@ -6,11 +6,15 @@ with AWS.Templates;
 with AWS.Translator;
 
 with Ada.Text_IO;
+
 use Ada;
+
+with absolute_path;
+use absolute_path;
 
 package body JS_Page_Compiler is
 
-   WWW_Root : constant String := "www_data";
+   WWW_Root : constant String := abs_path & "web_view/www_data";
   
     overriding function Clone (Element : in JS_Page_Compiler_Handler) return JS_Page_Compiler_Handler is
     begin

@@ -9,6 +9,8 @@ configuration_server
 quartiere1
 quartiere2
 quartiere3
+default.cfg
+default.gpr
 ior.txt
 quartiere_1
 webserver_starter

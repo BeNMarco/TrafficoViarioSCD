@@ -8,7 +8,7 @@ project Default is
    type Os_Kind is
       ("Windows_NT", "unix");
    for Source_Dirs use ("model/**", "web_view/**");
-   for Excluded_Source_Dirs use ("web_view/www_data/**","web_view/admin_data/**");
+   for Excluded_Source_Dirs use ("web_view/www_data/**","web_view/admin_data/**","web_view/file_not_used/**");
 
    --for Object_Dir use "obj/";
 

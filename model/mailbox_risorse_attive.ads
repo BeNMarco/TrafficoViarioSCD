@@ -61,6 +61,7 @@ package mailbox_risorse_attive is
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_abitante_from_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
       function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
+      -- get_next_abitante_on_road viene usato solo da quelle macchine in traiettoria di ingresso per ottenere a che distanza si trova la macchina successiva nella corsia in cui si deve immettere
       function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: Float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;

@@ -505,7 +505,7 @@
       "id": 6,
       "lunghezza": 50.0,
       "numcorsie": 1,
-      "strada_confinante": 34,
+      "strada_confinante": 22,
       "polo": true,
       "distanza_da_from": 250.0,
       "from": 0,
@@ -1151,12 +1151,12 @@
 {"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
 {"id_abitante":2,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
 {"id_abitante":3,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":4,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":5,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
+{"id_abitante":4,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":5,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
 {"id_abitante":6,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
 {"id_abitante":7,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
 {"id_abitante":8,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":9,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":9,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
 {"id_abitante":10,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}
 ]
 }

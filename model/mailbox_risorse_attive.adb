@@ -128,7 +128,9 @@ package body mailbox_risorse_attive is
       procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float) is
          key: Natural:= get_key_ingresso(index_ingresso,not_ordered);
       begin
-         abitante.posizione_abitante.set_current_speed_abitante(speed);
+         if speed>0.0 then
+            abitante.posizione_abitante.set_current_speed_abitante(speed);
+         end if;
          if step>0.0 then
             if abitante.posizione_abitante.get_where_now_posizione_abitanti+step>=get_traiettoria_ingresso(traiettoria).get_lunghezza and then
               get_distance_from_polo_percorrenza(get_ingresso_from_id(index_ingresso))+get_larghezza_marciapiede+get_larghezza_corsia+abitante.posizione_abitante.get_where_now_posizione_abitanti-get_traiettoria_ingresso(traiettoria).get_lunghezza>risorsa_features.get_lunghezza_road then
@@ -558,6 +560,9 @@ package body mailbox_risorse_attive is
             end if;
             list:= list.next;
          end loop;
+         if switch then
+            current_list:= null;
+         end if;
 
          switch:= True;
          list:= opposite_list;
@@ -568,6 +573,9 @@ package body mailbox_risorse_attive is
             end if;
             list:= list.next;
          end loop;
+         if switch then
+            opposite_list:= null;
+         end if;
 
          if opposite_list/=null and then opposite_list.posizione_abitante.get_in_overtaken then
             if opposite_list.posizione_abitante.get_distance_on_overtaking_trajectory=get_traiettoria_cambio_corsia.get_lunghezza_traiettoria/2.0 then

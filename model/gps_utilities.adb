@@ -448,8 +448,12 @@ package body gps_utilities is
                         estremo:= coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente;
                      end if;
 
+                     switch_loop_percorso:= False;
                      loop
                         segmento:= create_tratto(id_quartiere => estremo.id_quartiere, id_tratto => estremo.id_incrocio);
+                        if (segmento.get_id_quartiere_tratto=estremo_1_partenza.id_quartiere and segmento.get_id_tratto=estremo_1_partenza.id_incrocio) or (segmento.get_id_quartiere_tratto=estremo_2_partenza.id_quartiere and segmento.get_id_tratto=estremo_2_partenza.id_incrocio) then
+                           switch_loop_percorso:= True;
+                        end if;
                         ptr_route:= create_list_percorso(segmento,ptr_route);
                         if coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo=ingresso_partenza.get_id_quartiere_road and coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo/=ingresso_partenza.get_id_main_strada_ingresso then
                            segmento:= create_tratto(id_quartiere => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo, id_tratto => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo);
@@ -461,16 +465,22 @@ package body gps_utilities is
                         exit when coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere=0 or else coda_nodi(coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere,coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_incrocio).precedente.id_quartiere=0;
                      end loop;
 
-                     switch_loop_percorso:= False;
-                     if ptr_route.segmento.get_id_quartiere_tratto=estremo_1_partenza.id_quartiere and ptr_route.segmento.get_id_tratto=estremo_1_partenza.id_incrocio then
-                        switch_loop_percorso:= True;
-                     elsif ptr_route.segmento.get_id_quartiere_tratto=estremo_2_partenza.id_quartiere and ptr_route.segmento.get_id_tratto=estremo_2_partenza.id_incrocio then
-                        switch_loop_percorso:= True;
-                     end if;
                      if switch_loop_percorso=False then
-                        segmento:= create_tratto(id_quartiere => estremo_partenza.id_quartiere, id_tratto => estremo_partenza.id_incrocio);
+                        if estremo.id_quartiere=estremo_1_partenza.id_quartiere and estremo.id_incrocio=estremo_1_partenza.id_incrocio then
+                           switch_loop_percorso:= True;
+                        elsif estremo.id_quartiere=estremo_2_partenza.id_quartiere and estremo.id_incrocio=estremo_2_partenza.id_incrocio then
+                           switch_loop_percorso:= True;
+                        end if;
+                        segmento:= create_tratto(id_quartiere => estremo.id_quartiere, id_tratto => estremo.id_incrocio);
                         ptr_route:= create_list_percorso(segmento,ptr_route);
                         size_route:= size_route + 1;
+                        if switch_loop_percorso=False then
+                           segmento:= create_tratto(id_quartiere => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo, id_tratto => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo);
+                           ptr_route:= create_list_percorso(segmento,ptr_route);
+                           segmento:= create_tratto(id_quartiere => estremo_partenza.id_quartiere, id_tratto => estremo_partenza.id_incrocio);
+                           ptr_route:= create_list_percorso(segmento,ptr_route);
+                           size_route:= size_route + 2;
+                        end if;
                      end if;
                      segmento:= create_tratto(id_quartiere => from_id_quartiere, id_tratto => new_from_id_luogo);
                      ptr_route:= create_list_percorso(segmento,ptr_route);

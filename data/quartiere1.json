@@ -1,4 +1,4 @@
- {
+{
   "info": {
     "id": 1,
     "larghezza": 2000,
@@ -457,7 +457,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": false,
-      "distanza_da_from": 35.0,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     },

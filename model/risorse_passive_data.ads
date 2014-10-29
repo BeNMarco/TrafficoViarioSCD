@@ -60,6 +60,7 @@ package risorse_passive_data is
       function get_auto_quartiere(id_quartiere: Positive; id_abitante: Positive) return auto;
       function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
       function get_index_luogo_from_id_json(json_key: Positive) return Positive;
+      function get_from_ingressi_quartiere return Natural;
 
    private
 
@@ -78,7 +79,7 @@ package risorse_passive_data is
 
    procedure wait_settings_all_quartieri;
 
-   type estremi_resource_strada_urbana is array(Positive range 1..2) of ptr_rt_segmento;
+   type estremi_resource_strada_urbana is array(Positive range 1..2) of ptr_rt_incrocio;
    type estremi_strada_urbana is array(Positive range 1..2) of estremo_urbana;
 
    function get_resource_estremi_urbana(id_urbana: Positive) return estremi_resource_strada_urbana;

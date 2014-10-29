@@ -232,6 +232,11 @@ package body risorse_passive_data is
          return get_from_ingressi+json_key-1;
       end get_index_luogo_from_id_json;
 
+      function get_from_ingressi_quartiere return Natural is
+      begin
+         return get_from_ingressi;
+      end get_from_ingressi_quartiere;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is
@@ -261,12 +266,12 @@ package body risorse_passive_data is
             inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
             for i in get_from_urbane..get_to_urbane loop
                if inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana/=0 then
-                  inventory_estremi(i,1):= get_id_risorsa_quartiere(inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,1).get_id_incrocio_estremo_urbana);
+                  inventory_estremi(i,1):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,1).get_id_incrocio_estremo_urbana);
                else
                   inventory_estremi(i,1):= null;
                end if;
                if inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana/=0 then
-                  inventory_estremi(i,2):= get_id_risorsa_quartiere(inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,2).get_id_incrocio_estremo_urbana);
+                  inventory_estremi(i,2):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,2).get_id_incrocio_estremo_urbana);
                else
                   inventory_estremi(i,2):= null;
                end if;

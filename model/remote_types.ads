@@ -30,6 +30,7 @@ package remote_types is
    function get_type_entity(obj: access rt_quartiere_utilities; id_entità: Positive) return entity_type is abstract;
    function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Natural is abstract;
    function get_index_luogo_from_id_json(obj: access rt_quartiere_utilities; json_key: Positive) return Positive is abstract;
+   function get_from_ingressi_quartiere(obj: access rt_quartiere_utilities) return Natural is abstract;
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
    type rt_handler_semafori_quartiere is abstract tagged limited private;
@@ -63,8 +64,10 @@ package remote_types is
 
    procedure new_abitante_to_move(obj: access rt_ingresso; id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is abstract;
 
-   type set_resources is array(Positive range <>) of ptr_rt_segmento;
-   type estremi_urbane is array(Positive range <>,Positive range <>) of ptr_rt_segmento;
+   type set_resources_ingressi is array(Positive range <>) of ptr_rt_ingresso;
+   type set_resources_urbane is array(Positive range <>) of ptr_rt_urbana;
+   type set_resources_incroci is array(Positive range <>) of ptr_rt_incrocio;
+   type estremi_urbane is array(Positive range <>,Positive range <>) of ptr_rt_incrocio;
 
    type rt_wait_all_quartieri is synchronized interface;
    type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;

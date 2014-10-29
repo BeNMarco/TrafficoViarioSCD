@@ -85,6 +85,22 @@ package body data_quartiere is
    begin
       return to_incroci_a_3;
    end get_to_incroci_a_3;
+   function get_from_incroci return Natural is
+   begin
+      if to_incroci_a_4/=0 then
+         return get_from_incroci_a_4;
+      else
+         return get_from_incroci_a_3;
+      end if;
+   end get_from_incroci;
+   function get_to_incroci return Natural is
+   begin
+      if to_incroci_a_3/=0 then
+         return get_to_incroci_a_3;
+      else
+         return get_to_incroci_a_4;
+      end if;
+   end get_to_incroci;
    function get_from_rotonde_a_4 return Natural is
    begin
       return from_rotonde_a_4;

@@ -81,6 +81,7 @@ package gps_utilities is
    function get_id_quartiere_index_incroci(incrocio: index_incroci) return Natural;
    function get_id_incrocio_index_incroci(incrocio: index_incroci) return Natural;
    function get_polo_index_incroci(incrocio: index_incroci) return Boolean;
+   function "="(incrocio_1: index_incroci; incrocio_2: index_incroci) return Boolean;
    -- end get methods index_incrocio
 
 private

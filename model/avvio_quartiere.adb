@@ -56,8 +56,8 @@ package body avvio_quartiere is
          --get_webServer.registra_mappa_quartiere(contents, get_id_quartiere);
       end;
 
-      configure_tasks;
       registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));
+      configure_tasks;
       start_entity_to_move;
    end init;
 

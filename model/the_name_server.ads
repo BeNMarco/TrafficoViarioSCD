@@ -1,10 +1,8 @@
 with remote_types;
 with global_data;
-with partition_name;
 
 use remote_types;
 use global_data;
-use partition_name;
 
 package the_name_server is
    pragma Remote_Call_Interface;
@@ -25,16 +23,17 @@ package the_name_server is
 
    function get_synchronization_tasks_object return ptr_rt_task_synchronization;
 
-   type risorse_quartieri is array(Positive range <>) of access set_resources;
+   procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci);
 
-   procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources);
+   function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso;
 
-   function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento;
+   function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana;
+
+   function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio;
 
    procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere);
-   function get_gestori_quartiere return handler_semafori;
 
-   function get_id_mappa return str_quartieri;
+   function get_gestori_quartiere return handler_semafori;
 
    type registro_quartiere_entities is array(Positive range <>) of ptr_rt_quartiere_entities_life;
 
@@ -58,11 +57,22 @@ private
       registro: registro_quartieri(1..num_quartieri);
    end registro_ref_quartieri;
 
+   type risorse_quartieri_ingressi is array(Positive range <>) of access set_resources_ingressi;
+   type risorse_quartieri_urbane is array(Positive range <>) of access set_resources_urbane;
+   type risorse_quartieri_incroci is array(Positive range <>) of access set_resources_incroci;
+
    protected registro_risorse_strade is
-      procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources);
-      function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento;
+      procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci);
+
+      function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso;
+
+      function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana;
+
+      function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio;
    private
-      registro: risorse_quartieri(1..num_quartieri);
+      registro_ingressi: risorse_quartieri_ingressi(1..num_quartieri);
+      registro_urbane: risorse_quartieri_urbane(1..num_quartieri);
+      registro_incroci: risorse_quartieri_incroci(1..num_quartieri);
    end registro_risorse_strade;
 
    protected registro_gestori_semafori is

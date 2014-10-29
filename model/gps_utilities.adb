@@ -4,8 +4,10 @@ with Ada.Text_IO;
 --with System;
 
 with strade_e_incroci_common;
+with Ada.Exceptions;
 
 use Ada.Text_IO;
+use Ada.Exceptions;
 --use Ada.Task_Identification;
 --use Ada.Dynamic_Priorities;
 --use System;
@@ -27,6 +29,14 @@ package body gps_utilities is
    begin
       return incrocio.polo;
    end get_polo_index_incroci;
+   function "="(incrocio_1: index_incroci; incrocio_2: index_incroci) return Boolean is
+   begin
+      if incrocio_1.id_quartiere=incrocio_2.id_quartiere and incrocio_1.id_incrocio=incrocio_2.id_incrocio then
+         return True;
+      else
+         return False;
+      end if;
+   end "=";
    -- end get methods index_incrocio
 
       -- begin get methods adiacente
@@ -301,11 +311,14 @@ package body gps_utilities is
                                  distanza:= cache_urbane(ingresso_partenza.get_id_quartiere_road)(ingresso_partenza.get_id_main_strada_ingresso).get_lunghezza_road-ingresso_partenza.get_distance_from_road_head_ingresso;
                               end if;
                               -- poi si applica il caso 2 visto prima
+
+                              -- dato che la partenza è diversa dal punto di arrivo
                               if estremo_arrivo.polo then
-                                 distanza:= distanza+ingresso_arrivo.get_distance_from_road_head_ingresso;
-                              else
                                  distanza:= distanza+cache_urbane(ingresso_arrivo.get_id_quartiere_road)(ingresso_arrivo.get_id_main_strada_ingresso).get_lunghezza_road-ingresso_arrivo.get_distance_from_road_head_ingresso;
+                              else
+                                 distanza:= distanza+ingresso_arrivo.get_distance_from_road_head_ingresso;
                               end if;
+
                            end if;
                            -- il precedente non è l'estremo di partenza
                         else
@@ -423,7 +436,18 @@ package body gps_utilities is
                   -- Il resto del percorso è inserito prendendo incroci e urbane.
                   size_route:=0;
 
-                  if coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere/=0 then
+                  switch_loop_percorso:= True;
+
+                  if estremo_1_arrivo=estremo_1_partenza or else (estremo_1_arrivo=estremo_2_partenza or else (estremo_2_arrivo=estremo_1_partenza or else (estremo_2_arrivo=estremo_2_partenza))) then
+                     if estremo=estremo_1_partenza or else estremo=estremo_2_partenza then
+                         switch_loop_percorso:= False;
+                     elsif coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere/=0 and then (coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente=estremo_1_partenza or else coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente=estremo_2_partenza) then
+                        switch_loop_percorso:= False;
+                        estremo:= coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente;
+                     end if;
+                  end if;
+
+                  if switch_loop_percorso and coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere/=0 then
                      segmento:= create_tratto(id_quartiere => to_id_quartiere, id_tratto => new_to_id_luogo);
                      ptr_route:= create_list_percorso(segmento,ptr_route);
                      size_route:= size_route + 1;
@@ -455,17 +479,19 @@ package body gps_utilities is
                            switch_loop_percorso:= True;
                         end if;
                         ptr_route:= create_list_percorso(segmento,ptr_route);
-                        if coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo=ingresso_partenza.get_id_quartiere_road and coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo/=ingresso_partenza.get_id_main_strada_ingresso then
+
+                        -- controlla se lo spigolo è diverso da 0 e non è l'urbana di partenza
+                        if coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo/=0 and then ((coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo/=ingresso_partenza.get_id_quartiere_road) or else (coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo=ingresso_partenza.get_id_quartiere_road and coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo/=ingresso_partenza.get_id_main_strada_ingresso)) then
                            segmento:= create_tratto(id_quartiere => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_quartiere_spigolo, id_tratto => coda_nodi(estremo.id_quartiere,estremo.id_incrocio).id_spigolo);
                            ptr_route:= create_list_percorso(segmento,ptr_route);
                            size_route:= size_route + 1;
                         end if;
                         size_route:= size_route + 1;
                         estremo:= coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente;
-                        exit when coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere=0 or else coda_nodi(coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere,coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_incrocio).precedente.id_quartiere=0;
+                        exit when estremo.id_quartiere=0 or else (coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere=0 or else coda_nodi(coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_quartiere,coda_nodi(estremo.id_quartiere,estremo.id_incrocio).precedente.id_incrocio).precedente.id_quartiere=0);
                      end loop;
 
-                     if switch_loop_percorso=False then
+                     if estremo.id_quartiere/=0 and then switch_loop_percorso=False then
                         if estremo.id_quartiere=estremo_1_partenza.id_quartiere and estremo.id_incrocio=estremo_1_partenza.id_incrocio then
                            switch_loop_percorso:= True;
                         elsif estremo.id_quartiere=estremo_2_partenza.id_quartiere and estremo.id_incrocio=estremo_2_partenza.id_incrocio then

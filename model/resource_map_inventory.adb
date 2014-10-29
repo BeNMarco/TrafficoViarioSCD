@@ -27,29 +27,35 @@ package body resource_map_inventory is
       return synchronization_tasks_partition;
    end get_synchronization_tasks_partition_object;
 
-   function create_risorse return set_resources is
-      set: set_resources(1..get_num_task);
+   function create_risorse_ingressi return set_resources_ingressi is
+      set: set_resources_ingressi(get_from_ingressi..get_to_ingressi);
    begin
-      for i in get_from_urbane..get_to_urbane loop
-         set(i):= ptr_rt_segmento(get_urbane_segmento_resources(i));
-      end loop;
       for i in get_from_ingressi..get_to_ingressi loop
-         set(i):= ptr_rt_segmento(get_ingressi_segmento_resources(i));
-      end loop;
-      for i in get_from_incroci_a_4..get_to_incroci_a_4 loop
-         set(i):= ptr_rt_segmento(get_incroci_a_4_segmento_resources(i));
-      end loop;
-      for i in get_from_incroci_a_3..get_to_incroci_a_3 loop
-         set(i):= ptr_rt_segmento(get_incroci_a_3_segmento_resources(i));
-      end loop;
-      for i in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
-         set(i):= ptr_rt_segmento(get_rotonde_a_4_segmento_resources(i));
-      end loop;
-      for i in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
-         set(i):= ptr_rt_segmento(get_rotonde_a_3_segmento_resources(i));
+         set(i):= ptr_rt_ingresso(get_ingressi_segmento_resources(i));
       end loop;
       return set;
-   end create_risorse;
+   end create_risorse_ingressi;
+
+   function create_risorse_urbane return set_resources_urbane is
+      set: set_resources_urbane(get_from_urbane..get_to_urbane);
+   begin
+      for i in get_from_urbane..get_to_urbane loop
+         set(i):= ptr_rt_urbana(get_urbane_segmento_resources(i));
+      end loop;
+      return set;
+   end create_risorse_urbane;
+
+   function create_risorse_incroci return set_resources_incroci is
+      set: set_resources_incroci(get_from_incroci..get_to_incroci);
+   begin
+      for i in get_from_incroci_a_4..get_to_incroci_a_4 loop
+         set(i):= ptr_rt_incrocio(get_incroci_a_4_segmento_resources(i));
+      end loop;
+      for i in get_from_incroci_a_3..get_to_incroci_a_3 loop
+         set(i):= ptr_rt_incrocio(get_incroci_a_3_segmento_resources(i));
+      end loop;
+      return set;
+   end create_risorse_incroci;
 
    function get_quartiere_cfg(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
    begin
@@ -61,7 +67,9 @@ package body resource_map_inventory is
       local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
       local_bici: list_bici_quartiere:= create_array_bici(get_json_bici,get_from_abitanti,get_to_abitanti);
       local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
-      registro_risorse: set_resources(1..get_num_task);
+      registro_risorse_ingressi: set_resources_ingressi(get_from_ingressi..get_to_ingressi);
+      registro_risorse_urbane: set_resources_urbane(get_from_urbane..get_to_urbane);
+      registro_risorse_incroci: set_resources_incroci(get_from_incroci..get_to_incroci);
    begin
       gps:= get_server_gps;
       synchronization_tasks_partition:= new synchronization_tasks;
@@ -72,10 +80,12 @@ package body resource_map_inventory is
       -- end
       -- crea mailbox task
       create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
-      registro_risorse:= create_risorse;
+      registro_risorse_ingressi:= create_risorse_ingressi;
+      registro_risorse_urbane:= create_risorse_urbane;
+      registro_risorse_incroci:= create_risorse_incroci;
       -- end
       -- registrazione risorse segmenti
-      registra_risorse_quartiere(get_id_quartiere,registro_risorse);
+      registra_risorse_quartiere(get_id_quartiere,registro_risorse_ingressi,registro_risorse_urbane,registro_risorse_incroci);
       -- end
       registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
 

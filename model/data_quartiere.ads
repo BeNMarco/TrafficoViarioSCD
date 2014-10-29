@@ -7,7 +7,6 @@ with Polyorb.Parameters;
 with JSON_Helper;
 with strade_e_incroci_common;
 with the_name_server;
-with partition_name;
 
 use GNATCOLL.JSON;
 use Ada.Directories;
@@ -17,7 +16,6 @@ use Ada.Strings.Unbounded;
 use JSON_Helper;
 use strade_e_incroci_common;
 use the_name_server;
-use partition_name;
 
 with absolute_path;
 use absolute_path;
@@ -44,6 +42,8 @@ pragma Elaborate_Body;
    function get_to_incroci_a_4 return Natural;
    function get_from_incroci_a_3 return Natural;
    function get_to_incroci_a_3 return Natural;
+   function get_from_incroci return Natural;
+   function get_to_incroci return Natural;
    function get_from_rotonde_a_4 return Natural;
    function get_to_rotonde_a_4 return Natural;
    function get_from_rotonde_a_3 return Natural;

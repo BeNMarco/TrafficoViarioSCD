@@ -1,12 +1,10 @@
 with Text_IO;
 with Ada.Calendar;
 with remote_types;
-with partition_name;
 
 use Text_IO;
 use Ada.Calendar;
 use remote_types;
-use partition_name;
 
 package body the_name_server is
 
@@ -71,15 +69,27 @@ package body the_name_server is
 
    protected body registro_risorse_strade is
 
-      procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources) is
+      procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci) is
       begin
-         registro(id_quartiere):= new set_resources'(set);
+         registro_ingressi(id_quartiere):= new set_resources_ingressi'(set_ingressi);
+         registro_urbane(id_quartiere):= new set_resources_urbane'(set_urbane);
+         registro_incroci(id_quartiere):= new set_resources_incroci'(set_incroci);
       end registra_risorse_quartiere;
 
-      function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento is
+      function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
       begin
-         return registro(id_quartiere)(id_risorsa);
-      end get_id_risorsa_quartiere;
+         return registro_ingressi(id_quartiere)(id_risorsa);
+      end get_id_ingresso_quartiere;
+
+      function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
+      begin
+         return registro_urbane(id_quartiere)(id_risorsa);
+      end get_id_urbana_quartiere;
+
+      function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
+      begin
+         return registro_incroci(id_quartiere)(id_risorsa);
+      end get_id_incrocio_quartiere;
 
    end registro_risorse_strade;
 
@@ -97,15 +107,25 @@ package body the_name_server is
       return task_synchronization_obj;
    end get_synchronization_tasks_object;
 
-   procedure registra_risorse_quartiere(id_quartiere: Positive; set: set_resources) is
+   procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci) is
    begin
-      registro_risorse_strade.registra_risorse_quartiere(id_quartiere,set);
+      registro_risorse_strade.registra_risorse_quartiere(id_quartiere,set_ingressi,set_urbane,set_incroci);
    end registra_risorse_quartiere;
 
-   function get_id_risorsa_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_segmento is
+   function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
    begin
-      return registro_risorse_strade.get_id_risorsa_quartiere(id_quartiere,id_risorsa);
-   end get_id_risorsa_quartiere;
+      return registro_risorse_strade.get_id_ingresso_quartiere(id_quartiere,id_risorsa);
+   end get_id_ingresso_quartiere;
+
+   function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
+   begin
+      return registro_risorse_strade.get_id_urbana_quartiere(id_quartiere,id_risorsa);
+   end get_id_urbana_quartiere;
+
+   function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
+   begin
+      return registro_risorse_strade.get_id_incrocio_quartiere(id_quartiere,id_risorsa);
+   end get_id_incrocio_quartiere;
 
    procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
    begin
@@ -115,22 +135,6 @@ package body the_name_server is
    begin
       return registro_gestori_semafori.get_gestori_quartiere;
    end get_gestori_quartiere;
-
-   function get_id_mappa return str_quartieri is
-      pragma Warnings(off);
-      id: Positive;
-   begin
-      get_my_mappa.registra_mappa(id);
-      Put_Line(Natural'Image(id));
-      if id=1 then
-         return quartiere1;
-      elsif id=2 then
-         return quartiere2;
-      elsif id=3 then
-         return quartiere3;
-      end if;
-      pragma Warnings(on);
-   end get_id_mappa;
 
    procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life) is
    begin

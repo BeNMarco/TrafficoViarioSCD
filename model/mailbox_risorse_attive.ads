@@ -18,7 +18,7 @@ package mailbox_risorse_attive is
    type list_posizione_abitanti_on_road is tagged private;
    type ptr_list_posizione_abitanti_on_road is access list_posizione_abitanti_on_road;
 
-   function calculate_bound_to_overtake(abitante: ptr_list_posizione_abitanti_on_road; id_urbana: Positive) return Float;
+   function calculate_bound_to_overtake(abitante: ptr_list_posizione_abitanti_on_road; polo: Boolean; id_urbana: Positive) return Float;
 
    function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class;
    function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;

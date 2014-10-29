@@ -3,14 +3,12 @@ with ada.Text_IO;
 with data_quartiere;
 with the_name_server;
 with remote_types;
-with partition_name;
 
 use Ada.Text_IO;
 
 use data_quartiere;
 use the_name_server;
 use remote_types;
-use partition_name;
 
 package body synchronization_task_partition is
 

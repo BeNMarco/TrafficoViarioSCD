@@ -105,13 +105,13 @@ Simulation.prototype.moveObjects = function(time){
 		var newPos = null;
 		switch(curCar.where){
 			case 'strada':
-				newPos = this.map.streets[curCar.id_strada].getPositionAt(newDistance, curCar.polo, curCar.corsia);
+				newPos = this.map.streets[curCar.id_where].getPositionAt(newDistance, curCar.polo, curCar.corsia);
 				break;
 			case 'strada_ingresso':
-				newPos = this.map.entranceStreets[curCar.id_strada].getPositionAt(newDistance, curCar.polo, curCar.corsia);
+				newPos = this.map.entranceStreets[curCar.id_where].getPositionAt(newDistance, curCar.polo, curCar.corsia);
 				break;
 			case 'traiettoria_ingresso':
-				newPos = this.map.streets[curCar.id_strada].getPositionAtEntrancePath(
+				newPos = this.map.streets[curCar.id_where].getPositionAtEntrancePath(
 					curCar.polo, 
 					curCar.distanza_ingresso, 
 					curCar.traiettoria,
@@ -119,15 +119,16 @@ Simulation.prototype.moveObjects = function(time){
 					);
 				break;
 			case 'incrocio':
-				newPos = this.map.crossroads[curCar.id_incrocio].getPositionAt(
+				newPos = this.map.crossroads[curCar.id_where].getPositionAt(
 					newDistance, 
 					curCar.strada_ingresso, 
 					curCar.quartiere, 
 					curCar.direzione);
 				break;
 			case 'cambio_corsia':
+			/*
 				if(this.pathCache.cars[c] === undefined || (this.pathCache.cars[c] !== undefined && this.pathCache.cars[c].idp != this.currentState.num)){
-					this.pathCache.cars[c] = this.map.streets[curCar.id_strada].getOvertakingPath(
+					this.pathCache.cars[c] = this.map.streets[curCar.id_where].getOvertakingPath(
 						curCar.distanza_inizio, 
 						curCar.polo, 
 						curCar.corsia_inizio, 
@@ -137,6 +138,15 @@ Simulation.prototype.moveObjects = function(time){
 					this.pathCache.cars[c].idp = this.currentState.num;
 				}
 				var loc = this.pathCache.cars[c].getLocationAt(newDistance); 
+				*/
+				var path = this.map.streets[curCar.id_where].getOvertakingPath(
+						curCar.distanza_inizio, 
+						curCar.polo, 
+						curCar.corsia_inizio, 
+						curCar.corsia_fine, 
+						20
+						);
+				var loc = path.getLocationAt(newDistance); 
 				newPos = {
 					position: loc.point,
 					angle: loc.tangent.angle

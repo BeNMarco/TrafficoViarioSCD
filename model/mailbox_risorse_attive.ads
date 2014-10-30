@@ -1,12 +1,18 @@
+with GNATCOLL.JSON;
+
 with remote_types;
 with strade_e_incroci_common;
 with data_quartiere;
 with risorse_passive_data;
+with snapshot_interface;
+
+use GNATCOLL.JSON;
 
 use remote_types;
 use strade_e_incroci_common;
 use data_quartiere;
 use risorse_passive_data;
+use snapshot_interface;
 
 package mailbox_risorse_attive is
 
@@ -36,9 +42,17 @@ package mailbox_risorse_attive is
    type ordered_ingressi_in_svolta is array(Boolean range <>) of ptr_ingressi_in_svolta;
    type abitanti_in_transizione_incroci_urbane is array(Boolean range False..True,id_corsie range 1..2) of posizione_abitanti_on_road;
 
-   protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana with
+   function create_img_abitante(abitante: posizione_abitanti_on_road) return JSON_Value;
+   function create_img_strada(road: road_state) return JSON_Value;
+   function create_img_num_entity_strada(num_entity_strada: number_entity) return JSON_Value;
+
+   protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       entry wait_turno;
       procedure delta_terminate;
+
+      -- metodo usato per creare una snapshot
+      procedure create_img(json_1: out JSON_Value);
+
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
@@ -46,8 +60,8 @@ package mailbox_risorse_attive is
       procedure set_move_parameters_entity_on_main_road(current_car_in_corsia: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; speed: Float; step: Float);
       procedure set_car_overtaken(value_overtaken: Boolean; car: in out ptr_list_posizione_abitanti_on_road);
       procedure set_flag_car_can_overtake_to_next_corsia(car: in out ptr_list_posizione_abitanti_on_road; flag: Boolean);
-      procedure update_traiettorie_ingressi;
-      procedure update_car_on_road;
+      procedure update_traiettorie_ingressi(state_view_abitanti: in out JSON_Array);
+      procedure update_car_on_road(state_view_abitanti: in out JSON_Array);
       procedure remove_first_element_traiettoria(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type);
       procedure insert_abitante_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie);
       -- abitanti in transizione da incroci significa abitanti in uscita dagli incroci
@@ -84,10 +98,11 @@ package mailbox_risorse_attive is
       index_ingressi: indici_ingressi(1..num_ingressi);
       ordered_ingressi_polo: ordered_indici_ingressi(False..True):= (False => new indici_ingressi(1..num_ingressi_polo_false),True => new indici_ingressi(1..num_ingressi_polo_true));
       ordered_ingressi_polo_svolta: ordered_ingressi_in_svolta(False..True):= (False => new ingressi_in_svolta(1..num_ingressi_polo_false),True => new ingressi_in_svolta(1..num_ingressi_polo_true));
-      set_traiettorie_ingressi: array_traiettorie_ingressi(1..num_ingressi,traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last);
       risorsa_features: strada_urbana_features;
       finish_delta_urbana: Boolean:= False;
       num_ingressi_ready: Natural:= 0;
+      -- l'immagine va creata per i prossimi elementi
+      set_traiettorie_ingressi: array_traiettorie_ingressi(1..num_ingressi,traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last);
       main_strada: road_state(False..True,1..2); -- RANGE1=1 percorrenza macchine da estremo false a estremo true; VICEVERSA per RANGE1=2
       marciapiedi: road_state(False..True,1..2);
       main_strada_number_entity: number_entity(False..True,1..2):= (others => (others => 0));
@@ -98,16 +113,19 @@ package mailbox_risorse_attive is
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
-   protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso with
+   protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso and backup_interface with
       entry wait_turno;
       procedure delta_terminate;
+
+      -- metodo usato per creare una snapshot
+      procedure create_img(json_1: out JSON_Value);
 
       procedure set_move_parameters_entity_on_main_strada(range_1: Boolean; num_entity: Positive;
                                                           speed: Float; step_to_advance: Float);
       procedure registra_abitante_to_move(type_structure: data_structures_types; begin_speed: Float; posix: Float);
       procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
       procedure new_abitante_finish_route(abitante: posizione_abitanti_on_road; mezzo: means_of_carrying);
-      procedure update_position_entity(type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
+      procedure update_position_entity(state_view_abitanti: in out JSON_Array);-- type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
       procedure update_avanzamento_car_in_urbana(distance: Float);
       procedure delete_car_in_uscita;
       procedure delete_car_in_entrata;
@@ -126,10 +144,11 @@ package mailbox_risorse_attive is
 
       procedure configure(risorsa: strada_ingresso_features; inizio_moto: Boolean);
    private
-      car_avanzamento_in_urbana: Float;
       index_inizio_moto: Boolean;
       risorsa_features: strada_ingresso_features;
       function slide_list(type_structure: data_structures_types; range_1: Boolean; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
+      -- l'immagine va creata per i prossimi elementi
+      car_avanzamento_in_urbana: Float;
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..1);
       main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
@@ -143,14 +162,17 @@ package mailbox_risorse_attive is
 
    type car_to_move_in_incroci is array(Positive range <>, id_corsie range <>) of ptr_list_posizione_abitanti_on_road;
 
-   protected type resource_segmento_incrocio(id_risorsa: Positive; size_incrocio: Positive) is new rt_incrocio with
+   protected type resource_segmento_incrocio(id_risorsa: Positive; size_incrocio: Positive) is new rt_incrocio and backup_interface with
       entry wait_turno;
+
+      -- metodo usato per creare una snapshot
+      procedure create_img(json_1: out JSON_Value);
 
       procedure delta_terminate;
       procedure change_verso_semafori_verdi;
       procedure insert_new_car(from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road);
       procedure update_avanzamento_car(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: Float; new_speed: Float);
-      procedure update_avanzamento_cars;
+      procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array);
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
 
       function get_verso_semafori_verdi return Boolean;
@@ -161,6 +183,7 @@ package mailbox_risorse_attive is
       function get_num_urbane_to_wait return Positive;
       num_urbane_ready: Natural:= 0;
       finish_delta_incrocio: Boolean:= False;
+      -- l'immagine va creata per i prossimi elementi
       verso_semafori_verdi: Boolean:= True;  -- key incroci per valore True: 1 e 3
       car_to_move: car_to_move_in_incroci(1..size_incrocio,1..2):= (others => (others => null));
    end resource_segmento_incrocio;

@@ -102,7 +102,7 @@ package remote_types is
 
    type rt_quartiere_entities_life is abstract tagged limited private;
    type ptr_rt_quartiere_entities_life is access all rt_quartiere_entities_life'Class;
-   pragma Asynchronous(ptr_rt_quartiere_entities_life);
+   --pragma Asynchronous(ptr_rt_quartiere_entities_life);
    procedure abitante_is_arrived(obj: rt_quartiere_entities_life; id_abitante: Positive) is abstract;
    -- to set an asynchronus procedure you must have all IN parameter
    -- to set a synchronus procedure you must have IN-OUT parameters

@@ -1,4 +1,5 @@
 with Text_IO;
+with GNATCOLL.JSON;
 
 with remote_types;
 with data_quartiere;
@@ -6,8 +7,10 @@ with global_data;
 with risorse_passive_data;
 with risorse_mappa_utilities;
 with the_name_server;
+with model_webserver_communication_protocol_utilities;
 
 use Text_IO;
+use GNATCOLL.JSON;
 
 use remote_types;
 use data_quartiere;
@@ -15,6 +18,7 @@ use global_data;
 use risorse_passive_data;
 use risorse_mappa_utilities;
 use the_name_server;
+use model_webserver_communication_protocol_utilities;
 
 package body mailbox_risorse_attive is
 
@@ -62,7 +66,137 @@ package body mailbox_risorse_attive is
       end if;
    end calculate_max_num_pedoni;
 
+   function create_img_abitante(abitante: posizione_abitanti_on_road) return JSON_Value is
+      json_1: JSON_Value:= Create_Object;
+      json_2: JSON_Value:= Create_Object;
+   begin
+      json_1.Set_Field("id_abitante",abitante.get_id_abitante_posizione_abitanti);
+      json_1.Set_Field("id_quartiere",abitante.get_id_quartiere_posizione_abitanti);
+      json_1.Set_Field("where_next",Create(abitante.get_where_next_posizione_abitanti));
+      json_1.Set_Field("where_now",Create(abitante.get_where_now_posizione_abitanti));
+      json_1.Set_Field("current_speed",Create(abitante.get_current_speed_abitante));
+      json_1.Set_Field("in_overtaken",abitante.get_in_overtaken);
+      json_1.Set_Field("can_pass_corsia",abitante.get_flag_overtake_next_corsia);
+      json_1.Set_Field("came_from_ingresso",abitante.get_came_from_ingresso);
+      json_1.Set_Field("distance_on_overtaking_trajectory",Create(abitante.get_distance_on_overtaking_trajectory));
+
+      json_2.Set_Field("departure_corsia",abitante.get_destination.get_departure_corsia);
+      json_2.Set_Field("corsia_to_go",abitante.get_destination.get_corsia_to_go_trajectory);
+      json_2.Set_Field("ingresso_to_go",abitante.get_destination.get_ingresso_to_go_trajectory);
+      json_2.Set_Field("from_ingresso",abitante.get_destination.get_from_ingresso);
+      json_2.Set_Field("traiettoria_incrocio_to_follow",to_string_incroci_type(abitante.get_destination.get_traiettoria_incrocio_to_follow));
+      json_1.Set_Field("destination",json_2);
+
+      return json_1;
+   end create_img_abitante;
+
+   function create_img_strada(road: road_state) return JSON_Value is
+      json_1: JSON_Value:= Create_Object;
+      json_2: JSON_Value;
+      json_abitanti: JSON_Array;
+      json_abitante: JSON_Value;
+      list: ptr_list_posizione_abitanti_on_road;
+   begin
+      -- "main_strada": {"false": {"1":[{abitante1},{..abitanteN}],"2": *1o*2}, "true": [[],*1o*2]}
+      for i in road'Range(1) loop
+         json_2:= Create_Object;
+         for j in road'Range(2) loop
+            list:= road(i,j);
+            json_abitanti:= Empty_Array;
+            while list/=null loop
+               json_abitante:= create_img_abitante(list.posizione_abitante);
+               Append(json_abitanti,json_abitante);
+               list:= list.next;
+            end loop;
+            json_2.Set_Field(Positive'Image(j),json_abitanti);
+         end loop;
+         if i then
+            json_1.Set_Field("true",json_2);
+         else
+            json_1.Set_Field("false",json_2);
+         end if;
+      end loop;
+      return json_1;
+   end create_img_strada;
+
+   function create_img_num_entity_strada(num_entity_strada: number_entity) return JSON_Value is
+      json_1: JSON_Value:= Create_Object;
+      json_2: JSON_Value;
+   begin
+      -- "main_strada_number_entity": {"false": {"1": NUM,"2": NUM se c'è}, "true": {"1": NUM,"2": NUM se c'è}}
+      for i in num_entity_strada'Range(1) loop
+         json_2:= Create_Object;
+         for j in num_entity_strada'Range(2) loop
+            json_2.Set_Field(Positive'Image(j),num_entity_strada(i,j));
+         end loop;
+         if i then
+            json_1.Set_Field("true",json_2);
+         else
+            json_1.Set_Field("false",json_2);
+         end if;
+      end loop;
+      return json_1;
+   end create_img_num_entity_strada;
+
    protected body resource_segmento_urbana is
+
+      procedure create_img(json_1: out JSON_Value) is
+         json_2: JSON_Array;
+         json_3: JSON_Value;
+         json_4: JSON_Value;
+         json_abitanti: JSON_Array;
+         json_abitante: JSON_Value;
+         list: ptr_list_posizione_abitanti_on_road;
+      begin
+         json_1:= Create_Object;
+         -- creazione traiettorie ingressi
+         -- "set_traiettorie_ingressi" : [{"num_ingresso" : 1, "traiettorie" : {"entrata_andata" : [{abitante1},{abitante2},...,{abitanteN}]}},[ALTRO INGRESSO],[...]]
+         for i in set_traiettorie_ingressi'Range(1) loop
+            json_3:= Create_Object;
+            json_4:= Create_Object;
+            json_3.Set_Field("num_ingresso",i);
+            for j in set_traiettorie_ingressi'Range(2) loop
+               list:= set_traiettorie_ingressi(i,j);
+               json_abitanti:= Empty_Array;
+               while list/=null loop
+                  json_abitante:= create_img_abitante(list.posizione_abitante);
+                  Append(json_abitanti,json_abitante);
+                  list:= list.next;
+               end loop;
+               json_4.Set_Field(to_string_ingressi_type(j),json_abitanti);
+            end loop;
+            json_3.Set_Field("traiettorie",json_4);
+            Append(json_2,json_3);
+         end loop;
+         json_1.Set_Field("set_traiettorie_ingressi",json_2);
+         -- end creazione traiettorie ingressi
+
+         json_abitanti:= Empty_Array;
+         json_2:= Empty_Array;
+         -- creazione main_strada
+         json_1.Set_Field("main_strada",create_img_strada(main_strada));
+
+         -- MARCIAPIEDI IMAGE TO DO
+         -- MARCIAPIEDI NUMBER ENTITY TO DO
+         json_1.Set_Field("main_strada_number_entity",create_img_num_entity_strada(main_strada_number_entity));
+
+         -- "temp_abitanti_in_transizione": {"false": {"1":{abitante1},"2": *1o*2}, "true": [{},*1o*2]}
+         json_3:= Create_Object;
+         for i in temp_abitanti_in_transizione'Range(1) loop
+            json_4:= Create_Object;
+            for j in temp_abitanti_in_transizione'Range(2) loop
+               json_abitante:= create_img_abitante(temp_abitanti_in_transizione(i,j));
+               json_4.Set_Field(Positive'Image(j),json_abitante);
+            end loop;
+            if i then
+               json_3.Set_Field("true",json_4);
+            else
+               json_3.Set_Field("false",json_4);
+            end if;
+         end loop;
+         json_1.Set_Field("temp_abitanti_in_transizione",json_3);
+
+      end create_img;
 
       entry wait_turno when finish_delta_urbana is
       begin
@@ -111,7 +245,7 @@ package body mailbox_risorse_attive is
       begin
          if index/=0 then
             list:= set_traiettorie_ingressi(index,type_traiettoria);
-            place_abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere_abitante,0.0,0.0,0.0,False,0.0,0.0,True,traiettoria_on_main_strada));
+            place_abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere_abitante,0.0,0.0,0.0,False,0.0,True,traiettoria_on_main_strada));
             new_abitante_to_add.posizione_abitante:= place_abitante;
             new_abitante_to_add.next:= null;
             while list/=null loop
@@ -186,7 +320,7 @@ package body mailbox_risorse_attive is
          car.posizione_abitante.set_flag_overtake_next_corsia(flag);
       end set_flag_car_can_overtake_to_next_corsia;
 
-      procedure update_traiettorie_ingressi is
+      procedure update_traiettorie_ingressi(state_view_abitanti: in out JSON_Array) is
          list: ptr_list_posizione_abitanti_on_road;
          list_macchine_in_strada: ptr_list_posizione_abitanti_on_road;
          prec_list_macchine_in_strada: ptr_list_posizione_abitanti_on_road;
@@ -201,12 +335,12 @@ package body mailbox_risorse_attive is
          length_car: Float;
          num_corsia: id_corsie;
          departure_distance: Float;
+         state_view_abitante: JSON_Value;
       begin
          for i in 1..2 loop
             polo:= not polo;
             for i in ordered_ingressi_polo(polo).all'Range loop
                key_ingresso:= get_key_ingresso(ordered_ingressi_polo(polo)(i),not_ordered);
-
                for traiettoria in traiettoria_ingressi_type'Range loop
                   if traiettoria/=empty then
                      -- traiettoria uscita_andata
@@ -263,6 +397,9 @@ package body mailbox_risorse_attive is
                            end if;
                            main_strada_number_entity(consider_polo,num_corsia):= main_strada_number_entity(consider_polo,num_corsia)+1;
                            list.posizione_abitante.set_where_now_abitante(Float'Last);
+                        else
+                           state_view_abitante:= create_car_traiettoria_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,list.posizione_abitante.get_where_now_posizione_abitanti,polo,get_ingresso_from_id(ordered_ingressi_polo(polo)(i)).get_distance_from_road_head_ingresso,traiettoria);
+                           Append(state_view_abitanti,state_view_abitante);
                         end if;
                      elsif in_uscita=False then
                         if list/=null then
@@ -271,6 +408,9 @@ package body mailbox_risorse_attive is
                               if list.posizione_abitante.get_where_now_posizione_abitanti>=length_traiettoria then
                                  get_ingressi_segmento_resources(ordered_ingressi_polo(polo)(i)).new_abitante_finish_route(list.posizione_abitante,car);
                                  list.posizione_abitante.set_where_now_abitante(Float'Last);
+                              else
+                                 state_view_abitante:= create_car_traiettoria_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,list.posizione_abitante.get_where_now_posizione_abitanti,polo,get_ingresso_from_id(ordered_ingressi_polo(polo)(i)).get_distance_from_road_head_ingresso,traiettoria);
+                                 Append(state_view_abitanti,state_view_abitante);
                               end if;
                            end if;
                         end if;
@@ -281,7 +421,7 @@ package body mailbox_risorse_attive is
          end loop;
       end update_traiettorie_ingressi;
 
-      procedure update_car_on_road is
+      procedure update_car_on_road(state_view_abitanti: in out JSON_Array) is
          main_list: ptr_list_posizione_abitanti_on_road;
          prec_main_list: ptr_list_posizione_abitanti_on_road;
          other_list: ptr_list_posizione_abitanti_on_road;
@@ -293,6 +433,7 @@ package body mailbox_risorse_attive is
          prec_list_abitanti_traiettoria: ptr_list_posizione_abitanti_on_road;
          car_length: Float;
          fine_ingresso_distance: Float;
+         state_view_abitante: JSON_Value;
       begin
          for i in main_strada'Range(1) loop
             for j in main_strada'Range(2) loop
@@ -306,7 +447,10 @@ package body mailbox_risorse_attive is
                      if (main_list.posizione_abitante.get_in_overtaken and then main_list.posizione_abitante.get_distance_on_overtaking_trajectory-car_length>=fine_ingresso_distance) or else
                        (main_list.posizione_abitante.get_where_now_posizione_abitanti-car_length>=fine_ingresso_distance) then
                         main_list.posizione_abitante.set_came_from_ingresso(False);
-                       if main_list.posizione_abitante.get_destination.get_departure_corsia=1 then
+                        state_view_abitante:= create_car_traiettoria_cambio_corsia_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_distance_on_overtaking_trajectory,
+                                                                                     i,main_list.posizione_abitante.get_where_now_posizione_abitanti,main_list.posizione_abitante.get_destination.get_departure_corsia,main_list.posizione_abitante.get_destination.get_corsia_to_go_trajectory);
+                        Append(state_view_abitanti,state_view_abitante);
+                        if main_list.posizione_abitante.get_destination.get_departure_corsia=1 then
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata).next;
                         else
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno).next;
@@ -315,6 +459,10 @@ package body mailbox_risorse_attive is
                   end if;
                   if main_list.posizione_abitante.get_in_overtaken and main_list.posizione_abitante.get_flag_overtake_next_corsia then
                      -- begin togli elemento dalla lista
+                     state_view_abitante:= create_car_traiettoria_cambio_corsia_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_distance_on_overtaking_trajectory,
+                                                                                     i,main_list.posizione_abitante.get_where_now_posizione_abitanti,main_list.posizione_abitante.get_destination.get_departure_corsia,main_list.posizione_abitante.get_destination.get_corsia_to_go_trajectory);
+                     Append(state_view_abitanti,state_view_abitante);
+
                      main_list.posizione_abitante.set_flag_overtake_next_corsia(False);  -- reset del cambio corsia
                      Put_Line("begin overtake " & Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti));
                      if prec_main_list=null then
@@ -353,11 +501,20 @@ package body mailbox_risorse_attive is
                         main_list.posizione_abitante.set_where_next_abitante(main_list.posizione_abitante.get_where_now_posizione_abitanti+get_traiettoria_cambio_corsia.get_lunghezza_lineare_traiettoria+main_list.posizione_abitante.get_distance_on_overtaking_trajectory-get_traiettoria_cambio_corsia.get_lunghezza_traiettoria);
                         main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
                         main_list.posizione_abitante.set_distance_on_overtaking_trajectory(0.0);
+                        state_view_abitante:= create_car_urbana_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,j);
+                     else
+                        state_view_abitante:= create_car_traiettoria_cambio_corsia_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_distance_on_overtaking_trajectory,
+                                                                                     i,main_list.posizione_abitante.get_where_now_posizione_abitanti,main_list.posizione_abitante.get_destination.get_departure_corsia,main_list.posizione_abitante.get_destination.get_corsia_to_go_trajectory);
                      end if;
+                     Append(state_view_abitanti,state_view_abitante);
                      prec_main_list:= main_list;
                      main_list:= main_list.next;
                   else
                      main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
+                     if main_list.posizione_abitante.get_where_now_posizione_abitanti<get_urbana_from_id(id_risorsa).get_lunghezza_road then
+                        state_view_abitante:= create_car_urbana_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,j);
+                        Append(state_view_abitanti,state_view_abitante);
+                     end if;
                      if main_list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=empty then
                         --Put_Line(Float'Image(get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory))));
                         if get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory))=main_list.posizione_abitante.get_where_now_posizione_abitanti+get_larghezza_marciapiede+get_larghezza_corsia then
@@ -1159,6 +1316,33 @@ package body mailbox_risorse_attive is
    end resource_segmento_urbana;
 
    protected body resource_segmento_ingresso is
+
+      procedure create_img(json_1: out JSON_Value) is
+         list: ptr_list_posizione_abitanti_on_road;
+         json_abitanti: JSON_Array;
+         json_abitante: JSON_Value;
+      begin
+         json_1:= Create_Object;
+
+         json_1.Set_Field("car_avanzamento_in_urbana",car_avanzamento_in_urbana);
+
+         -- creazione main_strada
+         json_1.Set_Field("main_strada",create_img_strada(main_strada));
+
+         -- MARCIAPIEDI IMAGE TO DO
+         -- MARCIAPIEDI NUMBER ENTITY TO DO
+         -- MARCIAPIEDI TEMP TO DO
+         json_1.Set_Field("main_strada_number_entity",create_img_num_entity_strada(main_strada_number_entity));
+
+         list:= main_strada_temp;
+         while list/=null loop
+            json_abitante:= create_img_abitante(list.posizione_abitante);
+            Append(json_abitanti,json_abitante);
+            list:= list.next;
+         end loop;
+         json_1.Set_Field("main_strada_temp",json_abitanti);
+      end create_img;
+
       entry wait_turno when True is
       begin
          null;
@@ -1225,7 +1409,7 @@ package body mailbox_risorse_attive is
                   end if;
                   abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(main_strada_temp.posizione_abitante.get_id_abitante_posizione_abitanti,
                                                         main_strada_temp.posizione_abitante.get_id_quartiere_posizione_abitanti,where_next,0.0,begin_speed,False,
-                                                        0.0,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
+                                                        0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
                   list_abitanti.posizione_abitante:= abitante;
                   main_strada_temp:= main_strada_temp.next;
                   main_strada_number_entity(index_inizio_moto,1):= main_strada_number_entity(index_inizio_moto,1)+1;
@@ -1240,7 +1424,7 @@ package body mailbox_risorse_attive is
          abitante: posizione_abitanti_on_road;
          last_node: ptr_list_posizione_abitanti_on_road:= null;
       begin
-         abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere,0.0,0.0,0.0,False,0.0,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
+         abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere,0.0,0.0,0.0,False,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
          list_abitanti.posizione_abitante:= abitante;
          case mezzo is
             when walking | autobus | bike =>
@@ -1289,16 +1473,20 @@ package body mailbox_risorse_attive is
          end case;
       end new_abitante_finish_route;
 
-      procedure update_position_entity(type_structure: data_structures_types; range_1: Boolean; index_entity: Positive) is
+      procedure update_position_entity(state_view_abitanti: in out JSON_Array) is--; type_structure: data_structures_types; range_1: Boolean; index_entity: Positive) is
          nodo: ptr_list_posizione_abitanti_on_road:= null;
+         state_view_abitante: JSON_Value;
+         list: ptr_list_posizione_abitanti_on_road;
       begin
-         case type_structure is
-            when road =>
-               nodo:= slide_list(road,range_1,index_entity);
-            when sidewalk =>
-               nodo:= slide_list(sidewalk,range_1,index_entity);
-         end case;
-         nodo.posizione_abitante.set_where_now_abitante(nodo.posizione_abitante.get_where_next_posizione_abitanti);
+         for i in main_strada'Range(1) loop
+            list:= main_strada(i,1);
+            for j in 1..main_strada_number_entity(i,1) loop
+               list.posizione_abitante.set_where_now_abitante(list.posizione_abitante.get_where_next_posizione_abitanti);
+               state_view_abitante:= create_car_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,list.posizione_abitante.get_where_now_posizione_abitanti,i);
+               Append(state_view_abitanti,state_view_abitante);
+               list:= list.next;
+            end loop;
+         end loop;
       end update_position_entity;
 
       procedure update_avanzamento_car_in_urbana(distance: Float) is
@@ -1394,6 +1582,37 @@ package body mailbox_risorse_attive is
    end resource_segmento_ingresso;
 
    protected body resource_segmento_incrocio is
+
+      procedure create_img(json_1: out JSON_Value) is
+         json_2: JSON_Value;
+         json_3: JSON_Value;
+         json_abitanti: JSON_Array;
+         json_abitante: JSON_Value;
+         list: ptr_list_posizione_abitanti_on_road;
+      begin
+         json_1:= Create_Object;
+         json_1.Set_Field("verso_semafori_verdi",verso_semafori_verdi);
+
+         --"car_to_move": {"1": {"1":[{},{}],"2":[{},{}]},{"size_incrocio"}}
+         json_2:= Create_Object;
+         for i in car_to_move'Range(1) loop
+            json_3:= Create_Object;
+            for j in car_to_move'Range(2) loop
+               list:= car_to_move(i,j);
+               json_abitanti:= Empty_Array;
+               while list/=null loop
+                  json_abitante:= create_img_abitante(list.posizione_abitante);
+                  Append(json_abitanti,json_abitante);
+                  list:= list.next;
+               end loop;
+               json_3.Set_Field(Positive'Image(j),json_abitanti);
+            end loop;
+            json_2.Set_Field(Positive'Image(i),json_3);
+         end loop;
+         json_1.Set_Field("car_to_move",json_2);
+
+      end create_img;
+
       function get_num_urbane_to_wait return Positive is
       begin
          if id_risorsa>=get_from_incroci_a_4 and id_risorsa<=get_to_incroci_a_4 then
@@ -1451,11 +1670,13 @@ package body mailbox_risorse_attive is
          end if;
       end update_avanzamento_car;
 
-      procedure update_avanzamento_cars is
+      procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array) is
          list: ptr_list_posizione_abitanti_on_road;
          prec_list: ptr_list_posizione_abitanti_on_road;
          traiettoria_car: traiettoria_incroci_type;
          length_traiettoria: float;
+         state_view_abitante: JSON_Value;
+         from_road: tratto;
       begin
          for i in 1..size_incrocio loop
             for j in id_corsie'Range loop
@@ -1475,6 +1696,9 @@ package body mailbox_risorse_attive is
                         list:= prec_list.next;
                      end if;
                   else
+                     from_road:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list.posizione_abitante.get_id_quartiere_posizione_abitanti).get_current_tratto(list.posizione_abitante.get_id_abitante_posizione_abitanti);
+                     state_view_abitante:= create_car_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,list.posizione_abitante.get_where_now_posizione_abitanti,from_road.get_id_quartiere_tratto,from_road.get_id_tratto,traiettoria_car);
+                     Append(state_view_abitanti,state_view_abitante);
                      prec_list:= list;
                      list:= list.next;
                   end if;

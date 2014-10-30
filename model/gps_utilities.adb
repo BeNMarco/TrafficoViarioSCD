@@ -136,7 +136,7 @@ package body gps_utilities is
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is
-         coda_nodi: dijkstra_nodi(1..get_num_quartieri,min_first_incroci..max_last_incroci);
+         coda_nodi: dijkstra_nodi(1..num_quartieri,min_first_incroci..max_last_incroci);
          to_consider: index_to_consider(1..numero_globale_incroci);
          new_from_id_luogo: Positive;
          new_to_id_luogo: Positive;
@@ -545,7 +545,7 @@ package body gps_utilities is
 
       entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                       rotonde_a_3: list_incroci_a_3) when num_strade_quartieri=get_num_quartieri is
+                                       rotonde_a_3: list_incroci_a_3) when num_strade_quartieri=num_quartieri is
          incrocio_a_4: list_road_incrocio_a_4;
          incrocio_a_3: list_road_incrocio_a_3;
          rotonda_a_4: list_road_incrocio_a_4;
@@ -675,7 +675,7 @@ package body gps_utilities is
 
          num_incroci_quartieri_registrati:= num_incroci_quartieri_registrati + 1;
          Put_Line("incroci registrati" & Positive'Image(num_incroci_quartieri_registrati));
-         if num_incroci_quartieri_registrati = get_num_quartieri then
+         if num_incroci_quartieri_registrati = num_quartieri then
             -- il grafo può essere costruito
             Put_Line("costruzione grafo");
             for quartiere in hash_urbane_quartieri'Range loop

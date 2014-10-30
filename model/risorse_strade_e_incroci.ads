@@ -5,6 +5,7 @@ with global_data;
 with the_name_server;
 with risorse_mappa_utilities;
 with mailbox_risorse_attive;
+with snapshot_interface;
 
 use remote_types;
 use data_quartiere;
@@ -13,6 +14,7 @@ use global_data;
 use the_name_server;
 use risorse_mappa_utilities;
 use mailbox_risorse_attive;
+use snapshot_interface;
 
 package risorse_strade_e_incroci is
 
@@ -30,6 +32,8 @@ package risorse_strade_e_incroci is
    type core_avanzamento is limited interface;
 
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
+
+   procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive);
 
    task type core_avanzamento_urbane is new core_avanzamento with
       entry configure(id: Positive);

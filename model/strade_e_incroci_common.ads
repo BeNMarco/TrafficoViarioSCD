@@ -11,6 +11,9 @@ package strade_e_incroci_common is
    type traiettorie_intersezioni_linee_corsie is (linea_corsia,linea_mezzaria);
    type traiettoria_ingressi_type is (empty,entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno);
 
+   function to_string_incroci_type(obj: traiettoria_incroci_type) return String;
+   function to_string_ingressi_type(obj: traiettoria_ingressi_type) return String;
+
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;
    function get_id_quartiere_road(road: rt_strada_features) return Positive;
@@ -144,7 +147,7 @@ package strade_e_incroci_common is
    function get_corsia_to_go_trajectory(obj: trajectory_to_follow) return Natural;
    function get_ingresso_to_go_trajectory(obj: trajectory_to_follow) return Natural;
    function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type;
-   function get_from_ingresso(obj: trajectory_to_follow) return Positive;
+   function get_from_ingresso(obj: trajectory_to_follow) return Natural;
 
    function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
    function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
@@ -152,7 +155,6 @@ package strade_e_incroci_common is
    function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
    function get_in_overtaken(obj: posizione_abitanti_on_road) return Boolean;
-   function get_distance_at_witch_begin_overtaken(obj: posizione_abitanti_on_road) return Float;
    function get_distance_on_overtaking_trajectory(obj: posizione_abitanti_on_road) return Float;
    function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class;
    function get_flag_overtake_next_corsia(obj: posizione_abitanti_on_road) return Boolean;
@@ -162,7 +164,6 @@ package strade_e_incroci_common is
    procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float);
    procedure set_current_speed_abitante(obj: in out posizione_abitanti_on_road; speed: Float);
    procedure set_in_overtaken(obj: in out posizione_abitanti_on_road; in_overtaken: Boolean);
-   procedure set_distance_at_witch_begin_overtaken(obj: in out posizione_abitanti_on_road; distance: Float);
    procedure set_distance_on_overtaking_trajectory(obj: in out posizione_abitanti_on_road; distance: Float);
    procedure set_destination(obj: in out posizione_abitanti_on_road; traiettoria: trajectory_to_follow'Class);
    procedure set_flag_overtake_next_corsia(obj: in out posizione_abitanti_on_road; flag: Boolean);
@@ -172,7 +173,7 @@ package strade_e_incroci_common is
 
    function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
                                           where_now: Float; current_speed: Float; in_overtaken: Boolean;
-                                          distance_at_witch_begin_overtaken: Float; distance_on_overtaking_trajectory: Float;
+                                          distance_on_overtaking_trajectory: Float;
                                           came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class;
 
    function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road;
@@ -267,7 +268,6 @@ private
       in_overtaken: Boolean:= False;
       can_pass_corsia: Boolean:= False;
       came_from_ingresso: Boolean:= False;
-      distance_at_witch_begin_overtaken: Float:= 0.0;
       distance_on_overtaking_trajectory: Float:= 0.0;
       destination: trajectory_to_follow;
    end record;

@@ -1,9 +1,7 @@
 with Ada.Text_IO;
 with Ada.Numerics.Elementary_Functions;
 with Ada.Exceptions;
---with Ada.Task_Identification;
---with Ada.Dynamic_Priorities;
---with System;
+with GNATCOLL.JSON;
 
 with strade_e_incroci_common;
 with remote_types;
@@ -14,12 +12,13 @@ with mailbox_risorse_attive;
 with synchronization_task_partition;
 with risorse_passive_data;
 with data_quartiere;
+with snapshot_quartiere;
+with model_webserver_communication_protocol_utilities;
 
 use Ada.Text_IO;
 use Ada.Numerics.Elementary_Functions;
---use Ada.Task_Identification;
---use Ada.Dynamic_Priorities;
---use System;
+use GNATCOLL.JSON;
+use Ada.Exceptions;
 
 use strade_e_incroci_common;
 use remote_types;
@@ -30,7 +29,8 @@ use mailbox_risorse_attive;
 use synchronization_task_partition;
 use risorse_passive_data;
 use data_quartiere;
-use Ada.Exceptions;
+use snapshot_quartiere;
+use model_webserver_communication_protocol_utilities;
 
 package body risorse_strade_e_incroci is
 
@@ -500,6 +500,17 @@ package body risorse_strade_e_incroci is
       synch_obj.wait_tasks_partitions;
    end synchronization_with_delta;
 
+   procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive) is
+      json: JSON_Value;
+   begin
+      num_delta:= num_delta + 1;
+      if num_delta=num_delta_to_wait_to_have_system_snapshot then
+         mailbox.create_img(json);
+         snapshot_writer.write_img_resource(json,num_task);
+         num_delta:= 0;
+      end if;
+   end crea_snapshot;
+
    task body core_avanzamento_urbane is
       id_task: Positive;
       mailbox: ptr_resource_segmento_urbana;
@@ -556,6 +567,9 @@ package body risorse_strade_e_incroci is
 
       tratto_incrocio: tratto;
 
+      state_view_abitanti: JSON_Array;
+
+      num_delta: Natural:= 0;
       z: Positive;
    begin
       accept configure(id: Positive) do
@@ -573,6 +587,14 @@ package body risorse_strade_e_incroci is
          synchronization_with_delta(id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
+         state_view_abitanti:= Empty_Array;
+         mailbox.update_traiettorie_ingressi(state_view_abitanti);
+         mailbox.update_car_on_road(state_view_abitanti);
+         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+
+         -- crea snapshot se necessario
+         crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
+
          -- aspetta che finiscano gli incroci
          if array_estremi_strada_urbana(1)/=null then
             array_estremi_strada_urbana(1).wait_turno;
@@ -581,9 +603,6 @@ package body risorse_strade_e_incroci is
             array_estremi_strada_urbana(2).wait_turno;
 	 end if;
          -- fine wait; gli incroci hanno fatto l'avanzamento
-
-         mailbox.update_traiettorie_ingressi;
-         mailbox.update_car_on_road;
 
          current_polo_to_consider:= False;
          current_ingressi_structure_type_to_consider:= ordered_polo_false;
@@ -861,7 +880,6 @@ package body risorse_strade_e_incroci is
                      Put_Line("id_abitante " & Positive'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria entrata ritorno ingresso " & Positive'Image(id_task));
                   end if;
                end if;
-
 
                -- TRAIETTORIA ENTRATA_ANDATA
                can_move_from_traiettoria:= True;
@@ -1158,6 +1176,8 @@ package body risorse_strade_e_incroci is
       traiettoria_type: traiettoria_ingressi_type;
       traiettoria_on_main_strada: trajectory_to_follow;
       distanza_percorsa: Float;
+      state_view_abitanti: JSON_Array;
+      num_delta: Natural:= 0;
    begin
       accept configure(id: Positive) do
          id_task:= id;
@@ -1176,11 +1196,18 @@ package body risorse_strade_e_incroci is
          --Put_Line("wait " & Positive'Image(get_ingresso_from_id(id_task).get_id_main_strada_ingresso) & " id quartiere " & Positive'Image(get_id_quartiere));
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
+         state_view_abitanti:= Empty_Array;
+         mailbox.update_position_entity(state_view_abitanti);
+         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+
+         -- crea snapshot se necessario
+         crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
+
          resource_main_strada.wait_turno;
 
          list_abitanti:= mailbox.get_main_strada(mailbox.get_index_inizio_moto);
          for i in 1..mailbox.get_number_entity_strada(mailbox.get_index_inizio_moto) loop
-            mailbox.update_position_entity(road,mailbox.get_index_inizio_moto,i);
+            --mailbox.update_position_entity(state_view_abitanti,road,mailbox.get_index_inizio_moto,i);
             current_posizione_abitante:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
             Put_Line("id_abitante " & Positive'Image(current_posizione_abitante.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(current_posizione_abitante.get_where_now_posizione_abitanti) & ", gestore is ingresso " & Positive'Image(id_task));
             if list_abitanti.all.get_next_from_list_posizione_abitanti/=null then  -- elimino la macchina davanti se ha finito la transizione da ingresso a urbana
@@ -1283,15 +1310,16 @@ package body risorse_strade_e_incroci is
 
          list_abitanti:= mailbox.get_main_strada(not mailbox.get_index_inizio_moto);
          for i in 1..mailbox.get_number_entity_strada(not mailbox.get_index_inizio_moto) loop
-            mailbox.update_position_entity(road,not mailbox.get_index_inizio_moto,i);
             current_posizione_abitante:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
             Put_Line("id_abitante " & Positive'Image(current_posizione_abitante.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(current_posizione_abitante.get_where_now_posizione_abitanti) & ", gestore is ingresso " & Positive'Image(id_task));
             -- elimino l'elemento se è fuori traiettoria
-            if current_posizione_abitante.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti,current_posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva>=get_ingresso_from_id(id_task).get_lunghezza_road then
+            if current_posizione_abitante.get_where_next_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti,current_posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva>=get_ingresso_from_id(id_task).get_lunghezza_road then
                mailbox.delete_car_in_entrata;
                get_quartiere_utilities_obj.get_classe_locate_abitanti(current_posizione_abitante.get_id_quartiere_posizione_abitanti).set_finish_route(current_posizione_abitante.get_id_abitante_posizione_abitanti);
                get_quartiere_entities_life(current_posizione_abitante.get_id_quartiere_posizione_abitanti).abitante_is_arrived(current_posizione_abitante.get_id_abitante_posizione_abitanti);
             else
+               --mailbox.update_position_entity(state_view_abitanti,road,not mailbox.get_index_inizio_moto,i);
+               current_posizione_abitante:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
                -- FLAG OVERTAKE NEXT CORSIA usato per indicare se l'abitante ha già attraversato l'incrocio completamente
                if i=1 and then (current_posizione_abitante.get_flag_overtake_next_corsia=False and then current_posizione_abitante.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti,current_posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva>=0.0) then
                   mailbox.set_flag_spostamento_from_urbana_completato;
@@ -1334,6 +1362,8 @@ package body risorse_strade_e_incroci is
                list_abitanti:= list_abitanti.all.get_next_from_list_posizione_abitanti;
             end if;
          end loop;
+
+
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
       end loop;
@@ -1378,6 +1408,8 @@ package body risorse_strade_e_incroci is
       can_continue: Boolean;
       id_main_road: Positive;
       o: Boolean:= False;
+      state_view_abitanti: JSON_Array;
+      num_delta: Natural:= 0;
    begin
       accept configure(id: Positive) do
          id_task:= id;
@@ -1393,7 +1425,14 @@ package body risorse_strade_e_incroci is
 
          synchronization_with_delta(id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
-         mailbox.update_avanzamento_cars;
+
+         state_view_abitanti:= Empty_Array;
+         mailbox.update_avanzamento_cars(state_view_abitanti);
+         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+
+         -- crea snapshot se necessario
+         crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
+
          for i in 1..mailbox.get_size_incrocio loop
             for j in id_corsie'Range loop
                list_car:= mailbox.get_list_car_to_move(i,j);
@@ -1944,7 +1983,7 @@ package body risorse_strade_e_incroci is
                         mailbox.update_avanzamento_car(list_car,new_step,new_speed);
                         Put_Line("id_abitante " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is incrocio " & Positive'Image(id_task));
                         if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<length_traiettoria and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=length_traiettoria then
-                           -- passaggio della macchina all'incrocio
+                           -- passaggio della macchina all'urbana
                            road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,traiettoria_car));
                            new_abitante:= posizione_abitanti_on_road(create_new_posizione_abitante_from_copy(list_car.get_posizione_abitanti_from_list_posizione_abitanti));
                            new_abitante.set_where_now_abitante(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti-length_traiettoria);

@@ -1,8 +1,10 @@
+with GNATCOLL.JSON;
 with Ada.Text_IO;
 
 with the_name_server;
 with risorse_mappa_utilities;
 
+use GNATCOLL.JSON;
 use Ada.Text_IO;
 
 use the_name_server;
@@ -260,7 +262,7 @@ package body risorse_passive_data is
          num_quartieri_resource_registrate:= num_quartieri_resource_registrate+1;
       end incrementa_resource_mappa_quartieri;
 
-      entry wait_cfg when num_classi_locate_abitanti=get_num_quartieri and num_abitanti_quartieri_registrati=get_num_quartieri and num_quartieri_resource_registrate=get_num_quartieri is
+      entry wait_cfg when num_classi_locate_abitanti=num_quartieri and num_abitanti_quartieri_registrati=num_quartieri and num_quartieri_resource_registrate=num_quartieri is
       begin
          if inventory_estremi_is_set=False then
             inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
@@ -304,6 +306,49 @@ package body risorse_passive_data is
    end get_estremi_urbana;
 
    protected body location_abitanti is
+
+      procedure create_img(json_1: out JSON_Value) is
+         segmento: tratto;
+         route: JSON_Array;
+         passo: JSON_Array;
+         json_2: JSON_Value;
+         json_3: JSON_Value;
+         convert_passo: JSON_Value;
+      begin
+         json_1:= Create_Object;
+         json_2:= Create_Object;
+         for i in percorsi'Range loop
+            if percorsi(i)/=null then
+               route:= Empty_Array;
+               json_3:= Create_Object;
+               for j in percorsi(i).get_percorso_from_route_and_distance'Range loop
+                  passo:= Empty_Array;
+                  segmento:= percorsi(i).get_percorso_from_route_and_distance(j);
+                  Append(passo,Create(segmento.get_id_quartiere_tratto));
+                  Append(passo,Create(segmento.get_id_tratto));
+                  convert_passo:= Create(passo);
+                  Append(route,convert_passo);
+               end loop;
+               json_3.Set_Field("percorso",route);
+               json_3.Set_Field("distanza",Create(percorsi(i).get_distance_from_route_and_distance));
+               json_2.Set_Field(Positive'Image(i),json_3);
+            end if;
+         end loop;
+         json_1.Set_Field("percorsi",json_2);
+
+         json_2:= Create_Object;
+         for i in position_abitanti'Range loop
+            json_2.Set_Field(Positive'Image(i),position_abitanti(i));
+         end loop;
+         json_1.Set_Field("position_abitanti",json_2);
+
+         json_2:= Create_Object;
+         for i in abitanti_arrived'Range loop
+            json_2.Set_Field(Positive'Image(i),abitanti_arrived(i));
+         end loop;
+         json_1.Set_Field("abitanti_arrived",json_2);
+
+      end create_img;
 
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
       begin

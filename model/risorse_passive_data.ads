@@ -5,6 +5,7 @@ with strade_e_incroci_common;
 with data_quartiere;
 with remote_types;
 with global_data;
+with snapshot_interface;
 with JSON_Helper;
 
 use GNATCOLL.JSON;
@@ -13,6 +14,7 @@ use strade_e_incroci_common;
 use data_quartiere;
 use remote_types;
 use global_data;
+use snapshot_interface;
 use JSON_Helper;
 
 package risorse_passive_data is
@@ -64,13 +66,13 @@ package risorse_passive_data is
 
    private
 
-      entità_abitanti: list_abitanti_quartieri(1..get_num_quartieri);
-      entità_pedoni: list_pedoni_quartieri(1..get_num_quartieri);
-      entità_bici: list_bici_quartieri(1..get_num_quartieri);
-      entità_auto: list_auto_quartieri(1..get_num_quartieri);
+      entità_abitanti: list_abitanti_quartieri(1..num_quartieri);
+      entità_pedoni: list_pedoni_quartieri(1..num_quartieri);
+      entità_bici: list_bici_quartieri(1..num_quartieri);
+      entità_auto: list_auto_quartieri(1..num_quartieri);
 
       -- array i quali oggetti sono del tipo ptr_rt_location_abitanti per ottenere le informazioni esposte sopra per gps_abitanti
-      rt_classi_locate_abitanti: gps_abitanti_quartieri(1..get_num_quartieri);
+      rt_classi_locate_abitanti: gps_abitanti_quartieri(1..num_quartieri);
    end quartiere_utilities;
 
    type ptr_quartiere_utilities is access all quartiere_utilities;
@@ -90,9 +92,11 @@ package risorse_passive_data is
    type array_position_abitanti is array(Positive range <>) of Positive;
    type array_abitanti_finish_route is array(Positive range <>) of Boolean;
 
-   protected type location_abitanti(num_abitanti: Natural) is new rt_location_abitanti with
+   protected type location_abitanti(num_abitanti: Natural) is new rt_location_abitanti and backup_interface with
 
-        procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
+      procedure create_img(json_1: out JSON_Value);
+
+      procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
       procedure set_position_abitante_to_next(id_abitante: Positive);
       procedure set_finish_route(id_abitante: Positive);
 

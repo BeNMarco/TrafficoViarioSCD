@@ -1,6 +1,40 @@
 
 package body strade_e_incroci_common is
 
+   function to_string_incroci_type(obj: traiettoria_incroci_type) return String is
+   begin
+      case obj is
+         when empty =>
+            return "empty";
+         when destra =>
+            return "destra";
+         when sinistra =>
+            return "sinistra";
+         when dritto_1 =>
+            return "dritto_1";
+         when dritto_2 =>
+            return "dritto_2";
+         when dritto =>
+            return "dritto";
+         end case;
+   end to_string_incroci_type;
+
+   function to_string_ingressi_type(obj: traiettoria_ingressi_type) return String is
+   begin
+      case obj is
+         when empty =>
+            return "empty";
+         when entrata_andata =>
+            return "entrata_andata";
+         when uscita_andata =>
+            return "uscita_andata";
+         when entrata_ritorno =>
+            return "entrata_ritorno";
+         when uscita_ritorno =>
+            return "uscita_ritorno";
+      end case;
+   end to_string_ingressi_type;
+
    function get_lunghezza_road(road: rt_strada_features) return Float is
    begin
       return road.lunghezza;
@@ -265,7 +299,7 @@ package body strade_e_incroci_common is
    begin
       return obj.traiettoria_incrocio_to_follow;
    end get_traiettoria_incrocio_to_follow;
-   function get_from_ingresso(obj: trajectory_to_follow) return Positive is
+   function get_from_ingresso(obj: trajectory_to_follow) return Natural is
    begin
       return obj.from_ingresso;
    end get_from_ingresso;
@@ -294,10 +328,6 @@ package body strade_e_incroci_common is
    begin
       return obj.in_overtaken;
    end get_in_overtaken;
-   function get_distance_at_witch_begin_overtaken(obj: posizione_abitanti_on_road) return Float is
-   begin
-      return obj.distance_at_witch_begin_overtaken;
-   end get_distance_at_witch_begin_overtaken;
    function get_distance_on_overtaking_trajectory(obj: posizione_abitanti_on_road) return Float is
    begin
       return obj.distance_on_overtaking_trajectory;
@@ -331,10 +361,6 @@ package body strade_e_incroci_common is
    begin
       obj.in_overtaken:= in_overtaken;
    end set_in_overtaken;
-   procedure set_distance_at_witch_begin_overtaken(obj: in out posizione_abitanti_on_road; distance: Float) is
-   begin
-      obj.distance_at_witch_begin_overtaken:= distance;
-   end set_distance_at_witch_begin_overtaken;
    procedure set_distance_on_overtaking_trajectory(obj: in out posizione_abitanti_on_road; distance: Float) is
    begin
       obj.distance_on_overtaking_trajectory:= distance;
@@ -365,7 +391,7 @@ package body strade_e_incroci_common is
 
    function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
                                           where_now: Float; current_speed: Float; in_overtaken: Boolean;
-                                          distance_at_witch_begin_overtaken: Float; distance_on_overtaking_trajectory: Float;
+                                          distance_on_overtaking_trajectory: Float;
                                           came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class is
       abitante: posizione_abitanti_on_road;
    begin
@@ -376,7 +402,6 @@ package body strade_e_incroci_common is
       abitante.current_speed:= current_speed;
       abitante.in_overtaken:= in_overtaken;
       abitante.came_from_ingresso:= came_from_ingresso;
-      abitante.distance_at_witch_begin_overtaken:= distance_at_witch_begin_overtaken;
       abitante.distance_on_overtaking_trajectory:= distance_on_overtaking_trajectory;
       abitante.destination:= destination;
       return abitante;
@@ -391,8 +416,7 @@ package body strade_e_incroci_common is
       abitante.where_now:= posizione_abitante.where_now;
       abitante.current_speed:= posizione_abitante.current_speed;
       abitante.in_overtaken:= posizione_abitante.in_overtaken;
-      abitante.distance_at_witch_begin_overtaken:= posizione_abitante.distance_at_witch_begin_overtaken;
-      abitante.distance_on_overtaking_trajectory:= posizione_abitante.distance_on_overtaking_trajectory;
+      --abitante.distance_at_witch_begin_overtaken:= posizione_abitante.distance_at_witch_begin_overtaken;
       abitante.distance_on_overtaking_trajectory:= posizione_abitante.distance_on_overtaking_trajectory;
       abitante.destination:= posizione_abitante.destination;
       return abitante;

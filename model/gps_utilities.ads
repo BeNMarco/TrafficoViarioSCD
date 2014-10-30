@@ -62,10 +62,10 @@ package gps_utilities is
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;
       procedure print_grafo;
 
-      cache_urbane: urbane_quartiere(1..get_num_quartieri);
-      cache_ingressi: ingressi_quartiere(1..get_num_quartieri);
-      hash_urbane_quartieri: hash_quartieri_strade(1..get_num_quartieri);
-      grafo: grafo_mappa(1..get_num_quartieri);
+      cache_urbane: urbane_quartiere(1..num_quartieri);
+      cache_ingressi: ingressi_quartiere(1..num_quartieri);
+      hash_urbane_quartieri: hash_quartieri_strade(1..num_quartieri);
+      grafo: grafo_mappa(1..num_quartieri);
       num_incroci_quartieri_registrati: Natural:= 0;
       min_first_incroci: Natural:= 0;
       max_last_incroci: Natural:= 0;

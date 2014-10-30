@@ -118,7 +118,7 @@ Street.prototype.draw = function(style){
 	// drawing the separation lines
 	var precision = Math.ceil(this.guidingPath.length);
 	var sepStyle = {strokeWidth: style.lineWidth, strokeColor:style.lineColor, dashArray: style.dashArray};
-	for(var i = 1; i < this.nLanes; i++){
+	for(var i = 1, var len = this.nLanes; i < len; i++){
 		this.sepLines[false][i] = pathOffset(this.guidingPath, (i)*style.laneWidth, precision, sepStyle);
 		//p1.rasterize();
 		//p1.remove();

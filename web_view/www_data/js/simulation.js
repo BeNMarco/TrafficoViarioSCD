@@ -76,7 +76,8 @@ Simulation.prototype.init = function(){
 
 Simulation.prototype.moveObjects = function(time){
 	this.currentState.stateTime += time;
-	for(var c in this.currentState.cars){
+	for(var c = 0, var len = this.currentState.cars.length; c < len; c++){
+	//for(var c in this.currentState.cars){
 		var curCar = this.currentState.cars[c];
 		var newDistance = 0;
 		var prevPosition = 0;
@@ -90,14 +91,14 @@ Simulation.prototype.moveObjects = function(time){
 		// otherwise we compute the correct position
 		else {
 			// if the object switched from a place to another 
-			if(curCar.where != this.prevState.cars[c].where){
+			if(curCar.where != this.prevState.cars[curCar.id_abitante].where){
 				// if the initial position in the current state is set we use it, otherwise we use 0
 				prevPosition = curCar.inizio !== undefined ? curCar.inizio : 0;
 
 			}
 			// otherwise simply take the position from the previous state
 			else {
-				prevPosition = this.prevState.cars[c].distanza;
+				prevPosition = this.prevState.cars[curCar.id_abitante].distanza;
 			}
 			newDistance = 1*prevPosition + 1*((curCar.distanza - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 		}
@@ -153,7 +154,7 @@ Simulation.prototype.moveObjects = function(time){
 				}
 				break;
 		}
-		this.objects.cars[c].move(newPos.position, newPos.angle);
+		this.objects.cars[curCar.id_abitante].move(newPos.position, newPos.angle);
 	}
 }
 

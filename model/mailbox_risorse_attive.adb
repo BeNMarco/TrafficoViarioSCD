@@ -1,5 +1,6 @@
 with Text_IO;
 with GNATCOLL.JSON;
+with Polyorb.Parameters;
 
 with remote_types;
 with data_quartiere;
@@ -8,9 +9,12 @@ with risorse_passive_data;
 with risorse_mappa_utilities;
 with the_name_server;
 with model_webserver_communication_protocol_utilities;
+with JSON_Helper;
+with absolute_path;
 
 use Text_IO;
 use GNATCOLL.JSON;
+use Polyorb.Parameters;
 
 use remote_types;
 use data_quartiere;
@@ -19,6 +23,8 @@ use risorse_passive_data;
 use risorse_mappa_utilities;
 use the_name_server;
 use model_webserver_communication_protocol_utilities;
+use JSON_Helper;
+use absolute_path;
 
 package body mailbox_risorse_attive is
 
@@ -111,9 +117,9 @@ package body mailbox_risorse_attive is
             json_2.Set_Field(Positive'Image(j),json_abitanti);
          end loop;
          if i then
-            json_1.Set_Field("true",json_2);
+            json_1.Set_Field("TRUE",json_2);
          else
-            json_1.Set_Field("false",json_2);
+            json_1.Set_Field("FALSE",json_2);
          end if;
       end loop;
       return json_1;
@@ -130,13 +136,54 @@ package body mailbox_risorse_attive is
             json_2.Set_Field(Positive'Image(j),num_entity_strada(i,j));
          end loop;
          if i then
-            json_1.Set_Field("true",json_2);
+            json_1.Set_Field("TRUE",json_2);
          else
-            json_1.Set_Field("false",json_2);
+            json_1.Set_Field("FALSE",json_2);
          end if;
       end loop;
       return json_1;
    end create_img_num_entity_strada;
+
+   function create_abitante_from_json(json_abitante: JSON_Value) return posizione_abitanti_on_road is
+      destination: trajectory_to_follow;
+   begin
+      destination:= create_trajectory_to_follow(from_corsia                    => json_abitante.Get("destination").Get("departure_corsia"),
+                                                corsia_to_go                   => json_abitante.Get("destination").Get("corsia_to_go"),
+                                                ingresso_to_go                 => json_abitante.Get("destination").Get("ingresso_to_go"),
+                                                from_ingresso                  => json_abitante.Get("destination").Get("from_ingresso"),
+                                                traiettoria_incrocio_to_follow => convert_to_traiettoria_incroci(json_abitante.Get("destination").Get("traiettoria_incrocio_to_follow")));
+      return posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante                       => json_abitante.Get("id_abitante"),
+                                           id_quartiere                      => json_abitante.Get("id_quartiere"),
+                                           where_next                        => json_abitante.Get("where_next"),
+                                           where_now                         => json_abitante.Get("where_now"),
+                                           current_speed                     => json_abitante.Get("current_speed"),
+                                           in_overtaken                      => json_abitante.Get("in_overtaken"),
+                                           can_pass_corsia                   => json_abitante.Get("can_pass_corsia"),
+                                           distance_on_overtaking_trajectory => json_abitante.Get("distance_on_overtaking_trajectory"),
+                                           came_from_ingresso                => json_abitante.Get("came_from_ingresso"),
+                                           destination                       => destination));
+   end create_abitante_from_json;
+
+   function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road is
+      prec_abitante: ptr_list_posizione_abitanti_on_road;
+      list: ptr_list_posizione_abitanti_on_road;
+      json_abitante: JSON_Value;
+      abitante: posizione_abitanti_on_road;
+      ptr_abitante: ptr_list_posizione_abitanti_on_road;
+   begin
+      for z in 1..Length(json_abitanti) loop
+         json_abitante:= Get(json_abitanti,z);
+         abitante:= create_abitante_from_json(json_abitante);
+         ptr_abitante:= create_new_list_posizione_abitante(abitante,null);
+         if prec_abitante=null then
+            list:= ptr_abitante;
+         else
+            prec_abitante.next:= ptr_abitante;
+         end if;
+         prec_abitante:= ptr_abitante;
+      end loop;
+      return list;
+   end create_array_abitanti;
 
    protected body resource_segmento_urbana is
 
@@ -185,18 +232,75 @@ package body mailbox_risorse_attive is
          for i in temp_abitanti_in_transizione'Range(1) loop
             json_4:= Create_Object;
             for j in temp_abitanti_in_transizione'Range(2) loop
-               json_abitante:= create_img_abitante(temp_abitanti_in_transizione(i,j));
+               if temp_abitanti_in_transizione(i,j).get_id_abitante_posizione_abitanti=0 then
+                  json_abitante:= Create_Object;
+               else
+                  json_abitante:= create_img_abitante(temp_abitanti_in_transizione(i,j));
+               end if;
                json_4.Set_Field(Positive'Image(j),json_abitante);
             end loop;
             if i then
-               json_3.Set_Field("true",json_4);
+               json_3.Set_Field("TRUE",json_4);
             else
-               json_3.Set_Field("false",json_4);
+               json_3.Set_Field("FALSE",json_4);
             end if;
          end loop;
          json_1.Set_Field("temp_abitanti_in_transizione",json_3);
 
       end create_img;
+
+      procedure recovery_resource is
+         json_resource: JSON_Value;
+         json_traiettorie_ingressi: JSON_Array;
+         json_main_strada: JSON_Value;
+         json_numer_entity: JSON_Value;
+         json_abitanti_in_transazione: JSON_Value;
+         json_1: JSON_Value;
+         json_2: JSON_Value;
+         json_abitanti: JSON_Array;
+         json_abitante: JSON_Value;
+      begin
+         share_snapshot_file_quartiere.get_json_value_resource_snap(id_risorsa,json_resource);
+
+         json_traiettorie_ingressi:= json_resource.Get("set_traiettorie_ingressi");
+         for i in 1..Length(json_traiettorie_ingressi) loop
+            json_1:= Get(json_traiettorie_ingressi,i);
+            json_2:= json_1.Get("traiettorie");
+            for j in traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last loop
+               json_abitanti:= json_2.Get(to_string_ingressi_type(j));
+               set_traiettorie_ingressi(json_1.Get("num_ingresso"),j):= create_array_abitanti(json_abitanti);
+            end loop;
+         end loop;
+
+         json_main_strada:= json_resource.Get("main_strada");
+         for i in False..True loop
+            json_1:= json_main_strada.Get(Boolean'Image(i));
+            for j in 1..2 loop
+               json_abitanti:= json_1.Get(Positive'Image(j));
+               main_strada(i,j):= create_array_abitanti(json_abitanti);
+            end loop;
+         end loop;
+
+         json_numer_entity:= json_resource.Get("main_strada_number_entity");
+         for i in False..True loop
+            json_1:= json_numer_entity.Get(Boolean'Image(i));
+            for j in 1..2 loop
+               main_strada_number_entity(i,j):= json_1.Get(Positive'Image(j));
+            end loop;
+         end loop;
+
+         json_abitanti_in_transazione:= json_resource.Get("temp_abitanti_in_transizione");
+         for i in False..True loop
+            json_1:= json_abitanti_in_transazione.Get(Boolean'Image(i));
+            for j in 1..2 loop
+               json_abitante:= json_1.Get(Positive'Image(j));
+               if json_abitante.Has_Field("id_abitante") then
+                  temp_abitanti_in_transizione(i,j):= create_abitante_from_json(json_abitante);
+               end if;
+            end loop;
+         end loop;
+
+      end recovery_resource;
 
       entry wait_turno when finish_delta_urbana is
       begin
@@ -245,7 +349,7 @@ package body mailbox_risorse_attive is
       begin
          if index/=0 then
             list:= set_traiettorie_ingressi(index,type_traiettoria);
-            place_abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere_abitante,0.0,0.0,0.0,False,0.0,True,traiettoria_on_main_strada));
+            place_abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere_abitante,0.0,0.0,0.0,False,False,0.0,True,traiettoria_on_main_strada));
             new_abitante_to_add.posizione_abitante:= place_abitante;
             new_abitante_to_add.next:= null;
             while list/=null loop
@@ -1343,6 +1447,36 @@ package body mailbox_risorse_attive is
          json_1.Set_Field("main_strada_temp",json_abitanti);
       end create_img;
 
+      procedure recovery_resource is
+         json_resource: JSON_Value;
+         json_main_strada: JSON_Value;
+         json_numer_entity: JSON_Value;
+         json_1: JSON_Value;
+         json_2: JSON_Value;
+         json_abitanti: JSON_Array;
+      begin
+         share_snapshot_file_quartiere.get_json_value_resource_snap(id_risorsa,json_resource);
+
+         car_avanzamento_in_urbana:= json_resource.Get("car_avanzamento_in_urbana");
+
+         json_main_strada:= json_resource.Get("main_strada");
+         for i in False..True loop
+            json_1:= json_main_strada.Get(Boolean'Image(i));
+            json_abitanti:= json_1.Get(Positive'Image(1));
+            main_strada(i,1):= create_array_abitanti(json_abitanti);
+         end loop;
+
+         json_numer_entity:= json_resource.Get("main_strada_number_entity");
+         for i in False..True loop
+            json_1:= json_numer_entity.Get(Boolean'Image(i));
+            main_strada_number_entity(i,1):= json_1.Get(Positive'Image(1));
+         end loop;
+
+         json_abitanti:= json_resource.Get("main_strada_temp");
+         main_strada_temp:= create_array_abitanti(json_abitanti);
+
+      end recovery_resource;
+
       entry wait_turno when True is
       begin
          null;
@@ -1409,7 +1543,7 @@ package body mailbox_risorse_attive is
                   end if;
                   abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(main_strada_temp.posizione_abitante.get_id_abitante_posizione_abitanti,
                                                         main_strada_temp.posizione_abitante.get_id_quartiere_posizione_abitanti,where_next,0.0,begin_speed,False,
-                                                        0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
+                                                        False,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
                   list_abitanti.posizione_abitante:= abitante;
                   main_strada_temp:= main_strada_temp.next;
                   main_strada_number_entity(index_inizio_moto,1):= main_strada_number_entity(index_inizio_moto,1)+1;
@@ -1424,7 +1558,7 @@ package body mailbox_risorse_attive is
          abitante: posizione_abitanti_on_road;
          last_node: ptr_list_posizione_abitanti_on_road:= null;
       begin
-         abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere,0.0,0.0,0.0,False,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
+         abitante:= posizione_abitanti_on_road(create_new_posizione_abitante(id_abitante,id_quartiere,0.0,0.0,0.0,False,False,0.0,False,create_trajectory_to_follow(0,0,0,0,empty)));
          list_abitanti.posizione_abitante:= abitante;
          case mezzo is
             when walking | autobus | bike =>
@@ -1612,6 +1746,28 @@ package body mailbox_risorse_attive is
          json_1.Set_Field("car_to_move",json_2);
 
       end create_img;
+
+      procedure recovery_resource is
+         json_resource: JSON_Value;
+         json_main_strada: JSON_Value;
+         json_1: JSON_Value;
+         json_2: JSON_Value;
+         json_abitanti: JSON_Array;
+      begin
+         share_snapshot_file_quartiere.get_json_value_resource_snap(id_risorsa,json_resource);
+
+         verso_semafori_verdi:= json_resource.Get("verso_semafori_verdi");
+
+         json_main_strada:= json_resource.Get("car_to_move");
+         for i in 1..size_incrocio loop
+            json_1:= json_main_strada.Get(Positive'Image(i));
+            for j in 1..2 loop
+               json_abitanti:= json_1.Get(Positive'Image(j));
+               car_to_move(i,j):= create_array_abitanti(json_abitanti);
+            end loop;
+         end loop;
+
+      end recovery_resource;
 
       function get_num_urbane_to_wait return Positive is
       begin

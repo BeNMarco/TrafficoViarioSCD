@@ -45,6 +45,8 @@ package mailbox_risorse_attive is
    function create_img_abitante(abitante: posizione_abitanti_on_road) return JSON_Value;
    function create_img_strada(road: road_state) return JSON_Value;
    function create_img_num_entity_strada(num_entity_strada: number_entity) return JSON_Value;
+   function create_abitante_from_json(json_abitante: JSON_Value) return posizione_abitanti_on_road;
+   function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       entry wait_turno;
@@ -52,6 +54,7 @@ package mailbox_risorse_attive is
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
+      procedure recovery_resource;
 
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
@@ -119,6 +122,7 @@ package mailbox_risorse_attive is
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
+      procedure recovery_resource;
 
       procedure set_move_parameters_entity_on_main_strada(range_1: Boolean; num_entity: Positive;
                                                           speed: Float; step_to_advance: Float);
@@ -148,7 +152,7 @@ package mailbox_risorse_attive is
       risorsa_features: strada_ingresso_features;
       function slide_list(type_structure: data_structures_types; range_1: Boolean; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
       -- l'immagine va creata per i prossimi elementi
-      car_avanzamento_in_urbana: Float;
+      car_avanzamento_in_urbana: Float:= 0.0;
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..1);
       main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
@@ -167,6 +171,7 @@ package mailbox_risorse_attive is
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
+      procedure recovery_resource;
 
       procedure delta_terminate;
       procedure change_verso_semafori_verdi;

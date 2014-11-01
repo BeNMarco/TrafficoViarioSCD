@@ -1,14 +1,30 @@
 with GNATCOLL.JSON;
 with Ada.Text_IO;
+with Polyorb.Parameters;
 
-with the_name_server;
+with absolute_path;
 with risorse_mappa_utilities;
+with strade_e_incroci_common;
+with data_quartiere;
+with remote_types;
+with global_data;
+with snapshot_interface;
+with JSON_Helper;
+with the_name_server;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
+use Polyorb.Parameters;
 
-use the_name_server;
+use absolute_path;
 use risorse_mappa_utilities;
+use strade_e_incroci_common;
+use data_quartiere;
+use remote_types;
+use global_data;
+use snapshot_interface;
+use JSON_Helper;
+use the_name_server;
 
 package body risorse_passive_data is
 
@@ -61,7 +77,6 @@ package body risorse_passive_data is
       end loop;
       return 0;
    end get_index_road_from_incrocio;
-
 
    function get_urbane return strade_urbane_features is
    begin
@@ -305,6 +320,21 @@ package body risorse_passive_data is
       return estremi;
    end get_estremi_urbana;
 
+   function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance is
+      json_percorso: JSON_Array:= json_percorso_abitante.Get("percorso");
+      route: percorso(1..length);
+      json_tratto: JSON_Array;
+   begin
+      if length=0 then
+         return null;
+      end if;
+      for i in 1..length loop
+         json_tratto:= Get(Get(json_percorso,i));
+         route(i):= create_tratto(Get(Get(json_tratto,1)),Get(Get(json_tratto,2)));
+      end loop;
+      return new route_and_distance'(create_percorso(route,json_percorso_abitante.Get("distanza")));
+   end create_route_and_distance_from_json;
+
    protected body location_abitanti is
 
       procedure create_img(json_1: out JSON_Value) is
@@ -350,6 +380,36 @@ package body risorse_passive_data is
 
       end create_img;
 
+      procedure recovery_resource is
+         json_locate_abitanti: JSON_Value;
+         json_percorsi: JSON_Value;
+         json_positions: JSON_Value;
+         json_arrivi: JSON_Value;
+         json_percorso_abitante: JSON_Value;
+      begin
+         share_snapshot_file_quartiere.get_json_value_locate_abitanti(json_locate_abitanti);
+
+         json_percorsi:= json_locate_abitanti.Get("percorsi");
+         for i in get_from_abitanti..get_to_abitanti loop
+            json_percorso_abitante:= json_percorsi.Get(Positive'Image(i));
+            -- solo se la lunghezza è diversa da 0 cosi se arrivano
+            -- nuove richieste che settano il percorso queste non vengono toccate
+            if Length(json_percorso_abitante.Get("percorso"))/=0 then
+               percorsi(i):= create_route_and_distance_from_json(json_percorso_abitante,Length(json_percorso_abitante.Get("percorso")));
+            end if;
+         end loop;
+
+         json_positions:= json_locate_abitanti.Get("position_abitanti");
+         for i in get_from_abitanti..get_to_abitanti loop
+            position_abitanti(i):= json_positions.Get(Positive'Image(i));
+         end loop;
+
+         json_arrivi:= json_locate_abitanti.Get("abitanti_arrived");
+         for i in get_from_abitanti..get_to_abitanti loop
+            abitanti_arrived(i):= json_arrivi.Get(Positive'Image(i));
+         end loop;
+      end recovery_resource;
+
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
       begin
          abitanti_arrived(id_abitante):= False;
@@ -365,6 +425,7 @@ package body risorse_passive_data is
       procedure set_finish_route(id_abitante: Positive) is
       begin
          abitanti_arrived(id_abitante):= True;
+
       end set_finish_route;
 
       function get_next(id_abitante: Positive) return tratto is

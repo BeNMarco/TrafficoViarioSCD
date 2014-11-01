@@ -511,6 +511,16 @@ package body risorse_strade_e_incroci is
       end if;
    end crea_snapshot;
 
+   procedure reconfigure_resource(resource: ptr_backup_interface; id_task: Positive) is
+   begin
+      if get_recovery then
+         if id_task=1 then
+            ptr_backup_interface(get_locate_abitanti_quartiere).recovery_resource;
+         end if;
+         resource.recovery_resource;
+      end if;
+   end reconfigure_resource;
+
    task body core_avanzamento_urbane is
       id_task: Positive;
       mailbox: ptr_resource_segmento_urbana;
@@ -581,6 +591,8 @@ package body risorse_strade_e_incroci is
       wait_settings_all_quartieri;
       --Put_Line("task " & Positive'Image(id_task) & " of quartiere " & Positive'Image(get_id_quartiere) & " is set");
       array_estremi_strada_urbana:= get_resource_estremi_urbana(id_task);
+
+      reconfigure_resource(ptr_backup_interface(mailbox),id_task);
 
       loop
 
@@ -1152,7 +1164,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception urbane: ");
+         Put_Line("Unexpected exception urbane: " & Positive'Image(id_task));
          Put_Line(Exception_Information(Error));
       --Put_Line("Fine task urbana" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_urbane;
@@ -1189,6 +1201,7 @@ package body risorse_strade_e_incroci is
       --Put_Line("task " & Positive'Image(id_task) & " of quartiere " & Positive'Image(get_id_quartiere) & " is set");
 
       -- Ora i task e le risorse di tutti i quartieri sono attivi
+      reconfigure_resource(ptr_backup_interface(mailbox),id_task);
 
       loop
 
@@ -1369,7 +1382,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception ingressi: ");
+         Put_Line("Unexpected exception ingressi: " & Positive'Image(id_task));
          Put_Line(Exception_Information(Error));
 
 
@@ -1420,6 +1433,8 @@ package body risorse_strade_e_incroci is
       wait_settings_all_quartieri;
       --Put_Line("task " & Positive'Image(id_task) & " of quartiere " & Positive'Image(get_id_quartiere) & " is set");
       -- Ora i task e le risorse di tutti i quartieri sono attivi
+
+      reconfigure_resource(ptr_backup_interface(mailbox),id_task);
 
       loop
 
@@ -2010,7 +2025,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception incroci: ");
+         Put_Line("Unexpected exception incroci: " & Positive'Image(id_task));
          Put_Line(Exception_Information(Error));
 
       --Put_Line("Fine task incrocio" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));

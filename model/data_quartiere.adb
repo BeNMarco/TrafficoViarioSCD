@@ -8,6 +8,10 @@ package body data_quartiere is
    begin
       return id_quartiere;
    end get_id_quartiere;
+   function get_name_quartiere return String is
+   begin
+      return name_quartiere;
+   end get_name_quartiere;
    function get_json_urbane return JSON_Array is
    begin
       return json_urbane;
@@ -190,5 +194,10 @@ package body data_quartiere is
    begin
       return num_task;
    end get_num_task;
+
+   function get_recovery return Boolean is
+   begin
+      return recovery;
+   end get_recovery;
 
 end data_quartiere;

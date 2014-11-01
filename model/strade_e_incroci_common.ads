@@ -13,6 +13,7 @@ package strade_e_incroci_common is
 
    function to_string_incroci_type(obj: traiettoria_incroci_type) return String;
    function to_string_ingressi_type(obj: traiettoria_ingressi_type) return String;
+   function convert_to_traiettoria_incroci(obj: String) return traiettoria_incroci_type;
 
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return Float;
@@ -173,7 +174,7 @@ package strade_e_incroci_common is
 
    function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
                                           where_now: Float; current_speed: Float; in_overtaken: Boolean;
-                                          distance_on_overtaking_trajectory: Float;
+                                          can_pass_corsia: Boolean; distance_on_overtaking_trajectory: Float;
                                           came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class;
 
    function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road;

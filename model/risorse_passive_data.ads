@@ -92,9 +92,12 @@ package risorse_passive_data is
    type array_position_abitanti is array(Positive range <>) of Positive;
    type array_abitanti_finish_route is array(Positive range <>) of Boolean;
 
+   function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance;
+
    protected type location_abitanti(num_abitanti: Natural) is new rt_location_abitanti and backup_interface with
 
       procedure create_img(json_1: out JSON_Value);
+      procedure recovery_resource;
 
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
       procedure set_position_abitante_to_next(id_abitante: Positive);

@@ -32,6 +32,7 @@ package risorse_strade_e_incroci is
    type core_avanzamento is limited interface;
 
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
+   procedure reconfigure_resource(resource: ptr_backup_interface; id_task: Positive);
 
    procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive);
 

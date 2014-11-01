@@ -23,6 +23,7 @@ use absolute_path;
 package data_quartiere is
 pragma Elaborate_Body;
    function get_id_quartiere return Positive;
+   function get_name_quartiere return String;
    function get_json_urbane return JSON_Array;
    function get_json_ingressi return JSON_Array;
    function get_json_incroci_a_4 return JSON_Array;
@@ -59,10 +60,13 @@ pragma Elaborate_Body;
    function get_default_value_auto(value: move_settings) return Float;
    function get_num_abitanti return Natural;
    function get_num_task return Natural;
+   function get_recovery return Boolean;
 
 private
 
-   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/" & Polyorb.Parameters.Get_Conf("dsa","partition_name") & ".json");
+   name_quartiere: String:= Polyorb.Parameters.Get_Conf("dsa","partition_name");
+
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/" & name_quartiere & ".json");
    json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_incroci.json");
    json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_ingressi.json");
 
@@ -135,5 +139,9 @@ private
    json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_cambio_corsia.json");
    json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/road_parameters.json");
    -- END VALORI DI DEFAULT PER RISORSE PASSIVE
+
+   json_recovery: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/snapshot/recovery.json");
+   recovery: Boolean:= json_recovery.Get("abilita_ripristino");
+
 
 end data_quartiere;

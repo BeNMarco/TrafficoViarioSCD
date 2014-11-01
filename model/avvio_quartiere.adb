@@ -16,6 +16,7 @@ with data_quartiere;
 with risorse_mappa_utilities;
 with mailbox_risorse_attive;
 with risorse_passive_data;
+with snapshot_interface;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -31,6 +32,7 @@ use data_quartiere;
 use risorse_mappa_utilities;
 use mailbox_risorse_attive;
 use risorse_passive_data;
+use snapshot_interface;
 
 package body avvio_quartiere is
 

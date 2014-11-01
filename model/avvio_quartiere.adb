@@ -55,7 +55,7 @@ package body avvio_quartiere is
          File_String_IO.Read(File, Item => contents);
          File_String_IO.Close(File);
          Put_Line("Registering quartiere " & Integer'Image(get_id_quartiere));
-         --get_webServer.registra_mappa_quartiere(contents, get_id_quartiere);
+         get_webServer.registra_mappa_quartiere(contents, get_id_quartiere);
       end;
 
       registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));

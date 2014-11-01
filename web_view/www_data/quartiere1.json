@@ -1,4 +1,4 @@
- {
+{
   "info": {
     "id": 1,
     "larghezza": 2000,
@@ -457,17 +457,17 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": false,
-      "distanza_da_from": 35.0,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     },
     {
       "id": 2,
-      "lunghezza": 50.0,
+      "lunghezza": 10.0,
       "numcorsie": 1,
-      "strada_confinante": 30,
+      "strada_confinante": 31,
       "polo": true,
-      "distanza_da_from": 250.0,
+      "distanza_da_from": 35.0,
       "from": 0,
       "to": 0
     },
@@ -505,7 +505,7 @@
       "id": 6,
       "lunghezza": 50.0,
       "numcorsie": 1,
-      "strada_confinante": 34,
+      "strada_confinante": 22,
       "polo": true,
       "distanza_da_from": 250.0,
       "from": 0,
@@ -514,7 +514,7 @@
   ],
   "incroci_a_4": [
     {
-      "id": "i1",
+      "id": "i41",
       "strade": [
         {
           "quartiere": 1,
@@ -543,7 +543,7 @@
       ]
     },
     {
-      "id": "i2",
+      "id": "i42",
       "strade": [
         {
           "quartiere": 1,
@@ -572,7 +572,7 @@
       ]
     },
     {
-      "id": "i6",
+      "id": "i43",
       "strade": [
         {
           "quartiere": 1,
@@ -601,7 +601,7 @@
       ]
     },
     {
-      "id": "i7",
+      "id": "i44",
       "strade": [
         {
           "quartiere": 1,
@@ -630,7 +630,7 @@
       ]
     },
     {
-      "id": "i14",
+      "id": "i45",
       "strade": [
         {
           "quartiere": 1,
@@ -659,7 +659,7 @@
       ]
     },
     {
-      "id": "i18",
+      "id": "i46",
       "strade": [
         {
           "quartiere": 1,
@@ -1138,15 +1138,26 @@
 "default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
 "default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
 
-"pedoni":[{"id_abitante":1},{"id_abitante":2}],
+"pedoni":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
+{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
 
-"auto":[{"id_abitante":1},{"id_abitante":2}],
+"auto":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
+{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
 
-"bici":[{"id_abitante":1},{"id_abitante":2}],
+"bici":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
+{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
 
 "abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3}
+{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":2,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
+{"id_abitante":3,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
+{"id_abitante":4,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":5,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":6,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":7,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":8,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":9,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
+{"id_abitante":10,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}
 ]
 }
 

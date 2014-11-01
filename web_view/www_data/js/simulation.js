@@ -76,7 +76,8 @@ Simulation.prototype.init = function(){
 
 Simulation.prototype.moveObjects = function(time){
 	this.currentState.stateTime += time;
-	for(var c = 0, var len = this.currentState.cars.length; c < len; c++){
+	var len = this.currentState.cars.length
+	for(var c = 0; c < len; c++){
 	//for(var c in this.currentState.cars){
 		var curCar = this.currentState.cars[c];
 		var newDistance = 0;
@@ -154,6 +155,7 @@ Simulation.prototype.moveObjects = function(time){
 				}
 				break;
 		}
+
 		this.objects.cars[curCar.id_abitante].move(newPos.position, newPos.angle);
 	}
 }

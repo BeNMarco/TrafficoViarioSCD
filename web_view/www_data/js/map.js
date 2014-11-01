@@ -118,7 +118,8 @@ Street.prototype.draw = function(style){
 	// drawing the separation lines
 	var precision = Math.ceil(this.guidingPath.length);
 	var sepStyle = {strokeWidth: style.lineWidth, strokeColor:style.lineColor, dashArray: style.dashArray};
-	for(var i = 1, var len = this.nLanes; i < len; i++){
+	var len = this.nLanes;
+	for(var i = 1; i < len; i++){
 		this.sepLines[false][i] = pathOffset(this.guidingPath, (i)*style.laneWidth, precision, sepStyle);
 		//p1.rasterize();
 		//p1.remove();
@@ -131,11 +132,11 @@ Street.prototype.draw = function(style){
 	var pedestrianPaths = {true: [], false: []};
 	var middlePaths = {true: [], false: []};
 
-	for(side in this.sideStreets){
+	for(var side in this.sideStreets){
 		pedestrianPaths[side][0] = {start:0, end:this.guidingPath.length, type:'pavement'};
 		middlePaths[side][0] = {start:0, end:this.guidingPath.length, type:'continuous'};
 		var prev = 0;
-		for(index in this.sideStreets[side]){
+		for(var index in this.sideStreets[side]){
 			var curStr = this.sideStreets[side][index];
 			var crossStart = curStr.entranceDistance - curStr.nLanes*style.laneWidth;
 			var crossEnd = curStr.entranceDistance + curStr.nLanes*style.laneWidth;
@@ -284,8 +285,8 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 			dashArray: style.zebraDash,
 		}
 	}
-	for(side in pedPath){
-		for(seg in pedPath[side]){
+	for(var side in pedPath){
+		for(var seg in pedPath[side]){
 			var offset = (this.nLanes*style.laneWidth + (pedPath[side][seg].type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? -1 : 1);
 			var p = pathOffset(this.guidingPath, offset, precision, st[pedPath[side][seg].type],pedPath[side][seg].start, pedPath[side][seg].end);
 			//p.rasterize();
@@ -317,7 +318,7 @@ Street.prototype.drawMiddleLine = function(middlePath, style, precision){
 			dashArray: style.zebraDash,
 		}
 	}
-	for(seg in middlePath){
+	for(var seg in middlePath){
 		pathOffset(this.guidingPath, 0, precision, st[middlePath[seg].type],middlePath[seg].start, middlePath[seg].end);
 	}
 }
@@ -471,6 +472,7 @@ Crossroad.prototype.linkStreets = function(streets, district){
 	}
 	
 	// calculating the center and rotation of the crossroad
+
 	if(polo){
 		this.center = new Point(firstIn.from[0],firstIn.from[1]);
 		//tmpHandle = firstIn.guidingPath.firstSegment.handleOut;
@@ -696,13 +698,13 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 }
 
 Crossroad.prototype.switchTrafficLights = function(){
-	for(i in this.trafficLights){
+	for(var i in this.trafficLights){
 		this.trafficLights[i].switchState();
 	}
 }
 
 Crossroad.prototype.bringTrafficLightsToFront = function(){
-	for(i in this.trafficLights){
+	for(var i in this.trafficLights){
 		this.trafficLights[i].path.bringToFront();
 	}
 }
@@ -914,8 +916,8 @@ Map.prototype.load = function(obj){
 		this.loadingProgressNotifier("Loading streets");
 	}
 
-	for(var i in obj.strade){
-		this.streets[obj.strade[i].id] = new Street(obj.strade[i]);
+	for(var i in obj.strade_urbane){
+		this.streets[obj.strade_urbane[i].id] = new Street(obj.strade_urbane[i]);
 	}
 
 	if(typeof this.loadingProgressNotifier === 'function'){
@@ -1232,7 +1234,7 @@ Map.alignHandle = function(h1, h2){
 }
 
 Map.prototype.switchTrafficLights = function(){
-	for(i in this.crossroads){
+	for(var i in this.crossroads){
 		this.crossroads[i].switchTrafficLights();
 	}
 }

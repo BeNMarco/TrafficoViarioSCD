@@ -4,6 +4,7 @@ with Polyorb.Parameters;
 with Ada.Directories;
 with Ada.Direct_IO;
 
+with absolute_path;
 with handle_semafori;
 with JSON_Helper;
 with strade_e_incroci_common;
@@ -21,6 +22,7 @@ with snapshot_interface;
 use GNATCOLL.JSON;
 use Ada.Text_IO;
 
+use absolute_path;
 use JSON_Helper;
 use strade_e_incroci_common;
 use the_name_server;
@@ -42,7 +44,7 @@ package body avvio_quartiere is
       configure_quartiere;
 
       declare
-         File_Name: constant String:= "/home/marcobaesso/Scrivania/TrafficoViarioSCD/data/" & Polyorb.Parameters.Get_Conf("dsa","partition_name") & ".json";
+         File_Name: constant String:= abs_path & "data/" & get_name_quartiere & ".json";
          File_Size: Natural := Natural(Ada.Directories.Size(File_Name));
 
          subtype File_String    is String (1 .. File_Size);

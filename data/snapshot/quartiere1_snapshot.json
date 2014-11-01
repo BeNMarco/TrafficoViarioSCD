@@ -42,23 +42,8 @@
         }
       }
     },
-    " 1": {
+    " 11": {
       "set_traiettorie_ingressi": [
-        {
-          "num_ingresso": 1,
-          "traiettorie": {
-            "empty": [
-            ],
-            "entrata_andata": [
-            ],
-            "uscita_andata": [
-            ],
-            "entrata_ritorno": [
-            ],
-            "uscita_ritorno": [
-            ]
-          }
-        }
       ],
       "main_strada": {
         "FALSE": {
@@ -87,22 +72,6 @@
       "temp_abitanti_in_transizione": {
         "FALSE": {
           " 1": {
-            "id_abitante": 62,
-            "id_quartiere": 1,
-            "where_next": 1.61039E-01,
-            "where_now": 1.61039E-01,
-            "current_speed": 7.94969E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           },
           " 2": {
           }
@@ -111,27 +80,164 @@
           " 1": {
           },
           " 2": {
-            "id_abitante": 70,
-            "id_quartiere": 1,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           }
         }
       }
     },
-    " 14": {
+    " 51": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 13": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 57": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 49": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 5": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 9": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -215,7 +321,298 @@
         }
       }
     },
+    " 1": {
+      "set_traiettorie_ingressi": [
+        {
+          "num_ingresso": 1,
+          "traiettorie": {
+            "empty": [
+            ],
+            "entrata_andata": [
+            ],
+            "uscita_andata": [
+            ],
+            "entrata_ritorno": [
+            ],
+            "uscita_ritorno": [
+            ]
+          }
+        }
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+            "id_abitante": 64,
+            "id_quartiere": 1,
+            "where_next": 9.49841E-02,
+            "where_now": 9.49841E-02,
+            "current_speed": 7.96330E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 55": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
     " 35": {
+      "car_avanzamento_in_urbana": 0.00000E+00,
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0
+        },
+        "TRUE": {
+          " 1": 0
+        }
+      },
+      "main_strada_temp": [
+      ]
+    },
+    " 54": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 4": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 7": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 20": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 48": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 36": {
       "car_avanzamento_in_urbana": 0.00000E+00,
       "main_strada": {
         "FALSE": {
@@ -280,7 +677,7 @@
         }
       }
     },
-    " 8": {
+    " 17": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -316,13 +713,75 @@
         },
         "TRUE": {
           " 1": {
+            "id_abitante": 40,
+            "id_quartiere": 2,
+            "where_next": 1.76620E-03,
+            "where_now": 1.76620E-03,
+            "current_speed": 7.95109E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
           },
           " 2": {
           }
         }
       }
     },
-    " 11": {
+    " 50": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 60": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 27": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -336,6 +795,24 @@
           " 1": [
           ],
           " 2": [
+            {
+              "id_abitante": 70,
+              "id_quartiere": 1,
+              "where_next": 5.67561E+02,
+              "where_now": 5.67561E+02,
+              "current_speed": 7.99994E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 0,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "sinistra"
+              }
+            }
           ]
         }
       },
@@ -346,7 +823,7 @@
         },
         "TRUE": {
           " 1": 0,
-          " 2": 0
+          " 2": 1
         }
       },
       "temp_abitanti_in_transizione": {
@@ -360,7 +837,46 @@
           " 1": {
           },
           " 2": {
+            "id_abitante": 70,
+            "id_quartiere": 1,
+            "where_next": 3.62118E-01,
+            "where_now": 3.62118E-01,
+            "current_speed": 7.94782E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
           }
+        }
+      }
+    },
+    " 58": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
         }
       }
     },
@@ -387,6 +903,154 @@
           " 1": [
           ],
           " 2": [
+            {
+              "id_abitante": 71,
+              "id_quartiere": 1,
+              "where_next": 5.10554E+01,
+              "where_now": 5.10554E+01,
+              "current_speed": 7.99721E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 36,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "empty"
+              }
+            },
+            {
+              "id_abitante": 69,
+              "id_quartiere": 1,
+              "where_next": 7.50642E+01,
+              "where_now": 7.50642E+01,
+              "current_speed": 7.99850E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 36,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "empty"
+              }
+            },
+            {
+              "id_abitante": 68,
+              "id_quartiere": 1,
+              "where_next": 1.03060E+02,
+              "where_now": 1.03060E+02,
+              "current_speed": 7.99902E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 36,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "empty"
+              }
+            },
+            {
+              "id_abitante": 67,
+              "id_quartiere": 1,
+              "where_next": 1.31042E+02,
+              "where_now": 1.31042E+02,
+              "current_speed": 7.99923E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 36,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "empty"
+              }
+            },
+            {
+              "id_abitante": 62,
+              "id_quartiere": 1,
+              "where_next": 1.55092E+02,
+              "where_now": 1.55092E+02,
+              "current_speed": 7.99978E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 36,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "empty"
+              }
+            }
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 5
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+            "id_abitante": 71,
+            "id_quartiere": 1,
+            "where_next": 3.14091E-01,
+            "where_now": 3.14091E-01,
+            "current_speed": 7.98997E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 19": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
           ]
         },
         "TRUE": {
@@ -411,22 +1075,6 @@
           " 1": {
           },
           " 2": {
-            "id_abitante": 62,
-            "id_quartiere": 1,
-            "where_next": 2.92130E-01,
-            "where_now": 2.92130E-01,
-            "current_speed": 7.94848E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           }
         },
         "TRUE": {
@@ -436,6 +1084,317 @@
           }
         }
       }
+    },
+    " 47": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 61": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 43": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 21": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 40": {
+      "car_avanzamento_in_urbana": 0.00000E+00,
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0
+        },
+        "TRUE": {
+          " 1": 0
+        }
+      },
+      "main_strada_temp": [
+      ]
+    },
+    " 29": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 53": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 23": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 56": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+            {
+              "id_abitante": 64,
+              "id_quartiere": 1,
+              "where_next": 1.18764E+01,
+              "where_now": 1.18764E+01,
+              "current_speed": 7.99249E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": true,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 0,
+                "from_ingresso": 35,
+                "traiettoria_incrocio_to_follow": "sinistra"
+              }
+            }
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 39": {
+      "car_avanzamento_in_urbana": 0.00000E+00,
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0
+        },
+        "TRUE": {
+          " 1": 0
+        }
+      },
+      "main_strada_temp": [
+      ]
     },
     " 30": {
       "set_traiettorie_ingressi": [
@@ -479,7 +1438,7 @@
         }
       }
     },
-    " 4": {
+    " 18": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -511,72 +1470,82 @@
           " 1": {
           },
           " 2": {
-            "id_abitante": 70,
-            "id_quartiere": 1,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           }
         },
         "TRUE": {
           " 1": {
           },
           " 2": {
-            "id_abitante": 66,
-            "id_quartiere": 1,
-            "where_next": 3.18726E-01,
-            "where_now": 3.18726E-01,
-            "current_speed": 7.99438E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           }
         }
       }
     },
-    " 49": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
+    " 10": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
           " 1": [
           ],
           " 2": [
           ]
         },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
+        "TRUE": {
           " 1": [
           ],
           " 2": [
           ]
         }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
       }
     },
-    " 13": {
+    " 38": {
+      "car_avanzamento_in_urbana": 0.00000E+00,
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0
+        },
+        "TRUE": {
+          " 1": 0
+        }
+      },
+      "main_strada_temp": [
+      ]
+    },
+    " 8": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -690,59 +1659,7 @@
         }
       }
     },
-    " 39": {
-      "car_avanzamento_in_urbana": 0.00000E+00,
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0
-        },
-        "TRUE": {
-          " 1": 0
-        }
-      },
-      "main_strada_temp": [
-      ]
-    },
-    " 41": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 16": {
+    " 14": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -784,1059 +1701,7 @@
         }
       }
     },
-    " 56": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 9": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 37": {
-      "car_avanzamento_in_urbana": 0.00000E+00,
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0
-        },
-        "TRUE": {
-          " 1": 0
-        }
-      },
-      "main_strada_temp": [
-      ]
-    },
-    " 20": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 44": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 21": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 38": {
-      "car_avanzamento_in_urbana": 0.00000E+00,
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0
-        },
-        "TRUE": {
-          " 1": 0
-        }
-      },
-      "main_strada_temp": [
-      ]
-    },
-    " 58": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 54": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 51": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 43": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 18": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 57": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 53": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 52": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 60": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 47": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 55": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 59": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 19": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 17": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 40,
-            "id_quartiere": 2,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
-        },
-        "TRUE": {
-          " 1": {
-            "id_abitante": 40,
-            "id_quartiere": 2,
-            "where_next": 1.76620E-03,
-            "where_now": 1.76620E-03,
-            "current_speed": 7.95109E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 42": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 45": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 7": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 48": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 40": {
-      "car_avanzamento_in_urbana": 0.00000E+00,
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0
-        },
-        "TRUE": {
-          " 1": 0
-        }
-      },
-      "main_strada_temp": [
-      ]
-    },
-    " 23": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 6": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 50": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      }
-    },
-    " 5": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 3": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 70,
-            "id_quartiere": 1,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 66,
-            "id_quartiere": 1,
-            "where_next": 3.95893E-01,
-            "where_now": 3.95893E-01,
-            "current_speed": 7.99425E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
-        }
-      }
-    },
-    " 25": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 29": {
+    " 33": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -1923,22 +1788,6 @@
       "temp_abitanti_in_transizione": {
         "FALSE": {
           " 1": {
-            "id_abitante": 66,
-            "id_quartiere": 1,
-            "where_next": 2.46048E-03,
-            "where_now": 2.46048E-03,
-            "current_speed": 7.95109E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           },
           " 2": {
           }
@@ -1951,141 +1800,7 @@
         }
       }
     },
-    " 10": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-          }
-        }
-      }
-    },
-    " 27": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-            {
-              "id_abitante": 70,
-              "id_quartiere": 1,
-              "where_next": 8.66087E+02,
-              "where_now": 8.66087E+02,
-              "current_speed": 7.97813E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 1,
-                "corsia_to_go": 1,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "dritto_1"
-              }
-            }
-          ],
-          " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 1,
-          " 2": 0
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-            "id_abitante": 70,
-            "id_quartiere": 1,
-            "where_next": 1.32755E-01,
-            "where_now": 1.32755E-01,
-            "current_speed": 7.94994E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          },
-          " 2": {
-          }
-        },
-        "TRUE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 66,
-            "id_quartiere": 1,
-            "where_next": 3.96229E-01,
-            "where_now": 3.96229E-01,
-            "current_speed": 7.99437E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
-        }
-      }
-    },
-    " 61": {
+    " 59": {
       "verso_semafori_verdi": true,
       "car_to_move": {
         " 1": {
@@ -2108,28 +1823,268 @@
         }
       }
     },
-    " 36": {
-      "car_avanzamento_in_urbana": 0.00000E+00,
+    " 25": {
+      "set_traiettorie_ingressi": [
+      ],
       "main_strada": {
         "FALSE": {
           " 1": [
+          ],
+          " 2": [
           ]
         },
         "TRUE": {
           " 1": [
+          ],
+          " 2": [
           ]
         }
       },
       "main_strada_number_entity": {
         "FALSE": {
-          " 1": 0
+          " 1": 0,
+          " 2": 0
         },
         "TRUE": {
-          " 1": 0
+          " 1": 0,
+          " 2": 0
         }
       },
-      "main_strada_temp": [
-      ]
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 41": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 45": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 6": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 32": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+            {
+              "id_abitante": 63,
+              "id_quartiere": 1,
+              "where_next": 7.09389E+00,
+              "where_now": 7.09389E+00,
+              "current_speed": 7.99998E-01,
+              "in_overtaken": false,
+              "can_pass_corsia": false,
+              "came_from_ingresso": false,
+              "distance_on_overtaking_trajectory": 0.00000E+00,
+              "destination": {
+                "departure_corsia": 2,
+                "corsia_to_go": 2,
+                "ingresso_to_go": 0,
+                "from_ingresso": 0,
+                "traiettoria_incrocio_to_follow": "sinistra"
+              }
+            }
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 1
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+            "id_abitante": 63,
+            "id_quartiere": 1,
+            "where_next": 2.92130E-01,
+            "where_now": 2.92130E-01,
+            "current_speed": 7.94848E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
+          }
+        },
+        "TRUE": {
+          " 1": {
+            "id_abitante": 64,
+            "id_quartiere": 1,
+            "where_next": 1.38337E-01,
+            "where_now": 1.38337E-01,
+            "current_speed": 7.96279E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 46": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
     },
     " 15": {
       "set_traiettorie_ingressi": [
@@ -2173,7 +2128,7 @@
         }
       }
     },
-    " 33": {
+    " 16": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -2212,6 +2167,168 @@
           },
           " 2": {
           }
+        }
+      }
+    },
+    " 42": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 2": {
+      "set_traiettorie_ingressi": [
+      ],
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0,
+          " 2": 0
+        },
+        "TRUE": {
+          " 1": 0,
+          " 2": 0
+        }
+      },
+      "temp_abitanti_in_transizione": {
+        "FALSE": {
+          " 1": {
+          },
+          " 2": {
+            "id_abitante": 66,
+            "id_quartiere": 1,
+            "where_next": 3.95893E-01,
+            "where_now": 3.95893E-01,
+            "current_speed": 7.99425E-01,
+            "in_overtaken": false,
+            "can_pass_corsia": false,
+            "came_from_ingresso": false,
+            "distance_on_overtaking_trajectory": 0.00000E+00,
+            "destination": {
+              "departure_corsia": 0,
+              "corsia_to_go": 0,
+              "ingresso_to_go": 0,
+              "from_ingresso": 0,
+              "traiettoria_incrocio_to_follow": "empty"
+            }
+          }
+        },
+        "TRUE": {
+          " 1": {
+          },
+          " 2": {
+          }
+        }
+      }
+    },
+    " 37": {
+      "car_avanzamento_in_urbana": 0.00000E+00,
+      "main_strada": {
+        "FALSE": {
+          " 1": [
+          ]
+        },
+        "TRUE": {
+          " 1": [
+          ]
+        }
+      },
+      "main_strada_number_entity": {
+        "FALSE": {
+          " 1": 0
+        },
+        "TRUE": {
+          " 1": 0
+        }
+      },
+      "main_strada_temp": [
+      ]
+    },
+    " 44": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 4": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        }
+      }
+    },
+    " 52": {
+      "verso_semafori_verdi": true,
+      "car_to_move": {
+        " 1": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 2": {
+          " 1": [
+          ],
+          " 2": [
+          ]
+        },
+        " 3": {
+          " 1": [
+          ],
+          " 2": [
+          ]
         }
       }
     },
@@ -2245,9 +2362,9 @@
             {
               "id_abitante": 40,
               "id_quartiere": 2,
-              "where_next": 4.81187E+02,
-              "where_now": 4.81187E+02,
-              "current_speed": 2.98023E-08,
+              "where_next": 2.97600E+02,
+              "where_now": 2.97600E+02,
+              "current_speed": 7.99982E-01,
               "in_overtaken": false,
               "can_pass_corsia": false,
               "came_from_ingresso": false,
@@ -2280,22 +2397,6 @@
           " 1": {
           },
           " 2": {
-            "id_abitante": 40,
-            "id_quartiere": 2,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           }
         },
         "TRUE": {
@@ -2322,7 +2423,7 @@
         }
       }
     },
-    " 2": {
+    " 3": {
       "set_traiettorie_ingressi": [
       ],
       "main_strada": {
@@ -2330,18 +2431,12 @@
           " 1": [
           ],
           " 2": [
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
             {
               "id_abitante": 66,
               "id_quartiere": 1,
-              "where_next": 1.27532E+02,
-              "where_now": 1.27532E+02,
-              "current_speed": 7.99548E-01,
+              "where_next": 2.43539E+02,
+              "where_now": 2.43539E+02,
+              "current_speed": 7.99940E-01,
               "in_overtaken": false,
               "can_pass_corsia": false,
               "came_from_ingresso": false,
@@ -2357,9 +2452,9 @@
             {
               "id_abitante": 65,
               "id_quartiere": 1,
-              "where_next": 1.59463E+02,
-              "where_now": 1.59463E+02,
-              "current_speed": 7.89828E-01,
+              "where_next": 2.75557E+02,
+              "where_now": 2.75557E+02,
+              "current_speed": 7.99926E-01,
               "in_overtaken": false,
               "can_pass_corsia": false,
               "came_from_ingresso": false,
@@ -2373,42 +2468,26 @@
               }
             }
           ]
+        },
+        "TRUE": {
+          " 1": [
+          ],
+          " 2": [
+          ]
         }
       },
       "main_strada_number_entity": {
         "FALSE": {
           " 1": 0,
-          " 2": 0
+          " 2": 2
         },
         "TRUE": {
           " 1": 0,
-          " 2": 2
+          " 2": 0
         }
       },
       "temp_abitanti_in_transizione": {
         "FALSE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 70,
-            "id_quartiere": 1,
-            "where_next": 3.62118E-01,
-            "where_now": 3.62118E-01,
-            "current_speed": 7.94782E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
-        },
-        "TRUE": {
           " 1": {
           },
           " 2": {
@@ -2429,361 +2508,12 @@
               "traiettoria_incrocio_to_follow": "empty"
             }
           }
-        }
-      }
-    },
-    " 32": {
-      "set_traiettorie_ingressi": [
-      ],
-      "main_strada": {
-        "FALSE": {
-          " 1": [
-          ],
-          " 2": [
-            {
-              "id_abitante": 62,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 4.50015E-06,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 64,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 8.94070E-08,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 63,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 4.50015E-06,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 71,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 7.45058E-08,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 69,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 4.47035E-08,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 68,
-              "id_quartiere": 1,
-              "where_next": 5.55832E+02,
-              "where_now": 5.55832E+02,
-              "current_speed": 5.96046E-08,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            }
-          ]
-        },
-        "TRUE": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        }
-      },
-      "main_strada_number_entity": {
-        "FALSE": {
-          " 1": 0,
-          " 2": 6
-        },
-        "TRUE": {
-          " 1": 0,
-          " 2": 0
-        }
-      },
-      "temp_abitanti_in_transizione": {
-        "FALSE": {
-          " 1": {
-          },
-          " 2": {
-            "id_abitante": 62,
-            "id_quartiere": 1,
-            "where_next": 3.24615E-01,
-            "where_now": 3.24615E-01,
-            "current_speed": 7.99998E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
-          }
         },
         "TRUE": {
           " 1": {
-            "id_abitante": 62,
-            "id_quartiere": 1,
-            "where_next": 1.14620E-01,
-            "where_now": 1.14620E-01,
-            "current_speed": 7.95010E-01,
-            "in_overtaken": false,
-            "can_pass_corsia": false,
-            "came_from_ingresso": false,
-            "distance_on_overtaking_trajectory": 0.00000E+00,
-            "destination": {
-              "departure_corsia": 0,
-              "corsia_to_go": 0,
-              "ingresso_to_go": 0,
-              "from_ingresso": 0,
-              "traiettoria_incrocio_to_follow": "empty"
-            }
           },
           " 2": {
           }
-        }
-      }
-    },
-    " 46": {
-      "verso_semafori_verdi": true,
-      "car_to_move": {
-        " 1": {
-          " 1": [
-          ],
-          " 2": [
-            {
-              "id_abitante": 62,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.46799E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 64,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.61861E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 63,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.46799E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 71,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.62413E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 69,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.61885E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 68,
-              "id_quartiere": 1,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.61888E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            },
-            {
-              "id_abitante": 67,
-              "id_quartiere": 1,
-              "where_next": 2.45644E+01,
-              "where_now": 2.45644E+01,
-              "current_speed": 7.99422E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": true,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 2,
-                "corsia_to_go": 2,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "sinistra"
-              }
-            }
-          ]
-        },
-        " 2": {
-          " 1": [
-          ],
-          " 2": [
-          ]
-        },
-        " 3": {
-          " 1": [
-            {
-              "id_abitante": 40,
-              "id_quartiere": 2,
-              "where_next": 0.00000E+00,
-              "where_now": 0.00000E+00,
-              "current_speed": 1.65882E-01,
-              "in_overtaken": false,
-              "can_pass_corsia": false,
-              "came_from_ingresso": false,
-              "distance_on_overtaking_trajectory": 0.00000E+00,
-              "destination": {
-                "departure_corsia": 1,
-                "corsia_to_go": 1,
-                "ingresso_to_go": 0,
-                "from_ingresso": 0,
-                "traiettoria_incrocio_to_follow": "dritto_1"
-              }
-            }
-          ],
-          " 2": [
-          ]
-        },
-        " 4": {
-          " 1": [
-          ],
-          " 2": [
-          ]
         }
       }
     }
@@ -2869,39 +2599,7 @@
         "percorso": [
           [
             1,
-            40
-          ],
-          [
-            1,
-            43
-          ],
-          [
-            1,
-            27
-          ],
-          [
-            1,
-            52
-          ],
-          [
-            1,
-            4
-          ],
-          [
-            1,
-            53
-          ],
-          [
-            1,
-            3
-          ],
-          [
-            1,
-            54
-          ],
-          [
-            1,
-            2
+            35
           ],
           [
             1,
@@ -2909,7 +2607,39 @@
           ],
           [
             1,
-            35
+            2
+          ],
+          [
+            1,
+            54
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            53
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            52
+          ],
+          [
+            1,
+            27
+          ],
+          [
+            1,
+            43
+          ],
+          [
+            1,
+            40
           ]
         ],
         "distanza": 2.09612E+03
@@ -2918,39 +2648,7 @@
         "percorso": [
           [
             1,
-            40
-          ],
-          [
-            1,
-            43
-          ],
-          [
-            1,
-            27
-          ],
-          [
-            1,
-            52
-          ],
-          [
-            1,
-            4
-          ],
-          [
-            1,
-            53
-          ],
-          [
-            1,
-            3
-          ],
-          [
-            1,
-            54
-          ],
-          [
-            1,
-            2
+            35
           ],
           [
             1,
@@ -2958,7 +2656,39 @@
           ],
           [
             1,
-            35
+            2
+          ],
+          [
+            1,
+            54
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            53
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            52
+          ],
+          [
+            1,
+            27
+          ],
+          [
+            1,
+            43
+          ],
+          [
+            1,
+            40
           ]
         ],
         "distanza": 2.09612E+03
@@ -3042,39 +2772,7 @@
         "percorso": [
           [
             1,
-            35
-          ],
-          [
-            1,
-            55
-          ],
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            54
-          ],
-          [
-            1,
-            3
-          ],
-          [
-            1,
-            53
-          ],
-          [
-            1,
-            4
-          ],
-          [
-            1,
-            52
-          ],
-          [
-            1,
-            27
+            40
           ],
           [
             1,
@@ -3082,7 +2780,39 @@
           ],
           [
             1,
-            40
+            27
+          ],
+          [
+            1,
+            52
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            53
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            54
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            55
+          ],
+          [
+            1,
+            35
           ]
         ],
         "distanza": 2.09612E+03
@@ -3114,16 +2844,16 @@
       }
     },
     "position_abitanti": {
-      " 62": 3,
-      " 63": 3,
-      " 64": 3,
-      " 65": 8,
-      " 66": 8,
-      " 67": 3,
-      " 68": 3,
-      " 69": 3,
-      " 70": 8,
-      " 71": 3
+      " 62": 4,
+      " 63": 2,
+      " 64": 1,
+      " 65": 4,
+      " 66": 4,
+      " 67": 4,
+      " 68": 4,
+      " 69": 4,
+      " 70": 2,
+      " 71": 4
     },
     "abitanti_arrived": {
       " 62": false,

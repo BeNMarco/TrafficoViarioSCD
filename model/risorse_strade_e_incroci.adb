@@ -524,7 +524,6 @@ package body risorse_strade_e_incroci is
    task body core_avanzamento_urbane is
       id_task: Positive;
       mailbox: ptr_resource_segmento_urbana;
-      array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
       key_ingresso: Natural;
       abitante: ptr_list_posizione_abitanti_on_road;
       can_move_from_traiettoria: Boolean;
@@ -590,7 +589,7 @@ package body risorse_strade_e_incroci is
 
       wait_settings_all_quartieri;
       --Put_Line("task " & Positive'Image(id_task) & " of quartiere " & Positive'Image(get_id_quartiere) & " is set");
-      array_estremi_strada_urbana:= get_resource_estremi_urbana(id_task);
+      mailbox.set_estremi_urbana(get_resource_estremi_urbana(id_task));
 
       reconfigure_resource(ptr_backup_interface(mailbox),id_task);
 
@@ -608,12 +607,7 @@ package body risorse_strade_e_incroci is
          crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
 
          -- aspetta che finiscano gli incroci
-         if array_estremi_strada_urbana(1)/=null then
-            array_estremi_strada_urbana(1).wait_turno;
-         end if;
-         if array_estremi_strada_urbana(2)/=null then
-            array_estremi_strada_urbana(2).wait_turno;
-	 end if;
+         mailbox.wait_incroci;
          -- fine wait; gli incroci hanno fatto l'avanzamento
 
          current_polo_to_consider:= False;
@@ -1216,7 +1210,7 @@ package body risorse_strade_e_incroci is
          -- crea snapshot se necessario
          crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
 
-         resource_main_strada.wait_turno;
+         resource_main_strada.ingresso_wait_turno;
 
          list_abitanti:= mailbox.get_main_strada(mailbox.get_index_inizio_moto);
          for i in 1..mailbox.get_number_entity_strada(mailbox.get_index_inizio_moto) loop
@@ -2019,7 +2013,11 @@ package body risorse_strade_e_incroci is
             end loop;
          end loop;
 
-         mailbox.delta_terminate;
+         -- wake urbane
+         for r in 1..get_size_incrocio(id_task) loop
+            get_id_urbana_quartiere(get_road_from_incrocio(id_task,r).get_id_quartiere_road_incrocio,get_road_from_incrocio(id_task,r).get_id_strada_road_incrocio).delta_incrocio_finished;
+         end loop;
+
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
       end loop;

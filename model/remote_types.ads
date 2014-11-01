@@ -42,8 +42,8 @@ package remote_types is
    type rt_segmento is synchronized interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
 
-   procedure wait_turno(obj: access rt_segmento) is abstract;
-   procedure delta_terminate(obj: access rt_segmento) is abstract;
+   --procedure wait_turno(obj: access rt_segmento) is abstract;
+   --procedure delta_terminate(obj: access rt_segmento) is abstract;
 
    type rt_incrocio is synchronized interface and rt_segmento;
    type ptr_rt_incrocio is access all rt_incrocio'Class;
@@ -56,6 +56,7 @@ package remote_types is
 
    procedure insert_abitante_from_incrocio(obj: access rt_urbana; abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) is abstract;
    procedure remove_abitante_in_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) is abstract;
+   procedure delta_incrocio_finished(obj: access rt_urbana) is abstract;
    function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Float is abstract;
 
    procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;

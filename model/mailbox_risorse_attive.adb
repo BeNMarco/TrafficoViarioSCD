@@ -302,20 +302,39 @@ package body mailbox_risorse_attive is
 
       end recovery_resource;
 
-      entry wait_turno when finish_delta_urbana is
+      entry ingresso_wait_turno when finish_delta_urbana is
       begin
          num_ingressi_ready:=num_ingressi_ready+1;
          if num_ingressi_ready=num_ingressi then
             finish_delta_urbana:= False;
             num_ingressi_ready:= 0;
          end if;
-      end wait_turno;
+      end ingresso_wait_turno;
 
       procedure delta_terminate is
       begin
          --Put_Line("finish wait " & Positive'Image(id_risorsa) & " id quartiere " & Positive'Image(get_id_quartiere));
          finish_delta_urbana:= True;
       end delta_terminate;
+
+      function get_num_estremi_urbana return Positive is
+      begin
+         if array_estremi_strada_urbana(2)=null then
+            return 1;
+         else
+            return 2;
+         end if;
+      end get_num_estremi_urbana;
+
+      entry wait_incroci when get_num_estremi_urbana=num_delta_incroci_finished is
+      begin
+         num_delta_incroci_finished:= 0;
+      end wait_incroci;
+
+      procedure delta_incrocio_finished is
+      begin
+         num_delta_incroci_finished:= num_delta_incroci_finished+1;
+      end delta_incrocio_finished;
 
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana) is
@@ -338,6 +357,11 @@ package body mailbox_risorse_attive is
             list:= list.next;
          end loop;
       end configure;
+
+      procedure set_estremi_urbana(estremi: estremi_resource_strada_urbana) is
+      begin
+         array_estremi_strada_urbana:= estremi;
+      end set_estremi_urbana;
 
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type;
                                               id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow) is
@@ -1476,15 +1500,6 @@ package body mailbox_risorse_attive is
          main_strada_temp:= create_array_abitanti(json_abitanti);
 
       end recovery_resource;
-
-      entry wait_turno when True is
-      begin
-         null;
-      end wait_turno;
-      procedure delta_terminate is
-      begin
-         null;
-      end delta_terminate;
 
       procedure set_move_parameters_entity_on_main_strada(range_1: Boolean; num_entity: Positive;
                                                           speed: Float; step_to_advance: Float) is

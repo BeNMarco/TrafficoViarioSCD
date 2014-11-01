@@ -49,13 +49,17 @@ package mailbox_risorse_attive is
    function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
-      entry wait_turno;
+      entry ingresso_wait_turno;
       procedure delta_terminate;
+
+      entry wait_incroci;
+      procedure delta_incrocio_finished;
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
       procedure recovery_resource;
 
+      procedure set_estremi_urbana(estremi: estremi_resource_strada_urbana);
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
@@ -98,6 +102,10 @@ package mailbox_risorse_attive is
       function get_num_ingressi_polo(polo: Boolean) return Natural;
       function get_num_ingressi return Natural;
    private
+      function get_num_estremi_urbana return Positive;
+
+      num_delta_incroci_finished: Natural:= 0;
+      array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
       index_ingressi: indici_ingressi(1..num_ingressi);
       ordered_ingressi_polo: ordered_indici_ingressi(False..True):= (False => new indici_ingressi(1..num_ingressi_polo_false),True => new indici_ingressi(1..num_ingressi_polo_true));
       ordered_ingressi_polo_svolta: ordered_ingressi_in_svolta(False..True):= (False => new ingressi_in_svolta(1..num_ingressi_polo_false),True => new ingressi_in_svolta(1..num_ingressi_polo_true));
@@ -117,8 +125,6 @@ package mailbox_risorse_attive is
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
    protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso and backup_interface with
-      entry wait_turno;
-      procedure delta_terminate;
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);

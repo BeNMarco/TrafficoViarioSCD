@@ -784,11 +784,5 @@
     }
   ],
   "abitanti": [
-    {
-      "id_abitante": 40,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    }
   ]
 }

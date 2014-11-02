@@ -126,7 +126,7 @@ private
    default_s0_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("s0");
    default_length_bici: Float:= Get(Val => json_quartiere, Field => "default_bici").Get("length");
 
-   default_desired_velocity_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("time_headway");
+   default_desired_velocity_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("desired_velocity");
    default_time_headway_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("time_headway");
    default_max_acceleration_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("max_acceleration");
    default_comfortable_deceleration_auto: Float:= Get(Val => json_quartiere, Field => "default_auto").Get("comfortable_deceleration");

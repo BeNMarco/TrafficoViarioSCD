@@ -753,5 +753,5 @@
 
 "bici":[{"id_abitante":1}],
 
-"abitanti":[{"id_abitante":1,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1}]
+"abitanti":[]
 }

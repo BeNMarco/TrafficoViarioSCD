@@ -1126,6 +1126,9 @@ package body risorse_strade_e_incroci is
                            end if;
                         end if;
                      end if;
+                     if distance_to_stop_line<1.0 and then next_entity_distance=0.0 then
+                        new_step:= get_urbana_from_id(id_task).get_lunghezza_road-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
+                     end if;
                      mailbox.set_move_parameters_entity_on_main_road(current_car_in_corsia,current_polo_to_consider,first_corsia,new_speed,new_step);
                      if current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_urbana_from_id(id_task).get_lunghezza_road and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti=get_urbana_from_id(id_task).get_lunghezza_road then
                         -- aggiungi entità
@@ -1254,6 +1257,9 @@ package body risorse_strade_e_incroci is
             end if;
             new_speed:= calculate_new_speed(current_posizione_abitante.get_current_speed_abitante,acceleration);
             new_step:= calculate_new_step(new_speed,acceleration);
+            if list_abitanti.all.get_next_from_list_posizione_abitanti=null and then get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_where_now_posizione_abitanti<1.0 then
+               new_step:= get_ingresso_from_id(id_task).get_lunghezza_road-current_posizione_abitante.get_where_now_posizione_abitanti;
+            end if;
             mailbox.set_move_parameters_entity_on_main_strada(range_1 => mailbox.get_index_inizio_moto,num_entity => i,speed => new_speed,step_to_advance => new_step);
             current_posizione_abitante:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti;
             if current_posizione_abitante.get_where_next_posizione_abitanti=get_ingresso_from_id(id_task).get_lunghezza_road then

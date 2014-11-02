@@ -96,7 +96,7 @@ package body avvio_quartiere is
       end loop;
 
       get_webServer.registra_mappa_quartiere(Write(json_quartiere,False), get_id_quartiere);
-      --Put_Line("Registrato quartiere " & Integer'Image(get_id_quartiere));
+      Put_Line("Registrato quartiere " & Integer'Image(get_id_quartiere));
 
       registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));
       configure_tasks;

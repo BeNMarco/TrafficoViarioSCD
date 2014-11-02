@@ -22,4 +22,4 @@ view/dsa/
 *ns.txt
 QUARTIERE*_log.txt
 num_progressivo_pacchetti.ad*
-quartiere*_snapshot.json
+data/snapshot/quartiere*_snapshot.json

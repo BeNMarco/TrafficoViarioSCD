@@ -103,7 +103,6 @@ package body model_webserver_communication_protocol_utilities is
          if num_task_updated=get_num_task then
             num_task_updated:= 0;
             json:= Create_Object;
-            json.Set_Field("num",0);
             json.Set_Field("cars",global_state_quartiere);
             get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);
             global_state_quartiere:= Empty_Array;

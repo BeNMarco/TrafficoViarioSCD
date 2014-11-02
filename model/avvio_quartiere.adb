@@ -39,26 +39,64 @@ use snapshot_interface;
 package body avvio_quartiere is
 
    procedure init is
+      json_quartiere: JSON_Value:= get_json_quartiere;
+      array_elementi: JSON_Array;
+      elemento: JSON_Value;
    begin
       configure_quartiere_obj;
       configure_quartiere;
 
-      declare
-         File_Name: constant String:= abs_path & "data/" & get_name_quartiere & ".json";
-         File_Size: Natural := Natural(Ada.Directories.Size(File_Name));
+      array_elementi:= json_quartiere.Get("strade_ingresso");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id",get_from_ingressi+i-1);
+      end loop;
 
-         subtype File_String    is String (1 .. File_Size);
-         package File_String_IO is new Ada.Direct_IO (File_String);
+      array_elementi:= json_quartiere.Get("incroci_a_4");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id",get_from_incroci_a_4+i-1);
+      end loop;
 
-         File: File_String_IO.File_Type;
-         contents : File_String;
-      begin
-         File_String_IO.Open(File, Mode => File_String_IO.In_File, Name => File_Name);
-         File_String_IO.Read(File, Item => contents);
-         File_String_IO.Close(File);
-         Put_Line("Registering quartiere " & Integer'Image(get_id_quartiere));
-         get_webServer.registra_mappa_quartiere(contents, get_id_quartiere);
-      end;
+      array_elementi:= json_quartiere.Get("incroci_a_3");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id",get_from_incroci_a_3+i-1);
+      end loop;
+
+      array_elementi:= json_quartiere.Get("luoghi");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_luogo",get_from_ingressi+i-1);
+         elemento.Set_Field("idstrada",get_from_ingressi+i-1);
+      end loop;
+
+      array_elementi:= json_quartiere.Get("pedoni");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_abitante",get_from_abitanti+i-1);
+      end loop;
+
+      array_elementi:= json_quartiere.Get("auto");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_abitante",get_from_abitanti+i-1);
+      end loop;
+
+      array_elementi:= json_quartiere.Get("bici");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_abitante",get_from_abitanti+i-1);
+      end loop;
+
+      array_elementi:= json_quartiere.Get("abitanti");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_abitante",get_from_abitanti+i-1);
+      end loop;
+
+      get_webServer.registra_mappa_quartiere(Write(json_quartiere,False), get_id_quartiere);
+      Put_Line("Registrato quartiere " & Integer'Image(get_id_quartiere));
 
       registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));
       configure_tasks;

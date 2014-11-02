@@ -9,7 +9,7 @@
   "strade_urbane": [
     {
       "id": 1,
-      "lunghezza": 466.44354207678106,
+      "lunghezza": 4.66444E+02,
       "from": [
         0,
         300
@@ -22,7 +22,7 @@
     },
     {
       "id": 2,
-      "lunghezza": 166.0,
+      "lunghezza": 1.66000E+02,
       "from": [
         300,
         0
@@ -35,7 +35,7 @@
     },
     {
       "id": 3,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         500,
         0
@@ -48,7 +48,7 @@
     },
     {
       "id": 4,
-      "lunghezza": 66.0,
+      "lunghezza": 6.60000E+01,
       "from": [
         900,
         0
@@ -61,7 +61,7 @@
     },
     {
       "id": 5,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         1000,
         0
@@ -74,7 +74,7 @@
     },
     {
       "id": 6,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         1400,
         0
@@ -87,7 +87,7 @@
     },
     {
       "id": 7,
-      "lunghezza": 166.0,
+      "lunghezza": 1.66000E+02,
       "from": [
         1800,
         0
@@ -100,7 +100,7 @@
     },
     {
       "id": 8,
-      "lunghezza": 266.0,
+      "lunghezza": 2.66000E+02,
       "from": [
         0,
         300
@@ -113,7 +113,7 @@
     },
     {
       "id": 9,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         0,
         600
@@ -126,7 +126,7 @@
     },
     {
       "id": 10,
-      "lunghezza": 383.0,
+      "lunghezza": 3.83000E+02,
       "from": [
         0,
         1100
@@ -139,7 +139,7 @@
     },
     {
       "id": 11,
-      "lunghezza": 266.0,
+      "lunghezza": 2.66000E+02,
       "from": [
         2000,
         0
@@ -152,7 +152,7 @@
     },
     {
       "id": 12,
-      "lunghezza": 266.0,
+      "lunghezza": 2.66000E+02,
       "from": [
         2000,
         300
@@ -165,7 +165,7 @@
     },
     {
       "id": 13,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         2000,
         600
@@ -178,7 +178,7 @@
     },
     {
       "id": 14,
-      "lunghezza": 383.0,
+      "lunghezza": 3.83000E+02,
       "from": [
         2000,
         1100
@@ -191,7 +191,7 @@
     },
     {
       "id": 15,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         0,
         1100
@@ -204,7 +204,7 @@
     },
     {
       "id": 16,
-      "lunghezza": 966.0,
+      "lunghezza": 9.66000E+02,
       "from": [
         500,
         1100
@@ -217,7 +217,7 @@
     },
     {
       "id": 17,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         500,
         1100
@@ -230,7 +230,7 @@
     },
     {
       "id": 18,
-      "lunghezza": 966.0,
+      "lunghezza": 9.66000E+02,
       "from": [
         500,
         1500
@@ -243,7 +243,7 @@
     },
     {
       "id": 19,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         1500,
         1100
@@ -256,7 +256,7 @@
     },
     {
       "id": 20,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         1500,
         600
@@ -269,7 +269,7 @@
     },
     {
       "id": 21,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         1500,
         1100
@@ -282,7 +282,7 @@
     },
     {
       "id": 22,
-      "lunghezza": 466.0,
+      "lunghezza": 4.66000E+02,
       "from": [
         1500,
         600
@@ -295,7 +295,7 @@
     },
     {
       "id": 23,
-      "lunghezza": 281.2363027487136,
+      "lunghezza": 2.81236E+02,
       "from": [
         1800,
         0
@@ -308,7 +308,7 @@
     },
     {
       "id": 24,
-      "lunghezza": 321.6743934208883,
+      "lunghezza": 3.21674E+02,
       "from": [
         1650,
         250
@@ -321,7 +321,7 @@
     },
     {
       "id": 25,
-      "lunghezza": 363.6219611563082,
+      "lunghezza": 3.63622E+02,
       "from": [
         1650,
         250
@@ -334,7 +334,7 @@
     },
     {
       "id": 26,
-      "lunghezza": 384.3078230785546,
+      "lunghezza": 3.84308E+02,
       "from": [
         1400,
         0
@@ -347,7 +347,7 @@
     },
     {
       "id": 27,
-      "lunghezza": 881.6806229931107,
+      "lunghezza": 8.81681E+02,
       "from": [
         1000,
         0
@@ -360,7 +360,7 @@
     },
     {
       "id": 28,
-      "lunghezza": 442.618683818597,
+      "lunghezza": 4.42619E+02,
       "from": [
         900,
         0
@@ -373,7 +373,7 @@
     },
     {
       "id": 29,
-      "lunghezza": 480.00872002328435,
+      "lunghezza": 4.80009E+02,
       "from": [
         500,
         0
@@ -386,7 +386,7 @@
     },
     {
       "id": 30,
-      "lunghezza": 673.3897231972169,
+      "lunghezza": 6.73390E+02,
       "from": [
         300,
         0
@@ -399,7 +399,7 @@
     },
     {
       "id": 31,
-      "lunghezza": 368.04671047850036,
+      "lunghezza": 3.68047E+02,
       "from": [
         400,
         600
@@ -412,7 +412,7 @@
     },
     {
       "id": 32,
-      "lunghezza": 555.8322145259649,
+      "lunghezza": 5.55832E+02,
       "from": [
         0,
         300
@@ -425,7 +425,7 @@
     },
     {
       "id": 33,
-      "lunghezza": 366.0,
+      "lunghezza": 3.66000E+02,
       "from": [
         0,
         600
@@ -438,7 +438,7 @@
     },
     {
       "id": 34,
-      "lunghezza": 481.18651822370555,
+      "lunghezza": 4.81187E+02,
       "from": [
         400,
         600
@@ -452,69 +452,69 @@
   ],
   "strade_ingresso": [
     {
-      "id": 1,
-      "lunghezza": 10.0,
+      "id": 35,
+      "lunghezza": 1.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": false,
-      "distanza_da_from": 100.0,
+      "distanza_da_from": 1.00000E+02,
       "from": 0,
       "to": 0
     },
     {
-      "id": 2,
-      "lunghezza": 10.0,
+      "id": 36,
+      "lunghezza": 1.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 31,
       "polo": true,
-      "distanza_da_from": 35.0,
+      "distanza_da_from": 3.50000E+01,
       "from": 0,
       "to": 0
     },
     {
-      "id": 3,
-      "lunghezza": 50.0,
+      "id": 37,
+      "lunghezza": 5.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 28,
       "polo": true,
-      "distanza_da_from": 200.0,
+      "distanza_da_from": 2.00000E+02,
       "from": 0,
       "to": 0
     },
     {
-      "id": 4,
-      "lunghezza": 50.0,
+      "id": 38,
+      "lunghezza": 5.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 28,
       "polo": true,
-      "distanza_da_from": 380.0,
+      "distanza_da_from": 3.80000E+02,
       "from": 0,
       "to": 0
     },
     {
-      "id": 5,
-      "lunghezza": 50.0,
+      "id": 39,
+      "lunghezza": 5.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 34,
       "polo": true,
-      "distanza_da_from": 100.0,
+      "distanza_da_from": 1.00000E+02,
       "from": 0,
       "to": 0
     },
     {
-      "id": 6,
-      "lunghezza": 50.0,
+      "id": 40,
+      "lunghezza": 5.00000E+01,
       "numcorsie": 1,
       "strada_confinante": 22,
       "polo": true,
-      "distanza_da_from": 250.0,
+      "distanza_da_from": 2.50000E+02,
       "from": 0,
       "to": 0
     }
   ],
   "incroci_a_4": [
     {
-      "id": "i41",
+      "id": 41,
       "strade": [
         {
           "quartiere": 1,
@@ -543,7 +543,7 @@
       ]
     },
     {
-      "id": "i42",
+      "id": 42,
       "strade": [
         {
           "quartiere": 1,
@@ -572,7 +572,7 @@
       ]
     },
     {
-      "id": "i43",
+      "id": 43,
       "strade": [
         {
           "quartiere": 1,
@@ -601,7 +601,7 @@
       ]
     },
     {
-      "id": "i44",
+      "id": 44,
       "strade": [
         {
           "quartiere": 1,
@@ -630,7 +630,7 @@
       ]
     },
     {
-      "id": "i45",
+      "id": 45,
       "strade": [
         {
           "quartiere": 1,
@@ -659,7 +659,7 @@
       ]
     },
     {
-      "id": "i46",
+      "id": 46,
       "strade": [
         {
           "quartiere": 1,
@@ -690,7 +690,7 @@
   ],
   "incroci_a_3": [
     {
-      "id": "i3",
+      "id": 47,
       "strade": [
         {
           "quartiere": 1,
@@ -714,7 +714,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i4",
+      "id": 48,
       "strade": [
         {
           "quartiere": 1,
@@ -738,7 +738,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i5",
+      "id": 49,
       "strade": [
         {
           "quartiere": 1,
@@ -762,7 +762,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i8",
+      "id": 50,
       "strade": [
         {
           "quartiere": 1,
@@ -786,7 +786,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i9",
+      "id": 51,
       "strade": [
         {
           "quartiere": 1,
@@ -810,7 +810,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i10",
+      "id": 52,
       "strade": [
         {
           "quartiere": 1,
@@ -834,7 +834,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i11",
+      "id": 53,
       "strade": [
         {
           "quartiere": 1,
@@ -858,7 +858,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i12",
+      "id": 54,
       "strade": [
         {
           "quartiere": 1,
@@ -882,7 +882,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i13",
+      "id": 55,
       "strade": [
         {
           "quartiere": 1,
@@ -906,7 +906,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i15",
+      "id": 56,
       "strade": [
         {
           "quartiere": 1,
@@ -930,7 +930,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i16",
+      "id": 57,
       "strade": [
         {
           "quartiere": 1,
@@ -954,7 +954,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i17",
+      "id": 58,
       "strade": [
         {
           "quartiere": 1,
@@ -978,7 +978,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i19",
+      "id": 59,
       "strade": [
         {
           "quartiere": 3,
@@ -1002,7 +1002,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i20",
+      "id": 60,
       "strade": [
         {
           "quartiere": 1,
@@ -1026,7 +1026,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i21",
+      "id": 61,
       "strade": [
         {
           "quartiere": 1,
@@ -1052,10 +1052,10 @@
   ],
   "luoghi": [
     {
-      "id_luogo": 1,
+      "id_luogo": 35,
       "nome": "Casa riposo",
       "tipologia": "lavoro",
-      "idstrada": 1,
+      "idstrada": 35,
       "dimensioni": [
         50,
         30
@@ -1065,10 +1065,10 @@
       "capienza_bici": 100
     },
     {
-      "id_luogo": 2,
+      "id_luogo": 36,
       "nome": "Campo sportivo",
       "tipologia": "svago",
-      "idstrada": 2,
+      "idstrada": 36,
       "dimensioni": [
         50,
         30
@@ -1078,10 +1078,10 @@
       "capienza_bici": 100
     },
     {
-      "id_luogo": 3,
+      "id_luogo": 37,
       "nome": "Scuole private",
       "tipologia": "istruzione",
-      "idstrada": 3,
+      "idstrada": 37,
       "dimensioni": [
         50,
         30
@@ -1089,12 +1089,12 @@
       "capienza_macchine": 70,
       "capienza_persone": 1000,
       "capienza_bici": 100
-    }, 
+    },
     {
-      "id_luogo": 4,
+      "id_luogo": 38,
       "nome": "Da Toni meccanico",
       "tipologia": "lavoro",
-      "idstrada": 4,
+      "idstrada": 38,
       "dimensioni": [
         50,
         30
@@ -1104,10 +1104,10 @@
       "capienza_bici": 100
     },
     {
-      "id_luogo": 5,
+      "id_luogo": 39,
       "nome": "Geometra Attilio",
       "tipologia": "lavoro",
-      "idstrada": 5,
+      "idstrada": 39,
       "dimensioni": [
         50,
         30
@@ -1117,10 +1117,10 @@
       "capienza_bici": 100
     },
     {
-      "id_luogo": 6,
+      "id_luogo": 40,
       "nome": "Ghegin",
       "tipologia": "negozio",
-      "idstrada": 6,
+      "idstrada": 40,
       "dimensioni": [
         50,
         30
@@ -1130,34 +1130,191 @@
       "capienza_bici": 100
     }
   ],
-"rotonde_a_4":[],
-
-"rotonde_a_3":[],
-
-"default_pedoni":{"desired_velocity": 5.0,"time_headway": 0.5,"max_acceleration": 0.3,"comfortable_deceleration": 3.0,"s0": 2.0,"length": 0.5},
-"default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
-"default_auto":{"desired_velocity": 15.0,"time_headway": 0.8,"max_acceleration": 0.5,"comfortable_deceleration": 2.5,"s0": 2.0,"length": 3.0,"num_posti": 4},
-
-"pedoni":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
-
-"auto":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
-
-"bici":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},{"id_abitante":7},{"id_abitante":8},{"id_abitante":9},{"id_abitante":10}],
-
-"abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":2,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":3,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":4,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":5,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":6,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":7,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":8,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":9,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":10,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2}
-]
+  "rotonde_a_4": [
+  ],
+  "rotonde_a_3": [
+  ],
+  "default_pedoni": {
+    "desired_velocity": 5.00000E+00,
+    "time_headway": 5.00000E-01,
+    "max_acceleration": 3.00000E-01,
+    "comfortable_deceleration": 3.00000E+00,
+    "s0": 2.00000E+00,
+    "length": 5.00000E-01
+  },
+  "default_bici": {
+    "desired_velocity": 1.00000E+02,
+    "time_headway": 1.20000E+00,
+    "max_acceleration": 1.50000E+00,
+    "comfortable_deceleration": 2.00000E+00,
+    "s0": 2.00000E+00,
+    "length": 1.50000E+00
+  },
+  "default_auto": {
+    "desired_velocity": 1.50000E+01,
+    "time_headway": 8.00000E-01,
+    "max_acceleration": 5.00000E-01,
+    "comfortable_deceleration": 2.50000E+00,
+    "s0": 2.00000E+00,
+    "length": 3.00000E+00,
+    "num_posti": 4
+  },
+  "pedoni": [
+    {
+      "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
+    },
+    {
+      "id_abitante": 64
+    },
+    {
+      "id_abitante": 65
+    },
+    {
+      "id_abitante": 66
+    },
+    {
+      "id_abitante": 67
+    },
+    {
+      "id_abitante": 68
+    },
+    {
+      "id_abitante": 69
+    },
+    {
+      "id_abitante": 70
+    },
+    {
+      "id_abitante": 71
+    }
+  ],
+  "auto": [
+    {
+      "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
+    },
+    {
+      "id_abitante": 64
+    },
+    {
+      "id_abitante": 65
+    },
+    {
+      "id_abitante": 66
+    },
+    {
+      "id_abitante": 67
+    },
+    {
+      "id_abitante": 68
+    },
+    {
+      "id_abitante": 69
+    },
+    {
+      "id_abitante": 70
+    },
+    {
+      "id_abitante": 71
+    }
+  ],
+  "bici": [
+    {
+      "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
+    },
+    {
+      "id_abitante": 64
+    },
+    {
+      "id_abitante": 65
+    },
+    {
+      "id_abitante": 66
+    },
+    {
+      "id_abitante": 67
+    },
+    {
+      "id_abitante": 68
+    },
+    {
+      "id_abitante": 69
+    },
+    {
+      "id_abitante": 70
+    },
+    {
+      "id_abitante": 71
+    }
+  ],
+  "abitanti": [
+    {
+      "id_abitante": 62,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 63,
+      "id_luogo_casa": 2,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 1
+    },
+    {
+      "id_abitante": 64,
+      "id_luogo_casa": 2,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 1
+    },
+    {
+      "id_abitante": 65,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 6
+    },
+    {
+      "id_abitante": 66,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 6
+    },
+    {
+      "id_abitante": 67,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 68,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 69,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 70,
+      "id_luogo_casa": 6,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 1
+    },
+    {
+      "id_abitante": 71,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    }
+  ]
 }
-

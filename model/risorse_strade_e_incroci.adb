@@ -601,7 +601,7 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
          mailbox.update_traiettorie_ingressi(state_view_abitanti);
          mailbox.update_car_on_road(state_view_abitanti);
-         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          -- crea snapshot se necessario
          crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
@@ -1205,7 +1205,7 @@ package body risorse_strade_e_incroci is
 
          state_view_abitanti:= Empty_Array;
          mailbox.update_position_entity(state_view_abitanti);
-         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          -- crea snapshot se necessario
          crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
@@ -1437,7 +1437,7 @@ package body risorse_strade_e_incroci is
 
          state_view_abitanti:= Empty_Array;
          mailbox.update_avanzamento_cars(state_view_abitanti);
-         --state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          -- crea snapshot se necessario
          crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);

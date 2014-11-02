@@ -1869,6 +1869,9 @@ package body mailbox_risorse_attive is
                      end if;
                   else
                      from_road:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list.posizione_abitante.get_id_quartiere_posizione_abitanti).get_current_tratto(list.posizione_abitante.get_id_abitante_posizione_abitanti);
+                     if get_quartiere_utilities_obj.get_classe_locate_abitanti(list.posizione_abitante.get_id_quartiere_posizione_abitanti).get_current_position(list.posizione_abitante.get_id_abitante_posizione_abitanti)=1 then
+                        from_road:= create_tratto(from_road.get_id_quartiere_tratto,get_ref_quartiere(from_road.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(from_road.get_id_tratto));
+                     end if;
                      state_view_abitante:= create_car_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,list.posizione_abitante.get_where_now_posizione_abitanti,from_road.get_id_quartiere_tratto,from_road.get_id_tratto,traiettoria_car);
                      Append(state_view_abitanti,state_view_abitante);
                      prec_list:= list;

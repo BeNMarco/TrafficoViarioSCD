@@ -45,6 +45,14 @@ package body the_name_server is
       return registro_ref_quartieri.get_ref_rt_quartieri;
    end get_ref_rt_quartieri;
 
+   function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+   begin
+      while registro_ref_quartieri.get_ref_quartiere(id_quartiere)=null loop
+         delay until (Clock + 1.0);
+      end loop;
+      return registro_ref_quartieri.get_ref_quartiere(id_quartiere);
+   end get_ref_quartiere;
+
    procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks) is
    begin
       registro_local_synchronized_objects.registra_local_synchronized_obj(id_quartiere,obj);
@@ -65,6 +73,12 @@ package body the_name_server is
       begin
          return registro;
       end get_ref_rt_quartieri;
+
+      function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+      begin
+         return registro(id_quartiere);
+      end get_ref_quartiere;
+
    end registro_ref_quartieri;
 
    protected body registro_risorse_strade is

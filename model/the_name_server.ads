@@ -15,6 +15,8 @@ package the_name_server is
 
    function get_ref_rt_quartieri return registro_quartieri;
 
+   function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
+
    procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks);
 
    function get_ref_local_synchronized_obj return registro_local_synchronized_obj;
@@ -53,6 +55,7 @@ private
    protected registro_ref_quartieri is
       procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites);
       function get_ref_rt_quartieri return registro_quartieri;
+      function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
    private
       registro: registro_quartieri(1..num_quartieri);
    end registro_ref_quartieri;

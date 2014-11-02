@@ -55,7 +55,7 @@ EntitiesRegistry.prototype.setStyle = function(style){
 }
 
 EntitiesRegistry.prototype.load = function(obj){
-	for(i in obj.auto){
+	for(var i in obj.auto){
 		var c_id = obj.auto[i].id_abitante;
 		this.cars[c_id] = new Car(c_id);
 		this.cars[c_id].hide();
@@ -63,19 +63,19 @@ EntitiesRegistry.prototype.load = function(obj){
 }
 
 EntitiesRegistry.prototype.show = function(){
-	for(i in this.cars){
+	for(var i in this.cars){
 		this.cars[i].show();
 	}
 }
 
 EntitiesRegistry.prototype.draw = function(){
-	for(i in this.cars){
+	for(var i in this.cars){
 		this.cars[i].draw(this.style);
 	}
 }
 
 EntitiesRegistry.prototype.hide = function(){
-	for(i in this.cars){
+	for(var i in this.cars){
 		this.cars[i].hide();
 	}
 }

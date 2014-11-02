@@ -138,8 +138,9 @@ Street.prototype.draw = function(style){
 		var prev = 0;
 		for(var index in this.sideStreets[side]){
 			var curStr = this.sideStreets[side][index];
-			var crossStart = curStr.entranceDistance - curStr.nLanes*style.laneWidth;
-			var crossEnd = curStr.entranceDistance + curStr.nLanes*style.laneWidth;
+			var d = side ? this.guidingPath.length - curStr.entranceDistance : curStr.entranceDistance;
+			var crossStart = d - curStr.nLanes*style.laneWidth;
+			var crossEnd = d + curStr.nLanes*style.laneWidth;
 			pedestrianPaths[side][prev].end = crossStart;
 			middlePaths[side][prev].end = crossStart;
 			prev++;
@@ -357,13 +358,13 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	offset = side ? -offset : offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
-	try{
+	//try{
 		normal.length = offset;
-	} catch(err){
+	/*} catch(err){
 		console.log(this);
 		console.log(distance+"/"+this.guidingPath.length);
 		console.log(normal);
-	}
+	}*/
 
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
 }
@@ -373,16 +374,16 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 	//console.log(side + " " + entranceDistance + " " + crossingPath + " " + distance);
 	//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 	//console.log(distance +" on "+ this.sideStreets[side][entranceDistance].paths[crossingPath].path.length)
-	try{
+	//try{
 		var loc = this.sideStreets[side][entranceDistance].paths[crossingPath].path.getLocationAt(distance);
-	} catch(err){
+	/*} catch(err){
 		console.log(side);
 		console.log(entranceDistance);
 		console.log(crossingPath);
 		console.log(distance);
 		console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 		console.log("BOOM!");
-	}
+	}*/
 	return {angle:loc.tangent.angle, position: loc.point};
 }
 
@@ -1007,11 +1008,12 @@ Map.prototype.draw = function(){
 		var mainStreet = this.streets[this.entranceStreets[i].mainStreet];
 		var side = this.entranceStreets[i].entranceSide ? -1 : 1;
 
-		var refPoint = mainStreet.guidingPath.getPointAt(this.entranceStreets[i].entranceDistance);
-		var normalFrom = mainStreet.guidingPath.getNormalAt(this.entranceStreets[i].entranceDistance);
+		var entrDist = (side == 1) ? mainStreet.guidingPath.length - this.entranceStreets[i].entranceDistance :this.entranceStreets[i].entranceDistance;
+		var refPoint = mainStreet.guidingPath.getPointAt(entrDist);
+		var normalFrom = mainStreet.guidingPath.getNormalAt(entrDist);
 		normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
 		
-		var normalTo = mainStreet.guidingPath.getNormalAt(this.entranceStreets[i].entranceDistance);
+		var normalTo = mainStreet.guidingPath.getNormalAt(entrDist);
 		normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + this.entranceStreets[i].len);	
 		
 		this.entranceStreets[i].from = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];

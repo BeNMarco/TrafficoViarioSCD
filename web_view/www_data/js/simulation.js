@@ -33,8 +33,8 @@ Simulation.prototype.onReady = function(callback){
 Simulation.prototype.addState = function(state){
 	this.stateCache.push(state);
 	this.receivedStates++;
-	console.log("got state");
-	console.log(state);
+	//console.log("got state");
+	//console.log(state);
 	if(!this.running && this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
 		console.log("i'm ready!");
 		this.readyCallback();
@@ -101,7 +101,7 @@ Simulation.prototype.moveObjects = function(time){
 			}
 			newDistance = 1*prevPosition + 1*((curCar.distanza - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 		}
-
+		//console.log("new distance: "+newDistance);
 		var newPos = null;
 		switch(curCar.where){
 			case 'strada':
@@ -119,18 +119,18 @@ Simulation.prototype.moveObjects = function(time){
 					);
 				break;
 			case 'incrocio':
-			try{
+			//try{
 				newPos = this.map.crossroads[curCar.id_where].getPositionAt(
 					newDistance, 
 					curCar.strada_ingresso, 
 					curCar.quartiere_strada_ingresso, 
 					curCar.direzione);
-			} catch(err){
+			/*} catch(err){
 
 				console.log(err);
 				console.log(curCar);
 				console.log("BOOM!");
-			}
+			}*/
 				break;
 			case 'cambio_corsia':
 			/*
@@ -160,13 +160,15 @@ Simulation.prototype.moveObjects = function(time){
 				}
 				break;
 		}
-		try{
+		//try{
+			//console.log("movign "+curCar.id_abitante+" here:");
+			//console.log(newPos.position);
 			this.objects.cars[curCar.id_abitante].move(newPos.position, newPos.angle);
-		} catch(err){
+		/*} catch(err){
 			console.log(err);
 			console.log(curCar);
 			console.log(newPos);
-		}
+		}*/
 	}
 }
 }

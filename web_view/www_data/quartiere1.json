@@ -578,7 +578,7 @@
           "quartiere": 1,
           "id_strada": 25,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         },
         {
           "quartiere": 1,
@@ -607,7 +607,7 @@
           "quartiere": 1,
           "id_strada": 23,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         },
         {
           "quartiere": 1,
@@ -619,7 +619,7 @@
           "quartiere": 1,
           "id_strada": 25,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 1,
@@ -774,7 +774,7 @@
           "quartiere": 1,
           "id_strada": 23,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 1,

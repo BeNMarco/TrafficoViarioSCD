@@ -24,7 +24,7 @@
 	<script type="text/javascript">
 		myMap = new Map();
 		entities = new EntitiesRegistry();
-		sim = new Simulation(myMap, entities, 4, 300);
+		sim = new Simulation(myMap, entities, 4, 500);
 		sim.onReady(startSimulation);
 		entStyle = new EntitiesStyle();
 

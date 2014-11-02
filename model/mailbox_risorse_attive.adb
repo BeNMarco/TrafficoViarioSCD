@@ -1817,6 +1817,7 @@ package body mailbox_risorse_attive is
          new_abitante: ptr_list_posizione_abitanti_on_road:= new list_posizione_abitanti_on_road;
          copy_car: posizione_abitanti_on_road:= car;
       begin
+         Put_Line("inserito in incrocio id abitante " & Positive'Image(car.get_id_abitante_posizione_abitanti));
          key_road:= get_index_road_from_incrocio(from_id_quartiere,from_id_road,id_risorsa);
          copy_car.set_where_now_abitante(0.0);
          copy_car.set_where_next_abitante(0.0);

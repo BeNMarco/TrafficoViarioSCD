@@ -38,7 +38,7 @@
 		paper.install(window);
 
 		var style = new MapStyle();
-		//style.debug = true;
+		style.debug = true;
 		
 		var dDialog = null;
 	    var ws1;

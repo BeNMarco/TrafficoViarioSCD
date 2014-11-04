@@ -24,6 +24,7 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.readyCallback = null;
 	this.finishCallbal = null;
 	this.emptyStateCacheCallback = null;
+	this.lastStateTime = 0;
 }
 
 Simulation.prototype.onReady = function(callback){
@@ -34,7 +35,13 @@ Simulation.prototype.addState = function(state){
 	this.stateCache.push(state);
 	this.receivedStates++;
 	//console.log("got state");
-	//console.log(state);
+	
+	/*
+	var stateDelta = (new Date().getTime()) - this.lastStateTime;
+	console.log("Got state after "+stateDelta + " ms");
+	this.lastStateTime = new Date().getTime();
+	console.log(state);
+	*/
 	if(!this.running && this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
 		console.log("i'm ready!");
 		this.readyCallback();

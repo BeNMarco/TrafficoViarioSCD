@@ -138,7 +138,7 @@ Street.prototype.draw = function(style){
 		var prev = 0;
 		for(var index in this.sideStreets[side]){
 			var curStr = this.sideStreets[side][index];
-			var d = side ? this.guidingPath.length - curStr.entranceDistance : curStr.entranceDistance;
+			var d = /*side ? this.guidingPath.length - curStr.entranceDistance :*/ curStr.entranceDistance;
 			var crossStart = d - curStr.nLanes*style.laneWidth;
 			var crossEnd = d + curStr.nLanes*style.laneWidth;
 			pedestrianPaths[side][prev].end = crossStart;
@@ -173,8 +173,10 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 	var enterHandlePoint = null;
 	var exitHandlePoint = null;
 	var sideStreetsEntrancePaths = {};
-	side = side == 'true' ? true : false;
-	if(side){
+	if (typeof side === 'string'){
+		side = (side === 'true');
+	}
+	if(!side){
 		enterignPath1.add(this.getPositionAt(crossStart, side, 1, false).position);
 		enterignPath1.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
 		exitingPath1.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
@@ -254,7 +256,7 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 	// //this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};;
 	// sideStreetsEntrancePaths["uscita_ritorno_2"] = {id:"M"+this.id+"_come-S"+curStr.id+"_out_2", principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath2_2, polo:true};
 
-	if(style.debug){
+	if(false/*style.debug*/){
 		exitingPath1.fullySelected = true;
 		enterignPath1.fullySelected = true;
 		exitingPath2_1.fullySelected = true;
@@ -288,7 +290,7 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 	}
 	for(var side in pedPath){
 		for(var seg in pedPath[side]){
-			var offset = (this.nLanes*style.laneWidth + (pedPath[side][seg].type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? -1 : 1);
+			var offset = (this.nLanes*style.laneWidth + (pedPath[side][seg].type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? 1 : -1);
 			var p = pathOffset(this.guidingPath, offset, precision, st[pedPath[side][seg].type],pedPath[side][seg].start, pedPath[side][seg].end);
 			//p.rasterize();
 			//p.remove();
@@ -349,13 +351,13 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
-	if(drive && !side){
+	if(drive && side){
 		distance = this.guidingPath.length - distance;
 	}
 	var loc = this.guidingPath.getLocationAt(distance);
 
 	var offset = lane < 0 ? this.nLanes*this.laneWidth + 0.5*this.pavementWidth : (lane+0.5)*this.laneWidth;
-	offset = side ? -offset : offset;
+	offset = side ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
 	//try{
@@ -375,6 +377,8 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 	//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 	//console.log(distance +" on "+ this.sideStreets[side][entranceDistance].paths[crossingPath].path.length)
 	//try{
+		console.log("getting position on "+crossingPath);
+		this.sideStreets[side][entranceDistance].paths[crossingPath].path.fullySelected = true;
 		var loc = this.sideStreets[side][entranceDistance].paths[crossingPath].path.getLocationAt(distance);
 	/*} catch(err){
 		console.log(side);
@@ -394,7 +398,7 @@ Street.prototype.getSidestreetPositionAt = function(distance, side){
 	var loc = this.guidingPath.getLocationAt(distance);
 
 	var offset = this.nLanes*this.laneWidth + this.pavementWidth;
-	offset = side ? -offset : offset;
+	offset = side ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
 	normal.length = offset;
@@ -557,7 +561,7 @@ Crossroad.prototype.draw = function(style){
 				crossPath.firstSegment.handleOut.length = crossPath.firstSegment.handleOut.length*0.60;
 				crossPath.lastSegment.handleIn = handlePoint.subtract(crossPath.lastSegment.point);
 				crossPath.lastSegment.handleIn.length = crossPath.lastSegment.handleIn.length*0.60;
-				this.crossingPaths[i]['left'] = {
+				this.crossingPaths[i]['sinistra'] = {
 					path:crossPath, 
 					id:this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+1)%4].id_strada+".l"+2,
 					start: {street:this.streetsRef[i].id_strada, lane: 2, index: i},
@@ -573,7 +577,7 @@ Crossroad.prototype.draw = function(style){
 				var crossPath1 = new Path();
 				crossPath1.add(new Point(this.center.x-style.laneWidth*0.5, this.center.y-(style.laneWidth*2+style.pavementWidth)));
 				crossPath1.add(new Point(this.center.x-style.laneWidth*0.5, this.center.y+(style.laneWidth*2+style.pavementWidth)));
-				this.crossingPaths[i]['straight_1']={
+				this.crossingPaths[i]['dritto_1']={
 					path: crossPath1, 
 					id: this.id+"_s"+this.streetsRef[i].id_strada+".l"+1+"-"+"s"+this.streetsRef[(i+2)%4].id_strada+".l"+1,
 					start: {street: this.streetsRef[i].id_strada, lane: 1, index: i},
@@ -583,7 +587,7 @@ Crossroad.prototype.draw = function(style){
 				var crossPath2 = new Path();
 				crossPath2.add(new Point(this.center.x-style.laneWidth*1.5, this.center.y-(style.laneWidth*2+style.pavementWidth)));
 				crossPath2.add(new Point(this.center.x-style.laneWidth*1.5, this.center.y+(style.laneWidth*2+style.pavementWidth)));
-				this.crossingPaths[i]['straight_2']={
+				this.crossingPaths[i]['dritto_2']={
 					path: crossPath2, 
 					id: this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+2)%4].id_strada+".l"+2,
 					start: {street: this.streetsRef[i].id_strada, lane: 2, index: i},
@@ -613,7 +617,7 @@ Crossroad.prototype.draw = function(style){
 				var handlePoint = new Point(this.center.x-style.laneWidth*1.5, this.center.y-style.laneWidth*1.5);
 				crossPath.firstSegment.handleOut = handlePoint.subtract(crossPath.firstSegment.point);
 				crossPath.lastSegment.handleIn = handlePoint.subtract(crossPath.lastSegment.point);
-				this.crossingPaths[i]['right'] = {
+				this.crossingPaths[i]['destra'] = {
 					path: crossPath,
 					id:this.id+"_s"+this.streetsRef[i].id_strada+".l"+1+"-"+"s"+this.streetsRef[(i+3)%4].id_strada+".l"+1,
 					start: {street: this.streetsRef[i].id_strada, lane: 1, index: i},
@@ -703,6 +707,9 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 	try{
 		var loc = this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.getLocationAt(distance);
 	}catch(err){
+		console.log("ID entrance street: "+this.getEntranceStreetNumber(enteringStreet, streetDistrict));
+		console.log(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)])
+		console.log("Going "+direction);
 		throw "The crossroad "+this.id+" does not have the street "+enteringStreet+" form the district "+streetDistrict;
 	}
 	return {angle: loc.tangent.angle, position: loc.point};
@@ -811,8 +818,8 @@ Place.prototype.setEnteringStreet = function(street){
 }
 
 Place.prototype.draw = function(style){
-	var center = this.entranceStreet.guidingPath.lastSegment.point;
-	var angle = (center.subtract(this.entranceStreet.guidingPath.firstSegment.point)).angle+90;
+	var center = this.entranceStreet.guidingPath.firstSegment.point;
+	var angle = (center.subtract(this.entranceStreet.guidingPath.lastSegment.point)).angle+90;
 
 	var placePath = new Path.Rectangle(new Point(), new Size(this.placeWidth, this.placeHeight));
 	placePath.strokeWidth = 1;
@@ -1006,9 +1013,9 @@ Map.prototype.draw = function(){
 	for (var i in this.entranceStreets){
 
 		var mainStreet = this.streets[this.entranceStreets[i].mainStreet];
-		var side = this.entranceStreets[i].entranceSide ? -1 : 1;
+		var side = this.entranceStreets[i].entranceSide ? 1 : -1;
 
-		var entrDist = (side == 1) ? mainStreet.guidingPath.length - this.entranceStreets[i].entranceDistance :this.entranceStreets[i].entranceDistance;
+		var entrDist = /*(side == 1) ? mainStreet.guidingPath.length - this.entranceStreets[i].entranceDistance :*/this.entranceStreets[i].entranceDistance;
 		var refPoint = mainStreet.guidingPath.getPointAt(entrDist);
 		var normalFrom = mainStreet.guidingPath.getNormalAt(entrDist);
 		normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
@@ -1016,8 +1023,8 @@ Map.prototype.draw = function(){
 		var normalTo = mainStreet.guidingPath.getNormalAt(entrDist);
 		normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + this.entranceStreets[i].len);	
 		
-		this.entranceStreets[i].from = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
-		this.entranceStreets[i].to = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
+		this.entranceStreets[i].from = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
+		this.entranceStreets[i].to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
 		this.entranceStreets[i].reposition();
 		this.entranceStreets[i].draw(this.mapStyle);
 	}

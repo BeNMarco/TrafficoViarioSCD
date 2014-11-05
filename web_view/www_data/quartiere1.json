@@ -467,7 +467,7 @@
       "numcorsie": 1,
       "strada_confinante": 31,
       "polo": true,
-      "distanza_da_from": 3.50000E+01,
+      "distanza_da_from": 1.00000E+02,
       "from": 0,
       "to": 0
     },
@@ -1151,32 +1151,47 @@
     "length": 1.50000E+00
   },
   "default_auto": {
-    "desired_velocity": 1.20000E+02,
-    "time_headway": 8.00000E-01,
-    "max_acceleration": 1.50000E+00,
-    "comfortable_deceleration": 2.50000E+00,
-    "s0": 2.00000E+00,
+    "desired_velocity": 1.00000E+02,
+    "time_headway": 5.00000E-01,
+    "max_acceleration": 1.00000E+01,
+    "comfortable_deceleration": 1.05000E+01,
+    "s0": 5.00000E-01,
     "length": 3.00000E+00,
     "num_posti": 4
   },
   "pedoni": [
     {
       "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
     }
   ],
   "auto": [
     {
       "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
     }
   ],
   "bici": [
     {
       "id_abitante": 62
+    },
+    {
+      "id_abitante": 63
     }
   ],
   "abitanti": [
     {
       "id_abitante": 62,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 63,
       "id_luogo_casa": 1,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 2

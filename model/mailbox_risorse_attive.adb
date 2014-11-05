@@ -475,11 +475,11 @@ package body mailbox_risorse_attive is
                      list:= set_traiettorie_ingressi(key_ingresso,traiettoria);
                      if traiettoria=uscita_andata then
                         in_uscita:= True;
-                        num_corsia:= 1;
+                        num_corsia:= 2;
                         consider_polo:= polo;
                      elsif traiettoria=uscita_ritorno then
                         in_uscita:= True;
-                        num_corsia:= 2;
+                        num_corsia:= 1;
                         consider_polo:= not polo;
                      elsif traiettoria=entrata_andata then
                         in_uscita:= False;
@@ -562,7 +562,12 @@ package body mailbox_risorse_attive is
          car_length: Float;
          fine_ingresso_distance: Float;
          state_view_abitante: JSON_Value;
+         distance_ingresso: Float;
+         h: Boolean;
       begin
+         if id_risorsa=31 then
+            h:= True;
+         end if;
          for i in main_strada'Range(1) loop
             for j in main_strada'Range(2) loop
                main_list:= main_strada(i,j);
@@ -578,7 +583,7 @@ package body mailbox_risorse_attive is
                         state_view_abitante:= create_car_traiettoria_cambio_corsia_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_distance_on_overtaking_trajectory,
                                                                                      i,main_list.posizione_abitante.get_where_now_posizione_abitanti,main_list.posizione_abitante.get_destination.get_departure_corsia,main_list.posizione_abitante.get_destination.get_corsia_to_go_trajectory);
                         Append(state_view_abitanti,state_view_abitante);
-                        if main_list.posizione_abitante.get_destination.get_departure_corsia=1 then
+                        if main_list.posizione_abitante.get_destination.get_departure_corsia=2 then
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata).next;
                         else
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno).next;
@@ -639,13 +644,16 @@ package body mailbox_risorse_attive is
                      main_list:= main_list.next;
                   else
                      main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
-                     if main_list.posizione_abitante.get_where_now_posizione_abitanti<get_urbana_from_id(id_risorsa).get_lunghezza_road then
-                        state_view_abitante:= create_car_urbana_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,j);
-                        Append(state_view_abitanti,state_view_abitante);
-                     end if;
                      if main_list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=empty then
                         --Put_Line(Float'Image(get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory))));
-                        if get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory))=main_list.posizione_abitante.get_where_now_posizione_abitanti+get_larghezza_marciapiede+get_larghezza_corsia then
+
+                        if not i then
+                           distance_ingresso:= get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso;
+                        else
+                           distance_ingresso:= get_urbana_from_id(id_risorsa).get_lunghezza_road-get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso;
+                        end if;
+
+                        if distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia<=main_list.posizione_abitante.get_where_now_posizione_abitanti then
                            next_element_list:= main_list.next;
                            if prec_main_list/=null then  -- si ha un elemento in prec_list
                               prec_main_list.next:= next_element_list;
@@ -660,11 +668,15 @@ package body mailbox_risorse_attive is
                            main_list.posizione_abitante.set_where_now_abitante(0.0);
                            main_list.next:= null;
                            if main_list.posizione_abitante.get_destination.get_corsia_to_go_trajectory=1 then
-                              traiettoria:= entrata_andata;
-                           else
                               traiettoria:= entrata_ritorno;
+                           else
+                              traiettoria:= entrata_andata;
                            end if;
                            list_abitanti_traiettoria:= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory,not_ordered),traiettoria);
+                           -- update view state
+                           state_view_abitante:= create_car_traiettoria_ingresso_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso,traiettoria);
+                           Append(state_view_abitanti,state_view_abitante);
+                           -- end update
                            prec_list_abitanti_traiettoria:= null;
                            while list_abitanti_traiettoria/=null loop
                               prec_list_abitanti_traiettoria:= list_abitanti_traiettoria;
@@ -677,10 +689,18 @@ package body mailbox_risorse_attive is
                            end if;
                            main_strada_number_entity(i,j):= main_strada_number_entity(i,j)-1;
                         else
+                           if main_list.posizione_abitante.get_where_now_posizione_abitanti<get_urbana_from_id(id_risorsa).get_lunghezza_road then
+                              state_view_abitante:= create_car_urbana_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,j);
+                              Append(state_view_abitanti,state_view_abitante);
+                           end if;
                            prec_main_list:= main_list;
                            next_element_list:= main_list.next;
                         end if;
                      else  -- occorre percorrere tutta la strada
+                        if main_list.posizione_abitante.get_where_now_posizione_abitanti<get_urbana_from_id(id_risorsa).get_lunghezza_road then
+                          state_view_abitante:= create_car_urbana_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,i,j);
+                           Append(state_view_abitanti,state_view_abitante);
+                        end if;
                         prec_main_list:= main_list;
                         next_element_list:= main_list.next;
                      end if;

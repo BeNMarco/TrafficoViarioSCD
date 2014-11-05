@@ -3,28 +3,28 @@
       "destra": {
         "lunghezza": 11.71392999506322,
         "strada_partenza": {
-          "corsia": 1
+          "corsia": 2
         },
         "strada_arrivo": {
-          "corsia": 1
+          "corsia": 2
         }
       },
       "sinistra": {
         "lunghezza": 32.63980049957382,
         "strada_partenza": {
-          "corsia": 2
+          "corsia": 1
         },
         "strada_arrivo": {
-          "corsia": 2
+          "corsia": 1
         },
         "intersezioni": [
           {
             "traiettoria": "dritto_1",
-            "distanza": 26.06442805887287
+            "distanza": 18.15536731775895
           },
           {
             "traiettoria": "dritto_2",
-            "distanza": 18.15536731775895 
+            "distanza": 26.06442805887287
           }
         ],
         "intersezioni_corsie":[
@@ -49,7 +49,7 @@
         "intersezioni": [
           {
             "traiettoria": "sinistra",
-            "distanza": 14.349093848766858
+            "distanza": 17.908863181982486
           }
         ]
       },
@@ -64,7 +64,7 @@
         "intersezioni": [
           {
             "traiettoria": "sinistra",
-            "distanza": 17.908863181982486
+            "distanza": 14.349093848766858
           }
         ]
       }

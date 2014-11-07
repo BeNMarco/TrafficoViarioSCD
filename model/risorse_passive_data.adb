@@ -103,9 +103,9 @@ package body risorse_passive_data is
       return rotonde_a_3;
    end get_rotonde_a_3;
 
-   function get_distance_from_polo_percorrenza(road: strada_ingresso_features) return Float is
+   function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return Float is
    begin
-      if road.get_polo_ingresso=True then
+      if polo then
          return get_urbana_from_id(road.get_id_main_strada_ingresso).get_lunghezza_road-road.get_distance_from_road_head_ingresso;
       else
          return road.get_distance_from_road_head_ingresso;

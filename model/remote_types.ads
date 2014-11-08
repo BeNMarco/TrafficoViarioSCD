@@ -114,8 +114,8 @@ package remote_types is
    type Access_WebServer_Remote_Interface is access all WebServer_Remote_Interface'Class;
 
    procedure registra_mappa_quartiere(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
-   procedure invia_aggiornamento(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
    pragma Asynchronous(Access_WebServer_Remote_Interface);
+   procedure invia_aggiornamento(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
    --END REMOTE TYPES WEB SERVER
 
 private

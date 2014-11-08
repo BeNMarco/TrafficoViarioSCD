@@ -34,6 +34,8 @@ package risorse_strade_e_incroci is
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
    procedure reconfigure_resource(resource: ptr_backup_interface; id_task: Positive);
 
+   procedure update_bound_next_car_in_incrocio(previous_bound: in out Float; new_bound: Float);
+
    procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive);
 
    task type core_avanzamento_urbane is new core_avanzamento with

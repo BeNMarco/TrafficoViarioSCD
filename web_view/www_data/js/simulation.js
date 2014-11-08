@@ -106,7 +106,8 @@ Simulation.prototype.moveObjects = function(time){
 				// prevPosition = this.prevState.cars[curCar.id_abitante].distanza;
 				prevPosition = this.objects.cars[curCar.id_abitante].prevState.distanza;
 			}
-			newDistance = 1*prevPosition + 1*((curCar.distanza - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+			var curDist = (curCar.distanza < 0 ) ? 0 : curCar.distanza;
+			newDistance = 1*prevPosition + 1*((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 		}
 		//console.log("new distance: "+newDistance);
 		var newPos = null;

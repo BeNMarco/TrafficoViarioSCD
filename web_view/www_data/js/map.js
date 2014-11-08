@@ -230,7 +230,7 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 	exitingPath1.lastSegment.handleIn.length = 0.8*exitingPath1.lastSegment.handleIn.length;
 	exitingPath1.smooth();
 	//this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};;
-	sideStreetsEntrancePaths["uscita_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_out", principale: this.id, laterale:curStr.id, verso:'uscita', path:enterignPath1, polo:true};
+	sideStreetsEntrancePaths["uscita_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_out", principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};
 
 	enterignPath2.firstSegment.handleOut = enterHandlePoint2.subtract(enterignPath2.firstSegment.point);
 	enterignPath2.firstSegment.handleOut.length = 0.8*enterignPath2.firstSegment.handleOut.length;
@@ -351,6 +351,10 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
+
+	distance = (distance < 0) ? 0 : distance;
+	distance = (distance > this.guidingPath.length) ? this.guidingPath.length : distance;
+
 	if(drive && side){
 		distance = this.guidingPath.length - distance;
 	}
@@ -360,13 +364,13 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	offset = side ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
-	//try{
+	try{
 		normal.length = offset;
-	/*} catch(err){
+	} catch(err){
 		console.log(this);
 		console.log(distance+"/"+this.guidingPath.length);
 		console.log(normal);
-	}*/
+	}
 
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
 }
@@ -376,18 +380,19 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 	//console.log(side + " " + entranceDistance + " " + crossingPath + " " + distance);
 	//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 	//console.log(distance +" on "+ this.sideStreets[side][entranceDistance].paths[crossingPath].path.length)
-	//try{
-		console.log("getting position on "+crossingPath);
-		this.sideStreets[side][entranceDistance].paths[crossingPath].path.fullySelected = true;
-		var loc = this.sideStreets[side][entranceDistance].paths[crossingPath].path.getLocationAt(distance);
-	/*} catch(err){
+	try{
+		var curPath = this.sideStreets[side][entranceDistance].paths[crossingPath].path;
+		var newDistance = (distance < 0) ? 0 : distance;
+		newDistance = (distance > curPath.length) ? curPath.length : distance;
+		var loc = curPath.getLocationAt(newDistance);
+	} catch(err){
 		console.log(side);
 		console.log(entranceDistance);
 		console.log(crossingPath);
 		console.log(distance);
 		console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 		console.log("BOOM!");
-	}*/
+	}
 	return {angle:loc.tangent.angle, position: loc.point};
 }
 
@@ -1048,13 +1053,13 @@ Map.prototype.draw = function(){
 }
 
 Map.prototype.getUpdatedData = function(){
-	var l = this.objData.strade.length;
+	var l = this.objData.strade_urbane.length;
 	var i = 0;
 	// for(var i = 0; i < l; i++){ 
 	var enteringPaths = null
-	for(var i in this.objData.strade){ 	
-		this.objData.strade[i].lunghezza = this.streets[this.objData.strade[i].id].guidingPath.length;
-		var sE = this.streets[this.objData.strade[i].id].sideStreetsEntrancePaths;
+	for(var i in this.objData.strade_urbane){ 	
+		this.objData.strade_urbane[i].lunghezza = this.streets[this.objData.strade_urbane[i].id].guidingPath.length;
+		var sE = this.streets[this.objData.strade_urbane[i].id].sideStreetsEntrancePaths;
 		for(var c in sE){
 			var toAdd = {
 				id : sE[c].id,
@@ -1063,15 +1068,15 @@ Map.prototype.getUpdatedData = function(){
 				verso : sE[c].verso,
 				lunghezza : sE[c].path.length,
 			}
-			//this.objData.strade[i].traiettorie_ingresso.push(toAdd);
+			//this.objData.strade_urbane[i].traiettorie_ingresso.push(toAdd);
 		}
-		delete this.objData.strade[i].traiettorie_ingresso;
-		var sStreets = this.streets[this.objData.strade[i].id].sideStreets;
+		delete this.objData.strade_urbane[i].traiettorie_ingresso;
+		var sStreets = this.streets[this.objData.strade_urbane[i].id].sideStreets;
 		if(enteringPaths == null && (Object.keys(sStreets[false]).length > 0 || Object.keys(sStreets[true]).length > 0)){
 			if(i ==0){
 				i++;
 			} else {
-				enteringPaths = this.calcEntrancePathIntersections(this.streets[this.objData.strade[i].id]);
+				enteringPaths = this.calcEntrancePathIntersections(this.streets[this.objData.strade_urbane[i].id]);
 			}
 		}
 	}
@@ -1102,7 +1107,6 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 		enteringPaths = street.sideStreets[true][Object.keys(street.sideStreets[true])[0]].paths;
 		side = true;
 	}
-	enteringPaths['entrata_ritorno'].path.fullySelected = true;
 	street.guidingPath.fullySelected = true;
 	return {
 		entrata_andata: {
@@ -1115,16 +1119,12 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 			lunghezza: enteringPaths['entrata_ritorno'].path.length,
 			intersezioni:[
 				{
-					traiettoria: 'uscita_ritorno_1',
-					distanza: enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(enteringPaths['uscita_ritorno_1'].path)[0].point),
-				},
-				{
-					traiettoria: 'uscita_ritorno_2',
-					distanza: enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(enteringPaths['uscita_ritorno_2'].path)[0].point),
+					traiettoria: 'uscita_ritorno',
+					distanza: enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(enteringPaths['uscita_ritorno'].path)[0].point),
 				},
 				{
 					traiettoria: 'linea_corsia',
-					distanza: enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.sepLines[side][1])[0].point),
+					distanza: enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.sepLines[!side][1])[0].point),
 				},
 				{
 					traiettoria: 'linea_mezzaria',
@@ -1132,81 +1132,98 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 				}
 			]
 		},
-		uscita_ritorno_1: {
-			lunghezza: enteringPaths['uscita_ritorno_1'].path.length,
+		uscita_ritorno: {
+			lunghezza: enteringPaths['uscita_ritorno'].path.length,
 			intersezioni: [
 				{
 					traiettoria: 'entrata_ritorno',
-					distanza: enteringPaths['uscita_ritorno_1'].path.getOffsetOf(enteringPaths['uscita_ritorno_1'].path.getIntersections(enteringPaths['entrata_ritorno'].path)[0].point),
+					distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(enteringPaths['entrata_ritorno'].path)[0].point),
 				},
 				{
 					traiettoria: 'linea_corsia',
-					distanza: enteringPaths['uscita_ritorno_1'].path.getOffsetOf(enteringPaths['uscita_ritorno_1'].path.getIntersections(street.sepLines[side][1])[0].point),
+					distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.sepLines[!side][1])[0].point),
 				},
 				{
 					traiettoria: 'linea_mezzaria',
-					distanza: enteringPaths['uscita_ritorno_1'].path.getOffsetOf(enteringPaths['uscita_ritorno_1'].path.getIntersections(street.guidingPath)[0].point),
+					distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.guidingPath)[0].point),
 				}
 			]
-		},
-		uscita_ritorno_2: {
-			lunghezza: enteringPaths['uscita_ritorno_2'].path.length,
-			intersezioni: [
-				{
-					traiettoria: 'entrata_ritorno',
-					distanza: enteringPaths['uscita_ritorno_2'].path.getOffsetOf(enteringPaths['uscita_ritorno_2'].path.getIntersections(enteringPaths['entrata_ritorno'].path)[0].point),
-				}
-			]
-		},
+		}
 	}
 }
 
 Map.prototype.calcCrossroadsCrossingPathsIntersections = function(crossroad_ref){
 	var c = this.crossroads[crossroad_ref.id];
-	traiettorie = {};
+	var traiettorie = {};
 	for(var p in c.crossingPaths){
 		var np = parseInt(p);
 		traiettorie[np] = {};
 
-		if(c.crossingPaths[p] != null && c.crossingPaths[p].right){
-			traiettorie[np]['destra'] = makeCPData(c.crossingPaths[p].right);
+		if(c.crossingPaths[p] != null && c.crossingPaths[p].destra){
+			traiettorie[np]['destra'] = makeCPData(c.crossingPaths[p].destra);
 		}
-		if(c.crossingPaths[p] != null && c.crossingPaths[p].left){
-			var cLeft = makeCPData(c.crossingPaths[p].left);
-			if(c.crossingPaths[(np+2)%4] != null && c.crossingPaths[(np+2)%4].straight_1 && c.crossingPaths[(np+2)%4].straight_2){
-
+		if(c.crossingPaths[p] != null && c.crossingPaths[p].sinistra){
+			var cLeft = makeCPData(c.crossingPaths[p].sinistra);
+			var eN = (np+2)%4;
+			if(c.crossingPaths[eN] != null && c.crossingPaths[eN].dritto_1 && c.crossingPaths[eN].dritto_2){
+				var refPath = c.crossingPaths[eN].dritto_1.path;
+				var halfLane = this.mapStyle.laneWidth/2;
+				var p1 = refPath.getPointAt(0); 
+				var p2 = refPath.getPointAt(refPath.length); 
+				var mezzaria = new Path();
+				mezzaria.add(new Point(p1.x + halfLane, p1.y + halfLane));
+				mezzaria.add(new Point(p2.x + halfLane, p2.y + halfLane));
+				var corsia = new Path();
+				corsia.add(new Point(p1.x - halfLane, p1.y - halfLane));
+				corsia.add(new Point(p2.x - halfLane, p2.y - halfLane));
 				cLeft.intersezioni = [
 					{
-						//traiettoria: c.crossingPaths[(np+2)%4].straight_1.id,
-						traiettoria: 'ditto_1',
-						distanza: c.crossingPaths[p].left.path.getOffsetOf(c.crossingPaths[p].left.path.getIntersections(c.crossingPaths[(np+2)%4].straight_1.path)[0].point),
+						//traiettoria: c.crossingPaths[eN].dritto_1.id,
+						traiettoria: 'dritto_1',
+						distanza: c.crossingPaths[p].sinistra.path.getOffsetOf(c.crossingPaths[p].sinistra.path.getIntersections(c.crossingPaths[eN].dritto_1.path)[0].point),
 					},
 					{
-						//traiettoria: c.crossingPaths[(np+2)%4].straight_2.id,
+						//traiettoria: c.crossingPaths[eN].dritto_2.id,
 						traiettoria: 'dritto_2',
-						distanza: c.crossingPaths[p].left.path.getOffsetOf(c.crossingPaths[p].left.path.getIntersections(c.crossingPaths[(np+2)%4].straight_2.path)[0].point),
+						distanza: c.crossingPaths[p].sinistra.path.getOffsetOf(c.crossingPaths[p].sinistra.path.getIntersections(c.crossingPaths[eN].dritto_2.path)[0].point),
+					},
+					{
+						//traiettoria: c.crossingPaths[eN].dritto_2.id,
+						traiettoria: 'mezzaria',
+						distanza: c.crossingPaths[p].sinistra.path.getOffsetOf(c.crossingPaths[p].sinistra.path.getIntersections(mezzaria)[0].point),
+					},
+					{
+						//traiettoria: c.crossingPaths[eN].dritto_2.id,
+						traiettoria: 'corsia',
+						distanza: c.crossingPaths[p].sinistra.path.getOffsetOf(c.crossingPaths[p].sinistra.path.getIntersections(corsia)[0].point),
 					},
 				];
+				c.crossingPaths[p].sinistra.path.fullySelected = true;
+				c.crossingPaths[eN].dritto_1.path.fullySelected = true;
+				c.crossingPaths[eN].dritto_2.path.fullySelected = true;
+				corsia.fullySelected = true;
+				mezzaria.fullySelected = true;
 			}
-			//traiettorie[c.crossingPaths[p].left.id] = cLeft;
+			//traiettorie[c.crossingPaths[p].sinistra.id] = cLeft;
 			traiettorie[np]['sinistra'] = cLeft;
 		}
-		if(c.crossingPaths[p] != null && c.crossingPaths[p].straight_1 && c.crossingPaths[p].straight_2){
-			var s1 = makeCPData(c.crossingPaths[p].straight_1);
-			var s2 = makeCPData(c.crossingPaths[p].straight_2);
-			if(c.crossingPaths[(np+2)%4] && c.crossingPaths[(np+2)%4].left){
+		if(c.crossingPaths[p] != null && c.crossingPaths[p].dritto_1 && c.crossingPaths[p].dritto_2){
+			var s1 = makeCPData(c.crossingPaths[p].dritto_1);
+			var s2 = makeCPData(c.crossingPaths[p].dritto_2);
+			var eN = (np+2)%4;
+			if(c.crossingPaths[eN] && c.crossingPaths[eN].sinistra){
 				s1.intersezioni = [
 					{
-						//traiettoria: c.crossingPaths[(np+2)%4].left.id,
+						//traiettoria: c.crossingPaths[eN].left.id,
 						traiettoria: 'sinistra',
-						distanza: c.crossingPaths[p].straight_1.path.getOffsetOf(c.crossingPaths[p].straight_1.path.getIntersections(c.crossingPaths[(np+2)%4].left.path)[0].point),
+						distanza: c.crossingPaths[p].dritto_1.path.getOffsetOf(c.crossingPaths[p].dritto_1.path.getIntersections(c.crossingPaths[eN].sinistra.path)[0].point),
 					}
 				];
 				s2.intersezioni = [
 					{
-						//traiettoria: c.crossingPaths[(np+2)%4].left.id,
+						//traiettoria: c.crossingPaths[eN].left.id,
 						traiettoria: 'sinistra',
-						distanza: c.crossingPaths[p].straight_2.path.getOffsetOf(c.crossingPaths[p].straight_2.path.getIntersections(c.crossingPaths[(np+2)%4].left.path)[0].point),
+						distanza: c.crossingPaths[p].dritto_2.path.getOffsetOf(c.crossingPaths[p].dritto_2.path.getIntersections(c.crossingPaths[eN].sinistra.path)[0].point),
 					}
 				];
 			}

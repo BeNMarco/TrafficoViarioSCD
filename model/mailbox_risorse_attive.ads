@@ -63,7 +63,7 @@ package mailbox_risorse_attive is
       procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
-      procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; speed: Float; step: Float);
+      procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_to_go: Boolean; speed: Float; step: Float);
       procedure set_move_parameters_entity_on_main_road(current_car_in_corsia: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; speed: Float; step: Float);
       procedure set_car_overtaken(value_overtaken: Boolean; car: in out ptr_list_posizione_abitanti_on_road);
       procedure set_flag_car_can_overtake_to_next_corsia(car: in out ptr_list_posizione_abitanti_on_road; flag: Boolean);
@@ -151,6 +151,7 @@ package mailbox_risorse_attive is
       function get_index_inizio_moto return Boolean;
       function get_first_abitante_to_exit_from_urbana return ptr_list_posizione_abitanti_on_road;
       function get_car_avanzamento return Float;
+      function get_last_abitante_in_urbana return posizione_abitanti_on_road;
 
       procedure configure(risorsa: strada_ingresso_features; inizio_moto: Boolean);
    private
@@ -158,6 +159,7 @@ package mailbox_risorse_attive is
       risorsa_features: strada_ingresso_features;
       function slide_list(type_structure: data_structures_types; range_1: Boolean; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
       -- l'immagine va creata per i prossimi elementi
+      last_abitante_in_urbana: posizione_abitanti_on_road;   -- TO DO : mettere in immagine last_abitante_in_urbana
       car_avanzamento_in_urbana: Float:= 0.0;
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..1);

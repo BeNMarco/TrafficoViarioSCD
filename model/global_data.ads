@@ -14,5 +14,8 @@ package global_data is
    max_larghezza_veicolo: constant Float:= 1.5;
    bound_to_change_corsia: constant Float:= 40.0;
    num_delta_to_wait_to_have_system_snapshot: constant Positive:= 30;
+   min_veicolo_distance: constant Float:= 2.0;
+   distance_at_witch_decelarate: constant Float:= 3.5;
+   add_factor: constant Float:= 0.0;
 
 end global_data;

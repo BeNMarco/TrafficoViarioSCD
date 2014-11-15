@@ -28,6 +28,7 @@ package mailbox_risorse_attive is
 
    function get_posizione_abitanti_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return posizione_abitanti_on_road'Class;
    function get_next_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
+   function get_prev_from_list_posizione_abitanti(obj: list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
 
    type road_state is array (Boolean range <>,Positive range <>) of ptr_list_posizione_abitanti_on_road;
    type number_entity is array (Boolean range <>,Positive range <>) of Natural;
@@ -47,6 +48,8 @@ package mailbox_risorse_attive is
    function create_img_num_entity_strada(num_entity_strada: number_entity) return JSON_Value;
    function create_abitante_from_json(json_abitante: JSON_Value) return posizione_abitanti_on_road;
    function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road;
+
+   procedure update_bound_next_car_in_incrocio(previous_bound: in out Float; new_bound: Float);
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       entry ingresso_wait_turno;
@@ -103,6 +106,7 @@ package mailbox_risorse_attive is
       function get_num_ingressi return Natural;
    private
       function get_num_estremi_urbana return Positive;
+      function slide_list(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
 
       num_delta_incroci_finished: Natural:= 0;
       array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
@@ -188,11 +192,18 @@ package mailbox_risorse_attive is
       procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array);
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
 
+      procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
+
+      procedure calcola_bound_avanzamento_in_incrocio(index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out Float; stop_entity: in out Boolean; distance_to_next_car: in out Float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0);
+
       function get_verso_semafori_verdi return Boolean;
       function get_size_incrocio return Positive;
       function get_list_car_to_move(key_incrocio: Positive; corsia: id_corsie) return ptr_list_posizione_abitanti_on_road;
       function get_posix_first_entity(from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return Float;
+
+      function semaforo_is_verde_from_road(id_quartiere_road: Positive; id_road: Positive) return Boolean;
    private
+      function slide_list(num_urbana: Positive; num_corsia: id_corsie; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
       function get_num_urbane_to_wait return Positive;
       num_urbane_ready: Natural:= 0;
       finish_delta_incrocio: Boolean:= False;
@@ -249,6 +260,7 @@ private
    type list_posizione_abitanti_on_road is tagged record
       posizione_abitante: posizione_abitanti_on_road;
       next: ptr_list_posizione_abitanti_on_road:= null;
+      prev: ptr_list_posizione_abitanti_on_road:= null;
    end record;
 
    type list_ingressi_per_urbana is tagged record

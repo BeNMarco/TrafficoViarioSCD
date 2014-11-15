@@ -34,9 +34,9 @@ package risorse_strade_e_incroci is
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
    procedure reconfigure_resource(resource: ptr_backup_interface; id_task: Positive);
 
-   procedure update_bound_next_car_in_incrocio(previous_bound: in out Float; new_bound: Float);
-
    procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive);
+
+   function calculate_next_car_in_opposite_corsia(current_corsia: ptr_list_posizione_abitanti_on_road; opposite_corsia: ptr_list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
 
    task type core_avanzamento_urbane is new core_avanzamento with
       entry configure(id: Positive);
@@ -63,7 +63,7 @@ package risorse_strade_e_incroci is
 
    procedure synchronization_with_delta(id: Positive);
 
-   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: Float; distance_to_stop_line: Float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: Float; next_abitante_velocity: Float) return Float;
+   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: Float; distance_to_stop_line: Float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: in out Float; next_abitante_velocity: Float; disable_rallentamento_1: Boolean:= False; disable_rallentamento_2: Boolean:= False) return Float;
    function calculate_new_speed(current_speed: Float; acceleration: Float) return Float;
    function calculate_new_step(new_speed: Float; acceleration: Float) return Float;
    function calculate_traiettoria_to_follow_from_ingresso(id_quartiere_abitante: Positive; id_abitante: Positive; id_ingresso: Positive; ingressi: indici_ingressi) return traiettoria_ingressi_type;
@@ -75,6 +75,8 @@ package risorse_strade_e_incroci is
 
    procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: Float; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
    procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
+
+   procedure fix_advance_parameters(acceleration: in out Float; new_speed: in out Float; new_step: in out Float; speed_abitante: Float; distance_to_next: Float; distanza_stop_line: Float; max_acceleration: Float);
 
 private
 

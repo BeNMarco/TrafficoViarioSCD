@@ -1904,8 +1904,7 @@ package body mailbox_risorse_attive is
 
       procedure change_verso_semafori_verdi is
       begin
-         null;
-         --verso_semafori_verdi:= not verso_semafori_verdi;
+         verso_semafori_verdi:= not verso_semafori_verdi;
       end change_verso_semafori_verdi;
 
       procedure insert_new_car(from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is

@@ -208,7 +208,7 @@ package mailbox_risorse_attive is
       num_urbane_ready: Natural:= 0;
       finish_delta_incrocio: Boolean:= False;
       -- l'immagine va creata per i prossimi elementi
-      verso_semafori_verdi: Boolean:= True;  -- key incroci per valore True: 1 e 3
+      verso_semafori_verdi: Boolean:= False;  -- key incroci per valore True: 1 e 3
       car_to_move: car_to_move_in_incroci(1..size_incrocio,1..2):= (others => (others => null));
    end resource_segmento_incrocio;
    type ptr_resource_segmento_incrocio is access all resource_segmento_incrocio;

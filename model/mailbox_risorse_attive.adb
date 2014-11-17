@@ -595,6 +595,7 @@ package body mailbox_risorse_attive is
          state_view_abitante: JSON_Value;
          distance_ingresso: Float;
          flag_overtake_next_corsia: Boolean;
+         ab: posizione_abitanti_on_road;
       begin
          for i in main_strada'Range(1) loop
             for j in main_strada'Range(2) loop
@@ -733,6 +734,7 @@ package body mailbox_risorse_attive is
                            prec_list_abitanti_traiettoria:= null;
                            while list_abitanti_traiettoria/=null loop
                               prec_list_abitanti_traiettoria:= list_abitanti_traiettoria;
+                              ab:= prec_list_abitanti_traiettoria.posizione_abitante;
                               list_abitanti_traiettoria:= list_abitanti_traiettoria.next;
                            end loop;
                            if prec_list_abitanti_traiettoria=null then
@@ -810,7 +812,7 @@ package body mailbox_risorse_attive is
             list:= list.next;
          end loop;
          if prec_prec_list/=null then
-            prec_prec_list.prev:= null;
+            prec_list.prev:= null;
             prec_prec_list.next:= null;
          else
             main_strada(polo,num_corsia):= null;
@@ -1320,7 +1322,7 @@ package body mailbox_risorse_attive is
          for i in reverse 1..ordered_ingressi_polo(not polo_to_consider).all'Last loop
             key_ingresso:= get_key_ingresso(get_index_ingresso_from_key(i,type_ingressi_structure),not_ordered);
             index_ingresso:= ordered_ingressi_polo(not polo_to_consider)(i);
-            distance_ingresso:= get_urbana_from_id(get_ingresso_from_id(index_ingresso).get_id_main_strada_ingresso).get_lunghezza_road-get_distance_from_polo_percorrenza(get_ingresso_from_id(index_ingresso),polo_to_consider);
+            distance_ingresso:= get_distance_from_polo_percorrenza(get_ingresso_from_id(index_ingresso),polo_to_consider);
 
             list_traiettorie_uscita_ritorno:= set_traiettorie_ingressi(key_ingresso,uscita_ritorno);
             list_traiettorie_entrata_ritorno:= get_last_abitante_ingresso(key_ingresso,entrata_ritorno);
@@ -1348,10 +1350,22 @@ package body mailbox_risorse_attive is
             end if;
          end loop;
 
-         if distance_one<=distance_two then
-           return distance_one;
+         if distance_one=-1.0 and distance_two=-1.0 then
+            return -1.0;
          else
-            return distance_two;
+            if distance_one/=-1.0 and distance_two/=-1.0 then
+               if distance_one<=distance_two then
+                  return distance_one;
+               else
+                  return distance_two;
+               end if;
+            else
+               if distance_one=-1.0 then
+                  return distance_two;
+               else
+                  return distance_one;
+               end if;
+            end if;
          end if;
       end calculate_distance_ingressi_from_given_distance;
 
@@ -2078,18 +2092,22 @@ package body mailbox_risorse_attive is
             where_now_car:= 0.0;
          else
             where_now_car:= list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
-               -- begin inizializzazione di stop entity
-            if verso_semafori_verdi=True and then (index_road=1 or index_road=3) then
-               stop_entity:= False;
-            elsif verso_semafori_verdi=False and then (index_road=2 or index_road=4) then
-               stop_entity:= False;
+            -- begin inizializzazione di stop entity
+            if where_now_car=0.0 then
+               if verso_semafori_verdi=True and then (index_road=1 or index_road=3) then
+                  stop_entity:= False;
+               elsif verso_semafori_verdi=False and then (index_road=2 or index_road=4) then
+                  stop_entity:= False;
+               else
+                  stop_entity:= True;
+               end if;
             else
-               stop_entity:= True;
-            end if;
+               stop_entity:= False;
                -- end inizializzazione
+            end if;
          end if;
 
-         if stop_entity=False and then (list_car=null or else list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0) then
+         if (list_car=null or else (stop_entity=False and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0)) then
             index_other_road:= index_road+1;
 
             if index_other_road=5 then -- index_other_road è la posizione dell'indice della strada nell'incrocio

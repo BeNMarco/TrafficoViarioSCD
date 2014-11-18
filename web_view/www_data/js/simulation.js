@@ -94,17 +94,21 @@ Simulation.prototype.moveObjects = function(time){
 		} 
 		// otherwise we compute the correct position
 		else {
+			var prevState = this.objects.cars[curCar.id_abitante].prevState;
 			// if the object switched from a place to another 
 			// if(curCar.where != this.prevState.cars[curCar.id_abitante].where){
-			if(curCar.where != this.objects.cars[curCar.id_abitante].prevState.where){
+			if(curCar.where != prevState.where){
 				// if the initial position in the current state is set we use it, otherwise we use 0
 				prevPosition = curCar.inizio !== undefined ? curCar.inizio : 0;
+				if (curCar.where == 'strada' && prevState.where == 'traiettoria_ingresso'){
+					prevPosition = prevState.distanza_ingresso + 10;
+				}
 
 			}
 			// otherwise simply take the position from the previous state
 			else {
 				// prevPosition = this.prevState.cars[curCar.id_abitante].distanza;
-				prevPosition = this.objects.cars[curCar.id_abitante].prevState.distanza;
+				prevPosition = prevState.distanza;
 			}
 			var curDist = (curCar.distanza < 0 ) ? 0 : curCar.distanza;
 			newDistance = 1*prevPosition + 1*((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));

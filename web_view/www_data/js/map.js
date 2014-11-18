@@ -16,6 +16,11 @@ function sortCrossroadsStreets(a,b){
 	return sortPoints(a.point, b.point);
 }
 
+function doesExists(thing)
+{
+	return typeof thing !== 'undefined' && thing != null;
+}
+
 function pathOffset(path, offset, precision, style, start, end){
 	/*
 	  path: path object to be offset
@@ -151,6 +156,10 @@ Street.prototype.draw = function(style){
 			middlePaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'continuous'};
 			this.sideStreets[side][index].paths = this.prepareSidestreetsAccessPaths(style, curStr, crossStart, crossEnd, side);
 		}	
+	}
+
+	if(this.id == 31){
+		console.log(this.sideStreets);
 	}
 	
 	this.drawPedestrianLines(pedestrianPaths, style, precision);
@@ -370,6 +379,7 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 		console.log(this);
 		console.log(distance+"/"+this.guidingPath.length);
 		console.log(normal);
+		throw "TOO_LONG: Spostamento su strada "+this.id+" al metro "+distance+" di "+this.guidingPath.length + " (corsia "+lane+", lato "+side+")";
 	}
 
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
@@ -390,8 +400,29 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 		console.log(entranceDistance);
 		console.log(crossingPath);
 		console.log(distance);
-		console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
+		//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
 		console.log("BOOM!");
+		var errSideStreet = this.sideStreets[side][entranceDistance];
+		if(!doesExists(errSideStreet))
+		{
+			throw "ENTRANCE_STREET_NOT_FOUND: La strada di ingresso al metro "+entranceDistance+" nel lato "+side+" della strada "+this.id+" non esiste";
+		}
+		var curPath = errSideStreet.paths[crossingPath];
+		if(!doesExists(curPath)){
+			throw "ENTRANCE_PATH_NOT_FOUND: La traiettoria di ingresso "+crossingPath+" al metro "+entranceDistance+" nel lato "+side+" della strada "+this.id+" non esiste";
+		}
+		console.log(loc);
+		console.log(err);
+		
+		if(!doesExists(loc)){
+			console.log(curPath);
+			throw "ENTRANCE_PATH_TOO_LONG: Spostamento su traiettoria di ingresso della strada "+this.id+" al metro "+distance+" di "+curPath.path.length + " (traiettoria "+crossingPath+", lato "+side+", distanza ingresso: "+entranceDistance+")";
+		}
+		/*
+		var newDistance = (distance < 0) ? 0 : distance;
+		newDistance = (distance > curPath.length) ? curPath.length : distance;
+		var loc = curPath.getLocationAt(newDistance);
+		*/
 	}
 	return {angle:loc.tangent.angle, position: loc.point};
 }
@@ -512,10 +543,10 @@ Crossroad.prototype.draw = function(style){
 	var totalHeight = this.lanesNumber[1]*style.laneWidth+style.pavementWidth;
 	var startP = new Point(this.center.x-totalWidth, this.center.y-totalHeight);
 
-	if(style.debug){
+	//if(style.debug){
 		this.label = new PointText(this.center);
 		this.label.content = this.id;
-	}
+	//}
 	var path = new Path.Rectangle(startP, new Size(totalWidth*2, totalHeight*2));
 	path.fillColor = style.laneColor;
 	
@@ -715,7 +746,19 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 		console.log("ID entrance street: "+this.getEntranceStreetNumber(enteringStreet, streetDistrict));
 		console.log(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)])
 		console.log("Going "+direction);
-		throw "The crossroad "+this.id+" does not have the street "+enteringStreet+" form the district "+streetDistrict;
+		if (!doesExists(this.getEntranceStreetNumber(enteringStreet, streetDistrict)))
+		{
+			throw "CROSSROAD_SREET_NOT_FOUND: L'incrocio "+this.id+" non ha la strada "+enteringStreet+" proveniente dal distretto "+streetDistrict;	
+		}
+		else if (!doesExits(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction]))
+		{
+			throw "CROSSROAD_PATH_NOT_FOUND: L'incrocio "+this.id+" non ha la traiettoria "+direction+" a partire dalla strada "+enteringStreet+" del quartiere "+streetDistrict;	
+		}
+		else if (!doesExists(loc))
+		{
+			throw "CROSSROAD_PATH_TOO_LONG: Spostamento sulla traiettoria "+direction+" dell'incrocio "+this.id+" a partire dalla strada "+enteringStreet+" del quartiere "+streetDistrict+" al metro "+distance+" di "+this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.length;
+		}
+		
 	}
 	return {angle: loc.tangent.angle, position: loc.point};
 }

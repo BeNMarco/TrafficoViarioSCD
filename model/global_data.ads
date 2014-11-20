@@ -12,7 +12,7 @@ package global_data is
    delta_value: constant Float:= 0.5;
    safe_distance_to_overtake: constant Float:= 15.0;
    max_larghezza_veicolo: constant Float:= 1.5;
-   bound_to_change_corsia: constant Float:= 40.0;
+   bound_to_change_corsia: constant Float:= 30.0;
    num_delta_to_wait_to_have_system_snapshot: constant Positive:= 30;
    min_veicolo_distance: constant Float:= 2.0;
    distance_at_witch_decelarate: constant Float:= 3.5;

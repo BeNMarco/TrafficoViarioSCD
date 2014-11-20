@@ -750,8 +750,8 @@ package body risorse_strade_e_incroci is
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
          state_view_abitanti:= Empty_Array;
-         mailbox.update_traiettorie_ingressi(state_view_abitanti);
          mailbox.update_car_on_road(state_view_abitanti);
+         mailbox.update_traiettorie_ingressi(state_view_abitanti);
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          -- crea snapshot se necessario
@@ -816,10 +816,10 @@ package body risorse_strade_e_incroci is
 
                if first_corsia/=0 and then current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_urbana_from_id(id_task).get_lunghezza_road then
                   -- elaborazione corsia to go;    first_corsia è la corsia in cui la macchina è situata
-                  Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task));
+                  Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task) & " corsia" & Positive'Image(first_corsia));
                   -- Put_Line("id_abitante overtaking " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_distance_on_overtaking_trajectory));
 
-                  if (id_task=1 and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=68) and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>82.0 then
+                  if (id_task=27 and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=79) and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>784.0 then
                      z:= 5;
                   end if;
 
@@ -887,7 +887,7 @@ package body risorse_strade_e_incroci is
                               end if;
                            end if;
                            speed_abitante:= current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_current_speed_abitante;
-                           if stop_entity=False and (next_car_on_road/=null and next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) then
+                           if stop_entity=False and (next_car_on_road/=null and (next_car_in_ingresso_distance=-1.0 or else next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti)) then
                               acceleration:= calculate_acceleration(mezzo => car,
                                                               id_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,
                                                               id_quartiere_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
@@ -925,7 +925,7 @@ package body risorse_strade_e_incroci is
                               calculate_distance_to_next_car_on_road(current_car_in_corsia,next_car_in_opposite_corsia,next_car_in_corsia,destination.get_corsia_to_go_trajectory,next_car_on_road,next_car_on_road_distance);
                               next_entity_distance:= calculate_next_entity_distance(current_car_in_corsia,next_car_in_ingresso_distance,next_car_on_road,next_car_on_road_distance,id_task);
                               speed_abitante:= current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_current_speed_abitante;
-                              if next_car_on_road/=null and next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti then
+                              if next_car_on_road/=null and (next_car_in_ingresso_distance=-1.0 or else next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) then
                                  acceleration:= calculate_acceleration(mezzo => car,
                                                                 id_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,
                                                                 id_quartiere_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
@@ -957,7 +957,7 @@ package body risorse_strade_e_incroci is
                         calculate_distance_to_next_car_on_road(current_car_in_corsia,next_car_in_corsia,next_car_in_opposite_corsia,first_corsia,next_car_on_road,next_car_on_road_distance);
                         next_entity_distance:= calculate_next_entity_distance(current_car_in_corsia,next_car_in_ingresso_distance,next_car_on_road,next_car_on_road_distance,id_task);
                         speed_abitante:= current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_current_speed_abitante;
-                        if next_car_on_road/=null and then next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti then
+                        if next_car_on_road/=null and then (next_car_in_ingresso_distance=-1.0 or else next_car_in_ingresso_distance/=next_entity_distance-current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) then
                            acceleration:= calculate_acceleration(mezzo => car,
                                                            id_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,
                                                            id_quartiere_abitante => current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
@@ -972,6 +972,7 @@ package body risorse_strade_e_incroci is
                            disable_rallentamento:= False;
                            if semaforo_is_verde then
                               if distance_to_stop_line<distance_at_witch_decelarate then
+                                 -- next_entity_distance vale 0
                                  disable_rallentamento:= True;
                                  --tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                                  index_road:= 0;
@@ -988,35 +989,19 @@ package body risorse_strade_e_incroci is
                                                                                                                                                                                          from_id_road           => id_task);
                                  pragma warnings(on);
                                  if stop_entity_to_incrocio then  -- se true ferma tutto
-                                    semaforo_is_verde:= False;
+                                    --semaforo_is_verde:= False;
+                                    disable_rallentamento:= False;
                                     costante_additiva:= 0.0;
                                  else
-                                    if bound_distance=-1.0 and distance_to_next_car=-1.0 then
+                                    if distance_to_next_car=-1.0 then -- and bound_distance=-1.0 then
                                        costante_additiva:= get_traiettoria_incrocio(destination.get_traiettoria_incrocio_to_follow).get_lunghezza_traiettoria_incrocio;
                                     else
-                                       if bound_distance=-1.0 then
-                                          if distance_to_next_car>min_veicolo_distance then
-                                             costante_additiva:= distance_to_next_car;
-                                             semaforo_is_verde:= False;
-                                          else
-                                             costante_additiva:= 0.0;
-                                          end if;
+                                       if distance_to_next_car>min_veicolo_distance and then distance_to_next_car-min_veicolo_distance>0.0 then
+                                          costante_additiva:= distance_to_next_car-min_veicolo_distance;
+                                          --semaforo_is_verde:= False;
                                        else
-                                          if distance_to_next_car=-1.0 then
-                                             costante_additiva:= bound_distance;
-                                          else
-                                             if distance_to_next_car<bound_distance then
-                                                if distance_to_next_car>min_veicolo_distance then
-                                                   costante_additiva:= distance_to_next_car;
-                                                   semaforo_is_verde:= False;
-                                                else
-                                                   costante_additiva:= 0.0;
-                                                end if;
-                                             else
-                                                costante_additiva:= bound_distance;
-                                                distance_to_next_car:= -1.0;
-                                             end if;
-                                          end if;
+                                          costante_additiva:= 0.0;
+                                          disable_rallentamento:= False;
                                        end if;
                                     end if;
                                  end if;
@@ -1031,7 +1016,7 @@ package body risorse_strade_e_incroci is
                                                                  next_id_abitante => 0,
                                                                  abitante_velocity => speed_abitante,
                                                                  next_abitante_velocity => 0.0,
-                                                                 disable_rallentamento_1 => semaforo_is_verde,
+                                                                 disable_rallentamento_1 => disable_rallentamento,
                                                                  disable_rallentamento_2 => disable_rallentamento);
                         end if;
                      end if;
@@ -1071,11 +1056,19 @@ package body risorse_strade_e_incroci is
                         tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                         abitante_to_transfer:= posizione_abitanti_on_road(create_new_posizione_abitante_from_copy(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti));
 
-                        if distance_to_next_car/=-1.0 and then distance_to_next_car<get_traiettoria_incrocio(destination.get_traiettoria_incrocio_to_follow).get_lunghezza_traiettoria_incrocio then  -- se l'abitante ha una macchina davanti controllo sa la prossima posizione viola il vincolo min_veicolo_distance
-                           if abitante_to_transfer.get_where_next_posizione_abitanti-get_urbana_from_id(id_task).get_lunghezza_road<distance_to_next_car-min_veicolo_distance then
-                              abitante_to_transfer.set_where_next_abitante(get_urbana_from_id(id_task).get_lunghezza_road+distance_to_next_car-min_veicolo_distance);
+                        if semaforo_is_verde then
+                           if disable_rallentamento=True then
+                              abitante_to_transfer.set_where_next_abitante(get_urbana_from_id(id_task).get_lunghezza_road);
+                           else
+                              -- costante additiva >0
+                              if abitante_to_transfer.get_where_next_posizione_abitanti-get_urbana_from_id(id_task).get_lunghezza_road>costante_additiva then
+                                 abitante_to_transfer.set_where_next_abitante(get_urbana_from_id(id_task).get_lunghezza_road+costante_additiva);
+                              end if;
                            end if;
+                        else
+                           abitante_to_transfer.set_where_next_abitante(get_urbana_from_id(id_task).get_lunghezza_road);
                         end if;
+
                         abitante_to_transfer.set_where_next_abitante(abitante_to_transfer.get_where_next_posizione_abitanti-get_urbana_from_id(id_task).get_lunghezza_road);
 
                         -- l'abitante non può andare direttamente a fine traiettoria perchè altrimenti verrebbe eliminato
@@ -1210,7 +1203,7 @@ package body risorse_strade_e_incroci is
                   fix_advance_parameters(acceleration,new_speed,new_step,speed_abitante,next_pos_abitante,distance_to_stop_line,acceleration_car);
 
                   mailbox.set_move_parameters_entity_on_traiettoria_ingresso(list_abitanti_uscita_andata,ingresso.get_id_road,uscita_andata,current_polo_to_consider,new_speed,new_step);
-                  Put_Line("id_abitante " & Positive'Image(list_abitanti_uscita_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_uscita_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria uscita andata ingresso " & Positive'Image(id_task));
+                  Put_Line("id_abitante " & Positive'Image(list_abitanti_uscita_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_uscita_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria uscita andata ingresso " & Positive'Image(ingresso.get_id_road));
                end if;
 
                -- TRAIETTORIA USCITA_RITORNO
@@ -1228,6 +1221,9 @@ package body risorse_strade_e_incroci is
                end if;
                stop_entity:= False;
                if (list_abitanti_uscita_ritorno/=null and then list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_traiettoria_ingresso(uscita_ritorno).get_lunghezza) and can_move_from_traiettoria then
+                  if list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=82 then
+                     z:= 5;
+                  end if;
                   if list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie then
                      stop_entity:= not mailbox.can_abitante_continue_move(distance_ingresso,1,uscita_ritorno,current_polo_to_consider);
                   elsif list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_ritorno).get_intersezioni.get_distanza_intersezione-max_larghezza_veicolo then
@@ -1279,7 +1275,7 @@ package body risorse_strade_e_incroci is
                      -- cerco se ingressi nel polo opposto hanno svolte a sx
                      key_ingresso:= 0;
                      for j in reverse mailbox.get_ordered_ingressi_from_polo(not current_polo_to_consider).all'Range loop
-                        if distance_ingresso<get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(j,current_ingressi_structure_type_to_not_consider)),current_polo_to_consider) then
+                        if distance_ingresso>get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(j,current_ingressi_structure_type_to_not_consider)),current_polo_to_consider) then
                            abitante:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(j,current_ingressi_structure_type_to_not_consider),entrata_ritorno);
                            if abitante/=null and then (abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie and
                                                          abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
@@ -1302,7 +1298,7 @@ package body risorse_strade_e_incroci is
                      end loop;
                      if key_ingresso/=0 then
                         if next_pos_abitante=0.0 or else next_pos_abitante>get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(key_ingresso,current_ingressi_structure_type_to_not_consider)),not current_polo_to_consider)-costante_additiva then -- 10.0 dimensione di metà strada
-                           next_pos_abitante:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(key_ingresso,current_ingressi_structure_type_to_not_consider)),not current_polo_to_consider)+costante_additiva;
+                           next_pos_abitante:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(key_ingresso,current_ingressi_structure_type_to_not_consider)),not current_polo_to_consider)-costante_additiva;
                         end if;
                      end if;
                      acceleration_car:= move_parameters(get_quartiere_utilities_obj.get_auto_quartiere(list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti)).get_max_acceleration;
@@ -1337,18 +1333,18 @@ package body risorse_strade_e_incroci is
                      end if;
                      if stop_entity=False and then list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
                         if list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti+new_step>=get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
-                           if list_abitanti_entrata_ritorno=null and then list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
+                           ---if list_abitanti_entrata_ritorno=null and then list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
                               stop_entity:= not mailbox.can_abitante_continue_move(distance_ingresso,2,uscita_ritorno,current_polo_to_consider);
                               if stop_entity then
                                  new_step:= get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie-list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                               end if;
-                           end if;
+                           --end if;
                         end if;
                      end if;
                      -- end scaglioni steps e ottimizzazione
 
                      mailbox.set_move_parameters_entity_on_traiettoria_ingresso(list_abitanti_uscita_ritorno,ingresso.get_id_road,uscita_ritorno,not current_polo_to_consider,new_speed,new_step);
-                     Put_Line("id_abitante " & Positive'Image(list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria uscita ritorno ingresso " & Positive'Image(id_task));
+                     Put_Line("id_abitante " & Positive'Image(list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_uscita_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria uscita ritorno ingresso " & Positive'Image(ingresso.get_id_road));
                   end if;
                end if;
 
@@ -1357,6 +1353,9 @@ package body risorse_strade_e_incroci is
                can_move_from_traiettoria:= True;
                next_pos_abitante:= 0.0;
                stop_entity:= False;
+               if list_abitanti_entrata_ritorno/=null and then list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=89 then
+                  z:= 2;
+               end if;
                if list_abitanti_entrata_ritorno/=null and then list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0 then
                   if list_abitanti_uscita_ritorno=null then
                      can_move_from_traiettoria:= True;
@@ -1408,7 +1407,7 @@ package body risorse_strade_e_incroci is
                         end if;
                      end if;
                      if stop_entity=False and then list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
-                        if list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti+new_step>=get_traiettoria_ingresso(entrata_ritorno).get_intersezioni.get_distanza_intersezione-max_larghezza_veicolo then
+                        if list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti+new_step>=get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
                            stop_entity:= not mailbox.can_abitante_continue_move(get_urbana_from_id(id_task).get_lunghezza_road-distance_ingresso,1,entrata_ritorno,current_polo_to_consider);
                            if stop_entity then
                               new_step:= get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie-list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
@@ -1430,7 +1429,7 @@ package body risorse_strade_e_incroci is
                      -- end scaglioni e ottimizzazioni
 
                      mailbox.set_move_parameters_entity_on_traiettoria_ingresso(list_abitanti_entrata_ritorno,ingresso.get_id_road,entrata_ritorno,current_polo_to_consider,new_speed,new_step);
-                     Put_Line("id_abitante " & Positive'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria entrata ritorno ingresso " & Positive'Image(id_task));
+                     Put_Line("id_abitante " & Positive'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_entrata_ritorno.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria entrata ritorno ingresso " & Positive'Image(ingresso.get_id_road));
                   end if;
                end if;
 
@@ -1463,7 +1462,7 @@ package body risorse_strade_e_incroci is
                   calculate_parameters_car_in_entrata(list_abitanti_entrata_andata,traiettoria_rimasta_da_percorrere,next_abitante,distance_to_stop_line,entrata_andata,next_pos_abitante,acceleration,new_step,new_speed);
                   fix_advance_parameters(acceleration,new_speed,new_step,speed_abitante,next_pos_abitante,distance_to_stop_line,acceleration_car);
                   mailbox.set_move_parameters_entity_on_traiettoria_ingresso(list_abitanti_entrata_andata,ingresso.get_id_road,entrata_andata,current_polo_to_consider,new_speed,new_step);
-                  Put_Line("id_abitante " & Positive'Image(list_abitanti_entrata_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_entrata_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria entrata andata ingresso " & Positive'Image(id_task));
+                  Put_Line("id_abitante " & Positive'Image(list_abitanti_entrata_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_abitanti_entrata_andata.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is traiettoria entrata andata ingresso " & Positive'Image(ingresso.get_id_road));
                end if;
             end loop;
             current_polo_to_consider:= True;
@@ -1809,6 +1808,10 @@ package body risorse_strade_e_incroci is
                      stop_entity:= False;
                      bound_distance:= -1.0;  -- to fix that bound_distance is not set
                      distance_to_next_car:= -1.0;
+                     if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=70 then
+                        o:= False;
+                     end if;
+
                      mailbox.calcola_bound_avanzamento_in_incrocio(index_road             => index_road,
                                                                    indice                 => i,
                                                                    traiettoria_car        => traiettoria_car,
@@ -1841,25 +1844,25 @@ package body risorse_strade_e_incroci is
                      -- aggiornamento posizione macchina
                      if stop_entity=False then  -- la macchina può avanzare
                         switch:= False;
-                        if bound_distance/=-1.0 then
+                        --if bound_distance/=-1.0 then
                            -- la macchina deve fermarsi all'interno dell'incrocio
                            -- bound_distance è settato per macchine che vanno in direzione dritto_1 o dritto_2
                            -- distance_to_next_car can be -1.0 if there aren't cars in front of
-                           if distance_to_next_car/=-1.0 then
-                              if bound_distance<=distance_to_next_car then
-                                 distance_next_entity:= bound_distance;
-                              else
-                                 distance_next_entity:= distance_to_next_car;
-                              end if;
-                           else
-                              switch:= True;  -- non si ha bound per macchine che stanno davanti
-                           end if;
+                        --   if distance_to_next_car/=-1.0 then
+                        --      if bound_distance<=distance_to_next_car then
+                        --         distance_next_entity:= bound_distance;
+                        --      else
+                        --         distance_next_entity:= distance_to_next_car;
+                        --      end if;
+                        --   else
+                        --      switch:= True;  -- non si ha bound per macchine che stanno davanti
+                        --   end if;
+                        --else
+                        if distance_to_next_car/=-1.0 then
+                           distance_next_entity:= distance_to_next_car;
                         else
-                           if distance_to_next_car/=-1.0 then
-                              distance_next_entity:= distance_to_next_car;
-                           else
-                              switch:= True;  -- non si ha bound per macchine che stanno davanti
-                           end if;
+                           switch:= True;  -- non si ha bound per macchine che stanno davanti
+                        --end if;
                         end if;
                         if switch then
                            case traiettoria_car is  -- set distance next entity to length traiettoria
@@ -1965,7 +1968,7 @@ package body risorse_strade_e_incroci is
                         -- end update scaglioni
 
                         mailbox.update_avanzamento_car(list_car,new_step,new_speed);
-                        Put_Line("id_abitante " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is incrocio " & Positive'Image(id_task));
+                        Put_Line("id_abitante " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & Float'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is incrocio " & Positive'Image(id_task) & ", traiettoria:" & to_string_incroci_type(traiettoria_car) & ", from index road:" & Positive'Image(index_road));
                         if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<length_traiettoria and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=length_traiettoria then
                            -- passaggio della macchina all'urbana
                            if id_task=56 and list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=65 then

@@ -63,6 +63,7 @@ package risorse_passive_data is
       function get_classe_locate_abitanti(id_quartiere: Positive) return ptr_rt_location_abitanti;
       function get_index_luogo_from_id_json(json_key: Positive) return Positive;
       function get_from_ingressi_quartiere return Natural;
+      function is_incrocio(id_risorsa: Positive) return Boolean;
 
    private
 

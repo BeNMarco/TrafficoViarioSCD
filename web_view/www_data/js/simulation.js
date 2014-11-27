@@ -3,6 +3,10 @@
 *	Email: negromarc@gmail.com
 *	Descr: object that handle the whole simulation
 */
+function doesExists(thing)
+{
+	return typeof thing !== 'undefined' && thing != null;
+}
 
 function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.stateCache = [];
@@ -87,31 +91,49 @@ Simulation.prototype.moveObjects = function(time){
 		var prevPosition = 0;
 
 		// if the previous state is empty (simulation just initiated) we put the object at the position given by the state
-		if(this.prevState == null){
+		if(!doesExists(this.prevState))
+		{
 			newDistance = curCar.distanza;
 			console.log("previous state is null");
 			console.log(curCar);
 		} 
 		// otherwise we compute the correct position
-		else {
+		else if(doesExists(this.objects.cars[curCar.id_abitante].prevState))
+		{
 			var prevState = this.objects.cars[curCar.id_abitante].prevState;
 			// if the object switched from a place to another 
 			// if(curCar.where != this.prevState.cars[curCar.id_abitante].where){
-			if(curCar.where != prevState.where){
-				// if the initial position in the current state is set we use it, otherwise we use 0
-				prevPosition = curCar.inizio !== undefined ? curCar.inizio : 0;
-				if (curCar.where == 'strada' && prevState.where == 'traiettoria_ingresso'){
-					prevPosition = prevState.distanza_ingresso + 10;
-				}
+			try{
+				if(curCar.where != prevState.where){
+					// if the initial position in the current state is set we use it, otherwise we use 0
+					prevPosition = curCar.inizio !== undefined ? curCar.inizio : 0;
+					if (curCar.where == 'strada' && prevState.where == 'traiettoria_ingresso'){
+						prevPosition = prevState.distanza_ingresso + 10;
+					}
 
-			}
-			// otherwise simply take the position from the previous state
-			else {
-				// prevPosition = this.prevState.cars[curCar.id_abitante].distanza;
-				prevPosition = prevState.distanza;
+				}
+				// otherwise simply take the position from the previous state
+				else {
+					// prevPosition = this.prevState.cars[curCar.id_abitante].distanza;
+					prevPosition = prevState.distanza;
+				}
+			} catch(err)
+			{
+				console.log("curCar:");
+				console.log(curCar);
+				console.log("prevState:");
+				console.log(prevState);
+				console.log("this.prevSate:");
+				console.log(this.prevSate);
+				console.log(err);
+				throw err;
 			}
 			var curDist = (curCar.distanza < 0 ) ? 0 : curCar.distanza;
 			newDistance = 1*prevPosition + 1*((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+		}
+		else
+		{
+
 		}
 		//console.log("new distance: "+newDistance);
 		var newPos = null;

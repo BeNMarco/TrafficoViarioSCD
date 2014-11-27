@@ -3,6 +3,12 @@
 *	Email: negromarc@gmail.com
 *	Descr: collection of entities to move on the map
 */
+var idCurCarDbg;
+
+function doesExists(thing)
+{
+	return typeof thing !== 'undefined' && thing != null;
+}
 
 function EntitiesStyle(){
 	this.carShape = {type:'Rectangle', args: {point:[0,0],size:[7,11]}}; //[new Point(0,0), new Size(11,7)]
@@ -21,6 +27,7 @@ function Car(id){
 	this.path = new Path();
 	this.currentPosition = null;
 	this.angle = 90;
+	this.length = 11;
 }
 
 Car.prototype.show = function(){
@@ -35,10 +42,25 @@ Car.prototype.hide = function(){
 Car.prototype.draw = function(style){
 	this.path = new Path[style.carShape.type](style.carShape.args); //style.carShape.args[0], style.carShape.args[1]
 	this.path.fillColor = style.carColor;
+	this.length = style.carShape.args.size[1];
 }
 
 Car.prototype.move = function(pos, angle){
-	this.path.position = pos;
+	//this.path.position = new Point(pos.x, pos.y+this.length/2);
+	/*
+	if(doesExists(idCurCarDbg) && this.id == idCurCarDbg)
+	{
+		console.log(this.id+": " +angle);
+	}
+	else 
+	{
+		idCurCarDbg = this.id;
+	}
+*/
+	var p = new Point();
+	p.length = this.length/2;
+	p.angle = this.angle;
+	this.path.position = pos.subtract(p);
 	this.path.rotate(angle-this.angle);
 	this.angle=angle;
 }

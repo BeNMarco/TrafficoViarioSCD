@@ -31,6 +31,7 @@ package remote_types is
    function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Natural is abstract;
    function get_index_luogo_from_id_json(obj: access rt_quartiere_utilities; json_key: Positive) return Positive is abstract;
    function get_from_ingressi_quartiere(obj: access rt_quartiere_utilities) return Natural is abstract;
+   function is_incrocio(obj: access rt_quartiere_utilities; id_risorsa: Positive) return Boolean is abstract;
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
    type rt_handler_semafori_quartiere is abstract tagged limited private;

@@ -360,6 +360,10 @@ package body strade_e_incroci_common is
    begin
       return obj.came_from_ingresso;
    end get_came_from_ingresso;
+   function get_backup_corsia_to_go(obj: posizione_abitanti_on_road) return Natural is
+   begin
+      return obj.backup_corsia_to_go;
+   end get_backup_corsia_to_go;
 
    procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float) is
    begin
@@ -393,6 +397,10 @@ package body strade_e_incroci_common is
    begin
       obj.came_from_ingresso:= flag;
    end set_came_from_ingresso;
+   procedure set_backup_corsia_to_go(obj: in out posizione_abitanti_on_road; num_corsia: Natural) is
+   begin
+      obj.backup_corsia_to_go:= num_corsia;
+   end set_backup_corsia_to_go;
 
    function create_trajectory_to_follow(from_corsia: Natural; corsia_to_go: Natural; ingresso_to_go: Natural; from_ingresso: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow is
       traiettoria: trajectory_to_follow;
@@ -408,7 +416,7 @@ package body strade_e_incroci_common is
    function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
                                           where_now: Float; current_speed: Float; in_overtaken: Boolean;
                                           can_pass_corsia: Boolean; distance_on_overtaking_trajectory: Float;
-                                          came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class is
+                                          came_from_ingresso: Boolean; destination: trajectory_to_follow; backup_corsia_to_go: Natural) return posizione_abitanti_on_road'Class is
       abitante: posizione_abitanti_on_road;
    begin
       abitante.id_abitante:= id_abitante;
@@ -421,6 +429,7 @@ package body strade_e_incroci_common is
       abitante.can_pass_corsia:= can_pass_corsia;
       abitante.distance_on_overtaking_trajectory:= distance_on_overtaking_trajectory;
       abitante.destination:= destination;
+      abitante.backup_corsia_to_go:= backup_corsia_to_go;
       return abitante;
    end create_new_posizione_abitante;
 
@@ -437,6 +446,7 @@ package body strade_e_incroci_common is
       abitante.came_from_ingresso:= posizione_abitante.came_from_ingresso;
       abitante.distance_on_overtaking_trajectory:= posizione_abitante.distance_on_overtaking_trajectory;
       abitante.destination:= posizione_abitante.destination;
+      abitante.backup_corsia_to_go:= posizione_abitante.backup_corsia_to_go;
       return abitante;
    end create_new_posizione_abitante_from_copy;
 

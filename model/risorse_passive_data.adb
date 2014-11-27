@@ -254,6 +254,17 @@ package body risorse_passive_data is
          return get_from_ingressi;
       end get_from_ingressi_quartiere;
 
+      function is_incrocio(id_risorsa: Positive) return Boolean is
+      begin
+         if id_risorsa>=get_from_incroci_a_3 and id_risorsa<=get_to_incroci_a_3 then
+            return True;
+         elsif id_risorsa>=get_from_incroci_a_4 and id_risorsa<=get_to_incroci_a_4 then
+            return True;
+         else
+            return False;
+         end if;
+      end is_incrocio;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is

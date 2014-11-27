@@ -84,9 +84,9 @@ package mailbox_risorse_attive is
       function get_index_ingresso_from_key(key: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_abitante_from_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
-      function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
-      -- get_next_abitante_on_road viene usato solo da quelle macchine in traiettoria di ingresso per ottenere a che distanza si trova la macchina successiva nella corsia in cui si deve immettere
-      function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
+      -- get_next_abitante_on_road viene usato SIA DA quelle macchine in traiettoria di ingresso per ottenere a che distanza si trova la macchina successiva nella corsia in cui si deve immettere
+      -- SIA dagli incroci per vedere la progressione di avanzamento delle macchine(in questo caso viene chiamato da get_distanza_percorsa_first_abitante)
+      function get_next_abitante_on_road(from_distance: Float; range_1: Boolean; range_2: id_corsie; from_ingresso: Boolean:= True) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: Float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: Float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function get_abitanti_on_road(range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
@@ -94,13 +94,30 @@ package mailbox_risorse_attive is
       function calculate_distance_ingressi_from_given_distance(polo_to_consider: Boolean; in_corsia: id_corsie; car_distance: Float) return Float;
       function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return Float;
       function can_car_overtake(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; to_corsia: id_corsie) return Boolean;
+
+      -- BEGIN metodi per gestione cambio corsia
+      -- controlla se la macchina si trova nella posizione di un ingresso, lato false o true, e se in questo vi sono macchine in movimento
       function there_are_cars_moving_across_next_ingressi(car: ptr_list_posizione_abitanti_on_road; polo: Boolean) return Boolean;
-      function car_can_initiate_overtaken_on_road(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
-      function there_are_overtaken_on_ingresso(ingresso: strada_ingresso_features; polo: Boolean) return Boolean; -- se polo = (polo dell'ingresso) => senso macchine to check è indicato da polo altrimenti not polo
+      -- controlla se si hanno macchine dalla corsia opposta che intersecano la traiettoria di sorpasso
+      -- della macchina che vuole sorpassare nel primo pezzo della traiettoria e nel secondo pezzo della traiettoria
+      function car_can_overtake_on_first_step_trajectory(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; is_bound_overtaken: Boolean:= False) return Boolean;
+      function car_can_overtake_on_second_step_trajectory(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
+      -- controlla se si hanno macchine che intersecano la traiettoria di sorpasso nella corsia corrente
       function car_on_same_corsia_have_overtaked(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
+      -- END metodi gestione cambio corsia
+
+      -- DEPRECATED:
+      function there_are_overtaken_on_ingresso(ingresso: strada_ingresso_features; polo: Boolean) return Boolean; -- se polo = (polo dell'ingresso) => senso macchine to check è indicato da polo altrimenti not polo
+
+      --BEGIN metodi per gestione sorpassi
+      function get_next_abitante_in_corsia(num_corsia: id_corsie; polo: Boolean; from_distance: Float) return ptr_list_posizione_abitanti_on_road;
+      -- END metodi per gestione sorpassi
+
+
       function get_last_abitante_ingresso(key_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
 
       function get_distanza_percorsa_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
+      --function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
 
       function get_num_ingressi_polo(polo: Boolean) return Natural;
       function get_num_ingressi return Natural;
@@ -191,7 +208,9 @@ package mailbox_risorse_attive is
       procedure update_avanzamento_car(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: Float; new_speed: Float);
       procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array);
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
+      procedure update_avanzamento_in_urbana(abitante: in out ptr_list_posizione_abitanti_on_road; avanzamento: Float);
 
+      -- la seguente proc non dovrebbe venir usato |||| cancella
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
 
       procedure calcola_bound_avanzamento_in_incrocio(index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out Float; stop_entity: in out Boolean; distance_to_next_car: in out Float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0);
@@ -199,6 +218,8 @@ package mailbox_risorse_attive is
       function get_verso_semafori_verdi return Boolean;
       function get_size_incrocio return Positive;
       function get_list_car_to_move(key_incrocio: Positive; corsia: id_corsie) return ptr_list_posizione_abitanti_on_road;
+
+      -- metodo usato da un'urbana per individuare la posizione di un abitante
       function get_posix_first_entity(from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return Float;
 
       function semaforo_is_verde_from_road(id_quartiere_road: Positive; id_road: Positive) return Boolean;

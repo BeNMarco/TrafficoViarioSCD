@@ -160,6 +160,7 @@ package strade_e_incroci_common is
    function get_destination(obj: posizione_abitanti_on_road) return trajectory_to_follow'Class;
    function get_flag_overtake_next_corsia(obj: posizione_abitanti_on_road) return Boolean;
    function get_came_from_ingresso(obj: posizione_abitanti_on_road) return Boolean;
+   function get_backup_corsia_to_go(obj: posizione_abitanti_on_road) return Natural;
 
    procedure set_where_next_abitante(obj: in out posizione_abitanti_on_road; where_next: Float);
    procedure set_where_now_abitante(obj: in out posizione_abitanti_on_road; where_now: Float);
@@ -169,13 +170,14 @@ package strade_e_incroci_common is
    procedure set_destination(obj: in out posizione_abitanti_on_road; traiettoria: trajectory_to_follow'Class);
    procedure set_flag_overtake_next_corsia(obj: in out posizione_abitanti_on_road; flag: Boolean);
    procedure set_came_from_ingresso(obj: in out posizione_abitanti_on_road; flag: Boolean);
+   procedure set_backup_corsia_to_go(obj: in out posizione_abitanti_on_road; num_corsia: Natural);
 
    function create_trajectory_to_follow(from_corsia: Natural; corsia_to_go: Natural; ingresso_to_go: Natural; from_ingresso: Natural; traiettoria_incrocio_to_follow: traiettoria_incroci_type) return trajectory_to_follow;
 
    function create_new_posizione_abitante(id_abitante: Positive; id_quartiere: Positive; where_next: Float;
                                           where_now: Float; current_speed: Float; in_overtaken: Boolean;
                                           can_pass_corsia: Boolean; distance_on_overtaking_trajectory: Float;
-                                          came_from_ingresso: Boolean; destination: trajectory_to_follow) return posizione_abitanti_on_road'Class;
+                                          came_from_ingresso: Boolean; destination: trajectory_to_follow; backup_corsia_to_go: Natural) return posizione_abitanti_on_road'Class;
 
    function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road;
 
@@ -271,6 +273,7 @@ private
       came_from_ingresso: Boolean:= False;
       distance_on_overtaking_trajectory: Float:= 0.0;
       destination: trajectory_to_follow;
+      backup_corsia_to_go: Natural;
    end record;
 
 

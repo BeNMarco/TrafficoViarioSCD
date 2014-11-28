@@ -16,6 +16,7 @@ package global_data is
    min_veicolo_distance: constant Float:= 2.0;
    distance_at_witch_decelarate: constant Float:= 3.5;
    add_factor: constant Float:= 0.0;
+   distance_at_witch_can_be_thinked_overtake: constant Float:= 120.0;
 
    safe_distance_to_overtake: constant Float:= 20.0;
 

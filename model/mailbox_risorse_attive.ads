@@ -77,6 +77,7 @@ package mailbox_risorse_attive is
       -- abitanti in transizione da incroci significa abitanti in uscita dagli incroci
       procedure sposta_abitanti_in_transizione_da_incroci;
       procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie);
+      procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
 
       function get_ordered_ingressi_from_polo(polo: Boolean) return ptr_indici_ingressi;
       function is_index_ingresso_in_svolta(ingresso: Positive; traiettoria: traiettoria_ingressi_type) return Boolean;
@@ -210,7 +211,6 @@ package mailbox_risorse_attive is
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
       procedure update_avanzamento_in_urbana(abitante: in out ptr_list_posizione_abitanti_on_road; avanzamento: Float);
 
-      -- la seguente proc non dovrebbe venir usato |||| cancella
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
 
       procedure calcola_bound_avanzamento_in_incrocio(index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out Float; stop_entity: in out Boolean; distance_to_next_car: in out Float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0);

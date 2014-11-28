@@ -421,7 +421,6 @@ package body mailbox_risorse_attive is
       end set_move_parameters_entity_on_traiettoria_ingresso;
 
       procedure set_move_parameters_entity_on_main_road(current_car_in_corsia: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; speed: Float; step: Float) is
-         new_step: Float;
          distance: Float;
       begin
          if speed>0.0 then
@@ -431,10 +430,10 @@ package body mailbox_risorse_attive is
          if step>0.0 then
             if current_car_in_corsia.posizione_abitante.get_in_overtaken then
                current_car_in_corsia.posizione_abitante.set_distance_on_overtaking_trajectory(current_car_in_corsia.posizione_abitante.get_distance_on_overtaking_trajectory+step);
-               if current_car_in_corsia.posizione_abitante.get_distance_on_overtaking_trajectory>=get_traiettoria_cambio_corsia.get_lunghezza_traiettoria then
-                  new_step:= current_car_in_corsia.posizione_abitante.get_distance_on_overtaking_trajectory-get_traiettoria_cambio_corsia.get_lunghezza_traiettoria;
-                  current_car_in_corsia.posizione_abitante.set_where_next_abitante(current_car_in_corsia.posizione_abitante.get_where_now_posizione_abitanti+get_traiettoria_cambio_corsia.get_lunghezza_traiettoria+new_step);
-               end if;
+               --if current_car_in_corsia.posizione_abitante.get_distance_on_overtaking_trajectory>=get_traiettoria_cambio_corsia.get_lunghezza_traiettoria then
+               --   new_step:= current_car_in_corsia.posizione_abitante.get_distance_on_overtaking_trajectory-get_traiettoria_cambio_corsia.get_lunghezza_traiettoria;
+               --   current_car_in_corsia.posizione_abitante.set_where_next_abitante(current_car_in_corsia.posizione_abitante.get_where_now_posizione_abitanti+get_traiettoria_cambio_corsia.get_lunghezza_traiettoria+new_step);
+               --end if;
             else
                if current_car_in_corsia.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow/=empty then
                   current_car_in_corsia.posizione_abitante.set_where_next_abitante(current_car_in_corsia.posizione_abitante.get_where_now_posizione_abitanti+step);
@@ -612,19 +611,21 @@ package body mailbox_risorse_attive is
                prec_main_list:= null;
                next_element_list:= null;
                while main_list/=null loop
+                  main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
                   if main_list.posizione_abitante.get_came_from_ingresso then
                      -- se l'abitante sorpassa subito una volta uscito dall'ingresso
                      car_length:= get_quartiere_utilities_obj.get_auto_quartiere(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
 
                      fine_ingresso_distance:= get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_from_ingresso),i)+get_larghezza_marciapiede+get_larghezza_corsia;
 
-                     if (main_list.posizione_abitante.get_in_overtaken and then main_list.posizione_abitante.get_distance_on_overtaking_trajectory-car_length>=fine_ingresso_distance) or else
+                     if (main_list.posizione_abitante.get_in_overtaken and then main_list.posizione_abitante.get_where_now_posizione_abitanti+main_list.posizione_abitante.get_distance_on_overtaking_trajectory-car_length>=fine_ingresso_distance) or else
                        (main_list.posizione_abitante.get_where_now_posizione_abitanti-car_length>=fine_ingresso_distance) then
                         main_list.posizione_abitante.set_came_from_ingresso(False);
                         -- lo state_view_abitante al + viene costruito nell'else ****
                         if main_list.posizione_abitante.get_destination.get_departure_corsia=2 then
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata).next;
                         else
+                           --Put_Line("Delete " & Positive'Image(get_id_quartiere) & " ingresso " & Natural'Image(main_list.posizione_abitante.get_destination.get_from_ingresso) & " id abitante " & Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti));
                            set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno).next;
                         end if;
                      end if;
@@ -702,7 +703,6 @@ package body mailbox_risorse_attive is
                         main_list:= main_list.next;
                      end if;
                   else
-                     main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
                      if main_list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=empty then
                         --Put_Line(Float'Image(get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory))));
 
@@ -849,6 +849,11 @@ package body mailbox_risorse_attive is
          end if;
          main_strada_number_entity(polo,num_corsia):= main_strada_number_entity(polo,num_corsia)-1;
       end remove_abitante_in_incrocio;
+
+      procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow) is
+      begin
+         abitante.posizione_abitante.set_destination(destination);
+      end update_abitante_destination;
 
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural is
       begin
@@ -1380,6 +1385,10 @@ package body mailbox_risorse_attive is
             if list.posizione_abitante.get_where_now_posizione_abitanti>from_distance then
                if list.posizione_abitante.get_in_overtaken=False then
                   return list;
+               else
+                  if list.posizione_abitante.get_destination.get_corsia_to_go_trajectory=num_corsia then
+                     return list;
+                  end if;
                end if;
             end if;
             list:= list.next;

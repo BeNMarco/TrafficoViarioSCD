@@ -296,11 +296,11 @@
     {
       "id": 23,
       "lunghezza": 2.81236E+02,
-      "from": [
+      "to": [
         1800,
         0
       ],
-      "to": [
+      "from": [
         1650,
         250
       ],
@@ -322,11 +322,11 @@
     {
       "id": 25,
       "lunghezza": 3.63622E+02,
-      "from": [
+      "to": [
         1650,
         250
       ],
-      "to": [
+      "from": [
         1500,
         600
       ],
@@ -758,7 +758,7 @@
           "quartiere": 1,
           "id_strada": 25,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 1,
@@ -787,7 +787,7 @@
           "quartiere": 1,
           "id_strada": 23,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 1,
@@ -799,7 +799,7 @@
           "quartiere": 1,
           "id_strada": 25,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         },
         {
           "quartiere": 1,
@@ -954,7 +954,7 @@
           "quartiere": 1,
           "id_strada": 23,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         },
         {
           "quartiere": 1,

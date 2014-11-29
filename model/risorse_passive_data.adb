@@ -436,7 +436,6 @@ package body risorse_passive_data is
       procedure set_finish_route(id_abitante: Positive) is
       begin
          abitanti_arrived(id_abitante):= True;
-
       end set_finish_route;
 
       function get_next(id_abitante: Positive) return tratto is

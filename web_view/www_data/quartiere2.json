@@ -319,9 +319,9 @@
       "id": 25,
       "lunghezza": 5.00000E+01,
       "numcorsie": 1,
-      "strada_confinante": 3,
+      "strada_confinante": 4,
       "polo": false,
-      "distanza_da_from": 1.00000E+02,
+      "distanza_da_from": 2.50000E+02,
       "from": 0,
       "to": 0
     },
@@ -801,15 +801,15 @@
   "abitanti": [
     {
       "id_abitante": 40,
-      "id_luogo_casa": 1,
+      "id_luogo_casa": 3,
       "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 2
+      "id_luogo_lavoro": 4
     },
     {
       "id_abitante": 41,
-      "id_luogo_casa": 1,
+      "id_luogo_casa": 4,
       "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 2
+      "id_luogo_lavoro": 3
     }
   ]
 }

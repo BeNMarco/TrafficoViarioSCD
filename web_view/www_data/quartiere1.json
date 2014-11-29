@@ -467,7 +467,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": false,
-      "distanza_da_from": 1.60000E+02,
+      "distanza_da_from": 1.80000E+02,
       "from": 0,
       "to": 0
     },
@@ -477,7 +477,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,
-      "distanza_da_from": 2.20000E+02,
+      "distanza_da_from": 3.00000E+02,
       "from": 0,
       "to": 0
     },
@@ -507,7 +507,7 @@
       "numcorsie": 1,
       "strada_confinante": 27,
       "polo": true,
-      "distanza_da_from": 2.90000E+02,
+      "distanza_da_from": 3.15000E+02,
       "from": 0,
       "to": 0
     },
@@ -527,14 +527,174 @@
       "numcorsie": 1,
       "strada_confinante": 29,
       "polo": true,
-      "distanza_da_from": 2.40000E+02,
+      "distanza_da_from": 2.50000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 43,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 26,
+      "polo": true,
+      "distanza_da_from": 2.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 44,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 32,
+      "polo": false,
+      "distanza_da_from": 2.50000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 45,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 1.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 46,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 1.70000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 47,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": false,
+      "distanza_da_from": 2.50000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 48,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 4.20000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 49,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 1.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 50,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 1.70000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 51,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 2.50000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 52,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 3.40000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 53,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 4.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 54,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 5.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 55,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 5.80000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 56,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 6.50000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 57,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": false,
+      "distanza_da_from": 2.00000E+02,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 58,
+      "lunghezza": 5.00000E+01,
+      "numcorsie": 1,
+      "strada_confinante": 10,
+      "polo": false,
+      "distanza_da_from": 2.00000E+02,
       "from": 0,
       "to": 0
     }
   ],
   "incroci_a_4": [
     {
-      "id": 43,
+      "id": 59,
       "strade": [
         {
           "quartiere": 1,
@@ -563,7 +723,7 @@
       ]
     },
     {
-      "id": 44,
+      "id": 60,
       "strade": [
         {
           "quartiere": 1,
@@ -592,7 +752,7 @@
       ]
     },
     {
-      "id": 45,
+      "id": 61,
       "strade": [
         {
           "quartiere": 1,
@@ -621,7 +781,7 @@
       ]
     },
     {
-      "id": 46,
+      "id": 62,
       "strade": [
         {
           "quartiere": 1,
@@ -650,7 +810,7 @@
       ]
     },
     {
-      "id": 47,
+      "id": 63,
       "strade": [
         {
           "quartiere": 1,
@@ -679,7 +839,7 @@
       ]
     },
     {
-      "id": 48,
+      "id": 64,
       "strade": [
         {
           "quartiere": 1,
@@ -710,7 +870,7 @@
   ],
   "incroci_a_3": [
     {
-      "id": 49,
+      "id": 65,
       "strade": [
         {
           "quartiere": 1,
@@ -734,7 +894,7 @@
       "strada_mancante": 1
     },
     {
-      "id": 50,
+      "id": 66,
       "strade": [
         {
           "quartiere": 1,
@@ -758,7 +918,7 @@
       "strada_mancante": 1
     },
     {
-      "id": 51,
+      "id": 67,
       "strade": [
         {
           "quartiere": 1,
@@ -782,7 +942,7 @@
       "strada_mancante": 1
     },
     {
-      "id": 52,
+      "id": 68,
       "strade": [
         {
           "quartiere": 1,
@@ -806,7 +966,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 53,
+      "id": 69,
       "strade": [
         {
           "quartiere": 1,
@@ -830,7 +990,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 54,
+      "id": 70,
       "strade": [
         {
           "quartiere": 1,
@@ -854,7 +1014,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 55,
+      "id": 71,
       "strade": [
         {
           "quartiere": 1,
@@ -878,7 +1038,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 56,
+      "id": 72,
       "strade": [
         {
           "quartiere": 1,
@@ -902,7 +1062,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 57,
+      "id": 73,
       "strade": [
         {
           "quartiere": 1,
@@ -926,7 +1086,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 58,
+      "id": 74,
       "strade": [
         {
           "quartiere": 1,
@@ -950,7 +1110,7 @@
       "strada_mancante": 3
     },
     {
-      "id": 59,
+      "id": 75,
       "strade": [
         {
           "quartiere": 1,
@@ -974,7 +1134,7 @@
       "strada_mancante": 3
     },
     {
-      "id": 60,
+      "id": 76,
       "strade": [
         {
           "quartiere": 1,
@@ -998,7 +1158,7 @@
       "strada_mancante": 3
     },
     {
-      "id": 61,
+      "id": 77,
       "strade": [
         {
           "quartiere": 3,
@@ -1022,7 +1182,7 @@
       "strada_mancante": 0
     },
     {
-      "id": 62,
+      "id": 78,
       "strade": [
         {
           "quartiere": 1,
@@ -1046,7 +1206,7 @@
       "strada_mancante": 3
     },
     {
-      "id": 63,
+      "id": 79,
       "strade": [
         {
           "quartiere": 1,
@@ -1151,7 +1311,7 @@
     },
     {
       "id_luogo": 41,
-      "nome": "bo",
+      "nome": "Fruttivendolo",
       "tipologia": "negozio",
       "idstrada": 41,
       "dimensioni": [
@@ -1164,9 +1324,217 @@
     },
     {
       "id_luogo": 42,
-      "nome": "tatoo",
+      "nome": "Tatooo da Gianni",
       "tipologia": "negozio",
       "idstrada": 42,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 43,
+      "nome": "Angaran",
+      "tipologia": "negozio",
+      "idstrada": 43,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 44,
+      "nome": "Avis",
+      "tipologia": "negozio",
+      "idstrada": 44,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 45,
+      "nome": "Pescheria",
+      "tipologia": "negozio",
+      "idstrada": 45,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 46,
+      "nome": "Quaggiotto",
+      "tipologia": "negozio",
+      "idstrada": 46,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 47,
+      "nome": "Da Bertilla",
+      "tipologia": "negozio",
+      "idstrada": 47,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 48,
+      "nome": "Quali",
+      "tipologia": "negozio",
+      "idstrada": 48,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 49,
+      "nome": "Mazzorato",
+      "tipologia": "negozio",
+      "idstrada": 49,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 50,
+      "nome": "Bar Centrale",
+      "tipologia": "negozio",
+      "idstrada": 50,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 51,
+      "nome": "Da Rudi",
+      "tipologia": "negozio",
+      "idstrada": 51,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 52,
+      "nome": "Simionato servizi",
+      "tipologia": "negozio",
+      "idstrada": 52,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 53,
+      "nome": "Buffetti",
+      "tipologia": "negozio",
+      "idstrada": 53,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 54,
+      "nome": "Velma",
+      "tipologia": "negozio",
+      "idstrada": 54,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 55,
+      "nome": "Pirotecnica Castellana",
+      "tipologia": "negozio",
+      "idstrada": 55,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 56,
+      "nome": "MaxMax",
+      "tipologia": "negozio",
+      "idstrada": 56,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 57,
+      "nome": "Glam",
+      "tipologia": "negozio",
+      "idstrada": 57,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 58,
+      "nome": "Felix",
+      "tipologia": "negozio",
+      "idstrada": 58,
       "dimensioni": [
         50,
         30
@@ -1206,533 +1574,11 @@
     "num_posti": 4
   },
   "pedoni": [
-    {
-      "id_abitante": 64
-    },
-    {
-      "id_abitante": 65
-    },
-    {
-      "id_abitante": 66
-    },
-    {
-      "id_abitante": 67
-    },
-    {
-      "id_abitante": 68
-    },
-    {
-      "id_abitante": 69
-    },
-    {
-      "id_abitante": 70
-    },
-    {
-      "id_abitante": 71
-    },
-    {
-      "id_abitante": 72
-    },
-    {
-      "id_abitante": 73
-    },
-    {
-      "id_abitante": 74
-    },
-    {
-      "id_abitante": 75
-    },
-    {
-      "id_abitante": 76
-    },
-    {
-      "id_abitante": 77
-    },
-    {
-      "id_abitante": 78
-    },
-    {
-      "id_abitante": 79
-    },
-    {
-      "id_abitante": 80
-    },
-    {
-      "id_abitante": 81
-    },
-    {
-      "id_abitante": 82
-    },
-    {
-      "id_abitante": 83
-    },
-    {
-      "id_abitante": 84
-    },
-    {
-      "id_abitante": 85
-    },
-    {
-      "id_abitante": 86
-    },
-    {
-      "id_abitante": 87
-    },
-    {
-      "id_abitante": 88
-    },
-    {
-      "id_abitante": 89
-    },
-    {
-      "id_abitante": 90
-    },
-    {
-      "id_abitante": 91
-    },
-    {
-      "id_abitante": 92
-    }
   ],
   "auto": [
-    {
-      "id_abitante": 64,
-      "max_acceleration": 5.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.50000E+02
-    },
-    {
-      "id_abitante": 65,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.00000E+01
-    },
-    {
-      "id_abitante": 66,
-      "max_acceleration": 3.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 4.50000E+01
-    },
-    {
-      "id_abitante": 67,
-      "max_acceleration": 1.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.05000E+02
-    },
-    {
-      "id_abitante": 68,
-      "max_acceleration": 8.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.00000E+01
-    },
-    {
-      "id_abitante": 69,
-      "max_acceleration": 2.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.50000E+01
-    },
-    {
-      "id_abitante": 70,
-      "max_acceleration": 2.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.50000E+01
-    },
-    {
-      "id_abitante": 71,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 5.00000E+01
-    },
-    {
-      "id_abitante": 72,
-      "max_acceleration": 1.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.00000E+02
-    },
-    {
-      "id_abitante": 73,
-      "max_acceleration": 1.60000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 3.00000E+01
-    },
-    {
-      "id_abitante": 74,
-      "max_acceleration": 1.80000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 5.00000E+01
-    },
-    {
-      "id_abitante": 75,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 5.00000E+01
-    },
-    {
-      "id_abitante": 76,
-      "max_acceleration": 2.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.00000E+01
-    },
-    {
-      "id_abitante": 77,
-      "max_acceleration": 3.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.50000E+01
-    },
-    {
-      "id_abitante": 78,
-      "max_acceleration": 5.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 6.00000E+01
-    },
-    {
-      "id_abitante": 79,
-      "max_acceleration": 2.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.00000E+01
-    },
-    {
-      "id_abitante": 80,
-      "max_acceleration": 5.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.00000E+02
-    },
-    {
-      "id_abitante": 81,
-      "max_acceleration": 3.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.50000E+02
-    },
-    {
-      "id_abitante": 82,
-      "max_acceleration": 4.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.30000E+02
-    },
-    {
-      "id_abitante": 83,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.00000E+01
-    },
-    {
-      "id_abitante": 84,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.00000E+01
-    },
-    {
-      "id_abitante": 85,
-      "max_acceleration": 3.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.50000E+01
-    },
-    {
-      "id_abitante": 86,
-      "max_acceleration": 4.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.00000E+01
-    },
-    {
-      "id_abitante": 87,
-      "max_acceleration": 5.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.50000E+01
-    },
-    {
-      "id_abitante": 88,
-      "max_acceleration": 5.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 6.00000E+01
-    },
-    {
-      "id_abitante": 89,
-      "max_acceleration": 6.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.00000E+01
-    },
-    {
-      "id_abitante": 90,
-      "max_acceleration": 7.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.00000E+01
-    },
-    {
-      "id_abitante": 91,
-      "max_acceleration": 8.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.00000E+01
-    },
-    {
-      "id_abitante": 92,
-      "max_acceleration": 9.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.50000E+01
-    }
   ],
   "bici": [
-    {
-      "id_abitante": 64
-    },
-    {
-      "id_abitante": 65
-    },
-    {
-      "id_abitante": 66
-    },
-    {
-      "id_abitante": 67
-    },
-    {
-      "id_abitante": 68
-    },
-    {
-      "id_abitante": 69
-    },
-    {
-      "id_abitante": 70
-    },
-    {
-      "id_abitante": 71
-    },
-    {
-      "id_abitante": 72
-    },
-    {
-      "id_abitante": 73
-    },
-    {
-      "id_abitante": 74
-    },
-    {
-      "id_abitante": 75
-    },
-    {
-      "id_abitante": 76
-    },
-    {
-      "id_abitante": 77
-    },
-    {
-      "id_abitante": 78
-    },
-    {
-      "id_abitante": 79
-    },
-    {
-      "id_abitante": 80
-    },
-    {
-      "id_abitante": 81
-    },
-    {
-      "id_abitante": 82
-    },
-    {
-      "id_abitante": 83
-    },
-    {
-      "id_abitante": 84
-    },
-    {
-      "id_abitante": 85
-    },
-    {
-      "id_abitante": 86
-    },
-    {
-      "id_abitante": 87
-    },
-    {
-      "id_abitante": 88
-    },
-    {
-      "id_abitante": 89
-    },
-    {
-      "id_abitante": 90
-    },
-    {
-      "id_abitante": 91
-    },
-    {
-      "id_abitante": 92
-    }
   ],
   "abitanti": [
-    {
-      "id_abitante": 64,
-      "id_luogo_casa": 1,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4
-    },
-    {
-      "id_abitante": 65,
-      "id_luogo_casa": 1,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5
-    },
-    {
-      "id_abitante": 66,
-      "id_luogo_casa": 1,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6
-    },
-    {
-      "id_abitante": 67,
-      "id_luogo_casa": 2,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7
-    },
-    {
-      "id_abitante": 68,
-      "id_luogo_casa": 2,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8
-    },
-    {
-      "id_abitante": 69,
-      "id_luogo_casa": 3,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4
-    },
-    {
-      "id_abitante": 70,
-      "id_luogo_casa": 3,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5
-    },
-    {
-      "id_abitante": 71,
-      "id_luogo_casa": 3,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6
-    },
-    {
-      "id_abitante": 72,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    },
-    {
-      "id_abitante": 73,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 74,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 75,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    },
-    {
-      "id_abitante": 76,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 77,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 78,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    },
-    {
-      "id_abitante": 79,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 80,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 81,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7
-    },
-    {
-      "id_abitante": 82,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8
-    },
-    {
-      "id_abitante": 83,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4
-    },
-    {
-      "id_abitante": 84,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5
-    },
-    {
-      "id_abitante": 85,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6
-    },
-    {
-      "id_abitante": 86,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    },
-    {
-      "id_abitante": 87,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 88,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 89,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 90,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6
-    },
-    {
-      "id_abitante": 91,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 92,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    }
   ]
 }

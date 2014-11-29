@@ -737,6 +737,7 @@ package body mailbox_risorse_attive is
                               traiettoria:= entrata_andata;
                               polo_ingresso:= i;
                            end if;
+                           Put_Line(Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " TO GO " & Natural'Image(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory));
                            list_abitanti_traiettoria:= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory,not_ordered),traiettoria);
                            -- update view state
                            state_view_abitante:= create_car_traiettoria_ingresso_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,main_list.posizione_abitante.get_where_now_posizione_abitanti,polo_ingresso,get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso,traiettoria);
@@ -2630,6 +2631,7 @@ package body mailbox_risorse_attive is
                   if id_mancante/=0 and index_other_road>id_mancante then  -- condizione valida per incroci a 3
                      index_other_road:= index_other_road-1;
                   end if;
+
                   if traiettoria_car=dritto_1 or traiettoria_car=dritto_2 then
                      list_near_car:= get_list_car_to_move(index_other_road,1);
 

@@ -375,7 +375,7 @@
       "strada_mancante": 2
     }
   ],
-  "strade_ingresso": [
+   "strade_ingresso": [
     {
       "id": 1,
       "lunghezza": 75.0,
@@ -460,7 +460,7 @@
       "id": 9,
       "lunghezza": 75.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 200.0,
       "from": 0,
@@ -470,7 +470,7 @@
       "id": 10,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 300.0,
       "from": 0,
@@ -480,7 +480,7 @@
       "id": 11,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 400.0,
       "from": 0,
@@ -490,7 +490,7 @@
       "id": 12,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 500.0,
       "from": 0,
@@ -500,7 +500,7 @@
       "id": 13,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 600.0,
       "from": 0,
@@ -510,7 +510,7 @@
       "id": 14,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 700.0,
       "from": 0,
@@ -520,7 +520,7 @@
       "id": 15,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 800.0,
       "from": 0,
@@ -530,7 +530,7 @@
       "id": 16,
       "lunghezza": 150.0,
       "numcorsie": 1,
-      "strada_confinante": 10,
+      "strada_confinante": 9,
       "polo": false,
       "distanza_da_from": 900.0,
       "from": 0,
@@ -573,6 +573,86 @@
       "strada_confinante": 11,
       "polo": true,
       "distanza_da_from": 500.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 21,
+      "lunghezza": 75.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 22,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1300.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 23,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1400.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 24,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1500.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 25,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1600.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 26,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1700.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 27,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1800.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 28,
+      "lunghezza": 150.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": true,
+      "distanza_da_from": 1900.0,
       "from": 0,
       "to": 0
     }
@@ -827,7 +907,7 @@
     },
     {
       "id_luogo": 20,
-      "nome": "Da Jimmy",
+      "nome": "English Pub",
       "tipologia": "ristorazione",
       "idstrada": 20,
       "dimensioni": [
@@ -837,6 +917,110 @@
       "capienza_macchine": 10,
       "capienza_persone": 20,
       "capienza_bici": 0
+    },
+    {
+      "id_luogo": 21,
+      "nome": "Casa 21",
+      "tipologia": "casa",
+      "idstrada": 21,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 22,
+      "nome": "Casa 22",
+      "tipologia": "casa",
+      "idstrada": 22,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 23,
+      "nome": "Casa 23",
+      "tipologia": "casa",
+      "idstrada": 23,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 24,
+      "nome": "Casa 24",
+      "tipologia": "casa",
+      "idstrada": 24,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 25,
+      "nome": "Casa 25",
+      "tipologia": "casa",
+      "idstrada": 25,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 26,
+      "nome": "Casa 26",
+      "tipologia": "casa",
+      "idstrada": 26,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 27,
+      "nome": "Casa 27",
+      "tipologia": "casa",
+      "idstrada": 27,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
+    },
+    {
+      "id_luogo": 28,
+      "nome": "Casa 28",
+      "tipologia": "casa",
+      "idstrada": 28,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 2,
+      "capienza_persone": 5,
+      "capienza_bici": 5
     }
   ],
   "rotonde_a_4":[],

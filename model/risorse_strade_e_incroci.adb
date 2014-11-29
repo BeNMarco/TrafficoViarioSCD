@@ -952,7 +952,7 @@ package body risorse_strade_e_incroci is
                   if (id_task=1 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=65 and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=111.0)) then
                      z:= 5;
                   end if;
-                  if get_id_quartiere=2 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=41 and id_task=1) then
+                  if get_id_quartiere=1 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=80 and id_task=20) then
                      z:= 5;
                   end if;
 
@@ -1793,7 +1793,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception urbane: " & Positive'Image(id_task));
+         Put_Line("Unexpected exception urbane: " & Positive'Image(id_task) & " quartiere " & Positive'Image(get_id_quartiere));
          Put_Line(Exception_Information(Error));
       --Put_Line("Fine task urbana" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));
    end core_avanzamento_urbane;
@@ -2016,7 +2016,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception ingressi: " & Positive'Image(id_task));
+         Put_Line("Unexpected exception ingressi: " & Positive'Image(id_task) & " quartiere " & Positive'Image(get_id_quartiere));
          Put_Line(Exception_Information(Error));
 
 
@@ -2154,6 +2154,8 @@ package body risorse_strade_e_incroci is
                         if id_mancante/=0 and index_other_road>id_mancante then  -- condizione valida per incroci a 3
                            index_other_road:= index_other_road-1;
                         end if;
+                     else
+                        index_other_road:= 0;
                      end if;
 
                      -- aggiornamento posizione macchina
@@ -2341,7 +2343,7 @@ package body risorse_strade_e_incroci is
       end loop;
    exception
       when Error: others =>
-         Put_Line("Unexpected exception incroci: " & Positive'Image(id_task));
+         Put_Line("Unexpected exception incroci: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
          Put_Line(Exception_Information(Error));
 
       --Put_Line("Fine task incrocio" & Positive'Image(id_task) & ",id quartiere" & Positive'Image(get_id_quartiere));

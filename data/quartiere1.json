@@ -467,7 +467,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": false,
-      "distanza_da_from": 160.0,
+      "distanza_da_from": 180.0,
       "from": 0,
       "to": 0
     },
@@ -477,7 +477,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,
-      "distanza_da_from": 220.0,
+      "distanza_da_from": 300.0,
       "from": 0,
       "to": 0
     },
@@ -507,7 +507,7 @@
       "numcorsie": 1,
       "strada_confinante": 27,
       "polo": true,
-      "distanza_da_from": 290.0,
+      "distanza_da_from": 315.0,
       "from": 0,
       "to": 0
     },
@@ -527,7 +527,167 @@
       "numcorsie": 1,
       "strada_confinante": 29,
       "polo": true,
-      "distanza_da_from": 240.0,
+      "distanza_da_from": 250.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 9,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 26,
+      "polo": true,
+      "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 10,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 32,
+      "polo": false,
+      "distanza_da_from": 250.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 11,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 12,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 170.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 13,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": false,
+      "distanza_da_from": 250.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 14,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 420.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 15,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 16,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 170.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 17,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 250.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 18,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 340.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 19,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 400.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 20,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 500.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 21,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 580.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 22,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": false,
+      "distanza_da_from": 650.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 23,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": false,
+      "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 24,
+      "lunghezza": 50.0,
+      "numcorsie": 1,
+      "strada_confinante": 10,
+      "polo": false,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     }
@@ -1151,7 +1311,7 @@
     },
     {
       "id_luogo": 7,
-      "nome": "bo",
+      "nome": "Fruttivendolo",
       "tipologia": "negozio",
       "idstrada": 7,
       "dimensioni": [
@@ -1164,9 +1324,217 @@
     },
     {
       "id_luogo": 8,
-      "nome": "tatoo",
+      "nome": "Tatooo da Gianni",
       "tipologia": "negozio",
       "idstrada": 8,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 9,
+      "nome": "Angaran",
+      "tipologia": "negozio",
+      "idstrada": 9,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 10,
+      "nome": "Avis",
+      "tipologia": "negozio",
+      "idstrada": 10,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 11,
+      "nome": "Pescheria",
+      "tipologia": "negozio",
+      "idstrada": 11,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 12,
+      "nome": "Quaggiotto",
+      "tipologia": "negozio",
+      "idstrada": 12,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 13,
+      "nome": "Da Bertilla",
+      "tipologia": "negozio",
+      "idstrada": 13,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 14,
+      "nome": "Quali",
+      "tipologia": "negozio",
+      "idstrada": 14,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 15,
+      "nome": "Mazzorato",
+      "tipologia": "negozio",
+      "idstrada": 15,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 16,
+      "nome": "Bar Centrale",
+      "tipologia": "negozio",
+      "idstrada": 16,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 17,
+      "nome": "Da Rudi",
+      "tipologia": "negozio",
+      "idstrada": 17,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 18,
+      "nome": "Simionato servizi",
+      "tipologia": "negozio",
+      "idstrada": 18,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 19,
+      "nome": "Buffetti",
+      "tipologia": "negozio",
+      "idstrada": 19,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 20,
+      "nome": "Velma",
+      "tipologia": "negozio",
+      "idstrada": 20,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 21,
+      "nome": "Pirotecnica Castellana",
+      "tipologia": "negozio",
+      "idstrada": 21,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 22,
+      "nome": "MaxMax",
+      "tipologia": "negozio",
+      "idstrada": 22,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 23,
+      "nome": "Glam",
+      "tipologia": "negozio",
+      "idstrada": 23,
+      "dimensioni": [
+        50,
+        30
+      ],
+      "capienza_macchine": 70,
+      "capienza_persone": 1000,
+      "capienza_bici": 100
+    },
+    {
+      "id_luogo": 24,
+      "nome": "Felix",
+      "tipologia": "negozio",
+      "idstrada": 24,
       "dimensioni": [
         50,
         30
@@ -1184,119 +1552,15 @@
 "default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
 "default_auto":{"desired_velocity": 100.0,"time_headway": 0.9,"max_acceleration": 10.0,"comfortable_deceleration": 10.5,"s0": 0.9,"length": 3.0,"num_posti": 4},
 
-"pedoni":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},
-{"id_abitante":7},
-{"id_abitante":8},
-{"id_abitante":9},
-{"id_abitante":10},
-{"id_abitante":11},
-{"id_abitante":12},
-{"id_abitante":13},
-{"id_abitante":14},
-{"id_abitante":15},
-{"id_abitante":16},
-{"id_abitante":17},
-{"id_abitante":18},
-{"id_abitante":19},
-{"id_abitante":20},
-{"id_abitante":21},
-{"id_abitante":22},
-{"id_abitante":23},
-{"id_abitante":24},
-{"id_abitante":25},
-{"id_abitante":26},
-{"id_abitante":27},
-{"id_abitante":28},
-{"id_abitante":29}
+"pedoni":[
 ],
 
 "auto":[
-{"id_abitante":1,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 150.0},{"id_abitante":2,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
-{"id_abitante":3,"max_acceleration": 3.0,"comfortable_deceleration": 50.5,"desired_velocity": 45.0},
-{"id_abitante":4,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 105.0},
-{"id_abitante":5,"max_acceleration": 8.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
-{"id_abitante":6,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
-{"id_abitante":7,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
-{"id_abitante":8,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 50.0},
-{"id_abitante":9,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 100.0},
-{"id_abitante":10,"max_acceleration": 16.0,"comfortable_deceleration": 50.5,"desired_velocity": 30.0},
-{"id_abitante":11,"max_acceleration": 18.0,"comfortable_deceleration": 50.5,"desired_velocity": 50.0},
-{"id_abitante":12,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 50.0},
-{"id_abitante":13,"max_acceleration": 25.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
-{"id_abitante":14,"max_acceleration": 30.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0},
-{"id_abitante":15,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 60.0},
-{"id_abitante":16,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 90.0},
-{"id_abitante":17,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 100.0},
-{"id_abitante":18,"max_acceleration": 30.0,"comfortable_deceleration": 50.5,"desired_velocity": 150.0},
-{"id_abitante":19,"max_acceleration": 45.0,"comfortable_deceleration": 50.5,"desired_velocity": 130.0},
-{"id_abitante":20,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
-{"id_abitante":21,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 90.0},
-{"id_abitante":22,"max_acceleration": 3.0,"comfortable_deceleration": 50.5,"desired_velocity": 85.0},
-{"id_abitante":23,"max_acceleration": 4.0,"comfortable_deceleration": 50.5,"desired_velocity": 90.0},
-{"id_abitante":24,"max_acceleration": 5.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0},
-{"id_abitante":25,"max_acceleration": 5.0,"comfortable_deceleration": 50.5,"desired_velocity": 60.0},
-{"id_abitante":26,"max_acceleration": 6.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
-{"id_abitante":27,"max_acceleration": 7.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
-{"id_abitante":28,"max_acceleration": 8.0,"comfortable_deceleration": 50.5,"desired_velocity": 90.0},
-{"id_abitante":29,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0}
 ],
 
-"bici":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},{"id_abitante":7},
-{"id_abitante":8},
-{"id_abitante":9},
-{"id_abitante":10},
-{"id_abitante":11},
-{"id_abitante":12},
-{"id_abitante":13},
-{"id_abitante":14},
-{"id_abitante":15},
-{"id_abitante":16},
-{"id_abitante":17},
-{"id_abitante":18},
-{"id_abitante":19},
-{"id_abitante":20},
-{"id_abitante":21},
-{"id_abitante":22},
-{"id_abitante":23},
-{"id_abitante":24},
-{"id_abitante":25},
-{"id_abitante":26},
-{"id_abitante":27},
-{"id_abitante":28},
-{"id_abitante":29}
+"bici":[
 ],
 
 "abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":3,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":4,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
-{"id_abitante":5,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8},
-{"id_abitante":6,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":7,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":8,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":9,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":10,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":11,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":12,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":13,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":14,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":15,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":16,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":17,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":18,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
-{"id_abitante":19,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8},
-{"id_abitante":20,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":21,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":22,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":23,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":24,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":25,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":26,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":27,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":28,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":29,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3}
 ]
 }

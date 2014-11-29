@@ -271,10 +271,13 @@ package body risorse_strade_e_incroci is
                else
                   return create_trajectory_to_follow(num_corsia,2,0,0,dritto_2);
                end if;
-            elsif index_road_to>index_road_from or (index_road_to=1 and index_road_from=4) then
-               return create_trajectory_to_follow(num_corsia,1,0,0,sinistra);
             else
-               return create_trajectory_to_follow(num_corsia,2,0,0,destra);
+               if (index_road_from=1 and index_road_to=4) or else (index_road_from=2 and index_road_to=1) or else
+               (index_road_from=3 and index_road_to=2) or else (index_road_from=4 and index_road_to=3) then
+                  return create_trajectory_to_follow(num_corsia,2,0,0,destra);
+               else
+                  return create_trajectory_to_follow(num_corsia,1,0,0,sinistra);
+               end if;
             end if;
          end if;
       end if;
@@ -952,7 +955,7 @@ package body risorse_strade_e_incroci is
                   if (id_task=1 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=65 and current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=111.0)) then
                      z:= 5;
                   end if;
-                  if get_id_quartiere=1 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=80 and id_task=20) then
+                  if get_id_quartiere=1 and (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=80 and id_task=25) then
                      z:= 5;
                   end if;
 

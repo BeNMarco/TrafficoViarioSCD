@@ -3164,7 +3164,7 @@ package body mailbox_risorse_attive is
          when sinistra =>
             index_to_go:= from_index+1;
             if index_to_go=size_incrocio+1 then
-               index_to_go:= size_incrocio;
+               index_to_go:= 1;
             end if;
          when dritto_1 | dritto_2 =>
             if id_mancante=0 then

@@ -221,11 +221,11 @@
     {
       "id": 17,
       "lunghezza": 385.1857296720952,
-      "from": [
+      "to": [
         2000,
         0
       ],
-      "to": [
+      "from": [
         1900,
         400
       ],
@@ -706,7 +706,7 @@
           "quartiere": 2,
           "id_strada": 17,
           "tipo_strada": "urbana",
-          "polo": false
+          "polo": true
         },
         {
           "quartiere": 2,
@@ -742,7 +742,7 @@
           "quartiere": 2,
           "id_strada": 17,
           "tipo_strada": "urbana",
-          "polo": true
+          "polo": false
         }
       ],
       "strada_mancante": 3

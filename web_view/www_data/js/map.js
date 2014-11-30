@@ -158,6 +158,16 @@ Street.prototype.draw = function(style){
 		}	
 	}
 
+	if(style.debug)
+	{
+		var fromDot = new Path.Circle(this.guidingPath.firstSegment.point, 10);
+		fromDot.fillColor = 'red';
+		fromDot.bringToFront();
+		var toDot = new Path.Circle(this.guidingPath.lastSegment.point,10);
+		toDot.fillColor = 'green';
+		toDot.bringToFront();
+	}
+
 	if(this.id == 31){
 		console.log(this.sideStreets);
 	}

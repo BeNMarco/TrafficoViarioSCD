@@ -802,7 +802,7 @@ package body mailbox_risorse_attive is
                main_list:= main_strada(i,j);
                while main_list/=null loop
                   if main_list.next/=null then
-                     if main_list.posizione_abitante.get_where_now_posizione_abitanti>=main_list.next.posizione_abitante.get_where_now_posizione_abitanti then
+                     if main_list.posizione_abitante.get_where_now_posizione_abitanti>main_list.next.posizione_abitante.get_where_now_posizione_abitanti then
                         Put_Line("Errore distanze: " & Positive'Image(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " > " & Positive'Image(main_list.next.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(main_list.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " distanze " & Float'Image(main_list.posizione_abitante.get_where_now_posizione_abitanti) & " > " & Float'Image(main_list.next.posizione_abitante.get_where_now_posizione_abitanti));
                         raise distanza_next_abitante_minore;
                      end if;

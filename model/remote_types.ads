@@ -56,7 +56,7 @@ package remote_types is
    type ptr_rt_ingresso is access all rt_ingresso'Class;
 
    procedure insert_abitante_from_incrocio(obj: access rt_urbana; abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) is abstract;
-   procedure remove_abitante_in_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) is abstract;
+   procedure remove_abitante_in_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive) is abstract;
    procedure delta_incrocio_finished(obj: access rt_urbana) is abstract;
    function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Float is abstract;
 
@@ -100,7 +100,7 @@ package remote_types is
                                         incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                         rotonde_a_3: list_incroci_a_3) is abstract;
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
-                             to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is abstract;
+                             to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance is abstract;
    --function get_estremi_urbana(obj: access gps_interface; id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is abstract;
    -- end gps
 

@@ -61,6 +61,14 @@ pragma Elaborate_Body;
    function get_num_abitanti return Natural;
    function get_num_task return Natural;
    function get_recovery return Boolean;
+   function get_abilita_aggiornamenti_view return Boolean;
+
+   protected log is
+      procedure configure;
+      procedure write(stringa: String);
+   private
+      OutFile: File_Type;
+   end log;
 
 private
 
@@ -69,6 +77,9 @@ private
    json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/" & name_quartiere & ".json");
    json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_incroci.json");
    json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_ingressi.json");
+   json_aggiornamenti: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/abilita_invio_aggiornamenti.json");
+
+   abilita_aggiornamenti_view: Boolean:= Get(Val => json_aggiornamenti, Field => "abilita_invio_aggiornamenti");
 
    id_quartiere: Positive:= Get(Val => json_quartiere, Field => "id_quartiere");
 

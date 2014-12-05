@@ -55,7 +55,7 @@ package gps_utilities is
                                            incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
                                            rotonde_a_3: list_incroci_a_3);
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
-                                to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance;
+                                to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance;
       function get_estremi_strade_urbane(id_quartiere: Positive) return estremi_strade_urbane;
    private
 

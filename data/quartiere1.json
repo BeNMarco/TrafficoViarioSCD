@@ -694,7 +694,7 @@
   ],
   "incroci_a_4": [
     {
-      "id": "i41",
+      "id": "i59",
       "strade": [
         {
           "quartiere": 1,
@@ -723,7 +723,7 @@
       ]
     },
     {
-      "id": "i42",
+      "id": "i60",
       "strade": [
         {
           "quartiere": 1,
@@ -752,7 +752,7 @@
       ]
     },
     {
-      "id": "i43",
+      "id": "i61",
       "strade": [
         {
           "quartiere": 1,
@@ -781,7 +781,7 @@
       ]
     },
     {
-      "id": "i44",
+      "id": "i62",
       "strade": [
         {
           "quartiere": 1,
@@ -810,7 +810,7 @@
       ]
     },
     {
-      "id": "i45",
+      "id": "i63",
       "strade": [
         {
           "quartiere": 1,
@@ -839,7 +839,7 @@
       ]
     },
     {
-      "id": "i46",
+      "id": "i64",
       "strade": [
         {
           "quartiere": 1,
@@ -870,7 +870,7 @@
   ],
   "incroci_a_3": [
     {
-      "id": "i3",
+      "id": "i65",
       "strade": [
         {
           "quartiere": 1,
@@ -894,7 +894,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i4",
+      "id": "i66",
       "strade": [
         {
           "quartiere": 1,
@@ -918,7 +918,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i5",
+      "id": "i67",
       "strade": [
         {
           "quartiere": 1,
@@ -942,7 +942,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i8",
+      "id": "i68",
       "strade": [
         {
           "quartiere": 1,
@@ -966,7 +966,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i9",
+      "id": "i69",
       "strade": [
         {
           "quartiere": 1,
@@ -990,7 +990,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i10",
+      "id": "i70",
       "strade": [
         {
           "quartiere": 1,
@@ -1014,7 +1014,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i11",
+      "id": "i71",
       "strade": [
         {
           "quartiere": 1,
@@ -1038,7 +1038,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i12",
+      "id": "i72",
       "strade": [
         {
           "quartiere": 1,
@@ -1062,7 +1062,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i13",
+      "id": "i73",
       "strade": [
         {
           "quartiere": 1,
@@ -1086,7 +1086,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i15",
+      "id": "i74",
       "strade": [
         {
           "quartiere": 1,
@@ -1110,7 +1110,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i16",
+      "id": "i75",
       "strade": [
         {
           "quartiere": 1,
@@ -1134,7 +1134,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i17",
+      "id": "i76",
       "strade": [
         {
           "quartiere": 1,
@@ -1158,7 +1158,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i19",
+      "id": "i77",
       "strade": [
         {
           "quartiere": 3,
@@ -1182,7 +1182,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i20",
+      "id": "i78",
       "strade": [
         {
           "quartiere": 1,
@@ -1206,7 +1206,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i21",
+      "id": "i79",
       "strade": [
         {
           "quartiere": 1,
@@ -1233,7 +1233,7 @@
   "luoghi": [
     {
       "id_luogo": 1,
-      "nome": "Casa riposo",
+      "nome": "Casa riposo 1",
       "tipologia": "lavoro",
       "idstrada": 1,
       "dimensioni": [
@@ -1246,7 +1246,7 @@
     },
     {
       "id_luogo": 2,
-      "nome": "Campo sportivo",
+      "nome": "Campo sportivo 2",
       "tipologia": "svago",
       "idstrada": 2,
       "dimensioni": [
@@ -1259,7 +1259,7 @@
     },
     {
       "id_luogo": 3,
-      "nome": "Scuole private",
+      "nome": "Scuole private 3",
       "tipologia": "istruzione",
       "idstrada": 3,
       "dimensioni": [
@@ -1272,7 +1272,7 @@
     }, 
     {
       "id_luogo": 4,
-      "nome": "Da Toni meccanico",
+      "nome": "Da Toni meccanico 4",
       "tipologia": "lavoro",
       "idstrada": 4,
       "dimensioni": [
@@ -1285,7 +1285,7 @@
     },
     {
       "id_luogo": 5,
-      "nome": "Geometra Attilio",
+      "nome": "Geometra Attilio 5",
       "tipologia": "lavoro",
       "idstrada": 5,
       "dimensioni": [
@@ -1298,7 +1298,7 @@
     },
     {
       "id_luogo": 6,
-      "nome": "Ghegin",
+      "nome": "Ghegin 6",
       "tipologia": "negozio",
       "idstrada": 6,
       "dimensioni": [
@@ -1311,7 +1311,7 @@
     },
     {
       "id_luogo": 7,
-      "nome": "Fruttivendolo",
+      "nome": "Fruttivendolo 7",
       "tipologia": "negozio",
       "idstrada": 7,
       "dimensioni": [
@@ -1324,7 +1324,7 @@
     },
     {
       "id_luogo": 8,
-      "nome": "Tatooo da Gianni",
+      "nome": "Tatooo da Gianni 8",
       "tipologia": "negozio",
       "idstrada": 8,
       "dimensioni": [
@@ -1337,7 +1337,7 @@
     },
     {
       "id_luogo": 9,
-      "nome": "Angaran",
+      "nome": "Angaran 9",
       "tipologia": "negozio",
       "idstrada": 9,
       "dimensioni": [
@@ -1350,7 +1350,7 @@
     },
     {
       "id_luogo": 10,
-      "nome": "Avis",
+      "nome": "Avis 10",
       "tipologia": "negozio",
       "idstrada": 10,
       "dimensioni": [
@@ -1363,7 +1363,7 @@
     },
     {
       "id_luogo": 11,
-      "nome": "Pescheria",
+      "nome": "Pescheria 11",
       "tipologia": "negozio",
       "idstrada": 11,
       "dimensioni": [
@@ -1376,7 +1376,7 @@
     },
     {
       "id_luogo": 12,
-      "nome": "Quaggiotto",
+      "nome": "Quaggiotto 12",
       "tipologia": "negozio",
       "idstrada": 12,
       "dimensioni": [
@@ -1389,7 +1389,7 @@
     },
     {
       "id_luogo": 13,
-      "nome": "Da Bertilla",
+      "nome": "Da Bertilla 13",
       "tipologia": "negozio",
       "idstrada": 13,
       "dimensioni": [
@@ -1402,7 +1402,7 @@
     },
     {
       "id_luogo": 14,
-      "nome": "Quali",
+      "nome": "Quali 14",
       "tipologia": "negozio",
       "idstrada": 14,
       "dimensioni": [
@@ -1415,7 +1415,7 @@
     },
     {
       "id_luogo": 15,
-      "nome": "Mazzorato",
+      "nome": "Mazzorato 15",
       "tipologia": "negozio",
       "idstrada": 15,
       "dimensioni": [
@@ -1428,7 +1428,7 @@
     },
     {
       "id_luogo": 16,
-      "nome": "Bar Centrale",
+      "nome": "Bar Centrale 16",
       "tipologia": "negozio",
       "idstrada": 16,
       "dimensioni": [
@@ -1441,7 +1441,7 @@
     },
     {
       "id_luogo": 17,
-      "nome": "Da Rudi",
+      "nome": "Da Rudi 17",
       "tipologia": "negozio",
       "idstrada": 17,
       "dimensioni": [
@@ -1454,7 +1454,7 @@
     },
     {
       "id_luogo": 18,
-      "nome": "Simionato servizi",
+      "nome": "Simionato servizi 18",
       "tipologia": "negozio",
       "idstrada": 18,
       "dimensioni": [
@@ -1467,7 +1467,7 @@
     },
     {
       "id_luogo": 19,
-      "nome": "Buffetti",
+      "nome": "Buffetti 19",
       "tipologia": "negozio",
       "idstrada": 19,
       "dimensioni": [
@@ -1480,7 +1480,7 @@
     },
     {
       "id_luogo": 20,
-      "nome": "Velma",
+      "nome": "Velma 20",
       "tipologia": "negozio",
       "idstrada": 20,
       "dimensioni": [
@@ -1493,7 +1493,7 @@
     },
     {
       "id_luogo": 21,
-      "nome": "Pirotecnica Castellana",
+      "nome": "Pirotecnica Castellana 21",
       "tipologia": "negozio",
       "idstrada": 21,
       "dimensioni": [
@@ -1506,7 +1506,7 @@
     },
     {
       "id_luogo": 22,
-      "nome": "MaxMax",
+      "nome": "MaxMax 22",
       "tipologia": "negozio",
       "idstrada": 22,
       "dimensioni": [
@@ -1519,7 +1519,7 @@
     },
     {
       "id_luogo": 23,
-      "nome": "Glam",
+      "nome": "Glam 23",
       "tipologia": "negozio",
       "idstrada": 23,
       "dimensioni": [
@@ -1532,7 +1532,7 @@
     },
     {
       "id_luogo": 24,
-      "nome": "Felix",
+      "nome": "Felix 24",
       "tipologia": "negozio",
       "idstrada": 24,
       "dimensioni": [
@@ -1552,7 +1552,12 @@
 "default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
 "default_auto":{"desired_velocity": 100.0,"time_headway": 0.9,"max_acceleration": 10.0,"comfortable_deceleration": 10.5,"s0": 0.9,"length": 3.0,"num_posti": 4},
 
-"pedoni":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
+"pedoni":[
+{"id_abitante":1},
+{"id_abitante":2},
+{"id_abitante":3},
+{"id_abitante":4},
+{"id_abitante":5},
 {"id_abitante":6},
 {"id_abitante":7},
 {"id_abitante":8},
@@ -1576,11 +1581,33 @@
 {"id_abitante":26},
 {"id_abitante":27},
 {"id_abitante":28},
-{"id_abitante":29}
+{"id_abitante":29},
+{"id_abitante":30},
+{"id_abitante":31},
+{"id_abitante":32},
+{"id_abitante":33},
+{"id_abitante":34},
+{"id_abitante":35},
+{"id_abitante":36},
+{"id_abitante":37},
+{"id_abitante":38},
+{"id_abitante":39},
+{"id_abitante":40},
+{"id_abitante":41},
+{"id_abitante":42},
+{"id_abitante":43},
+{"id_abitante":44},
+{"id_abitante":45},
+{"id_abitante":46},
+{"id_abitante":47},
+{"id_abitante":48},
+{"id_abitante":49},
+{"id_abitante":50}
 ],
 
 "auto":[
-{"id_abitante":1,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 150.0},{"id_abitante":2,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
+{"id_abitante":1,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 150.0},
+{"id_abitante":2,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
 {"id_abitante":3,"max_acceleration": 3.0,"comfortable_deceleration": 50.5,"desired_velocity": 45.0},
 {"id_abitante":4,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 105.0},
 {"id_abitante":5,"max_acceleration": 8.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
@@ -1607,11 +1634,38 @@
 {"id_abitante":26,"max_acceleration": 6.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
 {"id_abitante":27,"max_acceleration": 7.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
 {"id_abitante":28,"max_acceleration": 8.0,"comfortable_deceleration": 50.5,"desired_velocity": 90.0},
-{"id_abitante":29,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0}
+{"id_abitante":29,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
+{"id_abitante":30,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
+{"id_abitante":31,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 150.0},
+{"id_abitante":32,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 50.0},
+{"id_abitante":33,"max_acceleration": 16.0,"comfortable_deceleration": 50.5,"desired_velocity": 50.0},
+{"id_abitante":34,"max_acceleration": 17.0,"comfortable_deceleration": 50.5,"desired_velocity": 30.0},
+{"id_abitante":35,"max_acceleration": 3.0,"comfortable_deceleration": 50.5,"desired_velocity": 25.0},
+{"id_abitante":36,"max_acceleration": 4.0,"comfortable_deceleration": 50.5,"desired_velocity": 100.0},
+{"id_abitante":37,"max_acceleration": 5.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
+{"id_abitante":38,"max_acceleration": 25.0,"comfortable_deceleration": 50.5,"desired_velocity": 85.0},
+{"id_abitante":39,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 45.0},
+{"id_abitante":40,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 60.0},
+{"id_abitante":41,"max_acceleration": 50.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
+{"id_abitante":42,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 85.0},
+{"id_abitante":43,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
+{"id_abitante":44,"max_acceleration": 20.0,"comfortable_deceleration": 50.5,"desired_velocity": 100.0},
+{"id_abitante":45,"max_acceleration": 8.0,"comfortable_deceleration": 50.5,"desired_velocity": 95.0},
+{"id_abitante":46,"max_acceleration": 30.0,"comfortable_deceleration": 50.5,"desired_velocity": 80.0},
+{"id_abitante":47,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0},
+{"id_abitante":48,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
+{"id_abitante":49,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 60.0},
+{"id_abitante":50,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0}
 ],
 
-"bici":[{"id_abitante":1},{"id_abitante":2},{"id_abitante":3},{"id_abitante":4},{"id_abitante":5},
-{"id_abitante":6},{"id_abitante":7},
+"bici":[
+{"id_abitante":1},
+{"id_abitante":2},
+{"id_abitante":3},
+{"id_abitante":4},
+{"id_abitante":5},
+{"id_abitante":6},
+{"id_abitante":7},
 {"id_abitante":8},
 {"id_abitante":9},
 {"id_abitante":10},
@@ -1633,38 +1687,83 @@
 {"id_abitante":26},
 {"id_abitante":27},
 {"id_abitante":28},
-{"id_abitante":29}
+{"id_abitante":29},
+{"id_abitante":30},
+{"id_abitante":31},
+{"id_abitante":32},
+{"id_abitante":33},
+{"id_abitante":34},
+{"id_abitante":35},
+{"id_abitante":36},
+{"id_abitante":37},
+{"id_abitante":38},
+{"id_abitante":39},
+{"id_abitante":40},
+{"id_abitante":41},
+{"id_abitante":42},
+{"id_abitante":43},
+{"id_abitante":44},
+{"id_abitante":45},
+{"id_abitante":46},
+{"id_abitante":47},
+{"id_abitante":48},
+{"id_abitante":49},
+{"id_abitante":50}
 ],
 
 "abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":3,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":4,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
-{"id_abitante":5,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8},
-{"id_abitante":6,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":7,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":8,"id_luogo_casa":3,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":9,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":10,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":11,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":12,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":13,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":14,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":15,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
-{"id_abitante":16,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":17,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
-{"id_abitante":18,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
-{"id_abitante":19,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8},
-{"id_abitante":20,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
-{"id_abitante":21,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
-{"id_abitante":22,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":23,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":1},
+{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
+{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8},
+{"id_abitante":3,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":4,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
+{"id_abitante":5,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":6,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21},
+{"id_abitante":7,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22},
+{"id_abitante":8,"id_luogo_casa":20,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21},
+{"id_abitante":9,"id_luogo_casa":14,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":17},
+{"id_abitante":10,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23},
+{"id_abitante":11,"id_luogo_casa":23,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24},
+{"id_abitante":12,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10},
+{"id_abitante":13,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
+{"id_abitante":14,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
+{"id_abitante":15,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
+{"id_abitante":16,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4},
+{"id_abitante":17,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":11},
+{"id_abitante":18,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10},
+{"id_abitante":19,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22},
+{"id_abitante":20,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13},
+{"id_abitante":21,"id_luogo_casa":15,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":12},
+{"id_abitante":22,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5},
+{"id_abitante":23,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7},
 {"id_abitante":24,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
 {"id_abitante":25,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3},
 {"id_abitante":26,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":27,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6},
-{"id_abitante":28,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2},
-{"id_abitante":29,"id_luogo_casa":4,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3}
+{"id_abitante":27,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":9},
+{"id_abitante":28,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23},
+{"id_abitante":29,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10},
+{"id_abitante":30,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20},
+
+
+{"id_abitante":31,"id_luogo_casa":16,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":6},
+{"id_abitante":32,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":8},
+{"id_abitante":33,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":9},
+{"id_abitante":34,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":7},
+{"id_abitante":35,"id_luogo_casa":20,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15},
+{"id_abitante":36,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":3},
+{"id_abitante":37,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":4},
+{"id_abitante":38,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":5},
+{"id_abitante":39,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":5},
+{"id_abitante":40,"id_luogo_casa":14,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":2},
+
+{"id_abitante":41,"id_luogo_casa":23,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":1},
+{"id_abitante":42,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":2},
+{"id_abitante":43,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":3},
+{"id_abitante":44,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":6},
+{"id_abitante":45,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":8},
+{"id_abitante":46,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":21},
+{"id_abitante":47,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":22},
+{"id_abitante":48,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":23},
+{"id_abitante":49,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":16},
+{"id_abitante":50,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":15}
 ]
 }

@@ -13,6 +13,8 @@ default.cfg
 default.gpr
 ior.txt
 quartiere_1
+quartiere_2
+quartiere_3
 webserver_starter
 webserver
 server

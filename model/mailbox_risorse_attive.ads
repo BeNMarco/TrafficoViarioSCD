@@ -16,6 +16,12 @@ use snapshot_interface;
 
 package mailbox_risorse_attive is
 
+   list_abitanti_error: exception;
+   deleted_wrong_abitante: exception;
+   alcuni_elementi_non_visitati: exception;
+   distanza_next_abitante_minore: exception;
+   lista_abitanti_rotta: exception;
+
    type data_structures_types is (road,sidewalk);
 
    type list_ingressi_per_urbana is tagged private;
@@ -49,7 +55,7 @@ package mailbox_risorse_attive is
    function create_abitante_from_json(json_abitante: JSON_Value) return posizione_abitanti_on_road;
    function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road;
 
-   procedure update_bound_next_car_in_incrocio(previous_bound: in out Float; new_bound: Float);
+   --procedure update_bound_next_car_in_incrocio(previous_bound: in out Float; new_bound: Float);
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       entry ingresso_wait_turno;
@@ -76,7 +82,9 @@ package mailbox_risorse_attive is
       procedure insert_abitante_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie);
       -- abitanti in transizione da incroci significa abitanti in uscita dagli incroci
       procedure sposta_abitanti_in_transizione_da_incroci;
-      procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie);
+      procedure azzera_spostamento_abitanti_in_incroci;
+
+      procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive);
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
 
       function get_ordered_ingressi_from_polo(polo: Boolean) return ptr_indici_ingressi;
@@ -96,6 +104,7 @@ package mailbox_risorse_attive is
       function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return Float;
       function can_car_overtake(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; to_corsia: id_corsie) return Boolean;
 
+      function get_abitante_in_transizione_da_incrocio(polo: Boolean; corsia: id_corsie) return posizione_abitanti_on_road;
       -- BEGIN metodi per gestione cambio corsia
       -- controlla se la macchina si trova nella posizione di un ingresso, lato false o true, e se in questo vi sono macchine in movimento
       function there_are_cars_moving_across_next_ingressi(car: ptr_list_posizione_abitanti_on_road; polo: Boolean) return Boolean;
@@ -104,7 +113,7 @@ package mailbox_risorse_attive is
       function car_can_overtake_on_first_step_trajectory(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; is_bound_overtaken: Boolean:= False) return Boolean;
       function car_can_overtake_on_second_step_trajectory(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
       -- controlla se si hanno macchine che intersecano la traiettoria di sorpasso nella corsia corrente
-      function car_on_same_corsia_have_overtaked(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
+      function complete_trajectory_on_same_corsia_is_free(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return Boolean;
       -- END metodi gestione cambio corsia
 
       -- DEPRECATED:
@@ -160,7 +169,7 @@ package mailbox_risorse_attive is
       procedure update_position_entity(state_view_abitanti: in out JSON_Array);-- type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
       procedure update_avanzamento_car_in_urbana(distance: Float);
       procedure delete_car_in_uscita;
-      procedure delete_car_in_entrata;
+      procedure delete_car_in_entrata(id_abitante: Positive);
       procedure set_flag_spostamento_from_urbana_completato;
 
       function get_main_strada(range_1: Boolean) return ptr_list_posizione_abitanti_on_road;

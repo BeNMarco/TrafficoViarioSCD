@@ -200,4 +200,28 @@ package body data_quartiere is
       return recovery;
    end get_recovery;
 
+   function get_abilita_aggiornamenti_view return Boolean is
+   begin
+      return abilita_aggiornamenti_view;
+   end get_abilita_aggiornamenti_view;
+
+   protected body log is
+      procedure configure is
+      begin
+         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_log.txt");
+         --Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
+         --Put_Line(OutFile, "ciao");
+         Close(OutFile);
+      end configure;
+
+      procedure write(stringa: String) is
+      begin
+         Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_log.txt", Mode => Append_File);
+         Put_Line(OutFile, stringa);
+         Close(OutFile);
+      end write;
+
+   end log;
+begin
+   log.configure;
 end data_quartiere;

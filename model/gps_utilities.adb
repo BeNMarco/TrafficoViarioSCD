@@ -135,7 +135,7 @@ package body gps_utilities is
       end get_estremi_strade_urbane;
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
-                                to_id_quartiere: Positive; to_id_luogo: Positive) return route_and_distance is
+                                to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance is
          coda_nodi: dijkstra_nodi(1..num_quartieri,min_first_incroci..max_last_incroci);
          to_consider: index_to_consider(1..numero_globale_incroci);
          new_from_id_luogo: Positive;
@@ -186,6 +186,7 @@ package body gps_utilities is
          --new_to_id_luogo:= cache_ingressi(to_id_quartiere).all'First  +to_id_luogo-1;
          new_from_id_luogo:= from_id_luogo;
          new_to_id_luogo:= to_id_luogo;
+         Put_Line("gps, quartiere " & Natural'Image(from_id_quartiere) & " luogo " & Natural'Image(new_from_id_luogo) & " quartiere ab " & Positive'Image(id_quartiere) & " ab " & Positive'Image(id_abitante));
          ingresso_partenza:= cache_ingressi(from_id_quartiere)(new_from_id_luogo);
          estremi:= hash_urbane_quartieri(from_id_quartiere)(ingresso_partenza.get_id_main_strada_ingresso);
          estremo_1_partenza:= estremi(1);

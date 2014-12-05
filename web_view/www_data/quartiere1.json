@@ -1233,7 +1233,7 @@
   "luoghi": [
     {
       "id_luogo": 35,
-      "nome": "Casa riposo",
+      "nome": "Casa riposo 1",
       "tipologia": "lavoro",
       "idstrada": 35,
       "dimensioni": [
@@ -1246,7 +1246,7 @@
     },
     {
       "id_luogo": 36,
-      "nome": "Campo sportivo",
+      "nome": "Campo sportivo 2",
       "tipologia": "svago",
       "idstrada": 36,
       "dimensioni": [
@@ -1259,7 +1259,7 @@
     },
     {
       "id_luogo": 37,
-      "nome": "Scuole private",
+      "nome": "Scuole private 3",
       "tipologia": "istruzione",
       "idstrada": 37,
       "dimensioni": [
@@ -1272,7 +1272,7 @@
     },
     {
       "id_luogo": 38,
-      "nome": "Da Toni meccanico",
+      "nome": "Da Toni meccanico 4",
       "tipologia": "lavoro",
       "idstrada": 38,
       "dimensioni": [
@@ -1285,7 +1285,7 @@
     },
     {
       "id_luogo": 39,
-      "nome": "Geometra Attilio",
+      "nome": "Geometra Attilio 5",
       "tipologia": "lavoro",
       "idstrada": 39,
       "dimensioni": [
@@ -1298,7 +1298,7 @@
     },
     {
       "id_luogo": 40,
-      "nome": "Ghegin",
+      "nome": "Ghegin 6",
       "tipologia": "negozio",
       "idstrada": 40,
       "dimensioni": [
@@ -1311,7 +1311,7 @@
     },
     {
       "id_luogo": 41,
-      "nome": "Fruttivendolo",
+      "nome": "Fruttivendolo 7",
       "tipologia": "negozio",
       "idstrada": 41,
       "dimensioni": [
@@ -1324,7 +1324,7 @@
     },
     {
       "id_luogo": 42,
-      "nome": "Tatooo da Gianni",
+      "nome": "Tatooo da Gianni 8",
       "tipologia": "negozio",
       "idstrada": 42,
       "dimensioni": [
@@ -1337,7 +1337,7 @@
     },
     {
       "id_luogo": 43,
-      "nome": "Angaran",
+      "nome": "Angaran 9",
       "tipologia": "negozio",
       "idstrada": 43,
       "dimensioni": [
@@ -1350,7 +1350,7 @@
     },
     {
       "id_luogo": 44,
-      "nome": "Avis",
+      "nome": "Avis 10",
       "tipologia": "negozio",
       "idstrada": 44,
       "dimensioni": [
@@ -1363,7 +1363,7 @@
     },
     {
       "id_luogo": 45,
-      "nome": "Pescheria",
+      "nome": "Pescheria 11",
       "tipologia": "negozio",
       "idstrada": 45,
       "dimensioni": [
@@ -1376,7 +1376,7 @@
     },
     {
       "id_luogo": 46,
-      "nome": "Quaggiotto",
+      "nome": "Quaggiotto 12",
       "tipologia": "negozio",
       "idstrada": 46,
       "dimensioni": [
@@ -1389,7 +1389,7 @@
     },
     {
       "id_luogo": 47,
-      "nome": "Da Bertilla",
+      "nome": "Da Bertilla 13",
       "tipologia": "negozio",
       "idstrada": 47,
       "dimensioni": [
@@ -1402,7 +1402,7 @@
     },
     {
       "id_luogo": 48,
-      "nome": "Quali",
+      "nome": "Quali 14",
       "tipologia": "negozio",
       "idstrada": 48,
       "dimensioni": [
@@ -1415,7 +1415,7 @@
     },
     {
       "id_luogo": 49,
-      "nome": "Mazzorato",
+      "nome": "Mazzorato 15",
       "tipologia": "negozio",
       "idstrada": 49,
       "dimensioni": [
@@ -1428,7 +1428,7 @@
     },
     {
       "id_luogo": 50,
-      "nome": "Bar Centrale",
+      "nome": "Bar Centrale 16",
       "tipologia": "negozio",
       "idstrada": 50,
       "dimensioni": [
@@ -1441,7 +1441,7 @@
     },
     {
       "id_luogo": 51,
-      "nome": "Da Rudi",
+      "nome": "Da Rudi 17",
       "tipologia": "negozio",
       "idstrada": 51,
       "dimensioni": [
@@ -1454,7 +1454,7 @@
     },
     {
       "id_luogo": 52,
-      "nome": "Simionato servizi",
+      "nome": "Simionato servizi 18",
       "tipologia": "negozio",
       "idstrada": 52,
       "dimensioni": [
@@ -1467,7 +1467,7 @@
     },
     {
       "id_luogo": 53,
-      "nome": "Buffetti",
+      "nome": "Buffetti 19",
       "tipologia": "negozio",
       "idstrada": 53,
       "dimensioni": [
@@ -1480,7 +1480,7 @@
     },
     {
       "id_luogo": 54,
-      "nome": "Velma",
+      "nome": "Velma 20",
       "tipologia": "negozio",
       "idstrada": 54,
       "dimensioni": [
@@ -1493,7 +1493,7 @@
     },
     {
       "id_luogo": 55,
-      "nome": "Pirotecnica Castellana",
+      "nome": "Pirotecnica Castellana 21",
       "tipologia": "negozio",
       "idstrada": 55,
       "dimensioni": [
@@ -1506,7 +1506,7 @@
     },
     {
       "id_luogo": 56,
-      "nome": "MaxMax",
+      "nome": "MaxMax 22",
       "tipologia": "negozio",
       "idstrada": 56,
       "dimensioni": [
@@ -1519,7 +1519,7 @@
     },
     {
       "id_luogo": 57,
-      "nome": "Glam",
+      "nome": "Glam 23",
       "tipologia": "negozio",
       "idstrada": 57,
       "dimensioni": [
@@ -1532,7 +1532,7 @@
     },
     {
       "id_luogo": 58,
-      "nome": "Felix",
+      "nome": "Felix 24",
       "tipologia": "negozio",
       "idstrada": 58,
       "dimensioni": [
@@ -1660,6 +1660,69 @@
     },
     {
       "id_abitante": 108
+    },
+    {
+      "id_abitante": 109
+    },
+    {
+      "id_abitante": 110
+    },
+    {
+      "id_abitante": 111
+    },
+    {
+      "id_abitante": 112
+    },
+    {
+      "id_abitante": 113
+    },
+    {
+      "id_abitante": 114
+    },
+    {
+      "id_abitante": 115
+    },
+    {
+      "id_abitante": 116
+    },
+    {
+      "id_abitante": 117
+    },
+    {
+      "id_abitante": 118
+    },
+    {
+      "id_abitante": 119
+    },
+    {
+      "id_abitante": 120
+    },
+    {
+      "id_abitante": 121
+    },
+    {
+      "id_abitante": 122
+    },
+    {
+      "id_abitante": 123
+    },
+    {
+      "id_abitante": 124
+    },
+    {
+      "id_abitante": 125
+    },
+    {
+      "id_abitante": 126
+    },
+    {
+      "id_abitante": 127
+    },
+    {
+      "id_abitante": 128
+    },
+    {
+      "id_abitante": 129
     }
   ],
   "auto": [
@@ -1836,6 +1899,132 @@
       "max_acceleration": 9.00000E+00,
       "comfortable_deceleration": 5.05000E+01,
       "desired_velocity": 9.50000E+01
+    },
+    {
+      "id_abitante": 109,
+      "max_acceleration": 9.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 9.50000E+01
+    },
+    {
+      "id_abitante": 110,
+      "max_acceleration": 2.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 1.50000E+02
+    },
+    {
+      "id_abitante": 111,
+      "max_acceleration": 1.50000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 5.00000E+01
+    },
+    {
+      "id_abitante": 112,
+      "max_acceleration": 1.60000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 5.00000E+01
+    },
+    {
+      "id_abitante": 113,
+      "max_acceleration": 1.70000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 3.00000E+01
+    },
+    {
+      "id_abitante": 114,
+      "max_acceleration": 3.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 2.50000E+01
+    },
+    {
+      "id_abitante": 115,
+      "max_acceleration": 4.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 1.00000E+02
+    },
+    {
+      "id_abitante": 116,
+      "max_acceleration": 5.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 8.00000E+01
+    },
+    {
+      "id_abitante": 117,
+      "max_acceleration": 2.50000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 8.50000E+01
+    },
+    {
+      "id_abitante": 118,
+      "max_acceleration": 5.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 4.50000E+01
+    },
+    {
+      "id_abitante": 119,
+      "max_acceleration": 9.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 6.00000E+01
+    },
+    {
+      "id_abitante": 120,
+      "max_acceleration": 5.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 7.00000E+01
+    },
+    {
+      "id_abitante": 121,
+      "max_acceleration": 1.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 8.50000E+01
+    },
+    {
+      "id_abitante": 122,
+      "max_acceleration": 2.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 9.50000E+01
+    },
+    {
+      "id_abitante": 123,
+      "max_acceleration": 2.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 1.00000E+02
+    },
+    {
+      "id_abitante": 124,
+      "max_acceleration": 8.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 9.50000E+01
+    },
+    {
+      "id_abitante": 125,
+      "max_acceleration": 3.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 8.00000E+01
+    },
+    {
+      "id_abitante": 126,
+      "max_acceleration": 1.50000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 7.50000E+01
+    },
+    {
+      "id_abitante": 127,
+      "max_acceleration": 1.00000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 7.00000E+01
+    },
+    {
+      "id_abitante": 128,
+      "max_acceleration": 1.50000E+01,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 6.00000E+01
+    },
+    {
+      "id_abitante": 129,
+      "max_acceleration": 9.00000E+00,
+      "comfortable_deceleration": 5.05000E+01,
+      "desired_velocity": 7.50000E+01
     }
   ],
   "bici": [
@@ -1925,6 +2114,69 @@
     },
     {
       "id_abitante": 108
+    },
+    {
+      "id_abitante": 109
+    },
+    {
+      "id_abitante": 110
+    },
+    {
+      "id_abitante": 111
+    },
+    {
+      "id_abitante": 112
+    },
+    {
+      "id_abitante": 113
+    },
+    {
+      "id_abitante": 114
+    },
+    {
+      "id_abitante": 115
+    },
+    {
+      "id_abitante": 116
+    },
+    {
+      "id_abitante": 117
+    },
+    {
+      "id_abitante": 118
+    },
+    {
+      "id_abitante": 119
+    },
+    {
+      "id_abitante": 120
+    },
+    {
+      "id_abitante": 121
+    },
+    {
+      "id_abitante": 122
+    },
+    {
+      "id_abitante": 123
+    },
+    {
+      "id_abitante": 124
+    },
+    {
+      "id_abitante": 125
+    },
+    {
+      "id_abitante": 126
+    },
+    {
+      "id_abitante": 127
+    },
+    {
+      "id_abitante": 128
+    },
+    {
+      "id_abitante": 129
     }
   ],
   "abitanti": [
@@ -1932,139 +2184,139 @@
       "id_abitante": 80,
       "id_luogo_casa": 1,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4
+      "id_luogo_lavoro": 7
     },
     {
       "id_abitante": 81,
       "id_luogo_casa": 1,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5
+      "id_luogo_lavoro": 8
     },
     {
       "id_abitante": 82,
-      "id_luogo_casa": 1,
+      "id_luogo_casa": 7,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 6
     },
     {
       "id_abitante": 83,
-      "id_luogo_casa": 2,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7
-    },
-    {
-      "id_abitante": 84,
-      "id_luogo_casa": 2,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8
-    },
-    {
-      "id_abitante": 85,
-      "id_luogo_casa": 3,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4
-    },
-    {
-      "id_abitante": 86,
-      "id_luogo_casa": 3,
+      "id_luogo_casa": 8,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 5
     },
     {
-      "id_abitante": 87,
-      "id_luogo_casa": 3,
+      "id_abitante": 84,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 6
     },
     {
-      "id_abitante": 88,
-      "id_luogo_casa": 4,
+      "id_abitante": 85,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
+      "id_luogo_lavoro": 21
+    },
+    {
+      "id_abitante": 86,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 22
+    },
+    {
+      "id_abitante": 87,
+      "id_luogo_casa": 20,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 21
+    },
+    {
+      "id_abitante": 88,
+      "id_luogo_casa": 14,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 17
     },
     {
       "id_abitante": 89,
-      "id_luogo_casa": 4,
+      "id_luogo_casa": 13,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
+      "id_luogo_lavoro": 23
     },
     {
       "id_abitante": 90,
-      "id_luogo_casa": 4,
+      "id_luogo_casa": 23,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
+      "id_luogo_lavoro": 24
     },
     {
       "id_abitante": 91,
-      "id_luogo_casa": 5,
+      "id_luogo_casa": 24,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
+      "id_luogo_lavoro": 10
     },
     {
       "id_abitante": 92,
-      "id_luogo_casa": 5,
+      "id_luogo_casa": 24,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 2
     },
     {
       "id_abitante": 93,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 94,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
-    },
-    {
-      "id_abitante": 95,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
-    },
-    {
-      "id_abitante": 96,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3
-    },
-    {
-      "id_abitante": 97,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7
-    },
-    {
-      "id_abitante": 98,
-      "id_luogo_casa": 4,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8
-    },
-    {
-      "id_abitante": 99,
-      "id_luogo_casa": 7,
+      "id_luogo_casa": 2,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 4
     },
     {
-      "id_abitante": 100,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5
-    },
-    {
-      "id_abitante": 101,
-      "id_luogo_casa": 7,
+      "id_abitante": 94,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 6
     },
     {
-      "id_abitante": 102,
-      "id_luogo_casa": 6,
+      "id_abitante": 95,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 1
+      "id_luogo_lavoro": 4
+    },
+    {
+      "id_abitante": 96,
+      "id_luogo_casa": 8,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 11
+    },
+    {
+      "id_abitante": 97,
+      "id_luogo_casa": 13,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 10
+    },
+    {
+      "id_abitante": 98,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 22
+    },
+    {
+      "id_abitante": 99,
+      "id_luogo_casa": 17,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 13
+    },
+    {
+      "id_abitante": 100,
+      "id_luogo_casa": 15,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 12
+    },
+    {
+      "id_abitante": 101,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 5
+    },
+    {
+      "id_abitante": 102,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 7
     },
     {
       "id_abitante": 103,
@@ -2086,21 +2338,147 @@
     },
     {
       "id_abitante": 106,
-      "id_luogo_casa": 8,
+      "id_luogo_casa": 6,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6
+      "id_luogo_lavoro": 9
     },
     {
       "id_abitante": 107,
-      "id_luogo_casa": 5,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2
+      "id_luogo_lavoro": 23
     },
     {
       "id_abitante": 108,
-      "id_luogo_casa": 4,
+      "id_luogo_casa": 9,
       "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 10
+    },
+    {
+      "id_abitante": 109,
+      "id_luogo_casa": 10,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 20
+    },
+    {
+      "id_abitante": 110,
+      "id_luogo_casa": 16,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 6
+    },
+    {
+      "id_abitante": 111,
+      "id_luogo_casa": 17,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 8
+    },
+    {
+      "id_abitante": 112,
+      "id_luogo_casa": 18,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 9
+    },
+    {
+      "id_abitante": 113,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 7
+    },
+    {
+      "id_abitante": 114,
+      "id_luogo_casa": 20,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 15
+    },
+    {
+      "id_abitante": 115,
+      "id_luogo_casa": 22,
+      "id_quartiere_luogo_lavoro": 2,
       "id_luogo_lavoro": 3
+    },
+    {
+      "id_abitante": 116,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 4
+    },
+    {
+      "id_abitante": 117,
+      "id_luogo_casa": 10,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 5
+    },
+    {
+      "id_abitante": 118,
+      "id_luogo_casa": 6,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 5
+    },
+    {
+      "id_abitante": 119,
+      "id_luogo_casa": 14,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 120,
+      "id_luogo_casa": 23,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 1
+    },
+    {
+      "id_abitante": 121,
+      "id_luogo_casa": 13,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 2
+    },
+    {
+      "id_abitante": 122,
+      "id_luogo_casa": 12,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 3
+    },
+    {
+      "id_abitante": 123,
+      "id_luogo_casa": 11,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 6
+    },
+    {
+      "id_abitante": 124,
+      "id_luogo_casa": 22,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 8
+    },
+    {
+      "id_abitante": 125,
+      "id_luogo_casa": 21,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 21
+    },
+    {
+      "id_abitante": 126,
+      "id_luogo_casa": 6,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 22
+    },
+    {
+      "id_abitante": 127,
+      "id_luogo_casa": 5,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 23
+    },
+    {
+      "id_abitante": 128,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 16
+    },
+    {
+      "id_abitante": 129,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_lavoro": 15
     }
   ]
 }

@@ -41,19 +41,20 @@ package body start_simulation is
       arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
       -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
+      Put_Line(Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
       if get_id_quartiere=arrived_tratto.get_id_quartiere_tratto and
         residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1=arrived_tratto.get_id_tratto then
          -- l'abitante si trova a casa
          -- lo si manda a lavorare
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_quartiere_cfg(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_ingressi_quartiere-1));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_quartiere_cfg(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_ingressi_quartiere-1,get_id_quartiere,id_abitante));
       elsif residente.get_id_quartiere_luogo_lavoro_from_abitante=arrived_tratto.get_id_quartiere_tratto and
         residente.get_id_luogo_lavoro_from_abitante+get_quartiere_cfg(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_ingressi_quartiere-1=arrived_tratto.get_id_tratto then
          -- l'abitante è a lavoro
          -- lo si manda a casa
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));
          get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
       else  -- lo si manda a casa cmq
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));--get_quartiere_cfg(residente.get_id_quartiere_from_abitante).get_from_ingressi_quartiere-1));
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));--get_quartiere_cfg(residente.get_id_quartiere_from_abitante).get_from_ingressi_quartiere-1));
       end if;
 
       -- Invio richiesta ASINCRONA
@@ -89,11 +90,12 @@ package body start_simulation is
          if switch then
             residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,i);
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-            Put_Line("request percorso");
+            Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
             percorso:= new route_and_distance'(get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,
-                                                                            to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante+get_quartiere_cfg(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_ingressi_quartiere-1));
-            Put_Line("end request percorso");
+                                                                            to_id_quartiere => residente.get_id_quartiere_luogo_lavoro_from_abitante, to_id_luogo => residente.get_id_luogo_lavoro_from_abitante+get_quartiere_cfg(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_ingressi_quartiere-1,id_quartiere => get_id_quartiere,id_abitante => i));
             print_percorso(percorso.get_percorso_from_route_and_distance);
+            Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+
             get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => percorso.all);
             get_ingressi_segmento_resources(get_from_ingressi+residente.get_id_luogo_casa_from_abitante-1).new_abitante_to_move(residente.get_id_quartiere_from_abitante,residente.get_id_abitante_from_abitante,car);
          end if;

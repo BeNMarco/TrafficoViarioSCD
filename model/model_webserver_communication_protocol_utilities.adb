@@ -6,6 +6,7 @@ with strade_e_incroci_common;
 with data_quartiere;
 with the_name_server;
 with remote_types;
+with global_data;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -15,6 +16,7 @@ use strade_e_incroci_common;
 use data_quartiere;
 use the_name_server;
 use remote_types;
+use global_data;
 
 package body model_webserver_communication_protocol_utilities is
 
@@ -96,16 +98,18 @@ package body model_webserver_communication_protocol_utilities is
       procedure registra_aggiornamento_stato_risorsa(id_risorsa: Positive; stato: JSON_Array) is
          json: JSON_Value;
       begin
-         num_task_updated:= num_task_updated+1;
-         for i in 1..Length(stato) loop
-            Append(global_state_quartiere,Get(stato,i));
-         end loop;
-         if num_task_updated=get_num_task then
-            num_task_updated:= 0;
-            json:= Create_Object;
-            json.Set_Field("cars",global_state_quartiere);
-            get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);
-            global_state_quartiere:= Empty_Array;
+         if get_abilita_aggiornamenti_view then
+            num_task_updated:= num_task_updated+1;
+            for i in 1..Length(stato) loop
+               Append(global_state_quartiere,Get(stato,i));
+            end loop;
+            if num_task_updated=get_num_task then
+               num_task_updated:= 0;
+               json:= Create_Object;
+               json.Set_Field("cars",global_state_quartiere);
+               get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);
+               global_state_quartiere:= Empty_Array;
+            end if;
          end if;
       end registra_aggiornamento_stato_risorsa;
    end state_view_quartiere;

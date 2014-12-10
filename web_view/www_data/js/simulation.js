@@ -23,11 +23,14 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration){
 	this.prevStateRemainingTime = 0;
 
 	this.running = false;
+  this.ranOutOfStates = false;
 
 	// callbacks
 	this.readyCallback = null;
 	this.finishCallbal = null;
 	this.emptyStateCacheCallback = null;
+  this.statesAvailableCallback = null;
+
 	this.lastStateTime = 0;
 }
 
@@ -38,7 +41,7 @@ Simulation.prototype.onReady = function(callback){
 Simulation.prototype.addState = function(state){
 	this.stateCache.push(state);
 	this.receivedStates++;
-	//console.log("got state");
+	console.log("got state");
 	
 	/*
 	var stateDelta = (new Date().getTime()) - this.lastStateTime;
@@ -49,6 +52,13 @@ Simulation.prototype.addState = function(state){
 	if(!this.running && this.receivedStates == this.requiredStates && (typeof this.readyCallback === 'function')){
 		console.log("i'm ready!");
 		this.readyCallback();
+    if(this.ranOutOfStates){
+      console.log("recovered from empty states");
+      this.ranOutOfStates = false;
+    }
+    if(typeof this.statesAvailableCallback === 'function'){
+      this.statesAvailableCallback();
+    }
 	}
 }
 
@@ -94,8 +104,6 @@ Simulation.prototype.moveObjects = function(time){
 		if(!doesExists(this.prevState))
 		{
 			newDistance = curCar.distanza;
-			console.log("previous state is null");
-			console.log(curCar);
 		} 
 		// otherwise we compute the correct position
 		else if(doesExists(this.objects.cars[curCar.id_abitante].prevState))
@@ -227,9 +235,13 @@ Simulation.prototype.updateState = function(deltaTime){
 			this.currentState = this.stateCache.shift();
 			if(this.currentState === undefined){
 				if(typeof this.emptyStateCacheCallback === 'function'){
+          console.log("calling callback");
 					this.emptyStateCacheCallback();
 				}
+        console.log("no more states");
+        this.ranOutOfStates = true;
 				this.running = false;
+        this.receivedStates = 0;
 			} else {
 				this.currentState.stateTime = 0;
 			}

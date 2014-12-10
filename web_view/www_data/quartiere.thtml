@@ -47,6 +47,15 @@
 		sim.onReady(startSimulation);
 		entStyle = new EntitiesStyle();
 
+		sim.emptyStateCacheCallback = function(){
+			$('#loadingMessage').html("Cache degli stati vuota.<br />Buffering in corso...");
+			$('#loadingDialog').modal('show');
+		}
+
+		sim.statesAvailableCallback = function(){
+			$('#loadingDialog').modal('hide');
+		}
+
 		//myMap.onStartLoading(openLoadingDialog);
 		myMap.onFinishDrawing(closeLoadingDialog);
 		//myMap.setProgressNotifier(setProgressText);
@@ -57,20 +66,20 @@
 		paper.install(window);
 
 		var style = new MapStyle();
-		style.debug = true;
+		//style.debug = true;
 		
 		var dDialog = null;
-	    var ws1;
-	    var ws2;
-	    var server = window.location.host;
+		var ws1;
+		var ws2;
+		var server = window.location.host;
 
-	    function startSimulation(){
-	    	console.log("start simulation");
-	    	sim.init();
+		function startSimulation(){
+			console.log("start simulation");
+			sim.init();
 			view.onFrame = function(event){
 				sim.updateState(event.delta*1000);
 			}
-	    }
+		}
 
 		function traslladar(a,b){
 			var center = paper.project.view.center;

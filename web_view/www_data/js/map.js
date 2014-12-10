@@ -750,8 +750,10 @@ Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, d
 }
 
 Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDistrict, direction){
+	var toRet = {angle: null, position: null};
 	try{
 		var loc = this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.getLocationAt(distance);
+		toRet = {angle: loc.tangent.angle, position: loc.point};
 	}catch(err){
 		console.log("ID entrance street: "+this.getEntranceStreetNumber(enteringStreet, streetDistrict));
 		console.log(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)])
@@ -760,7 +762,7 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 		{
 			throw "CROSSROAD_SREET_NOT_FOUND: L'incrocio "+this.id+" non ha la strada "+enteringStreet+" proveniente dal distretto "+streetDistrict;	
 		}
-		else if (!doesExits(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction]))
+		else if (!doesExists(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction]))
 		{
 			throw "CROSSROAD_PATH_NOT_FOUND: L'incrocio "+this.id+" non ha la traiettoria "+direction+" a partire dalla strada "+enteringStreet+" del quartiere "+streetDistrict;	
 		}
@@ -768,9 +770,12 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 		{
 			throw "CROSSROAD_PATH_TOO_LONG: Spostamento sulla traiettoria "+direction+" dell'incrocio "+this.id+" a partire dalla strada "+enteringStreet+" del quartiere "+streetDistrict+" al metro "+distance+" di "+this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.length;
 		}
-		
+		else
+		{
+			throw "WTF_IS_IT_I_DUNNO: Spostamento sulla traiettoria "+direction+" dell'incrocio "+this.id+" a partire dalla strada "+enteringStreet+" del quartiere "+streetDistrict+" al metro "+distance+" di "+this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path.length;
+		}
 	}
-	return {angle: loc.tangent.angle, position: loc.point};
+	return toRet;
 }
 
 Crossroad.prototype.switchTrafficLights = function(){

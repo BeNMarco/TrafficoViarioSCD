@@ -356,6 +356,7 @@ package body risorse_passive_data is
          json_3: JSON_Value;
          convert_passo: JSON_Value;
       begin
+         begin
          json_1:= Create_Object;
          json_2:= Create_Object;
          for i in percorsi'Range loop
@@ -388,7 +389,11 @@ package body risorse_passive_data is
             json_2.Set_Field(Positive'Image(i),abitanti_arrived(i));
          end loop;
          json_1.Set_Field("abitanti_arrived",json_2);
-
+         exception
+            when others =>
+               Put_Line("ERROR nella creazione position_abitanti");
+               raise set_field_json_error;
+         end;
       end create_img;
 
       procedure recovery_resource is

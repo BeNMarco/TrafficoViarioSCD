@@ -79,7 +79,7 @@ package risorse_strade_e_incroci is
    procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: Float; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
    procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
 
-   procedure fix_advance_parameters(acceleration: in out Float; new_speed: in out Float; new_step: in out Float; speed_abitante: Float; distance_to_next: Float; distanza_stop_line: Float; max_acceleration: Float; can_not_overtake_now: Boolean:= False);
+   procedure fix_advance_parameters(acceleration: in out Float; new_speed: in out Float; new_step: in out Float; speed_abitante: Float; distance_to_next: Float; distanza_stop_line: Float; max_acceleration: Float);
 
 private
 

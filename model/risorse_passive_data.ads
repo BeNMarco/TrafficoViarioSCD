@@ -19,6 +19,8 @@ use JSON_Helper;
 
 package risorse_passive_data is
 
+   set_field_json_error: exception;
+
    function get_urbana_from_id(index: Positive) return strada_urbana_features;
    function get_ingresso_from_id(index: Positive) return strada_ingresso_features;
    function get_incrocio_a_4_from_id(index: Positive) return list_road_incrocio_a_4;

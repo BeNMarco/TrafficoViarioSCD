@@ -32,6 +32,8 @@ use JSON_Helper;
 
 package body start_simulation is
 
+   nuova_eccezione: exception;
+
    procedure abitante_is_arrived(obj: quartiere_entities_life; id_abitante: Positive) is
       resource_locate_abitanti: ptr_location_abitanti:= get_locate_abitanti_quartiere;
       arrived_tratto: tratto;
@@ -39,6 +41,15 @@ package body start_simulation is
       percorso: access route_and_distance;
    begin
       arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
+      begin
+         Put_Line(Natural'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Natural'Image(arrived_tratto.get_id_tratto));
+      exception
+         when others =>
+            raise nuova_eccezione;
+      end;
+
+
+
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
       -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
       Put_Line(Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));

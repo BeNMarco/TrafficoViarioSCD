@@ -59,6 +59,7 @@ package remote_types is
    procedure remove_abitante_in_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive) is abstract;
    procedure delta_incrocio_finished(obj: access rt_urbana) is abstract;
    function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Float is abstract;
+   function first_car_abitante_has_passed_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Boolean is abstract;
 
    procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;
    --procedure change_verso_semafori_verdi(obj: access rt_incrocio) is abstract;

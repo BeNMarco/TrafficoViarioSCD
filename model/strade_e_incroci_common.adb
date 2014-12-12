@@ -320,11 +320,11 @@ package body strade_e_incroci_common is
       return obj.from_ingresso;
    end get_from_ingresso;
 
-   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Natural is
    begin
       return obj.id_abitante;
    end get_id_abitante_posizione_abitanti;
-   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive is
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Natural is
    begin
       return obj.id_quartiere;
    end get_id_quartiere_posizione_abitanti;

@@ -150,8 +150,8 @@ package strade_e_incroci_common is
    function get_traiettoria_incrocio_to_follow(obj: trajectory_to_follow) return traiettoria_incroci_type;
    function get_from_ingresso(obj: trajectory_to_follow) return Natural;
 
-   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
-   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Positive;
+   function get_id_abitante_posizione_abitanti(obj: posizione_abitanti_on_road) return Natural;
+   function get_id_quartiere_posizione_abitanti(obj: posizione_abitanti_on_road) return Natural;
    function get_where_next_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_where_now_posizione_abitanti(obj: posizione_abitanti_on_road) return Float;
    function get_current_speed_abitante(obj: posizione_abitanti_on_road) return Float;
@@ -263,8 +263,8 @@ private
    end record;
 
    type posizione_abitanti_on_road is tagged record
-      id_abitante: Positive;
-      id_quartiere: Positive;
+      id_abitante: Natural:= 0;
+      id_quartiere: Natural:= 0;
       where_next: Float:= 0.0; -- posizione nella strada corrente dal punto di entrata
       where_now: Float:= 0.0;
       current_speed: Float:= 0.0;

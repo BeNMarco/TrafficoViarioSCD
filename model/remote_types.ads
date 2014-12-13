@@ -122,6 +122,12 @@ package remote_types is
    procedure invia_aggiornamento(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
    --END REMOTE TYPES WEB SERVER
 
+
+   type rt_report_log is synchronized interface;
+   type ptr_rt_report_log is access all rt_report_log'Class;
+   pragma Asynchronous(ptr_rt_report_log);
+   procedure write_state_stallo(obj: access rt_report_log; id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is abstract;
+
 private
 
    type rt_handler_semafori_quartiere is abstract tagged limited null record;

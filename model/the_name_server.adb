@@ -8,6 +8,16 @@ use remote_types;
 
 package body the_name_server is
 
+   procedure registra_quartiere_log(id_quartiere: Positive; file_log: ptr_rt_report_log) is
+   begin
+      registro_log_quartieri(id_quartiere):= file_log;
+   end registra_quartiere_log;
+
+   function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+   begin
+      return registro_log_quartieri(id_quartiere);
+   end get_log_quartiere;
+
    procedure registra_webserver(my_web: Access_WebServer_Remote_Interface) is
    begin
       web:= my_web;

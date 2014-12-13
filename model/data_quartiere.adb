@@ -205,23 +205,54 @@ package body data_quartiere is
       return abilita_aggiornamenti_view;
    end get_abilita_aggiornamenti_view;
 
-   protected body log is
+   protected body report_log is
       procedure configure is
       begin
-         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_log.txt");
+         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_stallo.json");
          --Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
-         --Put_Line(OutFile, "ciao");
+         Put_Line(OutFile, "{}");
          Close(OutFile);
       end configure;
 
-      procedure write(stringa: String) is
+      procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is
+         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
       begin
-         Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_log.txt", Mode => Append_File);
-         Put_Line(OutFile, stringa);
-         Close(OutFile);
-      end write;
+         if id_quartiere=get_id_quartiere then
+            if state_stallo.Has_Field(Positive'Image(id_abitante)) then
+               if reset then
+                  state_stallo.Set_Field(Positive'Image(id_abitante),state_stallo.Get(Positive'Image(id_abitante))+1);
+               else
+                  state_stallo.Set_Field(Positive'Image(id_abitante),0);
+               end if;
+            else
+               if reset then
+                  state_stallo.Set_Field(Positive'Image(id_abitante),1);
+               else
+                  state_stallo.Set_Field(Positive'Image(id_abitante),0);
+               end if;
+            end if;
+            Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_stallo.json", Mode => Out_File);
+            Put_Line(OutFile, Write(state_stallo,False));
+            Close(OutFile);
+         else
+            get_log_quartiere(id_quartiere).write_state_stallo(id_quartiere,id_abitante,reset);
+         end if;
+      end write_state_stallo;
 
-   end log;
+      --procedure write(stringa: String) is
+      --begin
+      --   Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_log.txt", Mode => Append_File);
+      --   Put_Line(OutFile, stringa);
+      --   Close(OutFile);
+      --end write;
+
+   end report_log;
+
+   function get_log_stallo_quartiere return ptr_report_log is
+   begin
+      return my_log_stallo;
+   end get_log_stallo_quartiere;
+
 begin
-   log.configure;
+   my_log_stallo.configure;
 end data_quartiere;

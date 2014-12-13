@@ -48,9 +48,15 @@ package the_name_server is
    function get_webServer return Access_WebServer_Remote_Interface;
    -- end web server
 
+   procedure registra_quartiere_log(id_quartiere: Positive; file_log: ptr_rt_report_log);
+   function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log;
+   type registro_quartieri_log is array(Positive range 1..num_quartieri) of ptr_rt_report_log;
+
 private
 
    web: Access_WebServer_Remote_Interface:= null;
+
+   registro_log_quartieri: registro_quartieri_log;
 
    protected registro_ref_quartieri is
       procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites);

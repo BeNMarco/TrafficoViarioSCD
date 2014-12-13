@@ -7,6 +7,7 @@ with Polyorb.Parameters;
 with JSON_Helper;
 with strade_e_incroci_common;
 with the_name_server;
+with remote_types;
 
 use GNATCOLL.JSON;
 use Ada.Directories;
@@ -16,6 +17,7 @@ use Ada.Strings.Unbounded;
 use JSON_Helper;
 use strade_e_incroci_common;
 use the_name_server;
+use remote_types;
 
 with absolute_path;
 use absolute_path;
@@ -63,12 +65,18 @@ pragma Elaborate_Body;
    function get_recovery return Boolean;
    function get_abilita_aggiornamenti_view return Boolean;
 
-   protected log is
+
+   protected type report_log is new rt_report_log with
       procedure configure;
-      procedure write(stringa: String);
+      --procedure write(stringa: String);
+      procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean);
    private
       OutFile: File_Type;
-   end log;
+   end report_log;
+
+   type ptr_report_log is access all report_log;
+
+   function get_log_stallo_quartiere return ptr_report_log;
 
 private
 
@@ -154,5 +162,6 @@ private
    json_recovery: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/snapshot/recovery.json");
    recovery: Boolean:= json_recovery.Get("abilita_ripristino");
 
+   my_log_stallo: ptr_report_log:= new report_log;
 
 end data_quartiere;

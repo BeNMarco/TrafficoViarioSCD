@@ -1,10 +1,12 @@
 with GNATCOLL.json;
 
 with strade_e_incroci_common;
+with risorse_passive_data;
 
 use GNATCOLL.json;
 
 use strade_e_incroci_common;
+use risorse_passive_data;
 
 package risorse_passive_utilities is
 

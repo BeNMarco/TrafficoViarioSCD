@@ -3,12 +3,14 @@ with GNATCOLL.JSON;
 with strade_e_incroci_common;
 with data_quartiere;
 with remote_types;
+with numerical_types;
 
 use GNATCOLL.JSON;
 
 use strade_e_incroci_common;
 use data_quartiere;
 use remote_types;
+use numerical_types;
 
 package risorse_mappa_utilities is
 
@@ -67,25 +69,25 @@ package risorse_mappa_utilities is
 
    function get_mancante_incrocio_a_3(id_incrocio: Positive) return Natural;
 
-   function get_lunghezza(obj: traiettoria_ingresso) return Float;
+   function get_lunghezza(obj: traiettoria_ingresso) return new_float;
    function get_intersezioni(obj: traiettoria_ingresso) return intersezione_ingresso'Class;
    function get_intersezioni_corsie(obj: traiettoria_ingresso; linea: traiettorie_intersezioni_linee_corsie) return intersezione_linee'Class;
    function get_traiettoria_intersezione(obj: intersezione_ingresso) return traiettoria_ingressi_type;
-   function get_distanza_intersezione(obj: intersezione_ingresso) return Float;
+   function get_distanza_intersezione(obj: intersezione_ingresso) return new_float;
 
    function get_traiettoria_intersezioni_corsie(obj: intersezione_linee) return traiettorie_intersezioni_linee_corsie;
-   function get_distanza_intersezioni_corsie(obj: intersezione_linee) return Float;
+   function get_distanza_intersezioni_corsie(obj: intersezione_linee) return new_float;
 
-   function get_lunghezza_traiettoria(obj: traiettoria_cambio_corsia) return Float;
-   function get_lunghezza_lineare_traiettoria(obj: traiettoria_cambio_corsia) return Float;
-   function get_distanza_intersezione_linea_di_mezzo(obj: traiettoria_cambio_corsia) return Float;
+   function get_lunghezza_traiettoria(obj: traiettoria_cambio_corsia) return new_float;
+   function get_lunghezza_lineare_traiettoria(obj: traiettoria_cambio_corsia) return new_float;
+   function get_distanza_intersezione_linea_di_mezzo(obj: traiettoria_cambio_corsia) return new_float;
 
-   function get_lunghezza_traiettoria_incrocio(obj: traiettoria_incrocio) return Float;
+   function get_lunghezza_traiettoria_incrocio(obj: traiettoria_incrocio) return new_float;
    function get_intersezioni_incrocio(obj: traiettoria_incrocio; con_traiettoria: traiettoria_incroci_type) return intersezione_incrocio'Class;
    function get_intersezioni_corsie(obj: traiettoria_incrocio; linea: traiettorie_intersezioni_linee_corsie) return intersezione_linee'Class;
 
    function get_traiettoria_intersezione_incrocio(obj: intersezione_incrocio) return traiettoria_incroci_type;
-   function get_distanza_intersezione_incrocio(obj: intersezione_incrocio) return Float;
+   function get_distanza_intersezione_incrocio(obj: intersezione_incrocio) return new_float;
 
 private
 
@@ -93,16 +95,16 @@ private
 
    type intersezione_incrocio is tagged record
       traiettoria: traiettoria_incroci_type;
-      distanza: Float;
+      distanza: new_float;
    end record;
 
    type intersezione_linee is tagged record
       traiettoria: traiettorie_intersezioni_linee_corsie;
-      distanza: Float;
+      distanza: new_float;
    end record;
 
    type traiettoria_incrocio is tagged record
-      lunghezza: Float;
+      lunghezza: new_float;
       corsia_arrivo: id_corsie;
       corsia_partenza: id_corsie;
       intersezioni: ptr_intersezioni_incrocio;
@@ -111,19 +113,19 @@ private
 
    type intersezione_ingresso is tagged record
       traiettoria: traiettoria_ingressi_type;
-      distanza: Float;
+      distanza: new_float;
    end record;
 
    type traiettoria_ingresso is tagged record
-      lunghezza: Float;
+      lunghezza: new_float;
       intersezioni: ptr_intersezioni_ingresso;
       intersezioni_corsie: ptr_intersezioni_linee;
    end record;
 
    type traiettoria_cambio_corsia is tagged record
-      lunghezza_traiettoria: Float;
-      lunghezza_lineare: Float;
-      distanza_intersezione_linea_di_mezzo: Float;
+      lunghezza_traiettoria: new_float;
+      lunghezza_lineare: new_float;
+      distanza_intersezione_linea_di_mezzo: new_float;
    end record;
 
 end risorse_mappa_utilities;

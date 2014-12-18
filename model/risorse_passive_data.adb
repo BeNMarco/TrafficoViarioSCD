@@ -28,6 +28,45 @@ use the_name_server;
 
 package body risorse_passive_data is
 
+   function get_default_value_pedoni(value: move_settings) return new_float is
+   begin
+      case value is
+         when desired_velocity => return default_desired_velocity_pedoni;
+         when time_headway => return default_time_headway_pedoni;
+         when max_acceleration => return default_max_acceleration_pedoni;
+         when comfortable_deceleration => return default_comfortable_deceleration_pedoni;
+         when s0 => return default_s0_pedoni;
+         when length => return default_length_pedoni;
+         when others => return 0.0;
+      end case;
+   end get_default_value_pedoni;
+
+   function get_default_value_bici(value: move_settings) return new_float is
+   begin
+      case value is
+         when desired_velocity => return default_desired_velocity_bici;
+         when time_headway => return default_time_headway_bici;
+         when max_acceleration => return default_max_acceleration_bici;
+         when comfortable_deceleration => return default_comfortable_deceleration_bici;
+         when s0 => return default_s0_bici;
+         when length => return default_length_bici;
+         when others => return 0.0;
+      end case;
+   end get_default_value_bici;
+
+   function get_default_value_auto(value: move_settings) return new_float is
+   begin
+      case value is
+         when desired_velocity => return default_desired_velocity_auto;
+         when time_headway => return default_time_headway_auto;
+         when max_acceleration => return default_max_acceleration_auto;
+         when comfortable_deceleration => return default_comfortable_deceleration_auto;
+         when s0 => return default_s0_auto;
+         when length => return default_length_auto;
+         when num_posti => return new_float(default_num_posti_auto);
+      end case;
+   end get_default_value_auto;
+
    function get_urbana_from_id(index: Positive) return strada_urbana_features is
    begin
       return urbane_features(index);
@@ -103,7 +142,7 @@ package body risorse_passive_data is
       return rotonde_a_3;
    end get_rotonde_a_3;
 
-   function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return Float is
+   function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return new_float is
    begin
       if polo then
          return get_urbana_from_id(road.get_id_main_strada_ingresso).get_lunghezza_road-road.get_distance_from_road_head_ingresso;
@@ -331,99 +370,101 @@ package body risorse_passive_data is
       return estremi;
    end get_estremi_urbana;
 
-   function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance is
-      json_percorso: JSON_Array:= json_percorso_abitante.Get("percorso");
-      route: percorso(1..length);
-      json_tratto: JSON_Array;
-   begin
-      if length=0 then
-         return null;
-      end if;
-      for i in 1..length loop
-         json_tratto:= Get(Get(json_percorso,i));
-         route(i):= create_tratto(Get(Get(json_tratto,1)),Get(Get(json_tratto,2)));
-      end loop;
-      return new route_and_distance'(create_percorso(route,json_percorso_abitante.Get("distanza")));
-   end create_route_and_distance_from_json;
+   --function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance is
+   --   json_percorso: JSON_Array:= json_percorso_abitante.Get("percorso");
+   --   route: percorso(1..length);
+   --   json_tratto: JSON_Array;
+   --begin
+   --   if length=0 then
+   --      return null;
+   --   end if;
+   --   for i in 1..length loop
+   --      json_tratto:= Get(Get(json_percorso,i));
+   --      route(i):= create_tratto(Get(Get(json_tratto,1)),Get(Get(json_tratto,2)));
+   --   end loop;
+   --   return new route_and_distance'(create_percorso(route,json_percorso_abitante.Get("distanza")));
+   --end create_route_and_distance_from_json;
 
    protected body location_abitanti is
 
       procedure create_img(json_1: out JSON_Value) is
-         segmento: tratto;
-         route: JSON_Array;
-         passo: JSON_Array;
-         json_2: JSON_Value;
-         json_3: JSON_Value;
-         convert_passo: JSON_Value;
+      --   segmento: tratto;
+      --   route: JSON_Array;
+      --   passo: JSON_Array;
+      --   json_2: JSON_Value;
+      --   json_3: JSON_Value;
+      --   convert_passo: JSON_Value;
       begin
-         begin
-         json_1:= Create_Object;
-         json_2:= Create_Object;
-         for i in percorsi'Range loop
-            if percorsi(i)/=null then
-               route:= Empty_Array;
-               json_3:= Create_Object;
-               for j in percorsi(i).get_percorso_from_route_and_distance'Range loop
-                  passo:= Empty_Array;
-                  segmento:= percorsi(i).get_percorso_from_route_and_distance(j);
-                  Append(passo,Create(segmento.get_id_quartiere_tratto));
-                  Append(passo,Create(segmento.get_id_tratto));
-                  convert_passo:= Create(passo);
-                  Append(route,convert_passo);
-               end loop;
-               json_3.Set_Field("percorso",route);
-               json_3.Set_Field("distanza",Create(percorsi(i).get_distance_from_route_and_distance));
-               json_2.Set_Field(Positive'Image(i),json_3);
-            end if;
-         end loop;
-         json_1.Set_Field("percorsi",json_2);
+         null;
+      --   begin
+      --   json_1:= Create_Object;
+      --   json_2:= Create_Object;
+      --   for i in percorsi'Range loop
+      --      if percorsi(i)/=null then
+      --         route:= Empty_Array;
+      --         json_3:= Create_Object;
+      --         for j in percorsi(i).get_percorso_from_route_and_distance'Range loop
+      --            passo:= Empty_Array;
+      --            segmento:= percorsi(i).get_percorso_from_route_and_distance(j);
+      --            Append(passo,Create(segmento.get_id_quartiere_tratto));
+      --            Append(passo,Create(segmento.get_id_tratto));
+      --            convert_passo:= Create(passo);
+      --            Append(route,convert_passo);
+      --         end loop;
+      --         json_3.Set_Field("percorso",route);
+      --         json_3.Set_Field("distanza",Create(percorsi(i).get_distance_from_route_and_distance));
+      --         json_2.Set_Field(Positive'Image(i),json_3);
+      --      end if;
+      --   end loop;
+      --   json_1.Set_Field("percorsi",json_2);
 
-         json_2:= Create_Object;
-         for i in position_abitanti'Range loop
-            json_2.Set_Field(Positive'Image(i),position_abitanti(i));
-         end loop;
-         json_1.Set_Field("position_abitanti",json_2);
+      --   json_2:= Create_Object;
+      --   for i in position_abitanti'Range loop
+      --      json_2.Set_Field(Positive'Image(i),position_abitanti(i));
+      --   end loop;
+      --   json_1.Set_Field("position_abitanti",json_2);
 
-         json_2:= Create_Object;
-         for i in abitanti_arrived'Range loop
-            json_2.Set_Field(Positive'Image(i),abitanti_arrived(i));
-         end loop;
-         json_1.Set_Field("abitanti_arrived",json_2);
-         exception
-            when others =>
-               Put_Line("ERROR nella creazione position_abitanti");
-               raise set_field_json_error;
-         end;
+      --   json_2:= Create_Object;
+      --   for i in abitanti_arrived'Range loop
+      --      json_2.Set_Field(Positive'Image(i),abitanti_arrived(i));
+      --   end loop;
+      --   json_1.Set_Field("abitanti_arrived",json_2);
+      --   exception
+      --      when others =>
+      --         Put_Line("ERROR nella creazione position_abitanti");
+      --         raise set_field_json_error;
+      --   end;
       end create_img;
 
       procedure recovery_resource is
-         json_locate_abitanti: JSON_Value;
-         json_percorsi: JSON_Value;
-         json_positions: JSON_Value;
-         json_arrivi: JSON_Value;
-         json_percorso_abitante: JSON_Value;
+      --   json_locate_abitanti: JSON_Value;
+      --   json_percorsi: JSON_Value;
+      --   json_positions: JSON_Value;
+      --   json_arrivi: JSON_Value;
+      --   json_percorso_abitante: JSON_Value;
       begin
-         share_snapshot_file_quartiere.get_json_value_locate_abitanti(json_locate_abitanti);
+         null;
+      --   share_snapshot_file_quartiere.get_json_value_locate_abitanti(json_locate_abitanti);
 
-         json_percorsi:= json_locate_abitanti.Get("percorsi");
-         for i in get_from_abitanti..get_to_abitanti loop
-            json_percorso_abitante:= json_percorsi.Get(Positive'Image(i));
+       --  json_percorsi:= json_locate_abitanti.Get("percorsi");
+       --  for i in get_from_abitanti..get_to_abitanti loop
+       --     json_percorso_abitante:= json_percorsi.Get(Positive'Image(i));
             -- solo se la lunghezza è diversa da 0 cosi se arrivano
             -- nuove richieste che settano il percorso queste non vengono toccate
-            if Length(json_percorso_abitante.Get("percorso"))/=0 then
-               percorsi(i):= create_route_and_distance_from_json(json_percorso_abitante,Length(json_percorso_abitante.Get("percorso")));
-            end if;
-         end loop;
+       --     if Length(json_percorso_abitante.Get("percorso"))/=0 then
+      --         percorsi(i):= create_route_and_distance_from_json(json_percorso_abitante,Length(json_percorso_abitante.Get("percorso")));
+      --      end if;
+      --   end loop;
 
-         json_positions:= json_locate_abitanti.Get("position_abitanti");
-         for i in get_from_abitanti..get_to_abitanti loop
-            position_abitanti(i):= json_positions.Get(Positive'Image(i));
-         end loop;
+      --   json_positions:= json_locate_abitanti.Get("position_abitanti");
+      --   for i in get_from_abitanti..get_to_abitanti loop
+      --      position_abitanti(i):= json_positions.Get(Positive'Image(i));
+      --   end loop;
 
-         json_arrivi:= json_locate_abitanti.Get("abitanti_arrived");
-         for i in get_from_abitanti..get_to_abitanti loop
-            abitanti_arrived(i):= json_arrivi.Get(Positive'Image(i));
-         end loop;
+      --   json_arrivi:= json_locate_abitanti.Get("abitanti_arrived");
+      --   for i in get_from_abitanti..get_to_abitanti loop
+      --      abitanti_arrived(i):= json_arrivi.Get(Positive'Image(i));
+      --   end loop;
       end recovery_resource;
 
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
@@ -502,11 +543,11 @@ package body risorse_passive_data is
       return locate_abitanti_quartiere;
    end get_locate_abitanti_quartiere;
 
-   function get_larghezza_marciapiede return Float is
+   function get_larghezza_marciapiede return new_float is
    begin
       return larghezza_marciapiede;
    end get_larghezza_marciapiede;
-   function get_larghezza_corsia return Float is
+   function get_larghezza_corsia return new_float is
    begin
       return larghezza_corsia;
    end get_larghezza_corsia;

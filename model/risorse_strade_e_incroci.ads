@@ -6,6 +6,7 @@ with the_name_server;
 with risorse_mappa_utilities;
 with mailbox_risorse_attive;
 with snapshot_interface;
+with numerical_types;
 
 use remote_types;
 use data_quartiere;
@@ -15,6 +16,7 @@ use the_name_server;
 use risorse_mappa_utilities;
 use mailbox_risorse_attive;
 use snapshot_interface;
+use numerical_types;
 
 package risorse_strade_e_incroci is
 
@@ -63,23 +65,23 @@ package risorse_strade_e_incroci is
 
    procedure synchronization_with_delta(id: Positive);
 
-   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: Float; distance_to_stop_line: Float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: in out Float; next_abitante_velocity: Float; disable_rallentamento_1: Boolean:= False; disable_rallentamento_2: Boolean:= False) return Float;
-   function calculate_new_speed(current_speed: Float; acceleration: Float) return Float;
-   function calculate_new_step(new_speed: Float; acceleration: Float) return Float;
+   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: new_float; distance_to_stop_line: new_float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: in out new_float; next_abitante_velocity: new_float; disable_rallentamento_1: Boolean:= False; disable_rallentamento_2: Boolean:= False) return new_float;
+   function calculate_new_speed(current_speed: new_float; acceleration: new_float) return new_float;
+   function calculate_new_step(new_speed: new_float; acceleration: new_float) return new_float;
    function calculate_traiettoria_to_follow_from_ingresso(id_quartiere_abitante: Positive; id_abitante: Positive; id_ingresso: Positive; ingressi: indici_ingressi) return traiettoria_ingressi_type;
    function calculate_trajectory_to_follow_on_main_strada_from_ingresso(id_quartiere_abitante: Positive; id_abitante: Positive; from_ingresso: Positive; traiettoria_type: traiettoria_ingressi_type) return trajectory_to_follow;
    function calculate_trajectory_to_follow_on_main_strada_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return trajectory_to_follow;
-   function calculate_distance_to_stop_line_from_entity_on_road(abitante: ptr_list_posizione_abitanti_on_road; polo: Boolean; id_urbana: Positive) return Float;
-   function calculate_next_entity_distance(current_car: ptr_list_posizione_abitanti_on_road; next_car_in_ingresso_distance: Float; next_car_on_road: ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: Float; id_road: Positive; next_entity_is_ingresso: out Boolean) return Float;
+   function calculate_distance_to_stop_line_from_entity_on_road(abitante: ptr_list_posizione_abitanti_on_road; polo: Boolean; id_urbana: Positive) return new_float;
+   function calculate_next_entity_distance(current_car: ptr_list_posizione_abitanti_on_road; next_car_in_ingresso_distance: new_float; next_car_on_road: ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: new_float; id_road: Positive; next_entity_is_ingresso: out Boolean) return new_float;
    -- has_to_come_back vale True se l'abitante è in rientro da un sorpasso
-   function there_are_conditions_to_overtake(next_abitante: ptr_list_posizione_abitanti_on_road; next_abitante_other_corsia: ptr_list_posizione_abitanti_on_road; position_abitante: Float; has_to_come_back: Boolean) return Boolean;
+   function there_are_conditions_to_overtake(next_abitante: ptr_list_posizione_abitanti_on_road; next_abitante_other_corsia: ptr_list_posizione_abitanti_on_road; position_abitante: new_float; has_to_come_back: Boolean) return Boolean;
 
-   procedure calculate_distance_to_next_car_on_road(car_in_corsia: ptr_list_posizione_abitanti_on_road; next_car: ptr_list_posizione_abitanti_on_road; next_car_in_near_corsia: ptr_list_posizione_abitanti_on_road; from_corsia: id_corsie; next_car_on_road: out ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: out Float);
+   procedure calculate_distance_to_next_car_on_road(car_in_corsia: ptr_list_posizione_abitanti_on_road; next_car: ptr_list_posizione_abitanti_on_road; next_car_in_near_corsia: ptr_list_posizione_abitanti_on_road; from_corsia: id_corsie; next_car_on_road: out ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: out new_float);
 
-   procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: Float; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
-   procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: Float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: Float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out Float; acceleration: out Float; new_step: out Float; new_speed: out Float);
+   procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: new_float; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
+   procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
 
-   procedure fix_advance_parameters(acceleration: in out Float; new_speed: in out Float; new_step: in out Float; speed_abitante: Float; distance_to_next: Float; distanza_stop_line: Float; max_acceleration: Float);
+   procedure fix_advance_parameters(acceleration: in out new_float; new_speed: in out new_float; new_step: in out new_float; speed_abitante: new_float; distance_to_next: new_float; distanza_stop_line: new_float; max_acceleration: new_float);
 
 private
 

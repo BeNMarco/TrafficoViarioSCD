@@ -6,6 +6,7 @@ with strade_e_incroci_common;
 with JSON_Helper;
 with data_quartiere;
 with global_data;
+with numerical_types;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -15,6 +16,7 @@ use remote_types;
 use JSON_Helper;
 use data_quartiere;
 use global_data;
+use numerical_types;
 
 package body risorse_mappa_utilities is
 
@@ -37,7 +39,7 @@ package body risorse_mappa_utilities is
          val_num_corsie:= Get(Val => strada, Field => "numcorsie");
          array_roads(index_strada):= create_new_urbana(val_tipo => val_tipo,val_id => val_id,
                                                        val_id_quartiere => val_id_quartiere,
-                                                       val_lunghezza => Float(val_lunghezza),
+                                                       val_lunghezza => new_float(val_lunghezza),
                                                        val_num_corsie => val_num_corsie);
       end loop;
       return array_roads;
@@ -68,10 +70,10 @@ package body risorse_mappa_utilities is
          val_polo:= Get(Val => strada, Field => "polo");
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
                                                          val_id_quartiere => val_id_quartiere,
-                                                         val_lunghezza => Float(val_lunghezza),
+                                                         val_lunghezza => new_float(val_lunghezza),
                                                          val_num_corsie => val_num_corsie,
                                                          val_id_main_strada => val_id_main_strada,
-                                                         val_distance_from_road_head => val_distance_from_road_head,
+                                                         val_distance_from_road_head => new_float(val_distance_from_road_head),
                                                          polo => val_polo);
       end loop;
       return array_roads;
@@ -192,14 +194,14 @@ package body risorse_mappa_utilities is
       intersezione: intersezione_ingresso;
    begin
       intersezione.traiettoria:= traiettoria;
-      intersezione.distanza:= distanza;
+      intersezione.distanza:= new_float(distanza);
       return intersezione;
    end create_intersezione_ingresso;
 
    function create_traiettoria_ingresso(lunghezza: Float; intersezioni: ptr_intersezioni_ingresso; intersezioni_corsie: ptr_intersezioni_linee) return traiettoria_ingresso is
       traiettoria: traiettoria_ingresso;
    begin
-      traiettoria.lunghezza:= lunghezza;
+      traiettoria.lunghezza:= new_float(lunghezza);
       traiettoria.intersezioni:= intersezioni;
       traiettoria.intersezioni_corsie:= intersezioni_corsie;
       return traiettoria;
@@ -256,10 +258,13 @@ package body risorse_mappa_utilities is
 
    function create_traiettoria_cambio_corsia(json_traiettorie: JSON_Value) return traiettoria_cambio_corsia is
       traiettoria: traiettoria_cambio_corsia;
+      lunghezza_traiettoria: Float:= Get(Val => json_traiettorie, Field => "lunghezza_traiettoria");
+      distanza_intersezione_linea_di_mezzo: Float:= Get(Val => json_traiettorie, Field => "distanza_intersezione_linea_di_mezzo");
+      lunghezza_lineare: Float:= Get(Val => json_traiettorie, Field => "lunghezza_lineare");
    begin
-      traiettoria.lunghezza_traiettoria:= Get(Val => json_traiettorie, Field => "lunghezza_traiettoria");
-      traiettoria.distanza_intersezione_linea_di_mezzo:= Get(Val => json_traiettorie, Field => "distanza_intersezione_linea_di_mezzo");
-      traiettoria.lunghezza_lineare:= Get(Val => json_traiettorie, Field => "lunghezza_lineare");
+      traiettoria.lunghezza_traiettoria:= new_float(lunghezza_traiettoria);
+      traiettoria.distanza_intersezione_linea_di_mezzo:= new_float(distanza_intersezione_linea_di_mezzo);
+      traiettoria.lunghezza_lineare:= new_float(lunghezza_lineare);
       return traiettoria;
    end create_traiettoria_cambio_corsia;
 
@@ -347,7 +352,7 @@ package body risorse_mappa_utilities is
                                         intersezioni: ptr_intersezioni_incrocio; intersezioni_corsie: ptr_intersezioni_linee) return traiettoria_incrocio is
       traiettoria: traiettoria_incrocio;
    begin
-      traiettoria.lunghezza:= lunghezza;
+      traiettoria.lunghezza:= new_float(lunghezza);
       traiettoria.corsia_arrivo:= corsia_arrivo;
       traiettoria.corsia_partenza:= corsia_partenza;
       traiettoria.intersezioni:= intersezioni;
@@ -359,7 +364,7 @@ package body risorse_mappa_utilities is
       intersezione: intersezione_incrocio;
    begin
       intersezione.traiettoria:= traiettoria;
-      intersezione.distanza:= distanza;
+      intersezione.distanza:= new_float(distanza);
       return intersezione;
    end create_intersezione_incrocio;
 
@@ -367,11 +372,11 @@ package body risorse_mappa_utilities is
       intersezione: intersezione_linee;
    begin
       intersezione.traiettoria:= traiettoria;
-      intersezione.distanza:= distanza;
+      intersezione.distanza:= new_float(distanza);
       return intersezione;
    end create_intersezione_linea;
 
-   function get_lunghezza(obj: traiettoria_ingresso) return Float is
+   function get_lunghezza(obj: traiettoria_ingresso) return new_float is
    begin
       return obj.lunghezza;
    end get_lunghezza;
@@ -392,7 +397,7 @@ package body risorse_mappa_utilities is
    begin
       return obj.traiettoria;
    end get_traiettoria_intersezione;
-   function get_distanza_intersezione(obj: intersezione_ingresso) return Float is
+   function get_distanza_intersezione(obj: intersezione_ingresso) return new_float is
    begin
       return obj.distanza;
    end get_distanza_intersezione;
@@ -401,25 +406,25 @@ package body risorse_mappa_utilities is
    begin
       return obj.traiettoria;
    end get_traiettoria_intersezioni_corsie;
-   function get_distanza_intersezioni_corsie(obj: intersezione_linee) return Float is
+   function get_distanza_intersezioni_corsie(obj: intersezione_linee) return new_float is
    begin
       return obj.distanza;
    end get_distanza_intersezioni_corsie;
 
-   function get_lunghezza_traiettoria(obj: traiettoria_cambio_corsia) return Float is
+   function get_lunghezza_traiettoria(obj: traiettoria_cambio_corsia) return new_float is
    begin
       return obj.lunghezza_traiettoria;
    end get_lunghezza_traiettoria;
-   function get_lunghezza_lineare_traiettoria(obj: traiettoria_cambio_corsia) return Float is
+   function get_lunghezza_lineare_traiettoria(obj: traiettoria_cambio_corsia) return new_float is
    begin
       return obj.lunghezza_lineare;
    end get_lunghezza_lineare_traiettoria;
-   function get_distanza_intersezione_linea_di_mezzo(obj: traiettoria_cambio_corsia) return Float is
+   function get_distanza_intersezione_linea_di_mezzo(obj: traiettoria_cambio_corsia) return new_float is
    begin
       return obj.distanza_intersezione_linea_di_mezzo;
    end get_distanza_intersezione_linea_di_mezzo;
 
-   function get_lunghezza_traiettoria_incrocio(obj: traiettoria_incrocio) return Float is
+   function get_lunghezza_traiettoria_incrocio(obj: traiettoria_incrocio) return new_float is
    begin
       return obj.lunghezza;
    end get_lunghezza_traiettoria_incrocio;
@@ -451,7 +456,7 @@ package body risorse_mappa_utilities is
    begin
       return obj.traiettoria;
    end get_traiettoria_intersezione_incrocio;
-   function get_distanza_intersezione_incrocio(obj: intersezione_incrocio) return Float is
+   function get_distanza_intersezione_incrocio(obj: intersezione_incrocio) return new_float is
    begin
       return obj.distanza;
    end get_distanza_intersezione_incrocio;

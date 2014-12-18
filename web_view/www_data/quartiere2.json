@@ -973,31 +973,6 @@
   ],
   "rotonde_a_3": [
   ],
-  "default_pedoni": {
-    "desired_velocity": 5.00000E+00,
-    "time_headway": 5.00000E-01,
-    "max_acceleration": 3.00000E-01,
-    "comfortable_deceleration": 3.00000E+00,
-    "s0": 2.00000E+00,
-    "length": 5.00000E-01
-  },
-  "default_bici": {
-    "desired_velocity": 1.00000E+02,
-    "time_headway": 1.20000E+00,
-    "max_acceleration": 1.50000E+00,
-    "comfortable_deceleration": 2.00000E+00,
-    "s0": 2.00000E+00,
-    "length": 1.50000E+00
-  },
-  "default_auto": {
-    "desired_velocity": 1.50000E+01,
-    "time_headway": 8.00000E-01,
-    "max_acceleration": 5.00000E-01,
-    "comfortable_deceleration": 2.50000E+00,
-    "s0": 2.00000E+00,
-    "length": 3.00000E+00,
-    "num_posti": 4
-  },
   "pedoni": [
     {
       "id_abitante": 50

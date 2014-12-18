@@ -1,10 +1,12 @@
 with strade_e_incroci_common;
 with remote_types;
 with global_data;
+with numerical_types;
 
 use strade_e_incroci_common;
 use remote_types;
 use global_data;
+use numerical_types;
 
 package gps_utilities is
 
@@ -28,7 +30,7 @@ package gps_utilities is
    type index_to_consider is array(Positive range <>) of index_incroci;
    type dijkstra_nodo is record
       precedente: index_incroci; -- se 0 dopo l'algoritmo => è il nodo sorgente
-      distanza: Float:= Float'Last;
+      distanza: new_float:= new_float'Last;
       id_quartiere_spigolo: Natural:= 0;
       id_spigolo: Natural:= 0;
       in_coda: Boolean:= False;

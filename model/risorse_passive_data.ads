@@ -7,6 +7,8 @@ with remote_types;
 with global_data;
 with snapshot_interface;
 with JSON_Helper;
+with default_settings;
+with numerical_types;
 
 use GNATCOLL.JSON;
 use risorse_mappa_utilities;
@@ -16,10 +18,16 @@ use remote_types;
 use global_data;
 use snapshot_interface;
 use JSON_Helper;
+use default_settings;
+use numerical_types;
 
 package risorse_passive_data is
 
    set_field_json_error: exception;
+
+   function get_default_value_pedoni(value: move_settings) return new_float;
+   function get_default_value_bici(value: move_settings) return new_float;
+   function get_default_value_auto(value: move_settings) return new_float;
 
    function get_urbana_from_id(index: Positive) return strada_urbana_features;
    function get_ingresso_from_id(index: Positive) return strada_ingresso_features;
@@ -41,7 +49,7 @@ package risorse_passive_data is
    function get_rotonde_a_4 return list_incroci_a_4;
    function get_rotonde_a_3 return list_incroci_a_3;
 
-   function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return Float;
+   function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return new_float;
 
    function get_traiettoria_ingresso(type_traiettoria: traiettoria_ingressi_type) return traiettoria_ingresso;
 
@@ -95,7 +103,7 @@ package risorse_passive_data is
    type array_position_abitanti is array(Positive range <>) of Positive;
    type array_abitanti_finish_route is array(Positive range <>) of Boolean;
 
-   function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance;
+   --function create_route_and_distance_from_json(json_percorso_abitante: JSON_Value; length: Natural) return ptr_route_and_distance;
 
    protected type location_abitanti(num_abitanti: Natural) is new rt_location_abitanti and backup_interface with
 
@@ -126,8 +134,8 @@ package risorse_passive_data is
 
    function get_locate_abitanti_quartiere return ptr_location_abitanti;
 
-   function get_larghezza_marciapiede return Float;
-   function get_larghezza_corsia return Float;
+   function get_larghezza_marciapiede return new_float;
+   function get_larghezza_corsia return new_float;
 
    procedure configure_quartiere_obj;
 
@@ -164,7 +172,30 @@ private
    inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
    inventory_estremi_urbane: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
 
-   larghezza_marciapiede: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_marciapiede");
-   larghezza_corsia: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_corsia");
+   larghezza_marciapiede: new_float:= get_defaul_larghezza_marciapiede;
+   larghezza_corsia: new_float:= get_defaul_larghezza_corsia;
+
+   -- BEGIN VALORI DI DEFAULT PER RISORSE PASSIVE
+   default_desired_velocity_pedoni: new_float:= get_default_desired_velocity_pedoni;
+   default_time_headway_pedoni: new_float:= get_default_desired_velocity_pedoni;
+   default_max_acceleration_pedoni: new_float:= get_default_max_acceleration_pedoni;
+   default_comfortable_deceleration_pedoni: new_float:= get_default_comfortable_deceleration_pedoni;
+   default_s0_pedoni: new_float:= get_default_s0_pedoni;
+   default_length_pedoni: new_float:= get_default_length_pedoni;
+
+   default_desired_velocity_bici: new_float:= get_default_desired_velocity_bici;
+   default_time_headway_bici: new_float:= get_default_time_headway_bici;
+   default_max_acceleration_bici: new_float:= get_default_max_acceleration_bici;
+   default_comfortable_deceleration_bici: new_float:= get_default_comfortable_deceleration_bici;
+   default_s0_bici: new_float:= get_default_s0_bici;
+   default_length_bici: new_float:= get_default_length_bici;
+
+   default_desired_velocity_auto: new_float:= get_default_desired_velocity_auto;
+   default_time_headway_auto: new_float:= get_default_time_headway_auto;
+   default_max_acceleration_auto: new_float:= get_default_max_acceleration_auto;
+   default_comfortable_deceleration_auto: new_float:= get_default_comfortable_deceleration_auto;
+   default_s0_auto: new_float:= get_default_s0_auto;
+   default_length_auto: new_float:= get_default_length_auto;
+   default_num_posti_auto: Positive:= get_default_num_posti_auto;
 
 end risorse_passive_data;

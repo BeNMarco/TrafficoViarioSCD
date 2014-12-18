@@ -1,5 +1,8 @@
 with Ada.Text_IO;
 
+with numerical_types;
+use numerical_types;
+
 use Ada.Text_IO;
 
 package body data_quartiere is
@@ -56,6 +59,11 @@ package body data_quartiere is
    begin
       return json_quartiere;
    end get_json_quartiere;
+
+   function get_json_default_movement_entity return JSON_Value is
+   begin
+      return json_default_move_settings;
+   end get_json_default_movement_entity;
 
    function get_from_urbane return Natural is
    begin
@@ -145,45 +153,6 @@ package body data_quartiere is
    begin
       return to_abitanti;
    end get_to_abitanti;
-
-   function get_default_value_pedoni(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_pedoni;
-         when time_headway => return default_time_headway_pedoni;
-         when max_acceleration => return default_max_acceleration_pedoni;
-         when comfortable_deceleration => return default_comfortable_deceleration_pedoni;
-         when s0 => return default_s0_pedoni;
-         when length => return default_length_pedoni;
-         when others => return 0.0;
-      end case;
-   end get_default_value_pedoni;
-
-   function get_default_value_bici(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_bici;
-         when time_headway => return default_time_headway_bici;
-         when max_acceleration => return default_max_acceleration_bici;
-         when comfortable_deceleration => return default_comfortable_deceleration_bici;
-         when s0 => return default_s0_bici;
-         when length => return default_length_bici;
-         when others => return 0.0;
-      end case;
-   end get_default_value_bici;
-
-   function get_default_value_auto(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_auto;
-         when time_headway => return default_time_headway_auto;
-         when max_acceleration => return default_max_acceleration_auto;
-         when comfortable_deceleration => return default_comfortable_deceleration_auto;
-         when s0 => return default_s0_auto;
-         when length => return default_length_auto;
-         when num_posti => return Float(default_num_posti_auto);
-      end case;
-   end get_default_value_auto;
 
    function get_num_abitanti return Natural is
    begin

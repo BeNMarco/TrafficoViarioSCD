@@ -141,7 +141,7 @@ package body gps_utilities is
          new_from_id_luogo: Positive;
          new_to_id_luogo: Positive;
          num_elementi_lista: Natural:= 0;
-         min_index_lista: Float:= Float'Last;
+         min_index_lista: new_float:= new_float'Last;
          last_index_lista: Natural:= 0;
          min_ottimo: Natural:= 0;
          size_route: Natural:= 0;
@@ -170,10 +170,10 @@ package body gps_utilities is
          adiacenti: list_adiacenti;
          spigolo: strada_urbana_features;
          index: Positive:= 1;
-         distanza_estremo_1: Float;
-         distanza_estremo_2: Float;
-         distanza: Float;
-         min_distanza: Float:= Float'Last;
+         distanza_estremo_1: new_float;
+         distanza_estremo_2: new_float;
+         distanza: new_float;
+         min_distanza: new_float:= new_float'Last;
          change_route: Boolean:= False;
          estremo_partenza: index_incroci;
          estremo_arrivo: index_incroci;
@@ -227,7 +227,7 @@ package body gps_utilities is
                loop
                   exit when num_elementi_lista = 0;
                   -- begin trova il minimo
-                  min_index_lista:= Float'Last;
+                  min_index_lista:= new_float'Last;
                   for i in 1..last_index_lista loop
                      if to_consider(i).id_quartiere/=0 then
                         if coda_nodi(to_consider(i).id_quartiere,to_consider(i).id_incrocio).distanza<min_index_lista then
@@ -268,9 +268,9 @@ package body gps_utilities is
                estremi:= hash_urbane_quartieri(to_id_quartiere)(ingresso_arrivo.get_id_main_strada_ingresso);
                estremo_1_arrivo:= estremi(1);
                estremo_2_arrivo:= estremi(2);
-               distanza_estremo_1:= Float'Last;
-               distanza_estremo_2:= Float'Last;
-               distanza:= Float'Last;
+               distanza_estremo_1:= new_float'Last;
+               distanza_estremo_2:= new_float'Last;
+               distanza:= new_float'Last;
                estremo_arrivo:= estremo_1_arrivo;
                for indice in 1..2 loop
                   -- calcolo distanza_estremo
@@ -402,14 +402,14 @@ package body gps_utilities is
                         end if;
                      end if;
                   end if;
-                  Put_Line("DISTANZA:" & Float'Image(distanza));
+                  Put_Line("DISTANZA:" & new_float'Image(distanza));
                   if indice=1 then
                      distanza_estremo_1:=distanza;
                   else
                      distanza_estremo_2:=distanza;
                   end if;
                   estremo_arrivo:= estremo_2_arrivo;
-                  distanza:= Float'Last;
+                  distanza:= new_float'Last;
                end loop;
 
                change_route:= False;

@@ -1,6 +1,8 @@
 with strade_e_incroci_common;
+with numerical_types;
 
 use strade_e_incroci_common;
+use numerical_types;
 
 package remote_types is
    pragma Remote_Types;
@@ -58,14 +60,14 @@ package remote_types is
    procedure insert_abitante_from_incrocio(obj: access rt_urbana; abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) is abstract;
    procedure remove_abitante_in_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive) is abstract;
    procedure delta_incrocio_finished(obj: access rt_urbana) is abstract;
-   function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Float is abstract;
+   function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return new_float is abstract;
    function first_car_abitante_has_passed_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Boolean is abstract;
 
    procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;
    --procedure change_verso_semafori_verdi(obj: access rt_incrocio) is abstract;
-   function get_posix_first_entity(obj: access rt_incrocio; from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return Float is abstract;
+   function get_posix_first_entity(obj: access rt_incrocio; from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return new_float is abstract;
    function semaforo_is_verde_from_road(obj: access rt_incrocio; id_quartiere_road: Positive; id_road: Positive) return Boolean is abstract;
-   procedure calcola_bound_avanzamento_in_incrocio(obj: access rt_incrocio; index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out Float; stop_entity: in out Boolean; distance_to_next_car: in out Float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0) is abstract;
+   procedure calcola_bound_avanzamento_in_incrocio(obj: access rt_incrocio; index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out new_float; stop_entity: in out Boolean; distance_to_next_car: in out new_float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0) is abstract;
 
    procedure new_abitante_to_move(obj: access rt_ingresso; id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is abstract;
 

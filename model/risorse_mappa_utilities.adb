@@ -431,14 +431,14 @@ package body risorse_mappa_utilities is
    function get_intersezioni_incrocio(obj: traiettoria_incrocio; con_traiettoria: traiettoria_incroci_type) return intersezione_incrocio'Class is
    begin
       case con_traiettoria is
-         when empty | dritto | destra =>
-            return create_intersezione_incrocio(empty,0.0);
          when sinistra =>
             return obj.intersezioni(1);
          when dritto_1 =>
             return obj.intersezioni(1);
          when dritto_2 =>
             return obj.intersezioni(2);
+         when others =>
+            return create_intersezione_incrocio(empty,0.0);
       end case;
    end get_intersezioni_incrocio;
 

@@ -27,6 +27,7 @@ package mailbox_risorse_attive is
    null_acceleration_when_next_car_is_null: exception;
    not_all_abitantI_other_corsia_have_been_considered: exception;
    index_abitante_scelto_sbagliato: exception;
+   errore_traiettoria_car: exception;
 
    type data_structures_types is (road,sidewalk);
 
@@ -73,7 +74,7 @@ package mailbox_risorse_attive is
       procedure recovery_resource;
 
       procedure set_estremi_urbana(estremi: estremi_resource_strada_urbana);
-      procedure aggiungi_entità_from_ingresso(id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_on_main_strada: trajectory_to_follow);
+      procedure aggiungi_entità_from_ingresso(mezzo: means_of_carrying; id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_da_prendere: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
       procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_to_go: Boolean; speed: new_float; step: new_float; step_is_just_calculated: Boolean:= False);
@@ -102,7 +103,7 @@ package mailbox_risorse_attive is
       function get_next_abitante_on_road(from_distance: new_float; range_1: Boolean; range_2: id_corsie; from_ingresso: Boolean:= True) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: new_float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean; abitante_altra_traiettoria: ptr_list_posizione_abitanti_on_road:= null) return Boolean;
-      function get_abitanti_on_road(range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
+      function get_abitanti_to_move(type_structure: data_structures_types; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
       function get_number_entity(structure: data_structures_types; polo: Boolean; num_corsia: id_corsie) return Natural;
       function calculate_distance_ingressi_from_given_distance(polo_to_consider: Boolean; in_corsia: id_corsie; car_distance: new_float) return new_float;
       function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return new_float;
@@ -128,7 +129,7 @@ package mailbox_risorse_attive is
       -- END metodi per gestione sorpassi
 
 
-      function get_last_abitante_ingresso(key_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
+      --function get_last_abitante_ingresso(key_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
 
       function get_distanza_percorsa_first_abitante(polo: Boolean; num_corsia: id_corsie) return new_float;
       function first_car_abitante_has_passed_incrocio(polo: Boolean; num_corsia: id_corsie) return Boolean;
@@ -174,7 +175,7 @@ package mailbox_risorse_attive is
       procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
       procedure new_abitante_finish_route(abitante: posizione_abitanti_on_road);
       procedure update_position_entity(state_view_abitanti: in out JSON_Array);-- type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
-      procedure update_avanzamento_car_in_urbana(distance: new_float);
+      procedure update_avanzamento_abitante_in_urbana(mezzo: means_of_carrying; distance: new_float);
 
       -- BEGIN delete procedure
       procedure delete_car_in_uscita;
@@ -193,10 +194,12 @@ package mailbox_risorse_attive is
       function get_temp_main_strada return ptr_list_posizione_abitanti_on_road;
       function get_temp_marciapiede(range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
       function get_index_inizio_moto return Boolean;
+
       -- get_first_abitante_to_exit_from_urbana viene richiesto dall'urbana per trovare
       -- la posizione del primo abitante nella corsia di fine percorso (not index_inizio_moto)
       function get_first_abitante_to_exit_from_urbana return ptr_list_posizione_abitanti_on_road;
       function get_car_avanzamento return new_float;
+      function get_bipede_avanzamento(range_2: id_corsie) return new_float;
       function get_last_abitante_in_urbana return posizione_abitanti_on_road;
       function get_last_abitante_in_marciapiede(range_2: id_corsie) return posizione_abitanti_on_road;
 
@@ -210,6 +213,8 @@ package mailbox_risorse_attive is
       last_abitante_in_marciapiede_1: posizione_abitanti_on_road; -- abitante ciclabile
       last_abitante_in_marciapiede_2: posizione_abitanti_on_road; -- abitante marciapiede
       car_avanzamento_in_urbana: new_float:= 0.0;
+      pedone_avanzamento_in_urbana: new_float:= 0.0;
+      bici_avanzamento_in_urbana: new_float:= 0.0;
       temp_abitante_finish_route: posizione_abitanti_on_road;
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..2); -- RANGE2=1 sono le bici; RANGE2=1 sono i pedoni

@@ -14,8 +14,18 @@ package body strade_e_incroci_common is
             return "dritto_1";
          when dritto_2 =>
             return "dritto_2";
-         when dritto =>
-            return "dritto";
+         when destra_pedoni =>
+            return "destra_pedoni";
+         when dritto_pedoni =>
+            return "dritto_pedoni";
+         when sinistra_pedoni =>
+            return "sinistra_pedoni";
+         when destra_bici =>
+            return "destra_bici";
+         when dritto_bici =>
+            return "dritto_bici";
+         when sinistra_bici =>
+            return "sinistra_bici";
          end case;
    end to_string_incroci_type;
 
@@ -32,8 +42,31 @@ package body strade_e_incroci_common is
             return "entrata_ritorno";
          when uscita_ritorno =>
             return "uscita_ritorno";
-         when destra_pedoni =>
-            return "destra_pedoni";
+
+         when uscita_destra_pedoni =>
+            return "uscita_destra_pedoni";
+         when uscita_dritto_pedoni =>
+            return "uscita_dritto_pedoni";
+         when uscita_destra_bici =>
+            return "uscita_destra_bici";
+         when uscita_dritto_bici =>
+            return "uscita_dritto_bici";
+         when uscita_ritorno_pedoni =>
+            return "uscita_ritorno_pedoni";
+         when uscita_ritorno_bici =>
+            return "uscita_ritorno_bici";
+         when entrata_destra_pedoni =>
+            return "entrata_destra_pedoni";
+         when entrata_destra_bici =>
+            return "entrata_destra_bici";
+         when entrata_ritorno_pedoni =>
+            return "entrata_ritorno_pedoni";
+         when entrata_ritorno_bici =>
+            return "entrata_ritorno_bici";
+         when entrata_dritto_pedoni =>
+            return "entrata_dritto_pedoni";
+         when entrata_dritto_bici =>
+            return "entrata_dritto_bici";
       end case;
    end to_string_ingressi_type;
 
@@ -43,12 +76,22 @@ package body strade_e_incroci_common is
          return destra;
       elsif obj="sinistra" then
          return sinistra;
-      elsif obj="dritto" then
-         return dritto;
       elsif obj="dritto_1" then
          return dritto_1;
       elsif obj="dritto_2" then
          return dritto_2;
+      elsif obj="destra_pedoni" then
+         return destra_pedoni;
+      elsif obj="dritto_pedoni" then
+         return dritto_pedoni;
+      elsif obj="sinistra_pedoni" then
+         return sinistra_pedoni;
+      elsif obj="destra_bici" then
+         return destra_bici;
+      elsif obj="dritto_bici" then
+         return dritto_bici;
+      elsif obj="sinistra_bici" then
+         return sinistra_bici;
       end if;
       return empty;
    end convert_to_traiettoria_incroci;

@@ -102,7 +102,7 @@ package strade_e_incroci_common is
    function create_percorso(route: percorso; distance: new_float) return route_and_distance;
 
    function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
-                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural) return abitante;
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying) return abitante;
 
    function create_pedone(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
                           time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
@@ -137,6 +137,9 @@ package strade_e_incroci_common is
    function get_id_luogo_casa_from_abitante(residente: abitante) return Natural;
    function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural;
    function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural;
+   function get_mezzo_abitante(residente: abitante) return means_of_carrying;
+
+   procedure set_mezzo_abitante(residente: in out abitante; mezzo: means_of_carrying);
 
    function get_id_quartiere_tratto(segmento: tratto) return Natural;
    function get_id_tratto(segmento: tratto) return Natural;
@@ -236,6 +239,7 @@ private
       id_luogo_casa: Natural:= 0; -- il quartiere della casa coincide con id_quartiere
       id_quartiere_luogo_lavoro: Natural:= 0;
       id_luogo_lavoro: Natural:= 0;
+      mezzo: means_of_carrying;
    end record;
 
    type move_parameters is tagged record

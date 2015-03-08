@@ -124,16 +124,16 @@ package body default_settings is
       return default_num_posti_auto;
    end get_default_num_posti_auto;
 
-   function get_defaul_larghezza_marciapiede return new_float is
+   function get_default_larghezza_marciapiede return new_float is
       larghezza_marciapiede: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_marciapiede");
    begin
       return new_float(larghezza_marciapiede);
-   end get_defaul_larghezza_marciapiede;
+   end get_default_larghezza_marciapiede;
 
-   function get_defaul_larghezza_corsia return new_float is
+   function get_default_larghezza_corsia return new_float is
      larghezza_corsia: Float:= Get(Val => get_json_road_parameters, Field => "larghezza_corsia");
    begin
       return new_float(larghezza_corsia);
-   end get_defaul_larghezza_corsia;
+   end get_default_larghezza_corsia;
 
 end default_settings;

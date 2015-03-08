@@ -1,5 +1,5 @@
 {
 "default_pedoni":{"desired_velocity": 5.0,"time_headway": 0.5,"max_acceleration": 0.3,"comfortable_deceleration": 3.0,"s0": 2.0,"length": 0.5},
-"default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.5},
+"default_bici":{"desired_velocity": 100.0,"time_headway": 1.2,"max_acceleration": 1.5,"comfortable_deceleration": 2.0,"s0": 2.0,"length": 1.0},
 "default_auto":{"desired_velocity": 100.0,"time_headway": 0.9,"max_acceleration": 10.0,"comfortable_deceleration": 10.5,"s0": 0.9,"length": 3.0,"num_posti": 4}
 }

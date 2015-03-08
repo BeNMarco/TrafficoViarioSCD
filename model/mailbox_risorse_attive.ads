@@ -28,6 +28,7 @@ package mailbox_risorse_attive is
    not_all_abitantI_other_corsia_have_been_considered: exception;
    index_abitante_scelto_sbagliato: exception;
    errore_traiettoria_car: exception;
+   mezzo_settato_non_corretto: exception;
 
    type data_structures_types is (road,sidewalk);
 
@@ -62,6 +63,11 @@ package mailbox_risorse_attive is
    --function create_abitante_from_json(json_abitante: JSON_Value) return posizione_abitanti_on_road;
    --function create_array_abitanti(json_abitanti: JSON_Array) return ptr_list_posizione_abitanti_on_road;
 
+   type abilita_attraversamenti_bipedi is array (Positive range <>) of Boolean;
+   type ptr_abilita_attraversamenti_bipedi is access abilita_attraversamenti_bipedi;
+   type attraversamenti_bipedi is array (Boolean range <>, Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
+   type attraveramento_cars is array (Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
+
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       entry ingresso_wait_turno;
       procedure delta_terminate;
@@ -77,20 +83,41 @@ package mailbox_risorse_attive is
       procedure aggiungi_entità_from_ingresso(mezzo: means_of_carrying; id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_da_prendere: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
-      procedure set_move_parameters_entity_on_traiettoria_ingresso(abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_to_go: Boolean; speed: new_float; step: new_float; step_is_just_calculated: Boolean:= False);
+      procedure set_move_parameters_entity_on_traiettoria_ingresso(mezzo: means_of_carrying; abitante: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_to_go: Boolean; speed: new_float; step: new_float; step_is_just_calculated: Boolean:= False);
       procedure set_move_parameters_entity_on_main_road(current_car_in_corsia: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie; speed: new_float; step: new_float; step_is_just_calculated: Boolean:= False);
+      procedure set_move_parameters_entity_on_sidewalk(mezzo: means_of_carrying; entity: in out ptr_list_posizione_abitanti_on_road; polo: Boolean; new_speed: new_float; new_step: new_float; step_is_just_calculated: Boolean);
       procedure set_car_overtaken(value_overtaken: Boolean; car: in out ptr_list_posizione_abitanti_on_road);
-      procedure set_flag_car_can_overtake_to_next_corsia(car: in out ptr_list_posizione_abitanti_on_road; flag: Boolean);
+      procedure set_flag_abitante_can_overtake_to_next_corsia(abitante: in out ptr_list_posizione_abitanti_on_road; flag: Boolean);
       procedure update_traiettorie_ingressi(state_view_abitanti: in out JSON_Array);
       procedure update_car_on_road(state_view_abitanti: in out JSON_Array);
+      procedure update_bipedi_on_sidewalk(state_view_abitanti: in out JSON_Array);
+      procedure update_bipedi_on_traiettorie_ingressi(state_view_abitanti: in out JSON_Array);
       procedure remove_first_element_traiettoria(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type);
-      procedure insert_abitante_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie);
+      procedure insert_abitante_from_incrocio(mezzo: means_of_carrying; abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie);
       -- abitanti in transizione da incroci significa abitanti in uscita dagli incroci
-      procedure sposta_abitanti_in_transizione_da_incroci;
+      procedure sposta_macchine_in_transizione_da_incroci;
+      procedure sposta_bipedi_in_transizione_da_incroci;
       procedure azzera_spostamento_abitanti_in_incroci;
 
       procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive);
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
+
+      -- metodo usato per abilitare o meno l'inserimento di bipedi che da sinistra
+      -- devono essere messi nella traiettoria dritto
+      procedure abilitazione_sinistra_bipedi_in_incroci(mezzo: means_of_carrying; enable: Boolean);
+
+      -- metodi usati per abilitare attraversamenti pedoni in uscita_dritto e entrata_dritto
+      procedure abilita_attraversamento_all_ingressi(from_begin: Boolean);
+      procedure disabilita_attraversamento_bipedi_ingresso(polo_percorrenza: Boolean; polo_ingresso: Boolean; num_ingresso: Positive; from_begin: Boolean);
+      function get_abilitazione_attraversamento_ingresso(polo_percorrenza: Boolean; polo_ingresso: Boolean; num_ingresso: Positive; from_begin: Boolean) return Boolean;
+
+      procedure abilita_attraversamento_bipedi_in_all_entrata_ingresso;
+      procedure disabilita_attraversamento_bipedi_in_entrata_ingresso(polo_ingresso: Boolean; num_ingresso: Positive);
+      function get_abilitazione_attraversamento_in_entrata_ingresso(polo_ingresso: Boolean; num_ingresso: Positive) return Boolean;
+
+      procedure abilita_attraversamento_cars_ingressi(in_uscita: Boolean);
+      procedure disabilita_attraversamento_cars_ingresso(in_uscita: Boolean; polo_ingresso: Boolean; num_ingresso: Positive);
+      function get_abilitazione_attraversamento_cars_ingresso(in_uscita: Boolean; polo_ingresso: Boolean; num_ingresso: Positive) return Boolean;
 
       function get_ordered_ingressi_from_polo(polo: Boolean) return ptr_indici_ingressi;
       function is_index_ingresso_in_svolta(ingresso: Positive; traiettoria: traiettoria_ingressi_type) return Boolean;
@@ -98,18 +125,19 @@ package mailbox_risorse_attive is
       function get_index_ingresso_from_key(key: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_key_ingresso(ingresso: Positive; ingressi_structure_type: ingressi_type) return Natural;
       function get_abitante_from_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
+      function get_last_abitante_from_ingresso(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
       -- get_next_abitante_on_road viene usato SIA DA quelle macchine in traiettoria di ingresso per ottenere a che distanza si trova la macchina successiva nella corsia in cui si deve immettere
       -- SIA dagli incroci per vedere la progressione di avanzamento delle macchine(in questo caso viene chiamato da get_distanza_percorsa_first_abitante)
       function get_next_abitante_on_road(from_distance: new_float; range_1: Boolean; range_2: id_corsie; from_ingresso: Boolean:= True) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
       function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
       function can_abitante_continue_move(distance: new_float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean; abitante_altra_traiettoria: ptr_list_posizione_abitanti_on_road:= null) return Boolean;
       function get_abitanti_to_move(type_structure: data_structures_types; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
-      function get_number_entity(structure: data_structures_types; polo: Boolean; num_corsia: id_corsie) return Natural;
+      function get_number_entity_on_road(polo: Boolean; num_corsia: id_corsie) return Natural;
       function calculate_distance_ingressi_from_given_distance(polo_to_consider: Boolean; in_corsia: id_corsie; car_distance: new_float) return new_float;
       function calculate_distance_to_next_ingressi(polo_to_consider: Boolean; in_corsia: id_corsie; car_in_corsia: ptr_list_posizione_abitanti_on_road) return new_float;
       function can_car_overtake(car: ptr_list_posizione_abitanti_on_road; polo: Boolean; to_corsia: id_corsie) return Boolean;
 
-      function get_abitante_in_transizione_da_incrocio(polo: Boolean; corsia: id_corsie) return posizione_abitanti_on_road;
+      function get_abitante_in_transizione_da_incrocio(mezzo: means_of_carrying; polo: Boolean; corsia: id_corsie) return posizione_abitanti_on_road;
       -- BEGIN metodi per gestione cambio corsia
       -- controlla se la macchina si trova nella posizione di un ingresso, lato false o true, e se in questo vi sono macchine in movimento
       function there_are_cars_moving_across_next_ingressi(car: ptr_list_posizione_abitanti_on_road; polo: Boolean) return Boolean;
@@ -128,18 +156,22 @@ package mailbox_risorse_attive is
       function get_next_abitante_in_corsia(num_corsia: id_corsie; polo: Boolean; from_distance: new_float) return ptr_list_posizione_abitanti_on_road;
       -- END metodi per gestione sorpassi
 
-
       --function get_last_abitante_ingresso(key_ingresso: Positive; traiettoria: traiettoria_ingressi_type) return ptr_list_posizione_abitanti_on_road;
-
       function get_distanza_percorsa_first_abitante(polo: Boolean; num_corsia: id_corsie) return new_float;
+      -- get_distanza_percorsa_first_bipede ritorna la distanza al netto della lunghezza del bipede
+      function get_distanza_percorsa_first_bipede(polo: Boolean; mezzo: means_of_carrying) return new_float;
       function first_car_abitante_has_passed_incrocio(polo: Boolean; num_corsia: id_corsie) return Boolean;
       --function get_distance_to_first_abitante(polo: Boolean; num_corsia: id_corsie) return Float;
 
       function get_num_ingressi_polo(polo: Boolean) return Natural;
       function get_num_ingressi return Natural;
+
+      -- metodo richiamato per vedere se è possibile inserire gli abitanti
+      -- nella traiettoria per muoversi a destra
+      function get_abilitazione_cambio_traiettoria_bipede(mezzo: means_of_carrying) return Boolean;
    private
       function get_num_estremi_urbana return Positive;
-      function slide_list(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
+      function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
 
       num_delta_incroci_finished: Natural:= 0;
       array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
@@ -154,8 +186,19 @@ package mailbox_risorse_attive is
       main_strada: road_state(False..True,1..2); -- RANGE1=1 percorrenza macchine da estremo false a estremo true; VICEVERSA per RANGE1=2
       marciapiedi: road_state(False..True,1..2);
       main_strada_number_entity: number_entity(False..True,1..2):= (others => (others => 0));
-      marciapiedi_num_pedoni_bici: number_entity(False..True,1..2):= (others => (others => 0));
-      temp_abitanti_in_transizione: abitanti_in_transizione_incroci_urbane;
+      --marciapiedi_num_pedoni_bici: number_entity(False..True,1..2):= (others => (others => 0));
+      temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
+      temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
+
+      abilita_attraversamento_bipedi_from_begin: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));
+      abilita_attraversamento_bipedi_from_mezzaria: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));
+      abilita_attraversamento_bipedi_in_entrata_ingresso: attraveramento_cars(False..True):= (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false),True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true));
+
+      abilita_attraversameno_cars_in_uscita_ingressi: attraveramento_cars(False..True):= (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false),True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true));
+      abilita_attraversameno_cars_in_entrata_ingressi: attraveramento_cars(False..True):= (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false),True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true));
+
+      abilita_sinistra_pedoni_in_incroci: Boolean:= True;
+      abilita_sinistra_bici_in_incroci: Boolean:= True;
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
@@ -173,15 +216,16 @@ package mailbox_risorse_attive is
                                                           speed: new_float; step_to_advance: new_float);
       procedure registra_abitante_to_move(type_structure: data_structures_types; range_2: id_corsie);
       procedure new_abitante_to_move(id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying);
-      procedure new_abitante_finish_route(abitante: posizione_abitanti_on_road);
+      procedure new_car_finish_route(abitante: posizione_abitanti_on_road);
+      procedure new_bipede_finish_route(abitante: posizione_abitanti_on_road; corsia: id_corsie);
       procedure update_position_entity(state_view_abitanti: in out JSON_Array);-- type_structure: data_structures_types; range_1: Boolean; index_entity: Positive);
       procedure update_avanzamento_abitante_in_urbana(mezzo: means_of_carrying; distance: new_float);
 
       -- BEGIN delete procedure
       procedure delete_car_in_uscita;
-      procedure delete_car_in_entrata(id_abitante: Positive);
+      procedure delete_car_in_entrata(id_quartiere_abitante: Positive; id_abitante: Positive);
       procedure delete_bipede_in_uscita(range_2: id_corsie);
-      procedure delete_bipede_in_entrata(id_abitante: Positive; range_2: id_corsie);
+      procedure delete_bipede_in_entrata(id_quartiere_abitante: Positive; id_abitante: Positive; corsia: id_corsie);
       -- END delete procedure
 
       procedure set_flag_spostamento_from_urbana_completato(car: posizione_abitanti_on_road);
@@ -197,7 +241,7 @@ package mailbox_risorse_attive is
 
       -- get_first_abitante_to_exit_from_urbana viene richiesto dall'urbana per trovare
       -- la posizione del primo abitante nella corsia di fine percorso (not index_inizio_moto)
-      function get_first_abitante_to_exit_from_urbana return ptr_list_posizione_abitanti_on_road;
+      function get_first_abitante_to_exit_from_urbana(mezzo: means_of_carrying) return ptr_list_posizione_abitanti_on_road;
       function get_car_avanzamento return new_float;
       function get_bipede_avanzamento(range_2: id_corsie) return new_float;
       function get_last_abitante_in_urbana return posizione_abitanti_on_road;
@@ -215,7 +259,9 @@ package mailbox_risorse_attive is
       car_avanzamento_in_urbana: new_float:= 0.0;
       pedone_avanzamento_in_urbana: new_float:= 0.0;
       bici_avanzamento_in_urbana: new_float:= 0.0;
-      temp_abitante_finish_route: posizione_abitanti_on_road;
+      temp_car_finish_route: posizione_abitanti_on_road;
+      temp_bici_finish_route: posizione_abitanti_on_road;
+      temp_pedone_finish_route: posizione_abitanti_on_road;
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..2); -- RANGE2=1 sono le bici; RANGE2=1 sono i pedoni
       main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
@@ -231,6 +277,9 @@ package mailbox_risorse_attive is
    type car_to_move_in_incroci is array(Positive range <>, id_corsie range <>) of ptr_list_posizione_abitanti_on_road;
    type tmp_car_to_move_in_incroci is array(Positive range <>, id_corsie range <>) of posizione_abitanti_on_road;
 
+   type bipedi_to_move_in_incroci is array(Positive range <>, traiettoria_incroci_type range <>) of ptr_list_posizione_abitanti_on_road;
+   type temp_bipedi_to_move_in_incroci is array(Positive range <>, id_corsie range <>) of ptr_list_posizione_abitanti_on_road;
+
    protected type resource_segmento_incrocio(id_risorsa: Positive; size_incrocio: Positive) is new rt_incrocio and backup_interface with
       entry wait_turno;
 
@@ -240,24 +289,35 @@ package mailbox_risorse_attive is
 
       procedure delta_terminate;
       procedure change_verso_semafori_verdi;
+      procedure change_semafori_pedoni;
       procedure insert_new_car(from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road);
-      procedure update_avanzamento_car(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: new_float; new_speed: new_float; step_is_just_calculated: Boolean:= False);
+      procedure insert_new_bipede(from_id_quartiere: Positive; from_id_road: Positive; bipede: posizione_abitanti_on_road; mezzo: means_of_carrying; traiettoria: traiettoria_incroci_type);
+      procedure update_avanzamento_abitante(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: new_float; new_speed: new_float; step_is_just_calculated: Boolean:= False);
       procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array);
+      procedure update_avanzamento_bipedi(state_view_abitanti: in out JSON_Array);
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
       procedure update_avanzamento_in_urbana(abitante: in out ptr_list_posizione_abitanti_on_road; avanzamento: new_float);
 
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
 
       procedure calcola_bound_avanzamento_in_incrocio(index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out new_float; stop_entity: in out Boolean; distance_to_next_car: in out new_float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0);
+      procedure sposta_bipede_da_sinistra_a_dritto(index_road: Positive; mezzo: means_of_carrying; id_quartiere: Positive; id_abitante: Positive);
+
+      procedure remove_first_bipede_to_go_destra_from_dritto(index_road: Positive; corsia: id_corsie; list: in out ptr_list_posizione_abitanti_on_road);
 
       function get_verso_semafori_verdi return Boolean;
+      function get_semaforo_bipedi return Boolean;
       function get_size_incrocio return Positive;
       function get_list_car_to_move(key_incrocio: Positive; corsia: id_corsie) return ptr_list_posizione_abitanti_on_road;
+      function get_list_bipede_to_move(key_incrocio: Positive; traiettoria: traiettoria_incroci_type) return ptr_list_posizione_abitanti_on_road;
 
       -- metodo usato da un'urbana per individuare la posizione di un abitante
       function get_posix_first_entity(from_id_quartiere_road: Positive; from_id_road: Positive; num_corsia: id_corsie) return new_float;
 
+      function get_posix_first_bipede(from_id_quartiere_road: Positive; from_id_road: Positive; mezzo: means_of_carrying; traiettoria: traiettoria_incroci_type) return new_float;
+
       function semaforo_is_verde_from_road(id_quartiere_road: Positive; id_road: Positive) return Boolean;
+
    private
       function slide_list(num_urbana: Positive; num_corsia: id_corsie; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
       function get_num_urbane_to_wait return Positive;
@@ -265,8 +325,11 @@ package mailbox_risorse_attive is
       finish_delta_incrocio: Boolean:= False;
       -- l'immagine va creata per i prossimi elementi
       verso_semafori_verdi: Boolean:= False;  -- key incroci per valore True: 1 e 3
+      bipedi_can_cross: Boolean:= False;  -- False nessun bipede può attraversare, True tutti su tutte le strade dell'incrocio possono attraversare
       car_to_move: car_to_move_in_incroci(1..size_incrocio,1..2):= (others => (others => null));
       temp_car_to_move: tmp_car_to_move_in_incroci(1..size_incrocio,1..2);
+      bipedi_to_move: bipedi_to_move_in_incroci(1..4,destra_pedoni..sinistra_bici);
+      temp_bipedi_destra_to_go: temp_bipedi_to_move_in_incroci(1..4,1..2);
    end resource_segmento_incrocio;
    type ptr_resource_segmento_incrocio is access all resource_segmento_incrocio;
    type resource_segmenti_incroci is array(Positive range <>) of ptr_resource_segmento_incrocio;

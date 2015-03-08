@@ -172,8 +172,8 @@ private
    inventory_estremi: estremi_urbane(get_from_urbane..get_to_urbane,1..2):= (others => (others => null));
    inventory_estremi_urbane: estremi_strade_urbane(get_from_urbane..get_to_urbane,1..2);
 
-   larghezza_marciapiede: new_float:= get_defaul_larghezza_marciapiede;
-   larghezza_corsia: new_float:= get_defaul_larghezza_corsia;
+   larghezza_marciapiede: new_float:= get_default_larghezza_marciapiede;
+   larghezza_corsia: new_float:= get_default_larghezza_corsia;
 
    -- BEGIN VALORI DI DEFAULT PER RISORSE PASSIVE
    default_desired_velocity_pedoni: new_float:= get_default_desired_velocity_pedoni;

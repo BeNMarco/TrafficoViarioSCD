@@ -205,7 +205,15 @@ package body strade_e_incroci_common is
    begin
       return residente.id_luogo_lavoro;
    end get_id_luogo_lavoro_from_abitante;
+   function get_mezzo_abitante(residente: abitante) return means_of_carrying is
+   begin
+      return residente.mezzo;
+   end get_mezzo_abitante;
    -- end get methods
+   procedure set_mezzo_abitante(residente: in out abitante; mezzo: means_of_carrying) is
+   begin
+      residente.mezzo:= mezzo;
+   end set_mezzo_abitante;
 
    function create_new_road_incrocio(val_id_quartiere: Positive;val_id_strada: Positive;val_polo: Boolean)
                                      return road_incrocio_features is
@@ -262,7 +270,7 @@ package body strade_e_incroci_common is
    end create_percorso;
 
    function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
-                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural) return abitante is
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying) return abitante is
       ptr_abitante: abitante;
    begin
       ptr_abitante.id_abitante:= id_abitante;
@@ -270,6 +278,7 @@ package body strade_e_incroci_common is
       ptr_abitante.id_luogo_casa:= id_luogo_casa;
       ptr_abitante.id_quartiere_luogo_lavoro:= id_quartiere_luogo_lavoro;
       ptr_abitante.id_luogo_lavoro:= id_luogo_lavoro;
+      ptr_abitante.mezzo:= mezzo;
       return ptr_abitante;
    end create_abitante;
 

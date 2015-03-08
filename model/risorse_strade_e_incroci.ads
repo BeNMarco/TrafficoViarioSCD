@@ -23,14 +23,6 @@ package risorse_strade_e_incroci is
    type ptr_route_and_distance is access all route_and_distance'Class;
    type percorso_abitanti is array(Positive range <>) of ptr_route_and_distance;
 
-   --protected type location_abitanti(num_abitanti: Positive) is new rt_location_abitanti with
-   --     procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance);
-   --private
-   --   percorsi: percorso_abitanti(1..num_abitanti):= (others => null);
-   --end location_abitanti;
-
-   --type ptr_location_abitanti is access location_abitanti;
-
    type core_avanzamento is limited interface;
 
    procedure configure(entity: access core_avanzamento; id: Positive) is abstract;
@@ -39,6 +31,10 @@ package risorse_strade_e_incroci is
    procedure crea_snapshot(num_delta: in out Natural; mailbox: ptr_backup_interface; num_task: Positive);
 
    function calculate_next_car_in_opposite_corsia(current_corsia: ptr_list_posizione_abitanti_on_road; opposite_corsia: ptr_list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
+
+   type tratto_velocipedi_location is ('1','2','3','4');
+
+   procedure update_avanzamento_bipedi_in_uscita_ritorno(mailbox: ptr_resource_segmento_urbana; list_abitanti_sidewalk_pedoni: ptr_list_posizione_abitanti_on_road; list_abitanti_sidewalk_bici: ptr_list_posizione_abitanti_on_road; prec_list_abitanti_sidewalk_pedoni: ptr_list_posizione_abitanti_on_road; prec_list_abitanti_sidewalk_bici: ptr_list_posizione_abitanti_on_road; mezzo: means_of_carrying; index_ingresso_opposite_direction: Positive; current_ingressi_structure_type_to_not_consider: ingressi_type; polo: Boolean; id_road: Positive);
 
    task type core_avanzamento_urbane is new core_avanzamento with
       entry configure(id: Positive);
@@ -70,7 +66,7 @@ package risorse_strade_e_incroci is
    function calculate_new_step(new_speed: new_float; acceleration: new_float) return new_float;
    function calculate_traiettoria_to_follow_from_ingresso(mezzo: means_of_carrying; id_quartiere_abitante: Positive; id_abitante: Positive; id_ingresso: Positive; ingressi: indici_ingressi) return traiettoria_ingressi_type;
    function calculate_trajectory_to_follow_on_main_strada_from_ingresso(mezzo: means_of_carrying; id_quartiere_abitante: Positive; id_abitante: Positive; from_ingresso: Positive; traiettoria_type: traiettoria_ingressi_type) return trajectory_to_follow;
-   function calculate_trajectory_to_follow_on_main_strada_from_incrocio(abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return trajectory_to_follow;
+   function calculate_trajectory_to_follow_from_incrocio(mezzo: means_of_carrying; abitante: posizione_abitanti_on_road; polo: Boolean; num_corsia: id_corsie) return trajectory_to_follow;
    function calculate_distance_to_stop_line_from_entity_on_road(abitante: ptr_list_posizione_abitanti_on_road; polo: Boolean; id_urbana: Positive) return new_float;
    function calculate_next_entity_distance(current_car: ptr_list_posizione_abitanti_on_road; next_car_in_ingresso_distance: new_float; next_car_on_road: ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: new_float; id_road: Positive; next_entity_is_ingresso: out Boolean) return new_float;
    -- has_to_come_back vale True se l'abitante è in rientro da un sorpasso
@@ -81,7 +77,11 @@ package risorse_strade_e_incroci is
    procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: new_float; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
    procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
 
-   procedure fix_advance_parameters(acceleration: in out new_float; new_speed: in out new_float; new_step: in out new_float; speed_abitante: new_float; distance_to_next: new_float; distanza_stop_line: new_float; max_acceleration: new_float);
+   procedure fix_advance_parameters(mezzo: means_of_carrying; acceleration: in out new_float; new_speed: in out new_float; new_step: in out new_float; speed_abitante: new_float; distance_to_next: new_float; distanza_stop_line: new_float);
+
+   procedure set_condizioni_per_abilitare_spostamento_bipedi(mailbox: ptr_resource_segmento_urbana; distance_last_ingresso: in out Boolean; index_ingresso_same_direction: in out Natural; index_ingresso_opposite_direction: in out Natural; current_polo_to_consider: Boolean; current_car_in_corsia: ptr_list_posizione_abitanti_on_road; distance_ingresso_same_direction: in out new_float; distance_ingresso_opposite_direction: in out new_float);
+
+   function can_abitante_on_uscita_ritorno_overtake_bipedi(mailbox: ptr_resource_segmento_urbana; index_ingresso: Positive) return Boolean;
 
 private
 

@@ -1,5 +1,6 @@
 with Text_IO;
 with GNATCOLL.JSON;
+with Ada.Strings.Unbounded;
 
 with strade_e_incroci_common;
 with data_quartiere;
@@ -7,6 +8,7 @@ with JSON_Helper;
 
 use Text_IO;
 use GNATCOLL.JSON;
+use Ada.Strings.Unbounded;
 
 use strade_e_incroci_common;
 use data_quartiere;
@@ -22,6 +24,8 @@ package body risorse_passive_utilities is
       val_id_quartiere_luogo_lavoro: Positive;
       val_id_luogo_lavoro: Positive;
       var: Natural;
+      mezzo: Ada.Strings.Unbounded.Unbounded_String;
+      means: means_of_carrying;
    begin
       if get_id_quartiere=2 or get_id_quartiere=3 then
          var:=0;
@@ -31,9 +35,18 @@ package body risorse_passive_utilities is
          val_id_luogo_casa:= Get(Val => residente, Field => "id_luogo_casa");
          val_id_quartiere_luogo_lavoro:= Get(Val => residente, Field => "id_quartiere_luogo_lavoro");
          val_id_luogo_lavoro:= Get(Val => residente, Field => "id_luogo_lavoro");
+         mezzo:= Get(Val => residente, Field => "mezzo");
+         if mezzo="walking" then
+            means:= walking;
+         elsif mezzo="bike" then
+            means:= bike;
+         else
+            means:= car;
+         end if;
          array_abitanti(index_residente):= create_abitante(id_abitante => index_residente, id_quartiere => val_id_quartiere,
                                                            id_luogo_casa => val_id_luogo_casa, id_quartiere_luogo_lavoro => val_id_quartiere_luogo_lavoro,
-                                                           id_luogo_lavoro => val_id_luogo_lavoro);
+                                                           id_luogo_lavoro => val_id_luogo_lavoro,
+                                                           mezzo => means);
       end loop;
       return array_abitanti;
    end create_array_abitanti;

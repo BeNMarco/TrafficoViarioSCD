@@ -36,4 +36,29 @@ package body handle_semafori is
 
    end change_semafori;
 
+   procedure change_semafori_bipedi(obj: handler_semafori_quartiere) is
+      from: Natural;
+      to: Natural;
+   begin
+      if get_from_incroci_a_4/=0 then
+         from:= get_from_incroci_a_4;
+      elsif get_from_incroci_a_3/=0 then
+         from:= get_from_incroci_a_3;
+      end if;
+
+      if get_to_incroci_a_3/=0 then
+         to:= get_to_incroci_a_3;
+      elsif get_to_incroci_a_4/=0 then
+         to:= get_to_incroci_a_4;
+      end if;
+
+      if from/=0 then
+         for i in from..to loop
+            get_incroci_segmento_resources(i).change_semafori_pedoni;
+         end loop;
+      end if;
+
+   end change_semafori_bipedi;
+
+
 end handle_semafori;

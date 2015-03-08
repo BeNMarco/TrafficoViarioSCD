@@ -42,7 +42,33 @@
           "traiettoria": "linea_mezzaria",
           "distanza": 17.650719798739665
         }
-      ]
+      ],
+     "intersezione_bipedi": 22.63699493968893
+    },
+    
+    "uscita_destra_pedoni": {
+      "lunghezza": 2.5
+    },
+    "uscita_destra_bici": {
+      "lunghezza": 2.5
+    },
+    "uscita_ritorno_pedoni": {
+      "lunghezza": 2.5
+    },
+    "uscita_ritorno_bici": {
+      "lunghezza": 2.5
+    },
+    "entrata_destra_pedoni": {
+      "lunghezza": 2.5
+    },
+    "entrata_destra_bici": {
+      "lunghezza": 2.5
+    },
+    "entrata_ritorno_pedoni": {
+      "lunghezza": 2.5
+    },
+    "entrata_ritorno_bici": {
+      "lunghezza": 2.5
     }
   }
 }

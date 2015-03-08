@@ -27,7 +27,7 @@ package default_settings is
    function get_default_length_auto return new_float;
    function get_default_num_posti_auto return Positive;
 
-   function get_defaul_larghezza_marciapiede return new_float;
-   function get_defaul_larghezza_corsia return new_float;
+   function get_default_larghezza_marciapiede return new_float;
+   function get_default_larghezza_corsia return new_float;
 
 end default_settings;

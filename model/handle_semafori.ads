@@ -11,4 +11,6 @@ package handle_semafori is
 
    procedure change_semafori(obj: handler_semafori_quartiere);
 
+   procedure change_semafori_bipedi(obj: handler_semafori_quartiere);
+
 end handle_semafori;

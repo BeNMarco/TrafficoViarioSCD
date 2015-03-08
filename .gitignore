@@ -25,5 +25,5 @@ view/dsa/
 QUARTIERE*_log.txt
 num_progressivo_pacchetti.ad*
 data/snapshot/quartiere*_snapshot.json
-data/log/*
+data/log/quartiere*_stallo.json
 data/abilita_invio_aggiornamenti.json

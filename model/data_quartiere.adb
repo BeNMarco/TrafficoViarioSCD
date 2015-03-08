@@ -1,5 +1,8 @@
 with Ada.Text_IO;
 
+with numerical_types;
+use numerical_types;
+
 use Ada.Text_IO;
 
 package body data_quartiere is
@@ -56,6 +59,11 @@ package body data_quartiere is
    begin
       return json_quartiere;
    end get_json_quartiere;
+
+   function get_json_default_movement_entity return JSON_Value is
+   begin
+      return json_default_move_settings;
+   end get_json_default_movement_entity;
 
    function get_from_urbane return Natural is
    begin
@@ -146,45 +154,6 @@ package body data_quartiere is
       return to_abitanti;
    end get_to_abitanti;
 
-   function get_default_value_pedoni(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_pedoni;
-         when time_headway => return default_time_headway_pedoni;
-         when max_acceleration => return default_max_acceleration_pedoni;
-         when comfortable_deceleration => return default_comfortable_deceleration_pedoni;
-         when s0 => return default_s0_pedoni;
-         when length => return default_length_pedoni;
-         when others => return 0.0;
-      end case;
-   end get_default_value_pedoni;
-
-   function get_default_value_bici(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_bici;
-         when time_headway => return default_time_headway_bici;
-         when max_acceleration => return default_max_acceleration_bici;
-         when comfortable_deceleration => return default_comfortable_deceleration_bici;
-         when s0 => return default_s0_bici;
-         when length => return default_length_bici;
-         when others => return 0.0;
-      end case;
-   end get_default_value_bici;
-
-   function get_default_value_auto(value: move_settings) return Float is
-   begin
-      case value is
-         when desired_velocity => return default_desired_velocity_auto;
-         when time_headway => return default_time_headway_auto;
-         when max_acceleration => return default_max_acceleration_auto;
-         when comfortable_deceleration => return default_comfortable_deceleration_auto;
-         when s0 => return default_s0_auto;
-         when length => return default_length_auto;
-         when num_posti => return Float(default_num_posti_auto);
-      end case;
-   end get_default_value_auto;
-
    function get_num_abitanti return Natural is
    begin
       return size_json_abitanti;
@@ -205,23 +174,54 @@ package body data_quartiere is
       return abilita_aggiornamenti_view;
    end get_abilita_aggiornamenti_view;
 
-   protected body log is
+   protected body report_log is
       procedure configure is
       begin
-         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_log.txt");
+         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_stallo.json");
          --Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
-         --Put_Line(OutFile, "ciao");
+         Put_Line(OutFile, "{}");
          Close(OutFile);
       end configure;
 
-      procedure write(stringa: String) is
+      procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is
+         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
       begin
-         Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_log.txt", Mode => Append_File);
-         Put_Line(OutFile, stringa);
-         Close(OutFile);
-      end write;
+         if id_quartiere=get_id_quartiere then
+            if state_stallo.Has_Field(Positive'Image(id_abitante)) then
+               if reset then
+                  state_stallo.Set_Field(Positive'Image(id_abitante),state_stallo.Get(Positive'Image(id_abitante))+1);
+               else
+                  state_stallo.Set_Field(Positive'Image(id_abitante),0);
+               end if;
+            else
+               if reset then
+                  state_stallo.Set_Field(Positive'Image(id_abitante),1);
+               else
+                  state_stallo.Set_Field(Positive'Image(id_abitante),0);
+               end if;
+            end if;
+            Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_stallo.json", Mode => Out_File);
+            Put_Line(OutFile, Write(state_stallo,False));
+            Close(OutFile);
+         else
+            get_log_quartiere(id_quartiere).write_state_stallo(id_quartiere,id_abitante,reset);
+         end if;
+      end write_state_stallo;
 
-   end log;
+      --procedure write(stringa: String) is
+      --begin
+      --   Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_log.txt", Mode => Append_File);
+      --   Put_Line(OutFile, stringa);
+      --   Close(OutFile);
+      --end write;
+
+   end report_log;
+
+   function get_log_stallo_quartiere return ptr_report_log is
+   begin
+      return my_log_stallo;
+   end get_log_stallo_quartiere;
+
 begin
-   log.configure;
+   my_log_stallo.configure;
 end data_quartiere;

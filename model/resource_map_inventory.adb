@@ -96,6 +96,9 @@ package body resource_map_inventory is
 
       registra_quartiere(get_id_quartiere,ptr_rt_quartiere_utilitites(get_quartiere_utilities_obj));
       set_attesa_for_quartiere(get_id_quartiere);
+
+      registra_quartiere_log(get_id_quartiere,ptr_rt_report_log(get_log_stallo_quartiere));
+
       waiting_object.wait_quartieri;
       --ora tutti i rt_ref dei quartieri sono settati
       -- end checkpoint

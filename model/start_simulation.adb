@@ -32,6 +32,8 @@ use JSON_Helper;
 
 package body start_simulation is
 
+   nuova_eccezione: exception;
+
    procedure abitante_is_arrived(obj: quartiere_entities_life; id_abitante: Positive) is
       resource_locate_abitanti: ptr_location_abitanti:= get_locate_abitanti_quartiere;
       arrived_tratto: tratto;
@@ -39,6 +41,15 @@ package body start_simulation is
       percorso: access route_and_distance;
    begin
       arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
+      begin
+         Put_Line(Natural'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Natural'Image(arrived_tratto.get_id_tratto));
+      exception
+         when others =>
+            raise nuova_eccezione;
+      end;
+
+
+
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
       -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
       Put_Line(Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
@@ -58,9 +69,12 @@ package body start_simulation is
       end if;
 
       -- Invio richiesta ASINCRONA
+
+      Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
       print_percorso(percorso.get_percorso_from_route_and_distance);
+      Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
       get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
-      ptr_rt_ingresso(get_id_ingresso_quartiere(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,car);
+      ptr_rt_ingresso(get_id_ingresso_quartiere(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,residente.get_mezzo_abitante);
 
    end abitante_is_arrived;
 
@@ -97,7 +111,7 @@ package body start_simulation is
             Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
 
             get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => i, percorso => percorso.all);
-            get_ingressi_segmento_resources(get_from_ingressi+residente.get_id_luogo_casa_from_abitante-1).new_abitante_to_move(residente.get_id_quartiere_from_abitante,residente.get_id_abitante_from_abitante,car);
+            get_ingressi_segmento_resources(get_from_ingressi+residente.get_id_luogo_casa_from_abitante-1).new_abitante_to_move(residente.get_id_quartiere_from_abitante,residente.get_id_abitante_from_abitante,residente.get_mezzo_abitante);
          end if;
       end loop;
 

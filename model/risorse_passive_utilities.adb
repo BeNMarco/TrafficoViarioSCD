@@ -1,5 +1,6 @@
 with Text_IO;
 with GNATCOLL.JSON;
+with Ada.Strings.Unbounded;
 
 with strade_e_incroci_common;
 with data_quartiere;
@@ -7,6 +8,7 @@ with JSON_Helper;
 
 use Text_IO;
 use GNATCOLL.JSON;
+use Ada.Strings.Unbounded;
 
 use strade_e_incroci_common;
 use data_quartiere;
@@ -22,6 +24,8 @@ package body risorse_passive_utilities is
       val_id_quartiere_luogo_lavoro: Positive;
       val_id_luogo_lavoro: Positive;
       var: Natural;
+      mezzo: Ada.Strings.Unbounded.Unbounded_String;
+      means: means_of_carrying;
    begin
       if get_id_quartiere=2 or get_id_quartiere=3 then
          var:=0;
@@ -31,9 +35,18 @@ package body risorse_passive_utilities is
          val_id_luogo_casa:= Get(Val => residente, Field => "id_luogo_casa");
          val_id_quartiere_luogo_lavoro:= Get(Val => residente, Field => "id_quartiere_luogo_lavoro");
          val_id_luogo_lavoro:= Get(Val => residente, Field => "id_luogo_lavoro");
+         mezzo:= Get(Val => residente, Field => "mezzo");
+         if mezzo="walking" then
+            means:= walking;
+         elsif mezzo="bike" then
+            means:= bike;
+         else
+            means:= car;
+         end if;
          array_abitanti(index_residente):= create_abitante(id_abitante => index_residente, id_quartiere => val_id_quartiere,
                                                            id_luogo_casa => val_id_luogo_casa, id_quartiere_luogo_lavoro => val_id_quartiere_luogo_lavoro,
-                                                           id_luogo_lavoro => val_id_luogo_lavoro);
+                                                           id_luogo_lavoro => val_id_luogo_lavoro,
+                                                           mezzo => means);
       end loop;
       return array_abitanti;
    end create_array_abitanti;
@@ -56,32 +69,32 @@ package body risorse_passive_utilities is
          if Has_Field(Val => residente, Field => "desired_velocity") then
             val_desired_velocity:= Get(Val => residente, Field => "desired_velocity");
          else
-            val_desired_velocity:=get_default_value_pedoni(value => desired_velocity);
+            val_desired_velocity:= Float(get_default_value_pedoni(value => desired_velocity));
          end if;
          if Has_Field(Val => residente, Field => "time_headway") then
             val_time_headway:= Get(Val => residente, Field => "time_headway");
          else
-            val_time_headway:=get_default_value_pedoni(value => time_headway);
+            val_time_headway:= Float(get_default_value_pedoni(value => time_headway));
          end if;
          if Has_Field(Val => residente, Field => "max_acceleration") then
             val_max_acceleration:= Get(Val => residente, Field => "max_acceleration");
          else
-            val_max_acceleration:=get_default_value_pedoni(value => max_acceleration);
+            val_max_acceleration:= Float(get_default_value_pedoni(value => max_acceleration));
          end if;
          if Has_Field(Val => residente, Field => "comfortable_deceleration") then
             val_comfortable_deceleration:= Get(Val => residente, Field => "comfortable_deceleration");
          else
-            val_comfortable_deceleration:=get_default_value_pedoni(value => comfortable_deceleration);
+            val_comfortable_deceleration:= Float(get_default_value_pedoni(value => comfortable_deceleration));
          end if;
          if Has_Field(Val => residente, Field => "s0") then
             val_s0:= Get(Val => residente, Field => "s0");
          else
-            val_s0:=get_default_value_pedoni(value => s0);
+            val_s0:= Float(get_default_value_pedoni(value => s0));
          end if;
          if Has_Field(Val => residente, Field => "length") then
             val_length:= Get(Val => residente, Field => "length");
          else
-            val_length:=get_default_value_pedoni(value => length);
+            val_length:= Float(get_default_value_pedoni(value => length));
          end if;
          array_pedoni(val_id_abitante+from-1):= create_pedone(id_abitante => val_id_abitante, id_quartiere => val_id_quartiere,
                                                               desired_velocity => val_desired_velocity, time_headway => val_time_headway,
@@ -108,32 +121,32 @@ package body risorse_passive_utilities is
          if Has_Field(Val => residente, Field => "desired_velocity") then
             val_desired_velocity:= Get(Val => residente, Field => "desired_velocity");
          else
-            val_desired_velocity:=get_default_value_bici(value => desired_velocity);
+            val_desired_velocity:= Float(get_default_value_bici(value => desired_velocity));
          end if;
          if Has_Field(Val => residente, Field => "time_headway") then
             val_time_headway:= Get(Val => residente, Field => "time_headway");
          else
-            val_time_headway:=get_default_value_bici(value => time_headway);
+            val_time_headway:= Float(get_default_value_bici(value => time_headway));
          end if;
          if Has_Field(Val => residente, Field => "max_acceleration") then
             val_max_acceleration:= Get(Val => residente, Field => "max_acceleration");
          else
-            val_max_acceleration:=get_default_value_bici(value => max_acceleration);
+            val_max_acceleration:= Float(get_default_value_bici(value => max_acceleration));
          end if;
          if Has_Field(Val => residente, Field => "comfortable_deceleration") then
             val_comfortable_deceleration:= Get(Val => residente, Field => "comfortable_deceleration");
          else
-            val_comfortable_deceleration:=get_default_value_bici(value => comfortable_deceleration);
+            val_comfortable_deceleration:= Float(get_default_value_bici(value => comfortable_deceleration));
          end if;
          if Has_Field(Val => residente, Field => "s0") then
             val_s0:= Get(Val => residente, Field => "s0");
          else
-            val_s0:=get_default_value_bici(value => s0);
+            val_s0:= Float(get_default_value_bici(value => s0));
          end if;
          if Has_Field(Val => residente, Field => "length") then
             val_length:= Get(Val => residente, Field => "length");
          else
-            val_length:=get_default_value_bici(value => length);
+            val_length:= Float(get_default_value_bici(value => length));
          end if;
          array_bici(val_id_abitante+from-1):= create_bici(id_abitante => val_id_abitante, id_quartiere => val_id_quartiere,
                                                               desired_velocity => val_desired_velocity, time_headway => val_time_headway,
@@ -162,32 +175,32 @@ package body risorse_passive_utilities is
          if Has_Field(Val => residente, Field => "desired_velocity") then
             val_desired_velocity:= Get(Val => residente, Field => "desired_velocity");
          else
-            val_desired_velocity:=get_default_value_auto(value => desired_velocity);
+            val_desired_velocity:= Float(get_default_value_auto(value => desired_velocity));
          end if;
          if Has_Field(Val => residente, Field => "time_headway") then
             val_time_headway:= Get(Val => residente, Field => "time_headway");
          else
-            val_time_headway:=get_default_value_auto(value => time_headway);
+            val_time_headway:= Float(get_default_value_auto(value => time_headway));
          end if;
          if Has_Field(Val => residente, Field => "max_acceleration") then
             val_max_acceleration:= Get(Val => residente, Field => "max_acceleration");
          else
-            val_max_acceleration:=get_default_value_auto(value => max_acceleration);
+            val_max_acceleration:= Float(get_default_value_auto(value => max_acceleration));
          end if;
          if Has_Field(Val => residente, Field => "comfortable_deceleration") then
             val_comfortable_deceleration:= Get(Val => residente, Field => "comfortable_deceleration");
          else
-            val_comfortable_deceleration:=get_default_value_auto(value => comfortable_deceleration);
+            val_comfortable_deceleration:= Float(get_default_value_auto(value => comfortable_deceleration));
          end if;
          if Has_Field(Val => residente, Field => "s0") then
             val_s0:= Get(Val => residente, Field => "s0");
          else
-            val_s0:=get_default_value_auto(value => s0);
+            val_s0:= Float(get_default_value_auto(value => s0));
          end if;
          if Has_Field(Val => residente, Field => "length") then
             val_length:= Get(Val => residente, Field => "length");
          else
-            val_length:=get_default_value_auto(value => length);
+            val_length:= Float(get_default_value_auto(value => length));
          end if;
          if Has_Field(Val => residente, Field => "num_posti") then
             val_num_posti:= Get(Val => residente, Field => "num_posti");

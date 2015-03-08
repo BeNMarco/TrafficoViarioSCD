@@ -8,6 +8,16 @@ use remote_types;
 
 package body the_name_server is
 
+   procedure registra_quartiere_log(id_quartiere: Positive; file_log: ptr_rt_report_log) is
+   begin
+      registro_log_quartieri(id_quartiere):= file_log;
+   end registra_quartiere_log;
+
+   function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+   begin
+      return registro_log_quartieri(id_quartiere);
+   end get_log_quartiere;
+
    procedure registra_webserver(my_web: Access_WebServer_Remote_Interface) is
    begin
       web:= my_web;
@@ -102,7 +112,11 @@ package body the_name_server is
 
       function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
       begin
-         return registro_incroci(id_quartiere)(id_risorsa);
+         if id_quartiere=1 and then id_risorsa=2 then
+            return null;
+         else
+            return registro_incroci(id_quartiere)(id_risorsa);
+         end if;
       end get_id_incrocio_quartiere;
 
    end registro_risorse_strade;
@@ -138,6 +152,7 @@ package body the_name_server is
 
    function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
    begin
+      Put_Line(Positive'Image(id_quartiere) & " " & Positive'Image(id_risorsa));
       return registro_risorse_strade.get_id_incrocio_quartiere(id_quartiere,id_risorsa);
    end get_id_incrocio_quartiere;
 

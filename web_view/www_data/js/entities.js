@@ -25,6 +25,7 @@ function Car(id){
 	this.id = id;
 	this.driver = null;
 	this.path = new Path();
+
 	this.currentPosition = null;
 	this.angle = 90;
 	this.length = 11;
@@ -39,10 +40,56 @@ Car.prototype.hide = function(){
 	this.path.visible = false;
 }
 
+Car.prototype.onMouseEnter = function(event) {
+	  // Layout the tooltip above the dot
+	  var tooltipRect = new Rectangle(event.position + new Point(-20, -40), new Size(40, 28));
+	  // Create tooltip from rectangle
+	  tooltip = new Path.Rectangle(tooltipRect);
+	  tooltip.fillColor = 'white';
+	  tooltip.strokeColor = 'black';
+	  // Name the tooltip so we can retrieve it later
+	  tooltip.name = 'tooltip';
+	  // Add the tooltip to the parent (group)
+	  this.fillColor = 'green';
+	  this.parent.addChild(tooltip);
+	}
+
+Car.prototype.onMouseLeave = function(event) {
+	  // We retrieve the tooltip from its name in the parent node (group) then remove it
+	  this.parent.children['tooltip'].remove();
+	  this.fillColor = 'red';
+	  console.log("out");
+	}
+
 Car.prototype.draw = function(style){
 	this.path = new Path[style.carShape.type](style.carShape.args); //style.carShape.args[0], style.carShape.args[1]
 	this.path.fillColor = style.carColor;
 	this.length = style.carShape.args.size[1];
+	this.path.carData = this;
+
+	this.path.onMouseEnter = function(event) {
+	  // Layout the tooltip above the dot
+	  //var tooltipRect = new Rectangle(this.position + new Point(40, 40), new Size(100, 100));
+	  // Create tooltip from rectangle
+	  this.tooltipLabel = new PointText(this.position.subtract(new Point(-5,-5)));
+	  this.tooltipLabel.fillColor = 'white';
+	  this.tooltipLabel.textColor = 'blue';
+	  this.tooltipLabel.strokeColor = 'black';
+	  // Name the tooltip so we can retrieve it later
+	  this.tooltipLabel.content = this.carData.id;
+	  this.tooltipLabel.bringToFront();
+	  // Add the tooltip to the parent (group)
+	  this.fillColor = 'green';
+	}
+
+
+	// Create onMouseLeave event for dot
+	this.path.onMouseLeave =  function(event) {
+	  // We retrieve the tooltip from its name in the parent node (group) then remove it
+	  this.tooltipLabel.remove();
+	  this.fillColor = 'red';
+	  console.log("out");
+	}
 }
 
 Car.prototype.move = function(pos, angle){

@@ -838,7 +838,7 @@ function Place(obj){
 	this._curBikes = 0;
 
 	var tmpPoint = new Point(0,0);
-	this.nameLabel = new PointText(tmpPoint);;
+	this.nameLabel = new PointText(tmpPoint);
 	this.nameLabel.justification = 'center';
 	this.nameLabel.visible = false
 	this.carsLabel = new PointText(tmpPoint);

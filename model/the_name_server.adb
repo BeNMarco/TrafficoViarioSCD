@@ -112,11 +112,8 @@ package body the_name_server is
 
       function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
       begin
-         if id_quartiere=1 and then id_risorsa=2 then
-            return null;
-         else
-            return registro_incroci(id_quartiere)(id_risorsa);
-         end if;
+         Put_Line(Positive'Image(id_risorsa) & " " & Positive'Image(id_quartiere));
+         return registro_incroci(id_quartiere)(id_risorsa);
       end get_id_incrocio_quartiere;
 
    end registro_risorse_strade;

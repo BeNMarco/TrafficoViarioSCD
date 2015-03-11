@@ -90,6 +90,7 @@ package body risorse_strade_e_incroci is
       -- begin parameters not in the IDM models:
       if next_entity_distance=0.0 then
          intersection_coeff:= (Float(abitante_velocity/distance_to_stop_line))**2;
+         Put_Line("È MA MO È " & Positive'Image(id_abitante));
          coeff:= 1.0 - new_float(free_road_coeff) - new_float(intersection_coeff);
 
          if (free_road_coeff>intersection_coeff and intersection_coeff>0.0) or else (1.0 - free_road_coeff - intersection_coeff<=0.0) then
@@ -247,6 +248,10 @@ package body risorse_strade_e_incroci is
       -- next_nodo sarà o la strada corrente o un suo ingresso
       next_nodo:= get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_next(abitante.get_id_abitante_posizione_abitanti);
       Put_Line(Positive'Image(get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)));
+      if get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)<1 then
+         Put_Line("numero step rimasti per abitante " & Positive'Image(abitante.get_id_abitante_posizione_abitanti) & " è 0");
+         raise other_error;
+      end if;
       if get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)=1 then
          -- la macchina deve percorrere l'ultimo pezzo di strada
          if get_quartiere_cfg(next_nodo.get_id_quartiere_tratto).get_polo_ingresso(next_nodo.get_id_tratto)/=polo then
@@ -1524,7 +1529,7 @@ package body risorse_strade_e_incroci is
       index_road: Natural;
 
       abitante_to_transfer: posizione_abitanti_on_road;
-      --prec_abitante: ptr_list_posizione_abitanti_on_road;
+      prec_abitante: ptr_list_posizione_abitanti_on_road;
       length_car_on_road: new_float;
 
       prec_abitante_other_corsia: ptr_list_posizione_abitanti_on_road;
@@ -1556,6 +1561,7 @@ package body risorse_strade_e_incroci is
       --location_velocipede: tratto_velocipedi_location;
       switch: Boolean;
       segnale: Boolean;
+      signal: Boolean;
 
       --index_ingresso: Natural;
 
@@ -1700,34 +1706,57 @@ package body risorse_strade_e_incroci is
                end if;
 
                if list_abitanti/=null then
+                  --if (list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=141 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>186.0) and id_task=29 then
+                  --   stop_entity:= False;
+                  --end if;
                   if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow=empty then
-                     if get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory).get_polo_ingresso=range_1 then
-                        distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
-                     else
-                        distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)+get_larghezza_corsia;
-                     end if;
+                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_from_ingresso=0 then
+                        if get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory).get_polo_ingresso=range_1 then
+                           distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
+                        else
+                           distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)+get_larghezza_corsia;
+                        end if;
+                     --else
+                     --   if get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_from_ingresso).get_polo_ingresso=get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory).get_polo_ingresso then
+                     --      if get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_from_ingresso),range_1)<get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1) then
+                              -- uscita_destra
+                     --         distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
+                     --      else
+                              -- uscita_dritto
+                     --         distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)+get_larghezza_corsia;
+                     --      end if;
+                     --   else
+                     --      if get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_from_ingresso),range_1)<get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1) then
+                              -- uscita_destra
+                     --         distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)+get_larghezza_corsia;
+                     --      else
+                              -- uscita_dritto
+                     --         distance_to_stop_line:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
+                     --      end if;
+                     --   end if;
+                     --end if;
                   else
                      distance_to_stop_line:= get_urbana_from_id(id_task).get_lunghezza_road;
                   end if;
                   distance_to_stop_line:= distance_to_stop_line-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
 
                   -- aggiornamento indici ingressi
-                  switch:= False;
+                  signal:= False;
                   if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=distance_ingresso_opposite_direction+get_larghezza_corsia then
                      if mezzo=walking then
                         if (prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede) or else
                           (list_abitanti_sidewalk_bici/=null and then list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede) then
-                           switch:= True;
+                           signal:= True;
                         end if;
                      else
                         if (prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede) or else
                           (list_abitanti_sidewalk_pedoni/=null and then list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede) then
-                           switch:= True;
+                           signal:= True;
                         end if;
                      end if;
                   end if;
 
-                  while switch=False and then (validity_ingresso_opposite_direction and then distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede<list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) loop
+                  while signal=False and then (validity_ingresso_opposite_direction and then distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede<list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) loop
                      update_avanzamento_bipedi_in_uscita_ritorno(mailbox,list_abitanti_sidewalk_pedoni,list_abitanti_sidewalk_bici,prec_list_abitanti_sidewalk_pedoni,prec_list_abitanti_sidewalk_bici,mezzo,index_ingresso_opposite_direction,current_ingressi_structure_type_to_not_consider,range_1,id_task);
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_opposite_direction+get_larghezza_corsia then
                         index_ingresso_opposite_direction:= index_ingresso_opposite_direction-1;
@@ -1745,51 +1774,22 @@ package body risorse_strade_e_incroci is
                   end if;
 
                   -- aggiornamento indici ingressi
-                  switch:= False;
+                  signal:= False;
                   if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=distance_ingresso_same_direction+get_larghezza_corsia then
                      if mezzo=walking then
                         if (prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede) or else
                           (list_abitanti_sidewalk_bici/=null and then list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede) then
-                           switch:= True;
+                           signal:= True;
                         end if;
                      else
                         if (prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede) or else
                           (list_abitanti_sidewalk_pedoni/=null and then list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede) then
-                           switch:= True;
+                           signal:= True;
                         end if;
                      end if;
                   end if;
 
-                  while switch=False and then (validity_ingresso_same_direction and then distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede<list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) loop
-                     segnale:= True;
-                     if mezzo=walking then
-                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<distance_ingresso_same_direction then
-                           segnale:= False;
-                        end if;
-                        if prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                           segnale:= False;
-                        end if;
-                        if prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                           segnale:= False;
-                        end if;
-                        if (prec_list_abitanti_sidewalk_bici/=null and then (prec_list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti/=null and then (prec_list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede and then prec_list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_bici_quartiere(prec_list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,prec_list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<distance_ingresso_same_direction-get_larghezza_corsia))) then
-                           segnale:= False;
-                        end if;
-                     else
-                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<distance_ingresso_same_direction then
-                           segnale:= False;
-                        end if;
-                        if prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                           segnale:= False;
-                        end if;
-                        if prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                           segnale:= False;
-                        end if;
-                        if (prec_list_abitanti_sidewalk_pedoni/=null and then (prec_list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti/=null and then (prec_list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede and then prec_list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_pedone_quartiere(prec_list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,prec_list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<distance_ingresso_same_direction-get_larghezza_corsia))) then
-                           segnale:= False;
-                        end if;
-                     end if;
-
+                  while signal=False and then (validity_ingresso_same_direction and then distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede<list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) loop
                      if range_1 then
                         current_ingressi_structure_type_to_consider:= ordered_polo_true;
                      else
@@ -1806,22 +1806,6 @@ package body risorse_strade_e_incroci is
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_same_direction+get_larghezza_corsia or else
                        list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<distance_ingresso_same_direction+get_larghezza_corsia then
                         mailbox.disabilita_attraversamento_cars_ingresso(True,range_1,index_ingresso_same_direction);
-                     end if;
-
-                     if segnale then
-                        for d in 1..2 loop
-                           if d=1 then
-                              other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
-                           else
-                              other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
-                           end if;
-                           while other_list_abitanti/=null loop
-                              if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_larghezza_corsia*4.0+get_larghezza_marciapiede then
-                                 mailbox.set_flag_abitante_can_overtake_to_next_corsia(other_list_abitanti,True);
-                              end if;
-                              other_list_abitanti:= other_list_abitanti.get_next_from_list_posizione_abitanti;
-                           end loop;
-                        end loop;
                      end if;
 
                      segnale:= True;
@@ -1864,7 +1848,7 @@ package body risorse_strade_e_incroci is
                            distance_ingresso_same_direction:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider)),range_1);
                         end if;
                      else
-                        switch:= True;
+                        signal:= True;
                      end if;
                   end loop;
 
@@ -1880,17 +1864,13 @@ package body risorse_strade_e_incroci is
                      end if;
                   end if;
                   if next_abitante=null then
-                     if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=130 then
-                        stop_entity:= False;
-                        Put_Line(Positive'Image(id_task));
-                        stop_entity:= list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia;
-                     end if;
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=empty then
                         if get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_current_position(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti)=1 then
                            tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                         else
                            tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next_incrocio(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                         end if;
+                        Put_Line("1923 id abitante: " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti));
                         costante_additiva:= ptr_rt_incrocio(get_id_incrocio_quartiere(tratto_incrocio.get_id_quartiere_tratto,tratto_incrocio.get_id_tratto)).get_posix_first_bipede(get_id_quartiere,id_task,mezzo,traiettoria_incrocio_uno);
                         if costante_additiva<0.0 then
                            next_entity_distance:= get_urbana_from_id(id_task).get_lunghezza_road+costante_additiva-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
@@ -1911,7 +1891,7 @@ package body risorse_strade_e_incroci is
                   -- trovare a che distanza si trova il prossimo abitante
                   if validity_ingresso_same_direction then
                      temp_next_entity_distance_1:= 0.0;
-                     for h in index_ingresso_same_direction..mailbox.get_ordered_ingressi_from_polo(range_1).all'Last loop
+                     for h in reverse index_ingresso_same_direction..mailbox.get_ordered_ingressi_from_polo(range_1).all'Last loop
                         entity_length:= 0.0;
                         if temp_next_entity_distance_1=0.0 then
                            if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede then
@@ -1944,19 +1924,18 @@ package body risorse_strade_e_incroci is
 
                            if temp_next_entity_distance_1=0.0 then
                               other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),entrata_andata);
-                              if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else (other_list_abitanti.get_next_from_list_posizione_abitanti/=null)) then
+                              if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
                                  temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_corsia;
                               end if;
                               if temp_next_entity_distance_1=0.0 then
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),entrata_ritorno);
-                                 if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie+max_larghezza_veicolo*2.0 or else (other_list_abitanti.get_next_from_list_posizione_abitanti/=null and then
-                                                                                                                                                                                                                                                                                                                                     other_list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie+max_larghezza_veicolo*2.0)) then
+                                 if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>get_traiettoria_ingresso(entrata_ritorno).get_intersezione_bipedi then
                                     temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_corsia;
                                  end if;
                               end if;
                               if temp_next_entity_distance_1=0.0 then
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),uscita_andata);
-                                 if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
+                                 if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
                                     temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1);
                                  end if;
                               end if;
@@ -1965,11 +1944,6 @@ package body risorse_strade_e_incroci is
                                  if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
                                     entity_length:= get_quartiere_utilities_obj.get_auto_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                                     if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<max_length_veicolo then
-                                       temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1);
-                                    end if;
-                                 elsif other_list_abitanti/=null and then other_list_abitanti.get_next_from_list_posizione_abitanti/=null then
-                                    entity_length:= get_quartiere_utilities_obj.get_auto_quartiere(other_list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                                    if other_list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<max_length_veicolo then
                                        temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1);
                                     end if;
                                  end if;
@@ -2021,11 +1995,15 @@ package body risorse_strade_e_incroci is
 
                         end if;
                      end loop;
+                     if temp_next_entity_distance_1/=0.0 then
+                        temp_next_entity_distance_1:= temp_next_entity_distance_1-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
+                     end if;
+
                   end if;
 
                   if validity_ingresso_opposite_direction then
                      temp_next_entity_distance_2:= 0.0;
-                     for h in reverse 1..index_ingresso_opposite_direction loop
+                     for h in 1..index_ingresso_opposite_direction loop
                         entity_length:= 0.0;
                         if temp_next_entity_distance_2=0.0 then
                            if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede then
@@ -2062,9 +2040,9 @@ package body risorse_strade_e_incroci is
 
                                  if other_list_abitanti/=null then
                                     if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<0.0 then
-                                       temp_next_entity_distance_2:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)+get_larghezza_corsia;
-                                    else
                                        temp_next_entity_distance_2:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)+get_larghezza_corsia-entity_length;
+                                    else
+                                       temp_next_entity_distance_2:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)+get_larghezza_corsia;
                                     end if;
                                  end if;
 
@@ -2080,6 +2058,9 @@ package body risorse_strade_e_incroci is
                         end if;
 
                      end loop;
+                     if temp_next_entity_distance_2/=0.0 then
+                        temp_next_entity_distance_2:= temp_next_entity_distance_2-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
+                     end if;
                   end if;
 
                   if next_entity_distance/=0.0 and (temp_next_entity_distance_1/=0.0 and temp_next_entity_distance_2/=0.0) then
@@ -2172,12 +2153,14 @@ package body risorse_strade_e_incroci is
                      end if;
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=empty or else
                        list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory/=mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider) then
-                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede or else
-                          list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede then
-                           mailbox.disabilita_attraversamento_cars_ingresso(False,range_1,index_ingresso_same_direction);
+                        list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),entrata_ritorno);
+                        if list_abitanti_on_traiettoria_ingresso/=null and then list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_traiettoria_ingresso(entrata_ritorno).get_intersezione_bipedi then
+                           if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede or else
+                             list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede then
+                              mailbox.disabilita_attraversamento_cars_ingresso(False,range_1,index_ingresso_same_direction);
+                           end if;
                         end if;
-                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede or else
-                          list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede then
+                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede then
                            mailbox.disabilita_attraversamento_cars_ingresso(True,range_1,index_ingresso_same_direction);
                         end if;
                      end if;
@@ -2200,6 +2183,7 @@ package body risorse_strade_e_incroci is
                         get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).set_position_abitante_to_next(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                      end if;
                      tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
+                     Put_Line("2233");
                      ptr_rt_incrocio(get_id_incrocio_quartiere(tratto_incrocio.get_id_quartiere_tratto,tratto_incrocio.get_id_tratto)).insert_new_bipede(get_id_quartiere,id_task,posizione_abitanti_on_road(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti),mezzo,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow);
                   end if;
 
@@ -2229,36 +2213,38 @@ package body risorse_strade_e_incroci is
                      end if;
 
                      while validity_ingresso_same_direction loop
-                        segnale:= True;
                         if mezzo=walking then
-                           if prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                              segnale:= False;
-                           end if;
-                           if prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                              segnale:= False;
+                           if prec_list_abitanti_sidewalk_pedoni/=null then
+                              if prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=empty or else
+                                prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory/=mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider) then
+                                 list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),entrata_ritorno);
+                                 if list_abitanti_on_traiettoria_ingresso/=null and then list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_traiettoria_ingresso(entrata_ritorno).get_intersezione_bipedi then
+                                    if prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede or else
+                                      prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede then
+                                       mailbox.disabilita_attraversamento_cars_ingresso(False,range_1,index_ingresso_same_direction);
+                                    end if;
+                                 end if;
+                                 if prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede then
+                                    mailbox.disabilita_attraversamento_cars_ingresso(True,range_1,index_ingresso_same_direction);
+                                 end if;
+                              end if;
                            end if;
                         else
-                           if prec_list_abitanti_sidewalk_bici/=null and then prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                              segnale:= False;
-                           end if;
-                           if prec_list_abitanti_sidewalk_pedoni/=null and then prec_list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                              segnale:= False;
-                           end if;
-                        end if;
-                        if segnale then
-                           for d in 1..2 loop
-                              if d=1 then
-                                 other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
-                              else
-                                 other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
-                              end if;
-                              while other_list_abitanti/=null loop
-                                 if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_larghezza_corsia*4.0+get_larghezza_marciapiede then
-                                    mailbox.set_flag_abitante_can_overtake_to_next_corsia(other_list_abitanti,True);
+                           if prec_list_abitanti_sidewalk_bici/=null then
+                              if prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=empty or else
+                                prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_ingresso_to_go_trajectory/=mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider) then
+                                 list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(index_ingresso_same_direction,current_ingressi_structure_type_to_consider),entrata_ritorno);
+                                 if list_abitanti_on_traiettoria_ingresso/=null and then list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_traiettoria_ingresso(entrata_ritorno).get_intersezione_bipedi then
+                                    if prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede or else
+                                      prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia*2.0-get_larghezza_marciapiede then
+                                       mailbox.disabilita_attraversamento_cars_ingresso(False,range_1,index_ingresso_same_direction);
+                                    end if;
                                  end if;
-                                 other_list_abitanti:= other_list_abitanti.get_next_from_list_posizione_abitanti;
-                              end loop;
-                           end loop;
+                                 if prec_list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_same_direction-get_larghezza_corsia-get_larghezza_marciapiede then
+                                    mailbox.disabilita_attraversamento_cars_ingresso(True,range_1,index_ingresso_same_direction);
+                                 end if;
+                              end if;
+                           end if;
                         end if;
 
                         segnale:= True;
@@ -2343,6 +2329,87 @@ package body risorse_strade_e_incroci is
             end loop;
          end loop;
 
+         -- set flag overtake a True per i bipedi che da
+         -- traiettoria uscita_dritto devono immettersi in uscita_ritorno
+
+         for range_1 in False..True loop
+            if range_1 then
+               current_ingressi_structure_type_to_consider:= ordered_polo_false;
+            else
+               current_ingressi_structure_type_to_consider:= ordered_polo_true;
+            end if;
+            list_abitanti_sidewalk_bici:= mailbox.get_abitanti_to_move(sidewalk,range_1,1);
+            list_abitanti_sidewalk_pedoni:= mailbox.get_abitanti_to_move(sidewalk,range_1,2);
+            prec_list_abitanti_sidewalk_bici:= null;
+            prec_list_abitanti_sidewalk_pedoni:= null;
+            for k in reverse mailbox.get_ordered_ingressi_from_polo(not range_1).all'Range loop
+               distance_ingresso_opposite_direction:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider)),range_1);
+               while list_abitanti_sidewalk_bici/=null and then list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
+                  prec_list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici;
+                  list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti;
+               end loop;
+
+               while list_abitanti_sidewalk_pedoni/=null and then list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
+                  prec_list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni;
+                  list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti;
+               end loop;
+
+               segnale:= True; -- per le bici
+               signal:= True; -- per i pedoni
+               for j in 1..2 loop
+                  if j=1 then
+                     list_abitanti:= list_abitanti_sidewalk_bici;
+                     prec_abitante:= prec_list_abitanti_sidewalk_bici;
+                  else
+                     list_abitanti:= list_abitanti_sidewalk_pedoni;
+                     prec_abitante:= prec_list_abitanti_sidewalk_pedoni;
+                  end if;
+                  if list_abitanti/=null then
+                     if j=1 then
+                        entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                        costante_additiva:= min_bici_distance;
+                     else
+                        entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                        costante_additiva:= min_pedone_distance;
+                     end if;
+                  end if;
+                  if list_abitanti/=null and then list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<distance_ingresso_opposite_direction-get_larghezza_corsia-costante_additiva then
+                     if j=1 then
+                        segnale:= False;
+                        signal:= False;
+                     else
+                        signal:= False;
+                     end if;
+                  end if;
+                  if prec_abitante/=null and then prec_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
+                     if j=1 then
+                        segnale:= False;
+                        signal:= False;
+                     else
+                        signal:= False;
+                     end if;
+                  end if;
+               end loop;
+
+               for j in 1..2 loop
+                  list_abitanti_on_traiettoria_ingresso:= null;
+                  if j=1 and signal then
+                     list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
+                  elsif j=2 and segnale then
+                     list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
+                  end if;
+                  while list_abitanti_on_traiettoria_ingresso/=null loop
+                     -- può essere scelta come traiettoria: uscita_dritto_bici o uscita_dritto_pedoni indifferentemente
+                     if list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_dritto_bici).get_lunghezza then
+                        mailbox.set_flag_abitante_can_overtake_to_next_corsia(list_abitanti_on_traiettoria_ingresso,True);
+                     end if;
+                     list_abitanti_on_traiettoria_ingresso:= list_abitanti_on_traiettoria_ingresso.get_next_from_list_posizione_abitanti;
+                  end loop;
+               end loop;
+                  -- la flag può essere settata a True se si ha un abitante
+            end loop;
+         end loop;
+
          -- spostamento traiettorie ingressi per BICI/PEDONI
          for range_1 in False..True loop
             if range_1 then
@@ -2412,6 +2479,7 @@ package body risorse_strade_e_incroci is
                         when bike =>
                            if list_abitanti.get_next_from_list_posizione_abitanti/=null then
                               stop_entity:= True;
+                              next_abitante:= list_abitanti.get_next_from_list_posizione_abitanti;
                            else
                               next_abitante:= null;
                               if other_list_abitanti/=null then
@@ -2816,9 +2884,6 @@ package body risorse_strade_e_incroci is
                      next_abitante:= list_abitanti_sidewalk_bici;
                      mezzo:= bike;
                      traiettoria_da_percorrere:= uscita_destra_bici;
-                     if id_task=1 and then list_abitanti/=null then
-                        minus:= 0.0;
-                     end if;
                   else
                      list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(z,current_ingressi_structure_type_to_consider),uscita_destra_pedoni);
                      next_abitante:= list_abitanti_sidewalk_pedoni;
@@ -2828,29 +2893,34 @@ package body risorse_strade_e_incroci is
 
                   -- controlla se ocorre dare precedenze a bipedi già in transito in direzione
                   -- uguale a quella dei bipedi in uscita_destra_(bici/pedoni)
-                  for j in 1..2 loop
-                     entity_length:= 0.0;
-                     costante_additiva:= 0.0;
-                     if j=1 then
-                        other_list_abitanti:= list_abitanti_sidewalk_bici;
-                        if other_list_abitanti/=null then
-                           entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                           costante_additiva:= min_bici_distance;
-                        end if;
-                     else
-                        other_list_abitanti:= list_abitanti_sidewalk_pedoni;
-                        if other_list_abitanti/=null then
-                           entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                           costante_additiva:= min_pedone_distance;
-                        end if;
-                     end if;
+                  if list_abitanti/=null and then list_abitanti.get_next_from_list_posizione_abitanti/=null then
+                     list_abitanti:= list_abitanti.get_next_from_list_posizione_abitanti;
+                  end if;
 
-                     if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=distance_ingresso+get_larghezza_corsia+get_larghezza_marciapiede or else
-                       other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<=distance_ingresso+get_larghezza_corsia+get_larghezza_marciapiede+costante_additiva) then
-                        stop_entity:= True;
-                     end if;
+                  if list_abitanti/=null and then list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0 then
+                     for j in 1..2 loop
+                        entity_length:= 0.0;
+                        costante_additiva:= 0.0;
+                        if j=1 then
+                           other_list_abitanti:= list_abitanti_sidewalk_bici;
+                           if other_list_abitanti/=null then
+                              entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                              costante_additiva:= min_bici_distance;
+                           end if;
+                        else
+                           other_list_abitanti:= list_abitanti_sidewalk_pedoni;
+                           if other_list_abitanti/=null then
+                              entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                              costante_additiva:= min_pedone_distance;
+                           end if;
+                        end if;
 
-                  end loop;
+                        if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=distance_ingresso+get_larghezza_corsia+get_larghezza_marciapiede or else
+                                                               other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<=distance_ingresso+get_larghezza_corsia+get_larghezza_marciapiede+costante_additiva) then
+                           stop_entity:= True;
+                        end if;
+                     end loop;
+                  end if;
 
                   if stop_entity=False then
                      for j in 1..2 loop
@@ -3069,6 +3139,8 @@ package body risorse_strade_e_incroci is
                                  distance_to_stop_line:= get_larghezza_corsia*2.0+get_larghezza_marciapiede-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                               end if;
                            end if;
+                        else
+                           distance_to_stop_line:= get_larghezza_corsia*4.0+get_larghezza_marciapiede-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                         end if;
                      end if;
 
@@ -3343,6 +3415,9 @@ package body risorse_strade_e_incroci is
 
                abitante_in_transizione:= mailbox.get_abitante_in_transizione_da_incrocio(car,current_polo_to_consider,first_corsia);
 
+               if (current_polo_to_consider=False and id_task=2) and then (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=93 and then (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>160.0)) then
+                  stop_entity:= False;
+               end if;
                if first_corsia/=0 and then (current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<get_urbana_from_id(id_task).get_lunghezza_road and then (abitante_in_transizione.get_id_abitante_posizione_abitanti/=current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti and abitante_in_transizione.get_id_quartiere_posizione_abitanti/=current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti)) then
                   -- elaborazione corsia to go;    first_corsia è la corsia in cui la macchina è situata
                   Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task) & " corsia" & Positive'Image(first_corsia) & " polo " & Boolean'Image(current_polo_to_consider) & " quartiere" & Positive'Image(get_id_quartiere));
@@ -4758,7 +4833,7 @@ package body risorse_strade_e_incroci is
 
                   length_traiettoria:= get_traiettoria_incrocio(traiettoria_car).get_lunghezza_traiettoria_incrocio;
                   -- !!! QUI IL FLAG overtake_next_corsia VIENE USATO PER VEDERE SE LA MACCHINA HA ATTRAVERSATO COMPLETAMENTO L'URBANA PRECEDENTE
-                  if (get_id_quartiere=1 and then id_task=72) and then (list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=104 and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow=sinistra) then
+                  if (get_id_quartiere=1 and then id_task=72) and then (list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=90 and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti=3) then
                      ma:= False;
                   end if;
                   if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia=False and then
@@ -5047,25 +5122,12 @@ package body risorse_strade_e_incroci is
                         next_entity_distance:= 0.0;
                         next_abitante_velocity:= 0.0;
 
+                        -- un bipede non andrà mai a destra dall'indice della strada mancante nell'incrocio a 3
                         road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,destra));
 
                         if traiettoria_bipede=destra_pedoni and then list_bipedi.get_next_from_list_posizione_abitanti/=null then
                            stop_entity:= True;
                         end if;
-
-                        --if stop_entity=False and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0 then
-                        --   index_other_road:= index_road+1;
-                        --   if index_other_road=5 then -- 5 ovvero considerando sempre incroci di dimensione 4
-                        --      index_other_road:= 1;
-                        --      list_near_bipedi:= mailbox.get_list_bipede_to_move(index_other_road,other_traiettoria);
-                        --      while list_near_bipedi/=null and then stop_entity=False loop
-                        --         if list_near_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>get_larghezza_corsia*4.0+get_larghezza_marciapiede*0.5 then
-                        --            stop_entity:= True;
-                        --         end if;
-                        --         list_near_bipedi:= list_near_bipedi.get_next_from_list_posizione_abitanti;
-                        --      end loop;
-                        --   end if;
-                        --end if;
 
                         if stop_entity=False then
                            --next_abitante:= list_near_bipedi.get_next_from_list_posizione_abitanti;
@@ -5111,10 +5173,9 @@ package body risorse_strade_e_incroci is
                            else
                               get_log_stallo_quartiere.write_state_stallo(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,False);
                            end if;
-
                            if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio then
                               get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).set_position_abitante_to_next(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
-                              --if id_task=72 and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=130 then
+                              --if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=144 and id_task=69 then
                               --   stop_entity:= False;
                               --end if;
                               destination_trajectory:= calculate_trajectory_to_follow_from_incrocio(mezzo,posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti),road.get_polo_road_incrocio,corsia);
@@ -5189,7 +5250,7 @@ package body risorse_strade_e_incroci is
                                  end if;
 
                                  if index_other_road/=id_mancante then
-                                    index_other_road:= calulate_index_road_to_go(id_task,i,sinistra);
+                                    index_other_road:= calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,sinistra);
                                     list_car:= mailbox.get_list_car_to_move(index_other_road,1);
                                     while list_car/=null loop
                                        if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow=dritto_1 and then
@@ -5220,7 +5281,7 @@ package body risorse_strade_e_incroci is
                                     index_other_road:= 2;
                                  end if;
                                  if index_other_road/=id_mancante then
-                                    index_other_road:= calulate_index_road_to_go(id_task,i,dritto_1);
+                                    index_other_road:= calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,dritto_1);
                                     list_car:= mailbox.get_list_car_to_move(index_other_road,1);
                                     while list_car/=null loop
                                        if list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow=sinistra and then
@@ -5242,7 +5303,7 @@ package body risorse_strade_e_incroci is
                                     -- esiste la strada a destra
                                     -- controllare se le macchine che hanno preso la strada a destra
                                     -- hanno sorpassato il marciapiede
-                                    road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,destra));
+                                    road:= get_road_from_incrocio(id_task,calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,destra));
                                     if stop_entity=False then
                                        stop_entity:= not ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).first_car_abitante_has_passed_incrocio(road.get_polo_road_incrocio,1);
                                     end if;
@@ -5253,7 +5314,7 @@ package body risorse_strade_e_incroci is
                                     -- controllare se ci sono macchine in entrata incrocio dalla
                                     -- strada di destra
                                     for k in 1..2 loop
-                                       list_car:= mailbox.get_list_car_to_move(index_other_road,k);
+                                       list_car:= mailbox.get_list_car_to_move(calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,destra),k);
                                        if list_car/=null then
                                           --  ATTTTTTTENZIONE SI CONTROLLA IL WHERE_NEXT DATO CHE IL CICLO SULLE MACCHINE È
                                           -- ESEGUITO PRIMA DI QUELLO SULLO SPOSTAMENTO DEI BIPEDI
@@ -5320,7 +5381,7 @@ package body risorse_strade_e_incroci is
                               else
                                  quantità_percorsa:= get_quartiere_utilities_obj.get_bici_quartiere(next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                               end if;
-                              next_entity_distance:= next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-quantità_percorsa;
+                              next_entity_distance:= next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-quantità_percorsa-list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                               next_id_quartiere_abitante:= next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti;
                               next_id_abitante:= next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti;
                               next_abitante_velocity:= next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_current_speed_abitante;
@@ -5333,7 +5394,7 @@ package body risorse_strade_e_incroci is
                               if id_mancante=index_other_road then
                                  -- macchine che entrano in traiettoria destra non ve ne sono
                                  -- occorre calcolare la posizione del prossimo abitante nell'urbana
-                                 road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,dritto_1));
+                                 road:= get_road_from_incrocio(id_task,calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,dritto_1));
                                  quantità_percorsa:= ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_distanza_percorsa_first_bipede(not road.get_polo_road_incrocio,mezzo);
                                  next_entity_distance:= get_larghezza_marciapiede*2.0+get_larghezza_corsia*4.0+quantità_percorsa-list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                                  -- viene messa come distance_to_stop_line una distanza in cui si arriva a 10mt in più dalla fine dell'incrocio
@@ -5368,13 +5429,13 @@ package body risorse_strade_e_incroci is
                            if index_other_road=0 then
                               index_other_road:= 4;
                            end if;
-                           if id_mancante=index_other_road then
+                           if id_mancante=index_other_road and then (list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=sinistra_bici and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=sinistra_pedoni) then
                               if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio then
-                                 road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,dritto_1));
+                                 road:= get_road_from_incrocio(id_task,calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,dritto_1));
                                  get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).set_position_abitante_to_next(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
-                                 if id_task=72 and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=130 then
-                                    stop_entity:= False;
-                                 end if;
+                                 --if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=144 and id_task=69 then
+                                 --   stop_entity:= False;
+                                 --end if;
                                  destination_trajectory:= calculate_trajectory_to_follow_from_incrocio(mezzo,posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti),road.get_polo_road_incrocio,corsia);
                                  new_abitante:= posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti);
                                  new_abitante.set_destination(destination_trajectory);

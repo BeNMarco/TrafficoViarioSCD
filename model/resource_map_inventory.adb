@@ -71,6 +71,7 @@ package body resource_map_inventory is
       registro_risorse_urbane: set_resources_urbane(get_from_urbane..get_to_urbane);
       registro_risorse_incroci: set_resources_incroci(get_from_incroci..get_to_incroci);
    begin
+      Put_Line("ingressi quartiere " & Positive'Image(get_id_quartiere) & ": " & Positive'Image(get_from_ingressi) & " - " & Positive'Image(get_to_ingressi));
       gps:= get_server_gps;
       synchronization_tasks_partition:= new synchronization_tasks;
       waiting_object:= new wait_all_quartieri;

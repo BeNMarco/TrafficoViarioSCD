@@ -19,7 +19,7 @@ package body synchronized_task_partitions is
          --Close(OutFile);
          num_partition_ready:= num_partition_ready+1;
          num_delta_semafori_before_change:= num_delta_semafori_before_change+1;
-         if num_versi_changed_semafori_cars<2 then
+         if id_turno=1 or else id_turno=3 then
             if num_delta_semafori=num_delta_semafori_before_change then
                num_delta_semafori_before_change:= 0;
                if initialized_gestori_semafori=False then
@@ -29,23 +29,26 @@ package body synchronized_task_partitions is
                for i in gestori_semafori'Range loop
                   gestori_semafori(i).change_semafori;
                end loop;
-               num_versi_changed_semafori_cars:= num_versi_changed_semafori_cars+1;
-               if num_versi_changed_semafori_cars=2 then
-                  for i in gestori_semafori'Range loop
-                     gestori_semafori(i).change_semafori_bipedi; -- viene settato a True il semaforo dei bipedi
-                  end loop;
-               end if;
+               id_turno:= id_turno+1;
+               for i in gestori_semafori'Range loop
+                  gestori_semafori(i).change_semafori_bipedi; -- viene settato a True il semaforo dei bipedi
+               end loop;
             end if;
          else
+            -- id_turno=2 or 4
             if num_delta_semafori_bipedi=num_delta_semafori_before_change then
                num_delta_semafori_before_change:= 0;
-               num_versi_changed_semafori_cars:= 0;
+               id_turno:= id_turno+1;
+               if id_turno=5 then
+                  id_turno:= 1;
+               end if;
                -- initialized_gestori_semafori è sicuramente True dato che inizialmente num_versi_changed_semafori_cars vale 0
                for i in gestori_semafori'Range loop
                   gestori_semafori(i).change_semafori_bipedi; -- viene settato a False il semaforo dei bipedi
                end loop;
             end if;
          end if;
+
          if num_partition_ready=num_quartieri then
             --Open(File => OutFile,Name => "server_log.txt", Mode => Append_File);
             --Put_Line(OutFile, "w");

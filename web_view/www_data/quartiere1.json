@@ -1701,6 +1701,93 @@
     },
     {
       "id_abitante": 130
+    },
+    {
+      "id_abitante": 131
+    },
+    {
+      "id_abitante": 132
+    },
+    {
+      "id_abitante": 133
+    },
+    {
+      "id_abitante": 134
+    },
+    {
+      "id_abitante": 135
+    },
+    {
+      "id_abitante": 136
+    },
+    {
+      "id_abitante": 137
+    },
+    {
+      "id_abitante": 138
+    },
+    {
+      "id_abitante": 139
+    },
+    {
+      "id_abitante": 140
+    },
+    {
+      "id_abitante": 141
+    },
+    {
+      "id_abitante": 142
+    },
+    {
+      "id_abitante": 143
+    },
+    {
+      "id_abitante": 144
+    },
+    {
+      "id_abitante": 145
+    },
+    {
+      "id_abitante": 146
+    },
+    {
+      "id_abitante": 147
+    },
+    {
+      "id_abitante": 148
+    },
+    {
+      "id_abitante": 149
+    },
+    {
+      "id_abitante": 150
+    },
+    {
+      "id_abitante": 151
+    },
+    {
+      "id_abitante": 152
+    },
+    {
+      "id_abitante": 153
+    },
+    {
+      "id_abitante": 154
+    },
+    {
+      "id_abitante": 155
+    },
+    {
+      "id_abitante": 156
+    },
+    {
+      "id_abitante": 157
+    },
+    {
+      "id_abitante": 158
+    },
+    {
+      "id_abitante": 159
     }
   ],
   "auto": [
@@ -2006,6 +2093,93 @@
     },
     {
       "id_abitante": 130
+    },
+    {
+      "id_abitante": 131
+    },
+    {
+      "id_abitante": 132
+    },
+    {
+      "id_abitante": 133
+    },
+    {
+      "id_abitante": 134
+    },
+    {
+      "id_abitante": 135
+    },
+    {
+      "id_abitante": 136
+    },
+    {
+      "id_abitante": 137
+    },
+    {
+      "id_abitante": 138
+    },
+    {
+      "id_abitante": 139
+    },
+    {
+      "id_abitante": 140
+    },
+    {
+      "id_abitante": 141
+    },
+    {
+      "id_abitante": 142
+    },
+    {
+      "id_abitante": 143
+    },
+    {
+      "id_abitante": 144
+    },
+    {
+      "id_abitante": 145
+    },
+    {
+      "id_abitante": 146
+    },
+    {
+      "id_abitante": 147
+    },
+    {
+      "id_abitante": 148
+    },
+    {
+      "id_abitante": 149
+    },
+    {
+      "id_abitante": 150
+    },
+    {
+      "id_abitante": 151
+    },
+    {
+      "id_abitante": 152
+    },
+    {
+      "id_abitante": 153
+    },
+    {
+      "id_abitante": 154
+    },
+    {
+      "id_abitante": 155
+    },
+    {
+      "id_abitante": 156
+    },
+    {
+      "id_abitante": 157
+    },
+    {
+      "id_abitante": 158
+    },
+    {
+      "id_abitante": 159
     }
   ],
   "bici": [
@@ -2161,6 +2335,93 @@
     },
     {
       "id_abitante": 130
+    },
+    {
+      "id_abitante": 131
+    },
+    {
+      "id_abitante": 132
+    },
+    {
+      "id_abitante": 133
+    },
+    {
+      "id_abitante": 134
+    },
+    {
+      "id_abitante": 135
+    },
+    {
+      "id_abitante": 136
+    },
+    {
+      "id_abitante": 137
+    },
+    {
+      "id_abitante": 138
+    },
+    {
+      "id_abitante": 139
+    },
+    {
+      "id_abitante": 140
+    },
+    {
+      "id_abitante": 141
+    },
+    {
+      "id_abitante": 142
+    },
+    {
+      "id_abitante": 143
+    },
+    {
+      "id_abitante": 144
+    },
+    {
+      "id_abitante": 145
+    },
+    {
+      "id_abitante": 146
+    },
+    {
+      "id_abitante": 147
+    },
+    {
+      "id_abitante": 148
+    },
+    {
+      "id_abitante": 149
+    },
+    {
+      "id_abitante": 150
+    },
+    {
+      "id_abitante": 151
+    },
+    {
+      "id_abitante": 152
+    },
+    {
+      "id_abitante": 153
+    },
+    {
+      "id_abitante": 154
+    },
+    {
+      "id_abitante": 155
+    },
+    {
+      "id_abitante": 156
+    },
+    {
+      "id_abitante": 157
+    },
+    {
+      "id_abitante": 158
+    },
+    {
+      "id_abitante": 159
     }
   ],
   "abitanti": [
@@ -2519,7 +2780,210 @@
       "id_luogo_casa": 1,
       "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 7,
-      "mezzo": "bike"
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 131,
+      "id_luogo_casa": 1,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 8,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 132,
+      "id_luogo_casa": 7,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 6,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 133,
+      "id_luogo_casa": 8,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 5,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 134,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 6,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 135,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 21,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 136,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 22,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 137,
+      "id_luogo_casa": 20,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 21,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 138,
+      "id_luogo_casa": 14,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 17,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 139,
+      "id_luogo_casa": 13,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 23,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 140,
+      "id_luogo_casa": 23,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 24,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 141,
+      "id_luogo_casa": 24,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 10,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 142,
+      "id_luogo_casa": 24,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 143,
+      "id_luogo_casa": 2,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 4,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 144,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 6,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 145,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 4,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 146,
+      "id_luogo_casa": 8,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 11,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 147,
+      "id_luogo_casa": 13,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 10,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 148,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 22,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 149,
+      "id_luogo_casa": 17,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 13,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 150,
+      "id_luogo_casa": 15,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 12,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 151,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 5,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 152,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 7,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 153,
+      "id_luogo_casa": 7,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 154,
+      "id_luogo_casa": 8,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 3,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 155,
+      "id_luogo_casa": 8,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 2,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 156,
+      "id_luogo_casa": 6,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 9,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 157,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 23,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 158,
+      "id_luogo_casa": 9,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 10,
+      "mezzo": "walking"
+    },
+    {
+      "id_abitante": 159,
+      "id_luogo_casa": 10,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 20,
+      "mezzo": "walking"
     }
   ]
 }

@@ -22,7 +22,8 @@ package synchronized_task_partitions is
       num_partition_ready: Natural:= 0;
       num_awaked_partitions: Natural:= 0;
       num_partition_ready_to_resynch: Natural:= 0;
-      num_versi_changed_semafori_cars: Natural:= 0;
+      --num_versi_changed_semafori_cars: Natural:= 0;
+      id_turno: Positive:= 1; -- può essere 1 => cambio semaforo macchine ,2 => passano i bipedi, 3 => cambia semaforo macchine, 4 => passano i bipedi
       gestori_semafori: handler_semafori(1..num_quartieri):= (others => null);  -- non può essere inizializzato ora
       initialized_gestori_semafori: Boolean:= False;
       num_delta_semafori_before_change: Natural:= 0;

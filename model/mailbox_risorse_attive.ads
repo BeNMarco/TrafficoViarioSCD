@@ -20,6 +20,7 @@ package mailbox_risorse_attive is
 
    list_abitanti_error: exception;
    deleted_wrong_abitante: exception;
+   other_error: exception;
    alcuni_elementi_non_visitati: exception;
    distanza_next_abitante_minore: exception;
    lista_abitanti_rotta: exception;
@@ -372,7 +373,7 @@ package mailbox_risorse_attive is
                                                next: ptr_list_posizione_abitanti_on_road) return ptr_list_posizione_abitanti_on_road;
 
    function calulate_index_road_to_go(id_incrocio: Positive; from_index: Positive; traiettoria: traiettoria_incroci_type) return Natural;
-
+   function calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_incrocio: Positive; from_index: Positive; traiettoria: traiettoria_incroci_type) return Natural;
 private
 
    type list_posizione_abitanti_on_road is tagged record

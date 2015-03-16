@@ -79,7 +79,7 @@ package risorse_strade_e_incroci is
 
    procedure fix_advance_parameters(mezzo: means_of_carrying; acceleration: in out new_float; new_speed: in out new_float; new_step: in out new_float; speed_abitante: new_float; distance_to_next: new_float; distanza_stop_line: new_float);
 
-   procedure set_condizioni_per_abilitare_spostamento_bipedi(mailbox: ptr_resource_segmento_urbana; distance_last_ingresso: in out Boolean; index_ingresso_same_direction: in out Natural; index_ingresso_opposite_direction: in out Natural; current_polo_to_consider: Boolean; current_car_in_corsia: ptr_list_posizione_abitanti_on_road; distance_ingresso_same_direction: in out new_float; distance_ingresso_opposite_direction: in out new_float);
+   procedure set_condizioni_per_abilitare_spostamento_bipedi(mailbox: ptr_resource_segmento_urbana; distance_last_ingresso: in out Boolean; index_ingresso_same_direction: in out Natural; index_ingresso_opposite_direction: in out Natural; current_polo_to_consider: Boolean; current_car_in_corsia: ptr_list_posizione_abitanti_on_road; distance_ingresso_same_direction: in out new_float; distance_ingresso_opposite_direction: in out new_float; corsia: id_corsie);
 
    function can_abitante_on_uscita_ritorno_overtake_bipedi(mailbox: ptr_resource_segmento_urbana; index_ingresso: Positive) return Boolean;
 

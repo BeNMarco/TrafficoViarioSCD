@@ -112,7 +112,6 @@ package body the_name_server is
 
       function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
       begin
-         Put_Line(Positive'Image(id_risorsa) & " " & Positive'Image(id_quartiere));
          return registro_incroci(id_quartiere)(id_risorsa);
       end get_id_incrocio_quartiere;
 
@@ -149,7 +148,6 @@ package body the_name_server is
 
    function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
    begin
-      Put_Line(Positive'Image(id_quartiere) & " " & Positive'Image(id_risorsa));
       return registro_risorse_strade.get_id_incrocio_quartiere(id_quartiere,id_risorsa);
    end get_id_incrocio_quartiere;
 

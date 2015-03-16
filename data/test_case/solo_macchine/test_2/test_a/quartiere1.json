@@ -35,22 +35,22 @@
     },
     {
       "id": 3,
-      "lunghezza": 366.0,
+      "lunghezza": 216.0,
       "from": [
         500,
         0
       ],
       "to": [
-        900,
+        750,
         0
       ],
       "numcorsie": 2
     },
     {
       "id": 4,
-      "lunghezza": 66.0,
+      "lunghezza": 216.0,
       "from": [
-        900,
+        750,
         0
       ],
       "to": [
@@ -358,55 +358,55 @@
       ],
       "numcorsie": 2
     },
-    {
+{
       "id": 28,
-      "lunghezza": 442.618683818597,
+      "lunghezza": 422.631718237973,
       "from": [
-        900,
-        0
+        600,
+        350
       ],
       "to": [
-        700,
-        450
+        750,
+        0
       ],
       "numcorsie": 2
     },
     {
       "id": 29,
-      "lunghezza": 480.00872002328435,
+      "lunghezza": 338.0618349253283,
       "from": [
         500,
         0
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
     {
       "id": 30,
-      "lunghezza": 673.3897231972169,
+      "lunghezza": 509.63208731033416,
       "from": [
         300,
         0
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
     {
       "id": 31,
-      "lunghezza": 368.04671047850036,
+      "lunghezza": 345.4984813158077,
       "from": [
         400,
         600
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
@@ -448,6 +448,19 @@
         1100
       ],
       "numcorsie": 2
+    },
+    {
+      "id": 35,
+      "lunghezza": 166.0,
+      "from": [
+        0,
+        1500
+      ],
+      "to": [
+        200,
+        1500
+      ],
+      "numcorsie": 2
     }
   ],
   "strade_ingresso": [
@@ -477,7 +490,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,
-      "distanza_da_from": 300.0,
+      "distanza_da_from": 280.0,
       "from": 0,
       "to": 0
     },
@@ -517,7 +530,7 @@
       "numcorsie": 1,
       "strada_confinante": 29,
       "polo": true,
-      "distanza_da_from": 180.0,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     },
@@ -527,7 +540,7 @@
       "numcorsie": 1,
       "strada_confinante": 29,
       "polo": true,
-      "distanza_da_from": 250.0,
+      "distanza_da_from": 180.0,
       "from": 0,
       "to": 0
     },
@@ -557,7 +570,7 @@
       "numcorsie": 1,
       "strada_confinante": 34,
       "polo": true,
-      "distanza_da_from": 100.0,
+      "distanza_da_from": 90.0,
       "from": 0,
       "to": 0
     },
@@ -567,7 +580,7 @@
       "numcorsie": 1,
       "strada_confinante": 34,
       "polo": true,
-      "distanza_da_from": 170.0,
+      "distanza_da_from": 160.0,
       "from": 0,
       "to": 0
     },
@@ -577,7 +590,7 @@
       "numcorsie": 1,
       "strada_confinante": 34,
       "polo": false,
-      "distanza_da_from": 250.0,
+      "distanza_da_from": 240.0,
       "from": 0,
       "to": 0
     },
@@ -587,7 +600,7 @@
       "numcorsie": 1,
       "strada_confinante": 34,
       "polo": true,
-      "distanza_da_from": 420.0,
+      "distanza_da_from": 330.0,
       "from": 0,
       "to": 0
     },
@@ -690,11 +703,351 @@
       "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
+    },
+    {
+      "id": 25,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 1,
+      "polo": true,
+      "distanza_da_from": 380.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 26,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 2,
+      "polo": true,
+      "distanza_da_from": 80.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 27,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 3,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 28,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 4,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 29,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 5,
+      "polo": true,
+      "distanza_da_from": 180.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 30,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 6,
+      "polo": true,
+      "distanza_da_from": 150.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 31,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 7,
+      "polo": true,
+      "distanza_da_from": 80.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 32,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 8,
+      "polo": false,
+      "distanza_da_from": 130.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 33,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 9,
+      "polo": false,
+      "distanza_da_from": 310.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 34,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 10,
+      "polo": false,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 35,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 11,
+      "polo": true,
+      "distanza_da_from": 145.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 36,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 12,
+      "polo": true,
+      "distanza_da_from": 145.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 37,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 13,
+      "polo": true,
+      "distanza_da_from": 260.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 38,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 14,
+      "polo": true,
+      "distanza_da_from": 160.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 39,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 15,
+      "polo": true,
+      "distanza_da_from": 230.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 40,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 16,
+      "polo": true,
+      "distanza_da_from": 780.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 41,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 17,
+      "polo": true,
+      "distanza_da_from": 175.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 42,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 18,
+      "polo": true,
+      "distanza_da_from": 450.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 43,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 19,
+      "polo": true,
+      "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 44,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 20,
+      "polo": true,
+      "distanza_da_from": 210.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 45,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 21,
+      "polo": true,
+      "distanza_da_from": 245.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 46,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 22,
+      "polo": false,
+      "distanza_da_from": 260.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 47,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 23,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 48,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 24,
+      "polo": false,
+      "distanza_da_from": 110.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 49,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 25,
+      "polo": false,
+      "distanza_da_from": 145.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 50,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 26,
+      "polo": true,
+      "distanza_da_from": 290.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 51,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 27,
+      "polo": false,
+      "distanza_da_from": 500.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 52,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 28,
+      "polo": false,
+      "distanza_da_from": 190.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 53,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 29,
+      "polo": false,
+      "distanza_da_from": 260.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 54,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 30,
+      "polo": true,
+      "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 55,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 31,
+      "polo": false,
+      "distanza_da_from": 120.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 56,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 32,
+      "polo": true,
+      "distanza_da_from": 360.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 57,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 33,
+      "polo": false,
+      "distanza_da_from": 190.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 58,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 34,
+      "polo": true,
+      "distanza_da_from": 400.0,
+      "from": 0,
+      "to": 0
     }
   ],
   "incroci_a_4": [
     {
-      "id": "i59",
+      "id": "id94",
       "strade": [
         {
           "quartiere": 1,
@@ -723,7 +1076,7 @@
       ]
     },
     {
-      "id": "i60",
+      "id": "id95",
       "strade": [
         {
           "quartiere": 1,
@@ -752,7 +1105,7 @@
       ]
     },
     {
-      "id": "i61",
+      "id": "id96",
       "strade": [
         {
           "quartiere": 1,
@@ -781,7 +1134,7 @@
       ]
     },
     {
-      "id": "i62",
+      "id": "id97",
       "strade": [
         {
           "quartiere": 1,
@@ -810,7 +1163,7 @@
       ]
     },
     {
-      "id": "i63",
+      "id": "id98",
       "strade": [
         {
           "quartiere": 1,
@@ -839,7 +1192,7 @@
       ]
     },
     {
-      "id": "i64",
+      "id": "id99",
       "strade": [
         {
           "quartiere": 1,
@@ -870,7 +1223,7 @@
   ],
   "incroci_a_3": [
     {
-      "id": "i65",
+      "id": "id100",
       "strade": [
         {
           "quartiere": 1,
@@ -894,7 +1247,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i66",
+      "id": "id101",
       "strade": [
         {
           "quartiere": 1,
@@ -918,7 +1271,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i67",
+      "id": "id102",
       "strade": [
         {
           "quartiere": 1,
@@ -942,7 +1295,7 @@
       "strada_mancante": 1
     },
     {
-      "id": "i68",
+      "id": "id103",
       "strade": [
         {
           "quartiere": 1,
@@ -966,7 +1319,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i69",
+      "id": "id104",
       "strade": [
         {
           "quartiere": 1,
@@ -990,7 +1343,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i70",
+      "id": "id105",
       "strade": [
         {
           "quartiere": 1,
@@ -1014,7 +1367,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i71",
+      "id": "id106",
       "strade": [
         {
           "quartiere": 1,
@@ -1038,7 +1391,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i72",
+      "id": "id107",
       "strade": [
         {
           "quartiere": 1,
@@ -1062,7 +1415,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i73",
+      "id": "id108",
       "strade": [
         {
           "quartiere": 1,
@@ -1086,7 +1439,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i74",
+      "id": "id109",
       "strade": [
         {
           "quartiere": 1,
@@ -1110,7 +1463,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i75",
+      "id": "id110",
       "strade": [
         {
           "quartiere": 1,
@@ -1134,7 +1487,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i76",
+      "id": "id111",
       "strade": [
         {
           "quartiere": 1,
@@ -1158,7 +1511,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i77",
+      "id": "id112",
       "strade": [
         {
           "quartiere": 3,
@@ -1182,7 +1535,7 @@
       "strada_mancante": 0
     },
     {
-      "id": "i78",
+      "id": "id113",
       "strade": [
         {
           "quartiere": 1,
@@ -1206,7 +1559,7 @@
       "strada_mancante": 3
     },
     {
-      "id": "i79",
+      "id": "id114",
       "strade": [
         {
           "quartiere": 1,
@@ -1228,13 +1581,37 @@
         }
       ],
       "strada_mancante": 1
+    },
+    {
+      "id": "id115",
+      "strade": [
+        {
+          "quartiere": 1,
+          "id_strada": 10,
+          "tipo_strada": "urbana",
+          "polo": false
+        },
+        {
+          "quartiere": 1,
+          "id_strada": 35,
+          "tipo_strada": "urbana",
+          "polo": true
+        },
+        {
+          "quartiere": 2,
+          "id_strada": 1,
+          "tipo_strada": "urbana",
+          "polo": true
+        }
+      ],
+      "strada_mancante": 3
     }
   ],
   "luoghi": [
     {
       "id_luogo": 1,
-      "nome": "Casa riposo 1",
-      "tipologia": "lavoro",
+      "nome": "id36",
+      "tipologia": "abitato",
       "idstrada": 1,
       "dimensioni": [
         50,
@@ -1246,8 +1623,8 @@
     },
     {
       "id_luogo": 2,
-      "nome": "Campo sportivo 2",
-      "tipologia": "svago",
+      "nome": "id37",
+      "tipologia": "abitato",
       "idstrada": 2,
       "dimensioni": [
         50,
@@ -1259,8 +1636,8 @@
     },
     {
       "id_luogo": 3,
-      "nome": "Scuole private 3",
-      "tipologia": "istruzione",
+      "nome": "id38",
+      "tipologia": "abitato",
       "idstrada": 3,
       "dimensioni": [
         50,
@@ -1272,8 +1649,8 @@
     }, 
     {
       "id_luogo": 4,
-      "nome": "Da Toni meccanico 4",
-      "tipologia": "lavoro",
+      "nome": "id39",
+      "tipologia": "abitato",
       "idstrada": 4,
       "dimensioni": [
         50,
@@ -1285,8 +1662,8 @@
     },
     {
       "id_luogo": 5,
-      "nome": "Geometra Attilio 5",
-      "tipologia": "lavoro",
+      "nome": "id40",
+      "tipologia": "abitato",
       "idstrada": 5,
       "dimensioni": [
         50,
@@ -1298,8 +1675,8 @@
     },
     {
       "id_luogo": 6,
-      "nome": "Ghegin 6",
-      "tipologia": "negozio",
+      "nome": "id41",
+      "tipologia": "abitato",
       "idstrada": 6,
       "dimensioni": [
         50,
@@ -1311,8 +1688,8 @@
     },
     {
       "id_luogo": 7,
-      "nome": "Fruttivendolo 7",
-      "tipologia": "negozio",
+      "nome": "id42",
+      "tipologia": "abitato",
       "idstrada": 7,
       "dimensioni": [
         50,
@@ -1324,8 +1701,8 @@
     },
     {
       "id_luogo": 8,
-      "nome": "Tatooo da Gianni 8",
-      "tipologia": "negozio",
+      "nome": "id43",
+      "tipologia": "abitato",
       "idstrada": 8,
       "dimensioni": [
         50,
@@ -1337,8 +1714,8 @@
     },
     {
       "id_luogo": 9,
-      "nome": "Angaran 9",
-      "tipologia": "negozio",
+      "nome": "id44",
+      "tipologia": "abitato",
       "idstrada": 9,
       "dimensioni": [
         50,
@@ -1350,8 +1727,8 @@
     },
     {
       "id_luogo": 10,
-      "nome": "Avis 10",
-      "tipologia": "negozio",
+      "nome": "id45",
+      "tipologia": "abitato",
       "idstrada": 10,
       "dimensioni": [
         50,
@@ -1363,8 +1740,8 @@
     },
     {
       "id_luogo": 11,
-      "nome": "Pescheria 11",
-      "tipologia": "negozio",
+      "nome": "id46",
+      "tipologia": "abitato",
       "idstrada": 11,
       "dimensioni": [
         50,
@@ -1376,8 +1753,8 @@
     },
     {
       "id_luogo": 12,
-      "nome": "Quaggiotto 12",
-      "tipologia": "negozio",
+      "nome": "id47",
+      "tipologia": "abitato",
       "idstrada": 12,
       "dimensioni": [
         50,
@@ -1389,8 +1766,8 @@
     },
     {
       "id_luogo": 13,
-      "nome": "Da Bertilla 13",
-      "tipologia": "negozio",
+      "nome": "id48",
+      "tipologia": "abitato",
       "idstrada": 13,
       "dimensioni": [
         50,
@@ -1402,8 +1779,8 @@
     },
     {
       "id_luogo": 14,
-      "nome": "Quali 14",
-      "tipologia": "negozio",
+      "nome": "id49",
+      "tipologia": "abitato",
       "idstrada": 14,
       "dimensioni": [
         50,
@@ -1415,8 +1792,8 @@
     },
     {
       "id_luogo": 15,
-      "nome": "Mazzorato 15",
-      "tipologia": "negozio",
+      "nome": "id50",
+      "tipologia": "abitato",
       "idstrada": 15,
       "dimensioni": [
         50,
@@ -1428,8 +1805,8 @@
     },
     {
       "id_luogo": 16,
-      "nome": "Bar Centrale 16",
-      "tipologia": "negozio",
+      "nome": "id51",
+      "tipologia": "abitato",
       "idstrada": 16,
       "dimensioni": [
         50,
@@ -1441,8 +1818,8 @@
     },
     {
       "id_luogo": 17,
-      "nome": "Da Rudi 17",
-      "tipologia": "negozio",
+      "nome": "id52",
+      "tipologia": "abitato",
       "idstrada": 17,
       "dimensioni": [
         50,
@@ -1454,8 +1831,8 @@
     },
     {
       "id_luogo": 18,
-      "nome": "Simionato servizi 18",
-      "tipologia": "negozio",
+      "nome": "id53",
+      "tipologia": "abitato",
       "idstrada": 18,
       "dimensioni": [
         50,
@@ -1467,8 +1844,8 @@
     },
     {
       "id_luogo": 19,
-      "nome": "Buffetti 19",
-      "tipologia": "negozio",
+      "nome": "id54",
+      "tipologia": "abitato",
       "idstrada": 19,
       "dimensioni": [
         50,
@@ -1480,8 +1857,8 @@
     },
     {
       "id_luogo": 20,
-      "nome": "Velma 20",
-      "tipologia": "negozio",
+      "nome": "id55",
+      "tipologia": "abitato",
       "idstrada": 20,
       "dimensioni": [
         50,
@@ -1493,8 +1870,8 @@
     },
     {
       "id_luogo": 21,
-      "nome": "Pirotecnica Castellana 21",
-      "tipologia": "negozio",
+      "nome": "id56",
+      "tipologia": "abitato",
       "idstrada": 21,
       "dimensioni": [
         50,
@@ -1506,8 +1883,8 @@
     },
     {
       "id_luogo": 22,
-      "nome": "MaxMax 22",
-      "tipologia": "negozio",
+      "nome": "id57",
+      "tipologia": "abitato",
       "idstrada": 22,
       "dimensioni": [
         50,
@@ -1519,8 +1896,8 @@
     },
     {
       "id_luogo": 23,
-      "nome": "Glam 23",
-      "tipologia": "negozio",
+      "nome": "id58",
+      "tipologia": "abitato",
       "idstrada": 23,
       "dimensioni": [
         50,
@@ -1532,8 +1909,8 @@
     },
     {
       "id_luogo": 24,
-      "nome": "Felix 24",
-      "tipologia": "negozio",
+      "nome": "id59",
+      "tipologia": "abitato",
       "idstrada": 24,
       "dimensioni": [
         50,
@@ -1542,6 +1919,448 @@
       "capienza_macchine": 70,
       "capienza_persone": 1000,
       "capienza_bici": 100
+    },
+    {
+      "id_luogo": 25,
+      "nome": "id60",
+      "tipologia": "fermata",
+      "idstrada": 25,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 26,
+      "nome": "id61",
+      "tipologia": "fermata",
+      "idstrada": 26,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 27,
+      "nome": "id62",
+      "tipologia": "fermata",
+      "idstrada": 27,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 28,
+      "nome": "id63",
+      "tipologia": "fermata",
+      "idstrada": 28,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 29,
+      "nome": "id64",
+      "tipologia": "fermata",
+      "idstrada": 29,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 30,
+      "nome": "id65",
+      "tipologia": "fermata",
+      "idstrada": 30,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 31,
+      "nome": "id66",
+      "tipologia": "fermata",
+      "idstrada": 31,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 32,
+      "nome": "id67",
+      "tipologia": "fermata",
+      "idstrada": 32,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 33,
+      "nome": "id68",
+      "tipologia": "fermata",
+      "idstrada": 33,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 34,
+      "nome": "id69",
+      "tipologia": "fermata",
+      "idstrada": 34,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 35,
+      "nome": "id70",
+      "tipologia": "fermata",
+      "idstrada": 35,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 36,
+      "nome": "id71",
+      "tipologia": "fermata",
+      "idstrada": 36,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 37,
+      "nome": "id72",
+      "tipologia": "fermata",
+      "idstrada": 37,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 38,
+      "nome": "id73",
+      "tipologia": "fermata",
+      "idstrada": 38,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 39,
+      "nome": "id74",
+      "tipologia": "fermata",
+      "idstrada": 39,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 40,
+      "nome": "id75",
+      "tipologia": "fermata",
+      "idstrada": 40,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 41,
+      "nome": "id76",
+      "tipologia": "fermata",
+      "idstrada": 41,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 42,
+      "nome": "id77",
+      "tipologia": "fermata",
+      "idstrada": 42,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 43,
+      "nome": "id78",
+      "tipologia": "fermata",
+      "idstrada": 43,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 44,
+      "nome": "id79",
+      "tipologia": "fermata",
+      "idstrada": 44,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 45,
+      "nome": "id80",
+      "tipologia": "fermata",
+      "idstrada": 45,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 46,
+      "nome": "id81",
+      "tipologia": "fermata",
+      "idstrada": 46,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 47,
+      "nome": "id82",
+      "tipologia": "fermata",
+      "idstrada": 47,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 48,
+      "nome": "id83",
+      "tipologia": "fermata",
+      "idstrada": 48,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 49,
+      "nome": "id84",
+      "tipologia": "fermata",
+      "idstrada": 49,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 50,
+      "nome": "id85",
+      "tipologia": "fermata",
+      "idstrada": 50,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 51,
+      "nome": "id86",
+      "tipologia": "fermata",
+      "idstrada": 51,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 52,
+      "nome": "id87",
+      "tipologia": "fermata",
+      "idstrada": 52,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 53,
+      "nome": "id88",
+      "tipologia": "fermata",
+      "idstrada": 53,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 54,
+      "nome": "id89",
+      "tipologia": "fermata",
+      "idstrada": 54,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 55,
+      "nome": "id90",
+      "tipologia": "fermata",
+      "idstrada": 55,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 56,
+      "nome": "id91",
+      "tipologia": "fermata",
+      "idstrada": 56,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 57,
+      "nome": "id92",
+      "tipologia": "fermata",
+      "idstrada": 57,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
+    },
+    {
+      "id_luogo": 58,
+      "nome": "id93",
+      "tipologia": "fermata",
+      "idstrada": 58,
+      "dimensioni": [
+        0,
+        0
+      ],
+      "capienza_macchine": 10,
+      "capienza_persone": 10,
+      "capienza_bici": 10
     }
   ],
 "rotonde_a_4":[],

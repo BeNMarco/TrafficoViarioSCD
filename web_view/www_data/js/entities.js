@@ -148,3 +148,10 @@ EntitiesRegistry.prototype.hide = function(){
 		this.cars[i].hide();
 	}
 }
+
+EntitiesRegistry.prototype.clear = function(){
+	for(var i in this.cars){
+		this.cars[i].remove();
+		delete this.cars[i];
+	}
+}

@@ -35,22 +35,22 @@
     },
     {
       "id": 3,
-      "lunghezza": 366.0,
+      "lunghezza": 216.0,
       "from": [
         500,
         0
       ],
       "to": [
-        900,
+        750,
         0
       ],
       "numcorsie": 2
     },
     {
       "id": 4,
-      "lunghezza": 66.0,
+      "lunghezza": 216.0,
       "from": [
-        900,
+        750,
         0
       ],
       "to": [
@@ -362,12 +362,12 @@
       "id": 28,
       "lunghezza": 442.618683818597,
       "from": [
-        900,
-        0
+        600,
+        350
       ],
       "to": [
-        700,
-        450
+        750,
+        0
       ],
       "numcorsie": 2
     },
@@ -379,8 +379,8 @@
         0
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
@@ -392,8 +392,8 @@
         0
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
@@ -405,8 +405,8 @@
         600
       ],
       "to": [
-        700,
-        450
+        600,
+        350
       ],
       "numcorsie": 2
     },
@@ -477,7 +477,7 @@
       "numcorsie": 1,
       "strada_confinante": 1,
       "polo": true,
-      "distanza_da_from": 300.0,
+      "distanza_da_from": 280.0,
       "from": 0,
       "to": 0
     },
@@ -688,6 +688,46 @@
       "strada_confinante": 10,
       "polo": false,
       "distanza_da_from": 200.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 25,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 1,
+      "polo": true,
+      "distanza_da_from": 380.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 26,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 2,
+      "polo": true,
+      "distanza_da_from": 80.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 27,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 3,
+      "polo": true,
+      "distanza_da_from": 100.0,
+      "from": 0,
+      "to": 0
+    },
+    {
+      "id": 28,
+      "lunghezza": 10.0,
+      "numcorsie": 1,
+      "strada_confinante": 4,
+      "polo": true,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     }
@@ -1599,7 +1639,6 @@
 {"id_abitante":48},
 {"id_abitante":49},
 {"id_abitante":50},
-
 {"id_abitante":51},
 {"id_abitante":52},
 {"id_abitante":53},
@@ -1767,7 +1806,6 @@
 {"id_abitante":48},
 {"id_abitante":49},
 {"id_abitante":50},
-
 {"id_abitante":51},
 {"id_abitante":52},
 {"id_abitante":53},
@@ -1801,89 +1839,78 @@
 ],
 
 "abitanti":[
-{"id_abitante":1,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7,"mezzo": "car"},
-{"id_abitante":2,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8,"mezzo": "car"},
-{"id_abitante":3,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "car"},
-{"id_abitante":4,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5,"mezzo": "car"},
-{"id_abitante":5,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "car"},
-{"id_abitante":6,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21,"mezzo": "car"},
-{"id_abitante":7,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22,"mezzo": "car"},
-{"id_abitante":8,"id_luogo_casa":20,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21,"mezzo": "car"},
-{"id_abitante":9,"id_luogo_casa":14,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":17,"mezzo": "car"},
-{"id_abitante":10,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23,"mezzo": "car"},
-{"id_abitante":11,"id_luogo_casa":23,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
-{"id_abitante":12,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "car"},
-{"id_abitante":13,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "car"},
-{"id_abitante":14,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4,"mezzo": "car"},
-{"id_abitante":15,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "car"},
-{"id_abitante":16,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4,"mezzo": "car"},
-{"id_abitante":17,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":11,"mezzo": "car"},
-{"id_abitante":18,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "car"},
-{"id_abitante":19,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22,"mezzo": "car"},
-{"id_abitante":20,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
-{"id_abitante":21,"id_luogo_casa":15,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":12,"mezzo": "car"},
-{"id_abitante":22,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5,"mezzo": "car"},
-{"id_abitante":23,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7,"mezzo": "car"},
-{"id_abitante":24,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "car"},
-{"id_abitante":25,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3,"mezzo": "car"},
-{"id_abitante":26,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "car"},
-{"id_abitante":27,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":9,"mezzo": "car"},
-{"id_abitante":28,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23,"mezzo": "car"},
-{"id_abitante":29,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "car"},
-{"id_abitante":30,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
+{"id_abitante":1,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":2,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":3,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":4,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":5,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":6,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":7,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":8,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":9,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":10,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
 
+{"id_abitante":11,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":12,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":13,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":14,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":15,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":16,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":17,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":18,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":19,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
+{"id_abitante":20,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "car"},
 
-{"id_abitante":31,"id_luogo_casa":16,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":6,"mezzo": "car"},
-{"id_abitante":32,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":8,"mezzo": "car"},
-{"id_abitante":33,"id_luogo_casa":18,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":9,"mezzo": "car"},
-{"id_abitante":34,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":7,"mezzo": "car"},
-{"id_abitante":35,"id_luogo_casa":20,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
-{"id_abitante":36,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":3,"mezzo": "car"},
-{"id_abitante":37,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":4,"mezzo": "car"},
-{"id_abitante":38,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":5,"mezzo": "car"},
-{"id_abitante":39,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":5,"mezzo": "car"},
-{"id_abitante":40,"id_luogo_casa":14,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":2,"mezzo": "car"},
+{"id_abitante":31,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":32,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":33,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":34,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":35,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
 
-{"id_abitante":41,"id_luogo_casa":23,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":1,"mezzo": "car"},
-{"id_abitante":42,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":2,"mezzo": "car"},
-{"id_abitante":43,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":3,"mezzo": "car"},
-{"id_abitante":44,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":6,"mezzo": "car"},
-{"id_abitante":45,"id_luogo_casa":22,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":8,"mezzo": "car"},
-{"id_abitante":46,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":21,"mezzo": "car"},
-{"id_abitante":47,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":22,"mezzo": "car"},
-{"id_abitante":48,"id_luogo_casa":5,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":23,"mezzo": "car"},
-{"id_abitante":49,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":16,"mezzo": "car"},
-{"id_abitante":50,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":3,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":36,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":37,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":38,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":39,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
+{"id_abitante":40,"id_luogo_casa":21,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "car"},
 
-{"id_abitante":51,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7,"mezzo": "walking"},
-{"id_abitante":52,"id_luogo_casa":1,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":8,"mezzo": "walking"},
-{"id_abitante":53,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "walking"},
-{"id_abitante":54,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5,"mezzo": "walking"},
-{"id_abitante":55,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "walking"},
-{"id_abitante":56,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21,"mezzo": "walking"},
-{"id_abitante":57,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22,"mezzo": "walking"},
-{"id_abitante":58,"id_luogo_casa":20,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":21,"mezzo": "walking"},
-{"id_abitante":59,"id_luogo_casa":14,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":17,"mezzo": "walking"},
-{"id_abitante":60,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23,"mezzo": "walking"},
-{"id_abitante":61,"id_luogo_casa":23,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":24,"mezzo": "walking"},
-{"id_abitante":62,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "walking"},
-{"id_abitante":63,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "walking"},
-{"id_abitante":64,"id_luogo_casa":2,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4,"mezzo": "walking"},
-{"id_abitante":65,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":6,"mezzo": "walking"},
-{"id_abitante":66,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":4,"mezzo": "walking"},
-{"id_abitante":67,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":11,"mezzo": "walking"},
-{"id_abitante":68,"id_luogo_casa":13,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "walking"},
-{"id_abitante":69,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22,"mezzo": "walking"},
-{"id_abitante":70,"id_luogo_casa":17,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":13,"mezzo": "walking"},
-{"id_abitante":71,"id_luogo_casa":15,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":12,"mezzo": "walking"},
-{"id_abitante":72,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":5,"mezzo": "walking"},
-{"id_abitante":73,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":7,"mezzo": "walking"},
-{"id_abitante":74,"id_luogo_casa":7,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "walking"},
-{"id_abitante":75,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":3,"mezzo": "walking"},
-{"id_abitante":76,"id_luogo_casa":8,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":2,"mezzo": "walking"},
-{"id_abitante":77,"id_luogo_casa":6,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":9,"mezzo": "walking"},
-{"id_abitante":78,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":23,"mezzo": "walking"},
-{"id_abitante":79,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":10,"mezzo": "walking"},
-{"id_abitante":80,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "walking"}
+{"id_abitante":41,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":42,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":43,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":44,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":45,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":46,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":47,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":48,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":49,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":50,"id_luogo_casa":11,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+
+{"id_abitante":51,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":52,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":53,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":54,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":55,"id_luogo_casa":12,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+
+{"id_abitante":61,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":62,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":63,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":64,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":65,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":66,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":67,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":68,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":69,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":70,"id_luogo_casa":19,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+
+{"id_abitante":71,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":72,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":73,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":74,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+{"id_abitante":75,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":2,"id_luogo_lavoro":15,"mezzo": "car"},
+
+{"id_abitante":76,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
+{"id_abitante":77,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
+{"id_abitante":78,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
+{"id_abitante":79,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
+{"id_abitante":80,"id_luogo_casa":24,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"}
 ]
 }

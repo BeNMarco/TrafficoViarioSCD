@@ -462,6 +462,9 @@ Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toL
 	var hp1 = this.getPositionAt(startPosition+0.5*moveLength, side, fromLane).position;
 	var p2 = this.getPositionAt(startPosition+moveLength, side, toLane).position;
 	var hp2 = this.getPositionAt(startPosition+0.5*moveLength, side, toLane).position;
+	console.log("Get overtaking path");
+	console.log(p1);
+	console.log(p2)
 	var p = new Path(p1, p2);
 	p.firstSegment.handleOut = hp1.subtract(p1);
 	p.firstSegment.handleOut.length = 0.5*moveLength;
@@ -881,21 +884,31 @@ Place.prototype.setEnteringStreet = function(street){
 }
 
 Place.prototype.draw = function(style){
-	var center = this.entranceStreet.guidingPath.firstSegment.point;
+	var placePosition = new Point();
+	placePosition.length = this.placeHeight/2;
+	placePosition.angle = this.entranceStreet.guidingPath.firstSegment.point.subtract(this.entranceStreet.guidingPath.lastSegment.point).angle;
+	placePosition = this.entranceStreet.guidingPath.firstSegment.point.add(placePosition);
+	 var center = this.entranceStreet.guidingPath.firstSegment.point;
+	// center = center.add(new Point(0, this.placeHeight));
+	//var center = this.entranceStreet.guidingPath.lastSegment.point.subtract(this.entranceStreet.guidingPath.firstSegment.point);
+	//center.length = this.placeHeight;
 	var angle = (center.subtract(this.entranceStreet.guidingPath.lastSegment.point)).angle+90;
 
 	var placePath = new Path.Rectangle(new Point(), new Size(this.placeWidth, this.placeHeight));
 	placePath.strokeWidth = 1;
 	placePath.strokeColor = 'grey';
 	placePath.fillColor = 'white';
-	placePath.position = center;
+	placePath.position = placePosition;
+	//placePath.rotate(placePosition.angle);
+	//placePath.position = center;
 	placePath.rotate(angle);
 
-	var startPoint = new Point(center.x, center.y-(this.placeHeight/2)-7);
+	var startPoint = new Point(placePosition.x, placePosition.y-(this.placeHeight/2)-7);
 	this.nameLabel.position = startPoint;
 	this.nameLabel.content = this.placeName;
 	this.nameLabel.visible = true;
 
+/*
 	this.currentPeople = this._curPeople;
 	startPoint.y += this.placeHeight + 7 + this.peopleLabel.bounds.height;
 	this.peopleLabel.position = startPoint;
@@ -910,6 +923,7 @@ Place.prototype.draw = function(style){
 	startPoint.y += this.bikesLabel.bounds.height + 2;
 	this.bikesLabel.position = startPoint;
 	this.bikesLabel.visible = true;
+	*/
 }
 
 /**
@@ -1113,7 +1127,7 @@ Map.prototype.draw = function(){
 Map.prototype.getUpdatedData = function(){
 	var l = this.objData.strade_urbane.length;
 	var i = 0;
-	// for(var i = 0; i < l; i++){ 
+	for(var i = 0; i < l; i++){ 
 	var enteringPaths = null
 	for(var i in this.objData.strade_urbane){ 	
 		this.objData.strade_urbane[i].lunghezza = this.streets[this.objData.strade_urbane[i].id].guidingPath.length;
@@ -1138,6 +1152,7 @@ Map.prototype.getUpdatedData = function(){
 			}
 		}
 	}
+}
 	this.objData['traiettorie_incrocio_a_3'] = this.calcCrossroadsCrossingPathsIntersections(this.objData.incroci_a_3[Object.keys(this.objData.incroci_a_3)[0]]);
 	//console.log(this.objData['traiettorie_incrocio_a_3']);
 	this.objData['traiettorie_incrocio_a_4'] = this.calcCrossroadsCrossingPathsIntersections(this.objData.incroci_a_4[Object.keys(this.objData.incroci_a_4)[0]]);
@@ -1186,7 +1201,7 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 				},
 				{
 					traiettoria: 'linea_mezzaria',
-					distanza:  enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.guidingPath)[0].point),
+					//distanza:  enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.guidingPath)[0].point),
 				}
 			]
 		},
@@ -1203,7 +1218,7 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 				},
 				{
 					traiettoria: 'linea_mezzaria',
-					distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.guidingPath)[0].point),
+					//distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.guidingPath)[0].point),
 				}
 			]
 		}

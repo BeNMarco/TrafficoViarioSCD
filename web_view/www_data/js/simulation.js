@@ -136,8 +136,6 @@ Simulation.prototype.moveObjects = function(time) {
 								prevPosition = prevState.distanza_ingresso + 10;
 							}
 
-							//if (curCar.where == '')
-
 							if(curCar.id_abitante == debugTarget)
 							{
 								console.log("now: "+curCar.where+" before:"+prevState.where+" prevPosition:"+prevPosition);
@@ -150,6 +148,10 @@ Simulation.prototype.moveObjects = function(time) {
 							// prevPosition =
 							// this.prevState.cars[curCar.id_abitante].distanza;
 							prevPosition = prevState.distanza;
+							if(curCar.where == 'strada_ingresso' && (prevState.in_uscita != curCar.in_uscita))
+							{
+								prevPosition = 0;
+							}
 						}
 					} catch (err) {
 						console.log("curCar:");
@@ -178,7 +180,7 @@ Simulation.prototype.moveObjects = function(time) {
 					break;
 				case 'strada_ingresso':
 					newPos = this.map.entranceStreets[curCar.id_where]
-							.getPositionAt(newDistance, curCar.polo,
+							.getPositionAt(newDistance, !curCar.in_uscita,
 									curCar.corsia - 1);
 					break;
 				case 'traiettoria_ingresso':

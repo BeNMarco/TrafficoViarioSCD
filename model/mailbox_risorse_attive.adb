@@ -3446,12 +3446,18 @@ package body mailbox_risorse_attive is
          state_view_abitante: JSON_Value;
          list: ptr_list_posizione_abitanti_on_road;
          mezzo: means_of_carrying;
+         in_uscita: Boolean;
       begin
          for i in main_strada'Range(1) loop
             list:= main_strada(i,1);
+            if i=index_inizio_moto then
+               in_uscita:= True;
+            else
+               in_uscita:= False;
+            end if;
             for j in 1..main_strada_number_entity(i,1) loop
                list.posizione_abitante.set_where_now_abitante(list.posizione_abitante.get_where_next_posizione_abitanti);
-               state_view_abitante:= create_car_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),risorsa_features.get_polo_ingresso);
+               state_view_abitante:= create_car_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),in_uscita);
                Append(state_view_abitanti,state_view_abitante);
                list:= list.next;
             end loop;

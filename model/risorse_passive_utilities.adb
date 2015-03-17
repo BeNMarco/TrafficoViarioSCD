@@ -23,13 +23,9 @@ package body risorse_passive_utilities is
       val_id_luogo_casa: Positive;
       val_id_quartiere_luogo_lavoro: Positive;
       val_id_luogo_lavoro: Positive;
-      var: Natural;
       mezzo: Ada.Strings.Unbounded.Unbounded_String;
       means: means_of_carrying;
    begin
-      if get_id_quartiere=2 or get_id_quartiere=3 then
-         var:=0;
-      end if;
       for index_residente in from..to loop
          residente:= Get(Arr => json_abitanti,Index => index_residente-from+1);
          val_id_luogo_casa:= Get(Val => residente, Field => "id_luogo_casa");

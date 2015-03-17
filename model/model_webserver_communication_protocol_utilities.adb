@@ -74,7 +74,7 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("id_quartiere_where",id_quartiere_ingresso);
       json.Set_Field("id_where",id_ingresso);
       json.Set_Field("distanza",where);
-      json.Set_Field("polo",polo);
+      json.Set_Field("in_uscita",polo);
       json.Set_Field("corsia",1);
       return json;
    end create_car_ingresso_state;

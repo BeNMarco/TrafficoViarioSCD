@@ -1349,13 +1349,76 @@
 
   "rotonde_a_3":[],
 
-"fermate_autobus":{
-"q1_q1": [[3,43],[3,60],[3,5],[3,59],[3,1],[1,112],[1,66],[1,103],[1,65],[1,104],[1,64],[1,105],[1,63],[1,106],[1,62],[1,107],[1,61],[1,108],[1,60],[1,109],[1,67],[1,109],[1,67],[1,110],[1,68],[1,111],[1,69],[1,115],[2,1],[2,62],[2,2],[2,58],[2,3],[1,113],[1,76],[1,94],[1.74],[1,111],[1,9],[1.110],[1,92],[1,99],[1,90],[1,98],[1,89],[1,108],[1,2],[1,107],[1,88],[1,98],[1,87],[1,106],[1,4],[1,105],[1,86],[1,96],[1,84],[1,97],[1,85],[1,104],[1,6],[1,103],[1,82],[1,97],[1,83],[1,102],[1,70],[1,112],[3,1],[3,59],[3,5],[3,60],[3,6],[3,57],[3,2],[2,69],[1,73],[1,100],[1,72],[1,101],[1,71],[1,102],[1,24],[1,97],[1,25],[1,96],[1,81],[1,101],[1,13],[1,100],[1,80],[1,95],[1,79],[1,96],[1,22],[1,101],[1,13],[1,100],[1,21],[1,95],[1,75],[1,94],[1,17],[1,113],[1,77],[1,114],[1,78],[1,95],[1,16],[1,94],[1,93],[1,99],[1,91]],
+"fermate_autobus": [
+[
+{
 
-"q2_q2": [[3,43],[3,60],[3,6],[3,57],[3,2],[2,69],[2,53],[2,68],[2,54],[2,61],[2,57],[2,70],[2,56],[2,67],[2,51],[2,60],[2,55],[2,61],[2,18],[2,68],[2,52],[2,59],[2,48],[2,60],[2,15],[2,67],[2,50],[2,66],[2,45],[2,65],[2,49],[2,60],[2,12],[2,59],[2,46],[2,58],[2,39],[1,11],[1,17],[1,94],[1,15],[1,111],[1,10],[1,115],[2,37],[2,62],[2,42],[2,64],[2,41],[2,63],[2,43],[2,65],[2,9],[2,66],[2,44],[2,64],[2,5],[2,63],[2,40],[2,58],[2,38],[2,62],[2,6],[2,64],[2,8],[2,66],[2,14],[2,67],[2,15],[2,60],[2,12],[2,59],[2,47]],
+"from_to": [1,1],
 
-"q3_q3": [[3,43],[3,60],[3,48],[3,59],[3,44],[1,112],[1,11],[1,102],[1,12],[1,101],[1,13],[1,100],[1,14],[2,69],[3,45],[3,57],[3,53],[3,61],[3,52],[3,59],[3,5],[3,60],[3,49],[3,57],[3,50],[3,58],[3,51],[3,63],[3,47],[2,70],[2,21],[2,61],[3,46],[3,58],[3,54],[3,62],[3,55],[3,61],[3,11],[3,57],[3,7],[3,58],[3,12],[3,62],[3,56]]
+"linea": [
+["ingresso",3,29],["incrocio",3,4],["urbana",3,5],["incrocio",3,3],["urbana",3,1],["incrocio",1,19],["ingresso",1,31],["incrocio",1,10],["ingresso",1,30],["incrocio",1,11],["ingresso",1,29],["incrocio",1,12],["ingresso",1,28],["incrocio",1,13],["ingresso",1,27],["incrocio",1,14],["ingresso",1,26],["incrocio",1,15],["ingresso",1,25],["incrocio",1,16],["ingresso",1,32],["incrocio",1,17],["ingresso",1,33],["incrocio",1,18],["ingresso",1,34],["incrocio",1,22],["urbana",2,1],["incrocio",2,5],["urbana",2,2],["incrocio",2,1],["urbana",2,3],["incrocio",1,20],["ingresso",1,41],["incrocio",1,1],["ingresso",1,39],["incrocio",1,18],["urbana",1,9],["incrocio",1,17],["ingresso",1,57],["incrocio",1,96],["ingresso",1,55],["incrocio",1,5],["ingresso",1,54],["incrocio",1,15],["urbana",1,2],["incrocio",1,14],["ingresso",1,53],["incrocio",1,5],["ingresso",1,52],["incrocio",1,13],["urbana",1,4],["incrocio",1,12],["ingresso",1,51],["incrocio",1,3],["ingresso",1,49],["incrocio",1,4],["ingresso",1,50],["incrocio",1,11],["urbana",1,6],["incrocio",1,10],["ingresso",1,47],["incrocio",1,4],["ingresso",1,48],["incrocio",1,9],["ingresso",1,35],["incrocio",1,19],["urbana",3,1],["incrocio",3,3],["urbana",3,5],["incrocio",3,4],["urbana",3,6],["incrocio",3,1],["urbana",3,2],["incrocio",2,12],["ingresso",1,38],["incrocio",1,7],["ingresso",1,37],["incrocio",1,8],["ingresso",1,36],["incrocio",1,9],["urbana",1,24],["incrocio",1,3],["urbana",1,25],["incrocio",1,3],["ingresso",1,46],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["ingresso",1,45],["incrocio",1,2],["ingresso",1,44],["incrocio",1,3],["urbana",1,22],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["urbana",1,21],["incrocio",1,2],["ingresso",1,40],["incrocio",1,1],["urbana",1,17],["incrocio",1,20],["ingresso",1,42],["incrocio",1,21],["ingresso",1,43],["incrocio",1,2],["urbana",1,16],["incrocio",1,1],["ingresso",1,58],["incrocio",1,6],["ingresso",1,56]
+],
+
+"jolly":[
+{
+"to": 2,
+"at": [2,16]
 },
+{
+"to": 3,
+"at": [3,34]
+}
+]
+
+}
+],
+
+[
+{
+
+"from_to": [2,2],
+
+"linea": [
+["ingresso",3,29],["incrocio",3,4],["urbana",3,6],["incrocio",3,1],["urbana",3,2],["incrocio",2,12],["ingresso",2,32],["incrocio",2,11],["ingresso",2,33],["incrocio",2,4],["ingresso",2,36],["incrocio",2,13],["ingresso",2,35],["incrocio",2,10],["ingresso",2,30],["incrocio",2,3],["ingresso",2,34],["incrocio",2,4],["urbana",2,18],["incrocio",2,11],["ingresso",2,31],["incrocio",2,2],["ingresso",2,27],["incrocio",2,3],["urbana",2,15],["incrocio",2,10],["ingresso",2,29],["incrocio",2,9],["ingresso",2,24],["incrocio",2,8],["ingresso",2,28],["incrocio",2,3],["urbana",2,12],["incrocio",2,2],["ingresso",2,25],["incrocio",2,1],["ingresso",2,18],["incrocio",1,20],["urbana",1,17],["incrocio",1,1],["urbana",1,15],["incrocio",1,18],["urbana",1,10],["incrocio",1,22],["ingresso",2,16],["incrocio",2,5],["ingresso",2,21],["incrocio",2,7],["ingresso",2,20],["incrocio",2,6],["ingresso",2,22],["incrocio",2,8],["incrocio",2,9],["incrocio",2,9],["ingresso",2,23],["incrocio",2,7],["urbana",2,5],["incrocio",2,6],["ingresso",2,19],["incrocio",2,1],["ingresso",2,17],["incrocio",2,5],["urbana",2,6],["incrocio",2,7],["urbana",2,8],["incrocio",2,9],["urbana",2,14],["incrocio",2,10],["incrocio",2,15],["incrocio",2,3],["incrocio",2,12],["incrocio",2,2],["ingresso",2,26]
+],
+
+"jolly":[
+{
+"to": 1,
+"at": [1,43]
+},
+{
+"to": 3,
+"at": [3,34]
+}
+]
+
+}
+],
+
+[
+{
+
+"from_to": [3,3],
+
+"linea": [
+["ingresso",3,29],["incrocio",3,4],["ingresso",3,34],["incrocio",3,3],["ingresso",3,30],["incrocio",1,19],["urbana",1,11],["incrocio",1,9],["urbana",1,12],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["urbana",1,14],["incrocio",2,12],["ingresso",3,31],["incrocio",3,1],["ingresso",3,39],["incrocio",3,5],["ingresso",3,38],["incrocio",3,3],["urbana",3,5],["incrocio",3,4],["ingresso",3,35],["incrocio",3,1],["ingresso",3,36],["incrocio",3,2],["ingresso",3,37],["incrocio",3,7],["ingresso",3,33],["incrocio",2,13],["urbana",2,21],["incrocio",2,4],["ingresso",3,32],["incrocio",3,2],["ingresso",3,40],["incrocio",3,6],["ingresso",3,41],["incrocio",3,5],["urbana",3,11],["incrocio",3,1],["urbana",3,7],["incrocio",3,2],["urbana",3,12],["incrocio",3,6],["ingresso",3,42]
+],
+
+"jolly":[
+{
+"to": 1,
+"at": [1,43]
+},
+{
+"to": 2,
+"at": [2,16]
+}
+]
+
+}
+]
+],
 
 "pedoni":[
 {"id_abitante":1},
@@ -1572,5 +1635,20 @@
 {"id_abitante":48,"id_luogo_casa":28,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":19,"mezzo": "car"},
 {"id_abitante":49,"id_luogo_casa":9,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":20,"mezzo": "car"},
 {"id_abitante":50,"id_luogo_casa":10,"id_quartiere_luogo_lavoro":1,"id_luogo_lavoro":22,"mezzo": "car"}
+],
+
+"autobus":[
+{"id_autobus":1,"stazione_partenza":29,"linea":"1","jolly": false},
+{"id_autobus":2,"stazione_partenza":29,"linea":"1","jolly": false},
+{"id_autobus":3,"stazione_partenza":29,"linea":"2","jolly": false},
+{"id_autobus":4,"stazione_partenza":29,"linea":"2","jolly": false},
+{"id_autobus":5,"stazione_partenza":29,"linea":"3","jolly": false},
+{"id_autobus":6,"stazione_partenza":29,"linea":"3","jolly": false},
+{"id_autobus":7,"stazione_partenza":29,"linea":"1","jolly": true},
+{"id_autobus":8,"stazione_partenza":29,"linea":"1","jolly": true},
+{"id_autobus":9,"stazione_partenza":29,"linea":"2","jolly": true},
+{"id_autobus":10,"stazione_partenza":29,"linea":"2","jolly": true},
+{"id_autobus":11,"stazione_partenza":29,"linea":"3","jolly": true},
+{"id_autobus":12,"stazione_partenza":29,"linea":"3","jolly": true}
 ]
 }

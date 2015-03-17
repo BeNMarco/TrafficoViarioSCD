@@ -2,6 +2,9 @@
  * Author: Marco Negro Email: negromarc@gmail.com Descr: object that handle the
  * whole simulation
  */
+debugTarget = 116;
+
+
 function doesExists(thing) {
 	return typeof thing !== 'undefined' && thing != null;
 }
@@ -27,9 +30,9 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration) {
 
 	// callbacks
 	this.readyCallback = null;
-	this.finishCallbal = null;
 	this.emptyStateCacheCallback = null;
 	this.statesAvailableCallback = null;
+	this.gotStateCallback = null;
 
 	this.lastStateTime = 0;
 }
@@ -38,10 +41,20 @@ Simulation.prototype.onReady = function(callback) {
 	this.readyCallback = callback;
 }
 
+Simulation.prototype.onStateReceived = function(callback)
+{
+	this.gotStateCallback = callback;
+}
+
 Simulation.prototype.addState = function(state) {
 	this.stateCache.push(state);
 	this.receivedStates++;
 	console.log("got state");
+
+	if(this.gotStateCallback && (typeof this.gotStateCallback === 'function'))
+	{
+		this.gotStateCallback(this.stateCache.length);
+	}
 
 	/*
 	 * var stateDelta = (new Date().getTime()) - this.lastStateTime;
@@ -123,6 +136,13 @@ Simulation.prototype.moveObjects = function(time) {
 								prevPosition = prevState.distanza_ingresso + 10;
 							}
 
+							//if (curCar.where == '')
+
+							if(curCar.id_abitante == debugTarget)
+							{
+								console.log("now: "+curCar.where+" before:"+prevState.where+" prevPosition:"+prevPosition);
+							}
+
 						}
 						// otherwise simply take the position from the previous
 						// state
@@ -157,7 +177,6 @@ Simulation.prototype.moveObjects = function(time) {
 							newDistance, curCar.polo, curCar.corsia - 1);
 					break;
 				case 'strada_ingresso':
-					console.log(curCar);
 					newPos = this.map.entranceStreets[curCar.id_where]
 							.getPositionAt(newDistance, curCar.polo,
 									curCar.corsia - 1);
@@ -259,5 +278,17 @@ Simulation.prototype.updateState = function(deltaTime) {
 		if (this.running && remainingTime > 0) {
 			this.moveObjects(remainingTime);
 		}
+	}
+}
+
+Simulation.prototype.fastForward = function()
+{
+	console.log("Called fastForward");
+	if (this.running && this.stateCache.length >= this.requiredStates) {
+		var tmpArr = this.stateCache.slice(this.stateCache.length-this.requiredStates);
+		console.log("keeping the following..");
+		console.log(tmpArr);
+		this.stateCache = tmpArr;
+		this.init();
 	}
 }

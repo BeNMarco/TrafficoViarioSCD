@@ -40,6 +40,7 @@
 		// Internet Explorer) will be suppressed.
 		return suppressErrorAlert;
 	};
+
 	enableSimulation = true;
 	myMap = new Map();
 	entities = new EntitiesRegistry();
@@ -69,6 +70,9 @@
 	function setupSimulation() {
 		sim = new Simulation(myMap, entities, 4, 1000);
 		sim.onReady(startSimulation);
+		sim.onStateReceived(function(nInCache){
+			$('#statesCount').html(nInCache);
+		});
 		sim.emptyStateCacheCallback = function() {
 			$('#loadingMessage').html(
 					"Cache degli stati vuota.<br />Buffering in corso...");
@@ -88,6 +92,27 @@
 				sim.updateState(event.delta * 1000);
 			}
 		}
+	}
+
+
+	window.onfocus = function()
+	{
+		if(sim != null){
+			console.log("adding renderer");
+			sim.fastForward();
+			view.onFrame = function(event) {
+				// use this trick to throw away the first delta that is usually huge
+				view.onFrame = function(event){
+					sim.updateState(event.delta * 1000);
+				}
+			}
+		}
+	}
+
+	window.onblur = function()
+	{
+		console.log("removing renderer");
+		view.onFrame = null;
 	}
 
 	function traslladar(a, b) {
@@ -399,6 +424,8 @@
 				id="action2" href="#">Create states</a> - </span> <span><a
 				id="action3" href="#" onClick="resetSimulation()">Reset
 					simulation</a> - </span> <span id="debugOutput"></span>
+			<span style="float:right;">Cached states: <span id="statesCount"></span> </span>
+		</div>
 		</form>
 		<canvas id="canvas" resize hidpi="off"
 			style="background-color: #F0EDE5;"></canvas>
@@ -411,7 +438,6 @@
 				<a onClick="switchTrafficLights()">Switch</a>
 			</p>
 		</div>
-		<div></div>
 	</div>
 </body>
 </html>

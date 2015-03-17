@@ -167,10 +167,6 @@ Street.prototype.draw = function(style){
 		toDot.fillColor = 'green';
 		toDot.bringToFront();
 	}
-
-	if(this.id == 31){
-		console.log(this.sideStreets);
-	}
 	
 	this.drawPedestrianLines(pedestrianPaths, style, precision);
 
@@ -462,9 +458,12 @@ Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toL
 	var hp1 = this.getPositionAt(startPosition+0.5*moveLength, side, fromLane).position;
 	var p2 = this.getPositionAt(startPosition+moveLength, side, toLane).position;
 	var hp2 = this.getPositionAt(startPosition+0.5*moveLength, side, toLane).position;
+	/*
 	console.log("Get overtaking path");
 	console.log(p1);
 	console.log(p2)
+	*/
+
 	var p = new Path(p1, p2);
 	p.firstSegment.handleOut = hp1.subtract(p1);
 	p.firstSegment.handleOut.length = 0.5*moveLength;
@@ -571,7 +570,7 @@ Crossroad.prototype.draw = function(style){
 		var st = {color: style.lineColor, width: style.pavementWidth, dash: style.zebraDash};
 		var ped = style.pavementWidth/2;
 
-		// creating the pedestrian paths to move the peolple
+		// creating the pedestrian paths to move the people
 		var pP = new Path();
 		pP.add(new Point(
 			(path.position.x-this.lanesNumber[i%2]*style.laneWidth-0.5*style.pavementWidth),
@@ -999,7 +998,7 @@ Map.prototype.resetData = function(){
 }
 
 Map.prototype.load = function(obj){
-	console.log(obj);
+	//console.log(obj);
 	if(typeof this.startLoadingCallback === 'function'){
 		this.startLoadingCallback();
 	}

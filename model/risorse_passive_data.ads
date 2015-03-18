@@ -55,7 +55,7 @@ package risorse_passive_data is
 
    function get_traiettoria_cambio_corsia return traiettoria_cambio_corsia;
 
-   protected type quartiere_utilities is new rt_quartiere_utilities with
+   protected type quartiere_utilities(num_quartieri: Positive) is new rt_quartiere_utilities with
       procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
       procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
                                   bici: list_bici_quartiere; auto: list_auto_quartiere);
@@ -139,9 +139,7 @@ package risorse_passive_data is
 
    procedure configure_quartiere_obj;
 
-private
-
-   protected waiting_cfg is
+   protected type type_waiting_cfg(numero_quartieri: Positive) is
       procedure incrementa_classi_locate_abitanti;
       procedure incrementa_num_quartieri_abitanti;
       procedure incrementa_resource_mappa_quartieri;
@@ -151,7 +149,13 @@ private
       num_abitanti_quartieri_registrati: Natural:= 0;
       num_quartieri_resource_registrate: Natural:= 0;
       inventory_estremi_is_set: Boolean:= False;
-   end waiting_cfg;
+   end type_waiting_cfg;
+
+   type ptr_type_waiting_cfg is access type_waiting_cfg;
+
+private
+
+   waiting_cfg: ptr_type_waiting_cfg:= null;  
 
    quartiere_cfg: ptr_quartiere_utilities:= null;
 

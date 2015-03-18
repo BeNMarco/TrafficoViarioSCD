@@ -311,7 +311,7 @@ package body risorse_passive_data is
       return quartiere_cfg;
    end get_quartiere_utilities_obj;
 
-   protected body waiting_cfg is
+   protected body type_waiting_cfg is
       procedure incrementa_classi_locate_abitanti is
       begin
          num_classi_locate_abitanti:= num_classi_locate_abitanti+1;
@@ -327,7 +327,7 @@ package body risorse_passive_data is
          num_quartieri_resource_registrate:= num_quartieri_resource_registrate+1;
       end incrementa_resource_mappa_quartieri;
 
-      entry wait_cfg when num_classi_locate_abitanti=num_quartieri and num_abitanti_quartieri_registrati=num_quartieri and num_quartieri_resource_registrate=num_quartieri is
+      entry wait_cfg when num_classi_locate_abitanti=numero_quartieri and num_abitanti_quartieri_registrati=numero_quartieri and num_quartieri_resource_registrate=numero_quartieri is
       begin
          if inventory_estremi_is_set=False then
             inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
@@ -347,7 +347,7 @@ package body risorse_passive_data is
          end if;
       end wait_cfg;
 
-   end waiting_cfg;
+   end type_waiting_cfg;
 
    procedure wait_settings_all_quartieri is
    begin
@@ -563,8 +563,9 @@ package body risorse_passive_data is
 
    procedure configure_quartiere_obj is
    begin
-      quartiere_cfg:= new quartiere_utilities;
+      quartiere_cfg:= new quartiere_utilities(get_num_quartieri);
       locate_abitanti_quartiere:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
+      waiting_cfg:= new type_waiting_cfg(get_num_quartieri);
    end configure_quartiere_obj;
 
    function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio is

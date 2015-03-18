@@ -11,9 +11,10 @@ use global_data;
 use synchronized_task_partitions;
 
 package configuration_server_parameter is
-   pragma Elaborate_Body;
+
+   procedure registra_server_utilities;
 
 private
-   gps: ptr_registro_strade_resource:= new registro_strade_resource;
-   synchronization_task_obj: ptr_task_synchronization:= new task_synchronization;
+   gps: ptr_registro_strade_resource:= new registro_strade_resource(get_num_quartieri);
+   synchronization_task_obj: ptr_task_synchronization:= new task_synchronization(get_num_quartieri);
 end configuration_server_parameter;

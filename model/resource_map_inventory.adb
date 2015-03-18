@@ -59,8 +59,20 @@ package body resource_map_inventory is
 
    function get_quartiere_cfg(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
    begin
-      return registro_ref_rt_quartieri(id_quartiere);
+      return obj_registro_ref_rt_quartieri.get_registro_ref_quartiere(id_quartiere);
    end get_quartiere_cfg;
+
+   protected body wrap_type_registro_ref_rt_quartieri is
+      procedure set_registro_ref_rt_quartieri(registro: registro_quartieri) is
+      begin
+         registro_ref_rt_quartieri:= registro;
+      end set_registro_ref_rt_quartieri;
+      
+      function get_registro_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+      begin
+         return registro_ref_rt_quartieri(id_quartiere);
+      end get_registro_ref_quartiere;
+   end wrap_type_registro_ref_rt_quartieri;
 
    procedure configure_quartiere is
       local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
@@ -70,9 +82,12 @@ package body resource_map_inventory is
       registro_risorse_ingressi: set_resources_ingressi(get_from_ingressi..get_to_ingressi);
       registro_risorse_urbane: set_resources_urbane(get_from_urbane..get_to_urbane);
       registro_risorse_incroci: set_resources_incroci(get_from_incroci..get_to_incroci);
+      set: Boolean;
    begin
       Put_Line("ingressi quartiere " & Positive'Image(get_id_quartiere) & ": " & Positive'Image(get_from_ingressi) & " - " & Positive'Image(get_to_ingressi));
+      set:= rci_parameters_are_set;
       gps:= get_server_gps;
+      obj_registro_ref_rt_quartieri:= new wrap_type_registro_ref_rt_quartieri(get_num_quartieri);
       synchronization_tasks_partition:= new synchronization_tasks;
       waiting_object:= new wait_all_quartieri;
       semafori_quartiere_obj:= new handler_semafori_quartiere;
@@ -103,15 +118,15 @@ package body resource_map_inventory is
       waiting_object.wait_quartieri;
       --ora tutti i rt_ref dei quartieri sono settati
       -- end checkpoint
-      registro_ref_rt_quartieri:= get_ref_rt_quartieri;
+      obj_registro_ref_rt_quartieri.set_registro_ref_rt_quartieri(get_ref_rt_quartieri);
 
       gps.registra_strade_quartiere(get_id_quartiere,get_urbane,get_ingressi);
       gps.registra_incroci_quartiere(get_id_quartiere,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
 
-      for i in registro_ref_rt_quartieri'Range loop
-         registro_ref_rt_quartieri(i).registra_classe_locate_abitanti_quartiere(id_quartiere => get_id_quartiere, location_abitanti => ptr_rt_location_abitanti(get_locate_abitanti_quartiere));
-         registro_ref_rt_quartieri(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
-         registro_ref_rt_quartieri(i).registra_mappa(get_id_quartiere);
+      for i in 1..get_num_quartieri loop
+         obj_registro_ref_rt_quartieri.get_registro_ref_quartiere(i).registra_classe_locate_abitanti_quartiere(id_quartiere => get_id_quartiere, location_abitanti => ptr_rt_location_abitanti(get_locate_abitanti_quartiere));
+         obj_registro_ref_rt_quartieri.get_registro_ref_quartiere(i).registra_abitanti(from_id_quartiere => get_id_quartiere, abitanti => local_abitanti, pedoni => local_pedoni, bici => local_bici, auto => local_auto);
+         obj_registro_ref_rt_quartieri.get_registro_ref_quartiere(i).registra_mappa(get_id_quartiere);
       end loop;
 
       Put_Line("exit" & Positive'Image(get_id_quartiere) & " num task " & Positive'Image(get_num_task));

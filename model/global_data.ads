@@ -6,7 +6,7 @@ use numerical_types;
 package global_data is
    pragma Shared_Passive;
 
-   num_quartieri: constant Positive:= 3;
+   --num_quartieri: constant Positive:= 3;
    min_length_pedoni: constant new_float:= 0.5;
    min_length_bici: constant new_float:= 1.5;
    min_length_auto: constant new_float:= 3.0;

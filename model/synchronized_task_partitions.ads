@@ -12,7 +12,7 @@ use the_name_server;
 
 package synchronized_task_partitions is
 
-   protected type task_synchronization is new rt_task_synchronization with
+   protected type task_synchronization(num_quartieri: Positive) is new rt_task_synchronization with
         procedure all_task_partition_are_ready(id: Positive);
       --entry wait_awake_all_partitions;
       --procedure last_task_partition_ready;

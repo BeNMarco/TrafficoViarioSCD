@@ -15,7 +15,10 @@ use global_data;
 
 package body configuration_server_parameter is
 
-begin
-   registra_server_gps(ptr_gps_interface(gps));
-   registra_synchronization_tasks_object(ptr_rt_task_synchronization(synchronization_task_obj));
+   procedure registra_server_utilities is
+   begin
+      registra_server_gps(ptr_gps_interface(gps));
+      registra_synchronization_tasks_object(ptr_rt_task_synchronization(synchronization_task_obj));
+   end;
+
 end configuration_server_parameter;

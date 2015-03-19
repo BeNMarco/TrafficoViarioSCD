@@ -30,12 +30,21 @@ package resource_map_inventory is
 
    procedure configure_quartiere;
 
-private
+   protected type wrap_type_registro_ref_rt_quartieri(num_quartieri: Positive) is
+      procedure set_registro_ref_rt_quartieri(registro: registro_quartieri);
+      function get_registro_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
+   private
+      registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
+   end wrap_type_registro_ref_rt_quartieri;
 
-   registro_ref_rt_quartieri: registro_quartieri(1..num_quartieri);
-
+   type ptr_wrap_type_registro_ref_rt_quartieri is access wrap_type_registro_ref_rt_quartieri;
+   
+private     
+      
+   
+   obj_registro_ref_rt_quartieri: ptr_wrap_type_registro_ref_rt_quartieri:= null;
    waiting_object: ptr_wait_all_quartieri:= null;--:= new wait_all_quartieri;
-
+   
    gps: ptr_gps_interface:= null;
 
    synchronization_tasks_partition: ptr_synchronization_tasks:= null;

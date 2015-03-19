@@ -2,6 +2,7 @@ with remote_types;
 with Ada.Text_IO;
 with webserver;
 with global_data;
+with the_name_server;
 
 with AWS.Server;
 with AWS.Config;
@@ -9,6 +10,7 @@ with AWS.Net;
 with remote_types;
 with the_name_server;
 
+use the_name_server;
 use Ada;
 use AWS;
 use AWS.Config;
@@ -19,7 +21,7 @@ use WebServer;
 use global_data;
 
 procedure webserver_starter is
-  WebS : Access_Remote_Proxy_Type := new Remote_Proxy_Type(num_quartieri);
+  WebS : Access_Remote_Proxy_Type := new Remote_Proxy_Type(get_num_quartieri);
   WebSRef : Access_WebServer_Remote_Interface := Access_WebServer_Remote_Interface(WebS);
   -- I : Natural;
   -- Last : Integer;

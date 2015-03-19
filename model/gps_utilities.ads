@@ -46,7 +46,7 @@ package gps_utilities is
    function create_new_adiacente(val_id_quartiere_strada: Natural; val_id_strada: Natural;
                                  val_id_quartiere_adiacente: Natural; val_id_adiacente: Natural) return adiacente;
 
-   protected type registro_strade_resource is new gps_interface with
+   protected type registro_strade_resource(num_quartieri: Positive) is new gps_interface with
 
       --procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
       --                                 incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;

@@ -1123,6 +1123,14 @@ Map.prototype.draw = function(){
 	}
 }
 
+Map.prototype.bringTrafficLightsToFront = function()
+{
+	for (var c in this.crossroads)
+	{
+		this.crossroads[c].bringTrafficLightsToFront();
+	}
+}
+
 Map.prototype.getUpdatedData = function(){
 	var l = this.objData.strade_urbane.length;
 	var i = 0;

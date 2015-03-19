@@ -87,6 +87,8 @@
 	function startSimulation() {
 		console.log("start simulation");
 		sim.init();
+		entities.show();
+		myMap.bringTrafficLightsToFront();
 		if(enableSimulation){
 			view.onFrame = function(event) {
 				sim.updateState(event.delta * 1000);
@@ -268,8 +270,10 @@
 					function(data) {
 						myMap.load(data);
 						myMap.draw();
-						entities.load(data);
-						entities.draw(data);
+						//entities.load(data);
+						entities.draw();
+						entities.hide();
+						myMap.bringTrafficLightsToFront();
 					});
 		}, 10);
 

@@ -15,14 +15,15 @@ function EntitiesStyle(){
 	this.carColor = 'red';
 	this.busShape = {type:'Rectangle', args: {point:[0,0],size:[8,15]}};
 	this.busColor = 'blue';
-	this.bikeShape = [];
-	this.bikeColor = 'gree';
+	this.bikeShape = {type:'Circle', args: {center:[0,0], radius:3}};
+	this.bikeColor = 'green';
 	this.pedestrianShape = {type:'Circle', args: {center:[0,0], radius:3}};
 	this.pedestrianColor = 'pink';
 }
 
-function Car(id){
+function Car(id, id_quartiere){
 	this.id = id;
+	this.id_quartiere = id_quartiere;
 	this.driver = null;
 	this.path = new Path();
 
@@ -33,7 +34,7 @@ function Car(id){
 
 Car.prototype.show = function(){
 	this.path.visible = true;
-	this.path.bringToFront();
+	//this.path.bringToFront();
 }
 
 Car.prototype.hide = function(){
@@ -90,6 +91,7 @@ Car.prototype.draw = function(style){
 	  this.fillColor = 'red';
 	  console.log("out");
 	}
+	//this.path.bringToFront();
 }
 
 Car.prototype.move = function(pos, angle){
@@ -124,10 +126,12 @@ EntitiesRegistry.prototype.setStyle = function(style){
 }
 
 EntitiesRegistry.prototype.load = function(obj){
+	var c_id_q = obj.info.id;
 	for(var i in obj.auto){
 		var c_id = obj.auto[i].id_abitante;
-		this.cars[c_id] = new Car(c_id);
-		this.cars[c_id].hide();
+		var idx = c_id_q+"_"+c_id
+		this.cars[idx] = new Car(c_id, c_id_q);
+		this.cars[idx].hide();
 	}
 }
 

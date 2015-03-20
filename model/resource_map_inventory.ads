@@ -39,6 +39,7 @@ package resource_map_inventory is
 
    type ptr_wrap_type_registro_ref_rt_quartieri is access wrap_type_registro_ref_rt_quartieri;
    
+   
 private     
       
    

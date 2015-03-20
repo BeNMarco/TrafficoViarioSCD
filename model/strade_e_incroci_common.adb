@@ -96,6 +96,15 @@ package body strade_e_incroci_common is
       return empty;
    end convert_to_traiettoria_incroci;
 
+   function convert_string_to_type_ingresso(tipo: String) return type_ingresso is
+   begin
+      if tipo="fermata" then
+         return fermata;
+      else
+         return abitato;
+      end if;
+   end convert_string_to_type_ingresso;
+
    function get_lunghezza_road(road: rt_strada_features) return new_float is
    begin
       return road.lunghezza;
@@ -124,7 +133,11 @@ package body strade_e_incroci_common is
       return road.polo;
    end get_polo_ingresso;
 
-      -- begin get methods
+   function get_type_ingresso(road: strada_ingresso_features) return type_ingresso is
+   begin
+      return road.tipo_ingresso;
+   end get_type_ingresso;
+   -- begin get methods
    function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive is
    begin
       return road.id_quartiere;
@@ -209,6 +222,18 @@ package body strade_e_incroci_common is
    begin
       return residente.mezzo;
    end get_mezzo_abitante;
+   function is_a_bus(residente: abitante) return Boolean is
+   begin
+      return residente.bus;
+   end is_a_bus;
+   function is_a_bus_jolly(residente: abitante) return Boolean is
+   begin
+      return residente.jolly;
+   end is_a_bus_jolly;
+   function is_a_jolly_to_quartiere(residente: abitante) return Natural is
+   begin
+      return residente.jolly_to_quartiere;
+   end is_a_jolly_to_quartiere;
    -- end get methods
    procedure set_mezzo_abitante(residente: in out abitante; mezzo: means_of_carrying) is
    begin
@@ -239,7 +264,7 @@ package body strade_e_incroci_common is
 
    function create_new_ingresso(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
                                 val_lunghezza: new_float;val_num_corsie: Positive;val_id_main_strada: Positive;
-                                val_distance_from_road_head: new_float; polo: Boolean) return strada_ingresso_features is
+                                val_distance_from_road_head: new_float; polo: Boolean; val_tipo_ingresso: type_ingresso) return strada_ingresso_features is
       ptr_strada: strada_ingresso_features;
    begin
       ptr_strada.id:= val_id;
@@ -250,6 +275,7 @@ package body strade_e_incroci_common is
       ptr_strada.id_main_strada:= val_id_main_strada;
       ptr_strada.distance_from_road_head:= val_distance_from_road_head;
       ptr_strada.polo:= polo;
+      ptr_strada.tipo_ingresso:= val_tipo_ingresso;
       return ptr_strada;
    end create_new_ingresso;
 
@@ -270,7 +296,7 @@ package body strade_e_incroci_common is
    end create_percorso;
 
    function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
-                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying) return abitante is
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying; is_a_bus: Boolean; jolly: Boolean; jolly_to_quartiere: Natural) return abitante is
       ptr_abitante: abitante;
    begin
       ptr_abitante.id_abitante:= id_abitante;
@@ -279,6 +305,9 @@ package body strade_e_incroci_common is
       ptr_abitante.id_quartiere_luogo_lavoro:= id_quartiere_luogo_lavoro;
       ptr_abitante.id_luogo_lavoro:= id_luogo_lavoro;
       ptr_abitante.mezzo:= mezzo;
+      ptr_abitante.bus:= is_a_bus;
+      ptr_abitante.jolly:= jolly;
+      ptr_abitante.jolly_to_quartiere:= jolly_to_quartiere;
       return ptr_abitante;
    end create_abitante;
 
@@ -503,5 +532,68 @@ package body strade_e_incroci_common is
       abitante.backup_corsia_to_go:= posizione_abitante.backup_corsia_to_go;
       return abitante;
    end create_new_posizione_abitante_from_copy;
+
+   function convert_string_to_resource_type(tipo_risorsa: String) return resource_type is
+   begin
+      if tipo_risorsa="ingresso" then
+         return ingresso;
+      elsif tipo_risorsa="urbana" then
+         return urbana;
+      elsif tipo_risorsa="incrocio" then
+         return incrocio;
+      end if;
+      raise error_in_conversione_da_stringa;
+   end convert_string_to_resource_type;
+
+   function create_destination(to_id_quartiere: Positive; to_place: tratto'Class) return destination_tratto is
+      ptr_destination: destination_tratto;
+   begin
+      ptr_destination.to_id_quartiere:= to_id_quartiere;
+      ptr_destination.to_place:= tratto(to_place);
+      return ptr_destination;
+   end create_destination;
+
+   function get_quartiere_jolly_to_go(obj: destination_tratto) return Positive is
+   begin
+      return obj.to_id_quartiere;
+   end get_quartiere_jolly_to_go;
+   function get_tratto_jolly_to_go(obj: destination_tratto) return tratto'Class is
+   begin
+      return obj.to_place;
+   end get_tratto_jolly_to_go;
+
+   function create_linea_bus(from_id_quartiere: Positive; to_id_quartiere: Positive; linea: access tratti_fermata; jolly: access destination_tratti) return linea_bus is
+      ptr_linea: linea_bus;
+   begin
+      ptr_linea.from_id_quartiere:= from_id_quartiere;
+      ptr_linea.to_id_quartiere:= to_id_quartiere;
+      ptr_linea.linea:= linea;
+      ptr_linea.jolly:= jolly;
+      return ptr_linea;
+   end create_linea_bus;
+
+   function get_numero_fermate(obj: linea_bus) return Natural is
+   begin
+      return obj.linea.all'Last;
+   end get_numero_fermate;
+
+   function get_num_tratto(obj: linea_bus; num_tratto: Positive) return tratto'Class is
+   begin
+      if num_tratto<=obj.linea.all'Last then
+         return obj.linea(num_tratto);
+      else
+         return create_tratto(0,0);
+      end if;
+   end get_num_tratto;
+
+   function get_jolly_quartiere_to_go(obj: linea_bus; num_jolly_quartiere_to_go: Positive) return tratto'Class is
+   begin
+      for i in obj.jolly.all'Range loop
+         if obj.jolly(i).get_quartiere_jolly_to_go=num_jolly_quartiere_to_go then
+            return obj.jolly(i).get_tratto_jolly_to_go;
+         end if;
+      end loop;
+      return create_tratto(0,0);
+   end get_jolly_quartiere_to_go;
 
 end strade_e_incroci_common;

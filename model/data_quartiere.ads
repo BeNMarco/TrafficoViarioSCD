@@ -59,10 +59,16 @@ pragma Elaborate_Body;
    function get_json_bici return JSON_Array;
    function get_json_auto return JSON_Array;
    function get_json_abitanti return JSON_Array;
+   function get_json_autobus return JSON_Array;
+   function get_json_fermate_autobus return JSON_Array;
+   function get_json_abitanti_in_bus return JSON_Array;
+   function get_json_luoghi return JSON_Array;
    function get_from_abitanti return Natural;
    function get_to_abitanti return Natural;
    function get_num_abitanti return Natural;
+   function get_num_autobus return Natural;
    function get_num_task return Natural;
+   function get_num_linee_fermate return Natural;
    function get_recovery return Boolean;
    function get_abilita_aggiornamenti_view return Boolean;
 
@@ -124,12 +130,14 @@ private
    json_pedoni: JSON_Array:= Get(Val => json_quartiere, Field => "pedoni");
    json_bici: JSON_Array:= Get(Val => json_quartiere, Field => "bici");
    json_auto: JSON_Array:= Get(Val => json_quartiere, Field => "auto");
+   json_autobus: JSON_Array:= Get(Val => json_quartiere, Field => "autobus");
    size_json_abitanti: Natural:= Length(json_abitanti);
    size_json_pedoni: Natural:= Length(json_pedoni);
    size_json_bici: Natural:= Length(json_bici);
    size_json_auto: Natural:= Length(json_auto);
+   size_json_autobus: Natural:= Length(json_autobus);
    from_abitanti: Natural:= to_rotonde_a_3+1;
-   to_abitanti: Natural:= from_abitanti-1+size_json_abitanti;
+   to_abitanti: Natural:= from_abitanti-1+size_json_abitanti+size_json_autobus;
 
    json_default_move_settings: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/default_move_settings.json");
 
@@ -137,10 +145,15 @@ private
    json_traiettorie_ingresso: JSON_Value:= Get(Val => json_traiettorie_ingressi, Field => "traiettorie_ingresso");
    json_traiettorie_cambio_corsie: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_cambio_corsia.json");
    json_road_parameters: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/road_parameters.json");
-   -- END VALORI DI DEFAULT PER RISORSE PASSIVE
 
+   json_luoghi: JSON_Array:= Get(Val => json_quartiere, Field => "luoghi");
+
+   json_fermate_autobus: JSON_Array:= Get(Val => json_quartiere, Field => "fermate_autobus");
+   num_linee_fermate: Natural:= Length(json_fermate_autobus);
    json_recovery: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/snapshot/recovery.json");
    recovery: Boolean:= json_recovery.Get("abilita_ripristino");
+
+   json_abitanti_in_bus: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti_in_bus");
 
    my_log_stallo: ptr_report_log:= new report_log;
 

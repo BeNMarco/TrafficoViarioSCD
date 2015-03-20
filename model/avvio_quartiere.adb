@@ -95,12 +95,22 @@ package body avvio_quartiere is
          elemento.Set_Field("id_abitante",get_from_abitanti+i-1);
       end loop;
 
+      array_elementi:= json_quartiere.Get("autobus");
+      for i in 1..Length(array_elementi) loop
+         elemento:= Get(array_elementi,i);
+         elemento.Set_Field("id_autobus",get_to_abitanti-get_num_autobus+i);
+      end loop;
+
       get_webServer.registra_mappa_quartiere(Write(json_quartiere,False), get_id_quartiere);
       Put_Line("Registrato quartiere " & Integer'Image(get_id_quartiere));
 
-      registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));
       configure_tasks;
+      -- prima di muovere le entità che effettuano delle chiamate ad altri quartieri
+      -- si aspetta che vengono configurati
+      wait_settings_all_quartieri;
       start_entity_to_move;
+      start_autobus_to_move;
+
    end init;
 
 end avvio_quartiere;

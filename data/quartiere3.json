@@ -1356,7 +1356,7 @@
 "from_to": [1,1],
 
 "linea": [
-["ingresso",3,29],["incrocio",3,4],["urbana",3,5],["incrocio",3,3],["urbana",3,1],["incrocio",1,19],["ingresso",1,31],["incrocio",1,10],["ingresso",1,30],["incrocio",1,11],["ingresso",1,29],["incrocio",1,12],["ingresso",1,28],["incrocio",1,13],["ingresso",1,27],["incrocio",1,14],["ingresso",1,26],["incrocio",1,15],["ingresso",1,25],["incrocio",1,16],["ingresso",1,32],["incrocio",1,17],["ingresso",1,33],["incrocio",1,18],["ingresso",1,34],["incrocio",1,22],["urbana",2,1],["incrocio",2,5],["urbana",2,2],["incrocio",2,1],["urbana",2,3],["incrocio",1,20],["ingresso",1,41],["incrocio",1,1],["ingresso",1,39],["incrocio",1,18],["urbana",1,9],["incrocio",1,17],["ingresso",1,57],["incrocio",1,96],["ingresso",1,55],["incrocio",1,5],["ingresso",1,54],["incrocio",1,15],["urbana",1,2],["incrocio",1,14],["ingresso",1,53],["incrocio",1,5],["ingresso",1,52],["incrocio",1,13],["urbana",1,4],["incrocio",1,12],["ingresso",1,51],["incrocio",1,3],["ingresso",1,49],["incrocio",1,4],["ingresso",1,50],["incrocio",1,11],["urbana",1,6],["incrocio",1,10],["ingresso",1,47],["incrocio",1,4],["ingresso",1,48],["incrocio",1,9],["ingresso",1,35],["incrocio",1,19],["urbana",3,1],["incrocio",3,3],["urbana",3,5],["incrocio",3,4],["urbana",3,6],["incrocio",3,1],["urbana",3,2],["incrocio",2,12],["ingresso",1,38],["incrocio",1,7],["ingresso",1,37],["incrocio",1,8],["ingresso",1,36],["incrocio",1,9],["urbana",1,24],["incrocio",1,3],["urbana",1,25],["incrocio",1,3],["ingresso",1,46],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["ingresso",1,45],["incrocio",1,2],["ingresso",1,44],["incrocio",1,3],["urbana",1,22],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["urbana",1,21],["incrocio",1,2],["ingresso",1,40],["incrocio",1,1],["urbana",1,17],["incrocio",1,20],["ingresso",1,42],["incrocio",1,21],["ingresso",1,43],["incrocio",1,2],["urbana",1,16],["incrocio",1,1],["ingresso",1,58],["incrocio",1,6],["ingresso",1,56]
+[1,31],[1,30],[1,29],[1,28],[1,27],[1,26],[1,25],[1,32],[1,33],[1,34],[1,41],[1,39],[1,57],[1,55],[1,54],[1,53],[1,52],[1,51],[1,49],[1,50],[1,47],[1,48],[1,35],[1,38],[1,37],[1,36],[1,46],[1,45],[1,44],[1,40],[1,42],[1,43],[1,58],[1,56]
 ],
 
 "jolly":[
@@ -1379,7 +1379,7 @@
 "from_to": [2,2],
 
 "linea": [
-["ingresso",3,29],["incrocio",3,4],["urbana",3,6],["incrocio",3,1],["urbana",3,2],["incrocio",2,12],["ingresso",2,32],["incrocio",2,11],["ingresso",2,33],["incrocio",2,4],["ingresso",2,36],["incrocio",2,13],["ingresso",2,35],["incrocio",2,10],["ingresso",2,30],["incrocio",2,3],["ingresso",2,34],["incrocio",2,4],["urbana",2,18],["incrocio",2,11],["ingresso",2,31],["incrocio",2,2],["ingresso",2,27],["incrocio",2,3],["urbana",2,15],["incrocio",2,10],["ingresso",2,29],["incrocio",2,9],["ingresso",2,24],["incrocio",2,8],["ingresso",2,28],["incrocio",2,3],["urbana",2,12],["incrocio",2,2],["ingresso",2,25],["incrocio",2,1],["ingresso",2,18],["incrocio",1,20],["urbana",1,17],["incrocio",1,1],["urbana",1,15],["incrocio",1,18],["urbana",1,10],["incrocio",1,22],["ingresso",2,16],["incrocio",2,5],["ingresso",2,21],["incrocio",2,7],["ingresso",2,20],["incrocio",2,6],["ingresso",2,22],["incrocio",2,8],["incrocio",2,9],["incrocio",2,9],["ingresso",2,23],["incrocio",2,7],["urbana",2,5],["incrocio",2,6],["ingresso",2,19],["incrocio",2,1],["ingresso",2,17],["incrocio",2,5],["urbana",2,6],["incrocio",2,7],["urbana",2,8],["incrocio",2,9],["urbana",2,14],["incrocio",2,10],["incrocio",2,15],["incrocio",2,3],["incrocio",2,12],["incrocio",2,2],["ingresso",2,26]
+[2,32],[2,33],[2,36],[2,35],[2,30],[2,34],[2,31],[2,27],[2,29],[2,24],[2,28],[2,25],[2,18],[2,16],[2,21],[2,20],[2,22],[2,23],[2,19],[2,17],[2,26]
 ],
 
 "jolly":[
@@ -1402,7 +1402,7 @@
 "from_to": [3,3],
 
 "linea": [
-["ingresso",3,29],["incrocio",3,4],["ingresso",3,34],["incrocio",3,3],["ingresso",3,30],["incrocio",1,19],["urbana",1,11],["incrocio",1,9],["urbana",1,12],["incrocio",1,8],["urbana",1,13],["incrocio",1,7],["urbana",1,14],["incrocio",2,12],["ingresso",3,31],["incrocio",3,1],["ingresso",3,39],["incrocio",3,5],["ingresso",3,38],["incrocio",3,3],["urbana",3,5],["incrocio",3,4],["ingresso",3,35],["incrocio",3,1],["ingresso",3,36],["incrocio",3,2],["ingresso",3,37],["incrocio",3,7],["ingresso",3,33],["incrocio",2,13],["urbana",2,21],["incrocio",2,4],["ingresso",3,32],["incrocio",3,2],["ingresso",3,40],["incrocio",3,6],["ingresso",3,41],["incrocio",3,5],["urbana",3,11],["incrocio",3,1],["urbana",3,7],["incrocio",3,2],["urbana",3,12],["incrocio",3,6],["ingresso",3,42]
+[3,34],[3,30],[3,31],[3,39],[3,38],[3,35],[3,36],[3,37],[3,33],[3,32],[3,40],[3,41],[3,42]
 ],
 
 "jolly":[
@@ -1419,6 +1419,7 @@
 }
 ]
 ],
+
 
 "pedoni":[
 {"id_abitante":1},
@@ -1523,8 +1524,20 @@
 {"id_abitante":47,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0},
 {"id_abitante":48,"max_acceleration": 10.0,"comfortable_deceleration": 50.5,"desired_velocity": 70.0},
 {"id_abitante":49,"max_acceleration": 15.0,"comfortable_deceleration": 50.5,"desired_velocity": 60.0},
-{"id_abitante":50,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0}
+{"id_abitante":50,"max_acceleration": 9.0,"comfortable_deceleration": 50.5,"desired_velocity": 75.0},
 
+{"id_abitante":51},
+{"id_abitante":52},
+{"id_abitante":53},
+{"id_abitante":54},
+{"id_abitante":55},
+{"id_abitante":56},
+{"id_abitante":57},
+{"id_abitante":58},
+{"id_abitante":59},
+{"id_abitante":60},
+{"id_abitante":61},
+{"id_abitante":62}
 ],
 
 "bici":[
@@ -1638,17 +1651,19 @@
 ],
 
 "autobus":[
-{"id_autobus":1,"stazione_partenza":29,"linea":"1","jolly": false},
-{"id_autobus":2,"stazione_partenza":29,"linea":"1","jolly": false},
-{"id_autobus":3,"stazione_partenza":29,"linea":"2","jolly": false},
-{"id_autobus":4,"stazione_partenza":29,"linea":"2","jolly": false},
-{"id_autobus":5,"stazione_partenza":29,"linea":"3","jolly": false},
-{"id_autobus":6,"stazione_partenza":29,"linea":"3","jolly": false},
-{"id_autobus":7,"stazione_partenza":29,"linea":"1","jolly": true},
-{"id_autobus":8,"stazione_partenza":29,"linea":"1","jolly": true},
-{"id_autobus":9,"stazione_partenza":29,"linea":"2","jolly": true},
-{"id_autobus":10,"stazione_partenza":29,"linea":"2","jolly": true},
-{"id_autobus":11,"stazione_partenza":29,"linea":"3","jolly": true},
-{"id_autobus":12,"stazione_partenza":29,"linea":"3","jolly": true}
-]
+{"id_autobus":1,"stazione_partenza":29,"linea":1,"jolly": false},
+{"id_autobus":2,"stazione_partenza":29,"linea":1,"jolly": false},
+{"id_autobus":3,"stazione_partenza":29,"linea":2,"jolly": false},
+{"id_autobus":4,"stazione_partenza":29,"linea":2,"jolly": false},
+{"id_autobus":5,"stazione_partenza":29,"linea":3,"jolly": false},
+{"id_autobus":6,"stazione_partenza":29,"linea":3,"jolly": false},
+{"id_autobus":7,"stazione_partenza":29,"linea":1,"jolly": true},
+{"id_autobus":8,"stazione_partenza":29,"linea":1,"jolly": true},
+{"id_autobus":9,"stazione_partenza":29,"linea":2,"jolly": true},
+{"id_autobus":10,"stazione_partenza":29,"linea":2,"jolly": true},
+{"id_autobus":11,"stazione_partenza":29,"linea":3,"jolly": true},
+{"id_autobus":12,"stazione_partenza":29,"linea":3,"jolly": true}
+],
+
+"abitanti_in_bus":[]
 }

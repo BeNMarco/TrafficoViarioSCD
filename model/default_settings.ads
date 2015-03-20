@@ -19,13 +19,13 @@ package default_settings is
    function get_default_s0_bici return new_float;
    function get_default_length_bici return new_float;
 
-   function get_default_desired_velocity_auto return new_float;
-   function get_default_time_headway_auto return new_float;
-   function get_default_max_acceleration_auto return new_float;
-   function get_default_comfortable_deceleration_auto return new_float;
-   function get_default_s0_auto return new_float;
-   function get_default_length_auto return new_float;
-   function get_default_num_posti_auto return Positive;
+   function get_default_desired_velocity_auto(is_bus: Boolean) return new_float;
+   function get_default_time_headway_auto(is_bus: Boolean) return new_float;
+   function get_default_max_acceleration_auto(is_bus: Boolean) return new_float;
+   function get_default_comfortable_deceleration_auto(is_bus: Boolean) return new_float;
+   function get_default_s0_auto(is_bus: Boolean) return new_float;
+   function get_default_length_auto(is_bus: Boolean) return new_float;
+   function get_default_num_posti_auto(is_bus: Boolean) return Positive;
 
    function get_default_larghezza_marciapiede return new_float;
    function get_default_larghezza_corsia return new_float;

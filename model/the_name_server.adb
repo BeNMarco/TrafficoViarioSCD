@@ -182,6 +182,19 @@ package body the_name_server is
       return registro_quartiere_entities_life_obj.get_quartiere_entities_life(id_quartiere);
    end get_quartiere_entities_life;
 
+   procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere) is
+   begin
+      registro_quartieri_gestori_bus_obj.registra_quartiere_gestore_bus(id_quartiere,obj);
+   end registra_quartiere_gestore_bus;
+   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+   begin
+      return registro_quartieri_gestori_bus_obj.get_quartiere_gestore_bus(id_quartiere);
+   end get_quartiere_gestore_bus;
+   function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri is
+   begin
+      return registro_quartieri_gestori_bus_obj.get_registro;
+   end get_registro_gestori_bus_quartieri;
+
    protected body registro_gestori_semafori is
       procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
       begin
@@ -230,6 +243,23 @@ package body the_name_server is
 
    end registro_quartiere_entities_life;
 
+   protected body registro_quartieri_gestori_bus is
+      procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere) is
+      begin
+         registro(id_quartiere):= obj;
+      end registra_quartiere_gestore_bus;
+
+      function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+      begin
+         return registro(id_quartiere);
+      end get_quartiere_gestore_bus;
+
+      function get_registro return registro_gestori_bus_quartieri is
+      begin
+         return registro;
+      end get_registro;
+   end registro_quartieri_gestori_bus;
+
    procedure configure_num_quartieri_name_server(numero_quartieri: in Positive) is
    begin
       num_quartieri:= numero_quartieri;
@@ -239,15 +269,19 @@ package body the_name_server is
       registro_local_synchronized_objects_obj:= new registro_local_synchronized_objects(numero_quartieri);
       registro_quartiere_entities_life_obj:= new registro_quartiere_entities_life(numero_quartieri);
       registro_log_quartieri_obj:= new registro_log_quartieri(numero_quartieri);
+      registro_quartieri_gestori_bus_obj:= new registro_quartieri_gestori_bus(numero_quartieri);
    end configure_num_quartieri_name_server;
 
    function rci_parameters_are_set return Boolean is
    begin
-      loop
+      while not (is_set_synchonized_obj and (registro_ref_quartieri_obj/=null and
+                                               (registro_risorse_strade_obj/=null and (registro_gestori_semafori_obj/=null and (registro_local_synchronized_objects_obj/=null and (registro_quartiere_entities_life_obj/=null and (registro_log_quartieri_obj/=null and (gps/=null and (task_synchronization_obj/=null and registro_quartieri_gestori_bus_obj/=null))))))))) loop
          delay until (Clock + 1.0);
-         exit when (is_set_synchonized_obj and (registro_ref_quartieri_obj/=null and
-                                                  (registro_risorse_strade_obj/=null and (registro_gestori_semafori_obj/=null and (registro_local_synchronized_objects_obj/=null and (registro_quartiere_entities_life_obj/=null and (registro_log_quartieri_obj/=null and (gps/=null and task_synchronization_obj/=null))))))));
       end loop;
+
+      --   exit when (is_set_synchonized_obj and (registro_ref_quartieri_obj/=null and
+      --                                            (registro_risorse_strade_obj/=null and (registro_gestori_semafori_obj/=null and (registro_local_synchronized_objects_obj/=null and (registro_quartiere_entities_life_obj/=null and (registro_log_quartieri_obj/=null and (gps/=null and (task_synchronization_obj/=null and registro_quartieri_gestori_bus_obj/=null))))))));
+      --end loop;
       return True;
    end rci_parameters_are_set;
 

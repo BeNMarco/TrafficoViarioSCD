@@ -22,6 +22,16 @@ use default_settings;
 
 package body risorse_mappa_utilities is
 
+   function create_array_abitanti_in_bus return set is
+      ab_in_bus: set(1..Length(get_json_abitanti_in_bus));
+      json: JSON_Array:= get_json_abitanti_in_bus;
+   begin
+      for i in 1..Length(json) loop
+         ab_in_bus(i):= Get(Get(json,i));
+      end loop;
+      return ab_in_bus;
+   end create_array_abitanti_in_bus;
+
    function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features is
       array_roads: strade_urbane_features(from..to);
       val_tipo: type_strade;
@@ -57,7 +67,10 @@ package body risorse_mappa_utilities is
       val_id_main_strada : Positive;
       val_distance_from_road_head : Float;
       val_polo: Boolean;
+      val_tipo_ingresso: type_ingresso;
       strada: JSON_Value;
+      json_luoghi: JSON_Array:= get_json_luoghi;
+      luogo: JSON_Value;
    begin
       for index_strada in from..to
       loop
@@ -70,13 +83,16 @@ package body risorse_mappa_utilities is
          val_id_main_strada:= Get(Val => strada, Field => "strada_confinante")+get_from_urbane-1;
          val_distance_from_road_head:= Get(Val => strada, Field => "distanza_da_from");
          val_polo:= Get(Val => strada, Field => "polo");
+         luogo:= Get(json_luoghi,index_strada-from+1);
+         val_tipo_ingresso:= convert_string_to_type_ingresso(Get(Get(luogo,"tipologia")));
          array_roads(index_strada):= create_new_ingresso(val_tipo => val_tipo,val_id => val_id,
                                                          val_id_quartiere => val_id_quartiere,
                                                          val_lunghezza => new_float(val_lunghezza),
                                                          val_num_corsie => val_num_corsie,
                                                          val_id_main_strada => val_id_main_strada,
                                                          val_distance_from_road_head => new_float(val_distance_from_road_head),
-                                                         polo => val_polo);
+                                                         polo => val_polo,
+                                                         val_tipo_ingresso => val_tipo_ingresso);
       end loop;
       return array_roads;
    end create_array_ingressi;

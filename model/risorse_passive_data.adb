@@ -1,5 +1,6 @@
 with GNATCOLL.JSON;
 with Ada.Text_IO;
+with Ada.Strings.Unbounded;
 with Polyorb.Parameters;
 
 with absolute_path;
@@ -54,16 +55,16 @@ package body risorse_passive_data is
       end case;
    end get_default_value_bici;
 
-   function get_default_value_auto(value: move_settings) return new_float is
+   function get_default_value_auto(value: move_settings; is_bus: Boolean) return new_float is
    begin
       case value is
-         when desired_velocity => return default_desired_velocity_auto;
-         when time_headway => return default_time_headway_auto;
-         when max_acceleration => return default_max_acceleration_auto;
-         when comfortable_deceleration => return default_comfortable_deceleration_auto;
-         when s0 => return default_s0_auto;
-         when length => return default_length_auto;
-         when num_posti => return new_float(default_num_posti_auto);
+         when desired_velocity => return get_default_desired_velocity_auto(is_bus);
+         when time_headway => return get_default_time_headway_auto(is_bus);
+         when max_acceleration => return get_default_max_acceleration_auto(is_bus);
+         when comfortable_deceleration => return get_default_comfortable_deceleration_auto(is_bus);
+         when s0 => return get_default_s0_auto(is_bus);
+         when length => return get_default_length_auto(is_bus);
+         when num_posti => return new_float(get_default_num_posti_auto(is_bus));
       end case;
    end get_default_value_auto;
 
@@ -288,6 +289,24 @@ package body risorse_passive_data is
          return get_from_ingressi+json_key-1;
       end get_index_luogo_from_id_json;
 
+      function get_from_type_resource_quartiere(resource: resource_type) return Natural is
+      begin
+         case resource is
+            when urbana => return get_from_urbane;
+            when ingresso => return get_from_ingressi;
+            when incrocio => return get_from_incroci_a_4;
+         end case;
+      end get_from_type_resource_quartiere;
+
+      function get_to_type_resource_quartiere(resource: resource_type) return Natural is
+      begin
+         case resource is
+            when urbana => return get_to_urbane;
+            when ingresso => return get_to_ingressi;
+            when incrocio => return get_to_incroci_a_3;
+         end case;
+      end get_to_type_resource_quartiere;
+
       function get_from_ingressi_quartiere return Natural is
       begin
          return get_from_ingressi;
@@ -304,12 +323,22 @@ package body risorse_passive_data is
          end if;
       end is_incrocio;
 
+      function get_id_fermata_id_urbana(id_urbana: Positive) return Natural is
+      begin
+         return get_id_fermata_from_id_urbana(id_urbana);
+      end get_id_fermata_id_urbana;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is
    begin
       return quartiere_cfg;
    end get_quartiere_utilities_obj;
+
+   function get_gestore_bus_quartiere_obj return ptr_gestore_bus_quartiere is
+   begin
+      return gestore_bus_quartiere_obj;
+   end get_gestore_bus_quartiere_obj;
 
    protected body type_waiting_cfg is
       procedure incrementa_classi_locate_abitanti is
@@ -329,6 +358,7 @@ package body risorse_passive_data is
 
       entry wait_cfg when num_classi_locate_abitanti=numero_quartieri and num_abitanti_quartieri_registrati=numero_quartieri and num_quartieri_resource_registrate=numero_quartieri is
       begin
+         -- il prima che arriva si prende la configurazione della mappa creata
          if inventory_estremi_is_set=False then
             inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
             for i in get_from_urbane..get_to_urbane loop
@@ -533,8 +563,23 @@ package body risorse_passive_data is
 
       function get_number_steps_to_finish_route(id_abitante: Positive) return Natural is
       begin
-         return percorsi(id_abitante).get_percorso_from_route_and_distance'Length-position_abitanti(id_abitante);
+         return percorsi(id_abitante).get_percorso_from_route_and_distance'Last-position_abitanti(id_abitante);
       end get_number_steps_to_finish_route;
+
+      function get_destination_abitante_in_bus(id_abitante: Positive) return tratto is
+      begin
+         return destination_abitanti_on_bus(id_abitante);
+      end get_destination_abitante_in_bus;
+
+      procedure set_destination_abitante_in_bus(id_abitante: Positive; destination: tratto) is
+      begin
+         destination_abitanti_on_bus(id_abitante):= destination;
+      end set_destination_abitante_in_bus;
+
+      --function get_ingresso_destination(id_abitante: Positive) return tratto is
+      --begin
+      --   return create_tratto(0,0);
+      --end get_ingresso_destination;
 
    end location_abitanti;
 
@@ -561,12 +606,381 @@ package body risorse_passive_data is
       end if;
    end get_size_incrocio;
 
+   function create_lista_passeggeri(identificativo_ab: tratto; next: ptr_lista_passeggeri) return lista_passeggeri is
+      elemento: lista_passeggeri;
+   begin
+      elemento.identificativo_abitante:= identificativo_ab;
+      elemento.next:= next;
+      return elemento;
+   end create_lista_passeggeri;
+   function get_identificativo_abitante(obj: lista_passeggeri) return tratto is
+   begin
+      return obj.identificativo_abitante;
+   end get_identificativo_abitante;
+   function get_next(obj: lista_passeggeri) return ptr_lista_passeggeri is
+   begin
+      return obj.next;
+   end get_next;
+   procedure set_identificativo_abitante(obj: in out lista_passeggeri; identificativo_ab: tratto) is
+   begin
+      obj.identificativo_abitante:= identificativo_ab;
+   end set_identificativo_abitante;
+   procedure set_next(obj: in out lista_passeggeri; next: ptr_lista_passeggeri) is
+   begin
+      obj.next:= next;
+   end set_next;
+
+   protected body gestore_bus_quartiere is
+      -- configure può essere chiamata solo dopo l'avvenuto check-point
+      -- in configure di resource_map_inventory
+      procedure configure_ref_gestori_bus_remoti is
+      begin
+         registro_gestori_autobus_quartieri:= get_registro_gestori_bus_quartieri;
+      end configure_ref_gestori_bus_remoti;
+
+      procedure autobus_arrived_at_fermata(to_id_autobus: Positive; abitanti: set_tratti; from_fermata: tratto) is
+         id_urbana_to_go: Positive;
+         id_fermata: Positive;
+         destination: tratto;
+         overwrite_abitanti: set_tratti(1..abitanti'Last);
+         index: Positive:= 1;
+         autobus: abitante:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,to_id_autobus);
+         list: ptr_lista_passeggeri:= passeggeri_bus(to_id_autobus);
+         prec_list: ptr_lista_passeggeri:= null;
+         mailbox_fermata: ptr_rt_ingresso:= get_id_ingresso_quartiere(from_fermata.get_id_quartiere_tratto,from_fermata.get_id_tratto);
+         jolly_arrived: Boolean:= False;
+         abitante_is_arrived: Boolean;
+      begin
+         -- l'abitante è arrivato alla fermata
+         -- fa scendere abitanti
+         prec_list:= null;
+         if autobus.is_a_bus_jolly and linee_autobus(autobus.get_id_luogo_lavoro_from_abitante).get_numero_fermate=stato_bus(to_id_autobus).index_fermata then
+            jolly_arrived:= True;
+         end if;
+
+         while list/=null loop
+            if jolly_arrived then
+               mailbox_fermata.add_abitante_in_fermata(list.identificativo_abitante);
+            else
+               abitante_is_arrived:= False;
+               destination:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list.identificativo_abitante.get_id_quartiere_tratto).get_destination_abitante_in_bus(list.identificativo_abitante.get_id_tratto);
+               id_urbana_to_go:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(destination.get_id_tratto);
+               id_fermata:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana_to_go);
+               if tratto(from_fermata)=create_tratto(destination.get_id_quartiere_tratto,id_fermata) then
+                  abitante_is_arrived:= True;
+               end if;
+               if abitante_is_arrived then
+                  get_quartiere_entities_life(list.identificativo_abitante.get_id_quartiere_tratto).abitante_scende_dal_bus(list.identificativo_abitante.get_id_tratto,from_fermata);
+               end if;
+            end if;
+            if jolly_arrived or else abitante_is_arrived then
+               -- rimuovere abitante dalla lista
+               if prec_list=null then
+                  passeggeri_bus(to_id_autobus):= passeggeri_bus(to_id_autobus).next;
+                  list:= passeggeri_bus(to_id_autobus);
+               else
+                  prec_list.next:= list.next;
+                  -- list prende prec_list
+                  -- cosichè list:= list.next prende
+                  -- l'elemento successivo a quello eliminato
+                  list:= prec_list;
+               end if;
+            end if;
+            prec_list:= list;
+            list:= list.next;
+         end loop;
+
+         -- l'autobus non è arrivato alla posizione jolly
+         if jolly_arrived=False then
+            avanza_fermata(to_id_autobus);
+            list:= passeggeri_bus(to_id_autobus);
+            prec_list:= null;
+            while list/=null loop
+               prec_list:= list;
+               list:= list.next;
+            end loop;
+            -- posizionamento all'ultimo abitante della lista
+            list:= prec_list;
+            for i in abitanti'Range loop
+               -- destination è il luogo in cui l'abitante deve andare
+               -- un autobus può nascere in qualunque quartiere
+               destination:= get_quartiere_utilities_obj.get_classe_locate_abitanti(abitanti(i).get_id_quartiere_tratto).get_destination_abitante_in_bus(abitanti(i).get_id_tratto);
+               id_urbana_to_go:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(destination.get_id_tratto);
+               id_fermata:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana_to_go);
+               -- fermata è la fermata in cui l'abitante deve andare
+               if fermata_da_fare(to_id_autobus,create_tratto(destination.get_id_quartiere_tratto,id_fermata))or else
+                 (autobus.is_a_bus_jolly and then (autobus.is_a_jolly_to_quartiere=destination.get_id_quartiere_tratto)) then
+                  overwrite_abitanti(index):= abitanti(i);
+                  index:= index+1;
+                  if list=null then
+                     passeggeri_bus(to_id_autobus):= new lista_passeggeri'(create_lista_passeggeri(abitanti(i),null));
+                     list:= passeggeri_bus(to_id_autobus);
+                  else
+                     list.next:= new lista_passeggeri'(create_lista_passeggeri(abitanti(i),null));
+                     -- list.next/=null
+                     list:= list.next;
+                  end if;
+               end if;
+               -- viene controllato se la fermata è da fare per l'autobus in questione
+            end loop;
+            mailbox_fermata.aggiorna_abitanti_in_fermata(overwrite_abitanti);
+         end if;
+      end autobus_arrived_at_fermata;
+
+      procedure avanza_fermata(id_autobus: Positive) is
+      begin
+         stato_bus(id_autobus).index_fermata:= stato_bus(id_autobus).index_fermata+1;
+      end avanza_fermata;
+
+      procedure revert_percorso(id_autobus: Positive) is
+      begin
+         stato_bus(id_autobus).revert_percorso:= not stato_bus(id_autobus).revert_percorso;
+         stato_bus(id_autobus).index_fermata:= 0;
+      end revert_percorso;
+
+      function linea_is_reverted(id_autobus: Positive) return Boolean is
+      begin
+         return stato_bus(id_autobus).revert_percorso;
+      end linea_is_reverted;
+
+      function fermata_da_fare(id_autobus: Positive; fermata: tratto) return Boolean is
+         num_linea: Positive:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_autobus).get_id_luogo_lavoro_from_abitante;
+         from: Positive;
+         to: Positive;
+      begin
+         if stato_bus(id_autobus).revert_percorso=False then
+            from:= stato_bus(id_autobus).index_fermata+1;
+            to:= linee_autobus(num_linea).get_numero_fermate;
+         else
+            from:= 1;
+            to:= stato_bus(id_autobus).index_fermata-1;
+         end if;
+         for i in from..to loop
+            if tratto(linee_autobus(num_linea).get_num_tratto(i))=tratto(fermata) then
+               return True;
+            end if;
+         end loop;
+         return False;
+      end fermata_da_fare;
+
+      function get_num_fermate_rimaste(id_autobus: Positive) return Natural is
+         num_linea: Positive:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_autobus).get_id_luogo_lavoro_from_abitante;
+      begin
+         return linee_autobus(num_linea).get_numero_fermate-stato_bus(id_autobus).index_fermata;
+      end get_num_fermate_rimaste;
+
+      function get_num_fermata_arrived(id_autobus: Positive) return Positive is
+      begin
+         return stato_bus(id_autobus).index_fermata;
+      end get_num_fermata_arrived;
+
+      function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+      begin
+         return registro_gestori_autobus_quartieri(id_quartiere);
+      end get_gestore_bus_quartiere;
+
+   end gestore_bus_quartiere;
+
    procedure configure_quartiere_obj is
    begin
       quartiere_cfg:= new quartiere_utilities(get_num_quartieri);
       locate_abitanti_quartiere:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
       waiting_cfg:= new type_waiting_cfg(get_num_quartieri);
+      quartiere_entities_life_obj:= new quartiere_entities_life;
+      gestore_bus_quartiere_obj:= new gestore_bus_quartiere(get_num_quartieri,get_num_autobus);
+
+      configure_map_fermate_urbane;
    end configure_quartiere_obj;
+
+   procedure configure_map_fermate_urbane is
+      num_fermate: Natural:= 0;
+   begin
+      for i in get_from_ingressi..get_to_ingressi loop
+         if get_ingresso_from_id(i).get_type_ingresso=fermata then
+            fermate_associate_a_urbane(get_ingresso_from_id(i).get_id_main_strada_ingresso):= get_ingresso_from_id(i).get_id_road;
+            num_fermate:= num_fermate+1;
+         end if;
+      end loop;
+      Put_Line("numero fermate quartiere " & Positive'Image(get_id_quartiere) & " " & Positive'Image(num_fermate));
+   end configure_map_fermate_urbane;
+
+   procedure abitante_is_arrived(obj: quartiere_entities_life; id_abitante: Positive) is
+      resource_locate_abitanti: ptr_location_abitanti:= get_locate_abitanti_quartiere;
+      arrived_tratto: tratto;
+      tratto_to_go: tratto;
+      residente: abitante;
+      percorso: access route_and_distance;
+      segnale: Boolean;
+      mezzo: means_of_carrying;
+      id_urbana: Positive;
+      id_fermata: Positive;
+      destination: tratto;
+   begin
+      arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
+      residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
+      -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
+      Put_Line(Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
+      mezzo:= residente.get_mezzo_abitante;
+      if is_abitante_in_bus(id_abitante) then
+         mezzo:= walking;
+         id_urbana:= get_ref_quartiere(arrived_tratto.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(arrived_tratto.get_id_tratto);
+         id_fermata:= get_ref_quartiere(arrived_tratto.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana);
+         destination:= get_location_abitanti_quartiere.get_destination_abitante_in_bus(residente.get_id_abitante_from_abitante);
+         --residente.get_id_quartiere_from_abitante
+         if residente.get_id_quartiere_from_abitante=arrived_tratto.get_id_quartiere_tratto and then arrived_tratto.get_id_tratto=residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1 then
+            -- il residente è arrivato a casa lo si manda a lavorare
+            get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(residente.get_id_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1));
+         else
+            get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
+         end if;
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(from_id_quartiere => arrived_tratto.get_id_quartiere_tratto, from_id_luogo => arrived_tratto.get_id_tratto,
+                                                                            to_id_quartiere => arrived_tratto.get_id_quartiere_tratto, to_id_luogo => id_fermata,id_quartiere => get_id_quartiere,id_abitante => id_abitante));
+      elsif residente.is_a_bus then
+         Put_Line("BUSSSSS " & Positive'Image(id_abitante) & " " & Positive'Image(get_id_quartiere));
+         if get_gestore_bus_quartiere_obj.get_num_fermate_rimaste(id_abitante)=0 then
+            segnale:= False;
+            if residente.is_a_bus_jolly then
+               if residente.is_a_jolly_to_quartiere=arrived_tratto.get_id_quartiere_tratto then
+                  -- l'abitante è arrivato alla postazione jolly
+                  segnale:= True;
+               else
+                  tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_jolly_quartiere_to_go(residente.is_a_jolly_to_quartiere));
+               end if;
+            end if;
+            if segnale or else residente.is_a_bus_jolly=False then
+               get_gestore_bus_quartiere_obj.revert_percorso(id_abitante);
+               if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
+                  tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate));
+               else
+                  tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(1));
+               end if;
+            end if;
+         else
+            if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
+               tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate-(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante)+1)));
+            else
+               tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante)+1));
+            end if;
+         end if;
+         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante));
+      else
+         if get_id_quartiere=arrived_tratto.get_id_quartiere_tratto and
+           residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1=arrived_tratto.get_id_tratto then
+            -- l'abitante si trova a casa
+            -- lo si manda a lavorare
+            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1,get_id_quartiere,id_abitante));
+         elsif residente.get_id_quartiere_luogo_lavoro_from_abitante=arrived_tratto.get_id_quartiere_tratto and
+           residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1=arrived_tratto.get_id_tratto then
+            -- l'abitante è a lavoro
+            -- lo si manda a casa
+            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));
+            --get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+         else  -- lo si manda a casa cmq
+            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));--get_quartiere_cfg(residente.get_id_quartiere_from_abitante).get_from_ingressi_quartiere-1));
+         end if;
+      end if;
+
+
+      -- Invio richiesta ASINCRONA
+
+      Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      print_percorso(percorso.get_percorso_from_route_and_distance);
+      Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+      ptr_rt_ingresso(get_id_ingresso_quartiere(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,mezzo);
+
+   end abitante_is_arrived;
+
+   procedure abitante_scende_dal_bus(obj: quartiere_entities_life; id_abitante: Positive; alla_fermata: tratto) is
+      percorso: access route_and_distance;
+      tratto_to_go: tratto;
+      residente: abitante;
+   begin
+      residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
+
+      Put_Line(Positive'Image(alla_fermata.get_id_quartiere_tratto) & " " & Positive'Image(alla_fermata.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
+
+      tratto_to_go:= get_location_abitanti_quartiere.get_destination_abitante_in_bus(id_abitante);
+
+      percorso:= new route_and_distance'(get_server_gps.calcola_percorso(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante));
+      Put_Line("request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      print_percorso(percorso.get_percorso_from_route_and_distance);
+      Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      ptr_rt_ingresso(get_id_ingresso_quartiere(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,walking);
+
+   end abitante_scende_dal_bus;
+
+   function get_quartiere_entities_life_obj return ptr_quartiere_entities_life is
+   begin
+      return quartiere_entities_life_obj;
+   end get_quartiere_entities_life_obj;
+
+   function is_abitante_in_bus(id_abitante: Positive) return Boolean is
+   begin
+      for i in abitanti_in_bus'Range loop
+         if abitanti_in_bus(i)+get_from_abitanti-1=id_abitante then
+            return True;
+         end if;
+      end loop;
+      return False;
+   end is_abitante_in_bus;
+
+   function get_linea(num_linea: Positive) return linea_bus is
+   begin
+      return linee_autobus(num_linea);
+   end get_linea;
+
+   function get_id_fermata_from_id_urbana(id_urbana: Positive) return Natural is
+   begin
+      return fermate_associate_a_urbane(id_urbana);
+   end get_id_fermata_from_id_urbana;
+
+   function get_location_abitanti_quartiere return ptr_location_abitanti is
+   begin
+      return locate_abitanti_quartiere;
+   end get_location_abitanti_quartiere;
+
+   procedure configure_linee_fermate is
+      json_fermate: JSON_Array:= get_json_fermate_autobus;
+      temp1_json_value: JSON_Value;
+      temp2_json_value: JSON_Value;
+      temp0_json_array: JSON_Array;
+      temp1_json_array: JSON_Array;
+      temp2_json_array: JSON_Array;
+      id_quartiere: Positive;
+      id_tratto: Positive;
+      ref_quartieri: registro_quartieri:= get_ref_rt_quartieri;
+      linea: access tratti_fermata;
+      jollys: access destination_tratti;
+      jolly_to: Positive;
+   begin
+      for i in 1..Length(json_fermate) loop
+         temp0_json_array:= Get(Get(json_fermate, i));
+         temp1_json_value:= Get(temp0_json_array, 1);
+         temp1_json_array:= Get(temp1_json_value,"linea");
+         linea:= new tratti_fermata(1..Length(temp1_json_array));
+         for j in 1..Length(temp1_json_array) loop
+            temp2_json_array:= Get(Get(temp1_json_array,j));
+            id_quartiere:= Get(Get(temp2_json_array,1));
+            id_tratto:= Get(Get(temp2_json_array,2));
+            id_tratto:= ref_quartieri(id_quartiere).get_from_type_resource_quartiere(ingresso)+id_tratto-1;
+            linea(j):= create_tratto(id_quartiere,id_tratto);
+         end loop;
+         temp1_json_array:= Get(temp1_json_value,"jolly");
+         jollys:= new destination_tratti(1..Length(temp1_json_array));
+         for j in 1..Length(temp1_json_array) loop
+            temp2_json_value:= Get(temp1_json_array, j);
+            jolly_to:= Get(Get(temp2_json_value,"to"));
+            temp2_json_array:= Get(Get(temp2_json_value,"at"));
+            id_quartiere:= Get(Get(temp2_json_array,1));
+            id_tratto:= Get(Get(temp2_json_array,2));
+            id_tratto:= ref_quartieri(id_quartiere).get_from_type_resource_quartiere(ingresso)+id_tratto-1;
+            jollys(j):= create_destination(jolly_to,create_tratto(id_quartiere,id_tratto));
+         end loop;
+         temp1_json_array:= Get(temp1_json_value,"from_to");
+         linee_autobus(i):= create_linea_bus(Get(Get(temp1_json_array,1)),Get(Get(temp1_json_array,2)),linea,jollys);
+      end loop;
+   end configure_linee_fermate;
 
    function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio is
    begin

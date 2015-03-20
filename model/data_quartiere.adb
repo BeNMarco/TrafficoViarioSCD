@@ -145,6 +145,22 @@ package body data_quartiere is
    begin
       return json_abitanti;
    end get_json_abitanti;
+   function get_json_autobus return JSON_Array is
+   begin
+      return json_autobus;
+   end get_json_autobus;
+   function get_json_fermate_autobus return JSON_Array is
+   begin
+      return json_fermate_autobus;
+   end get_json_fermate_autobus;
+   function get_json_abitanti_in_bus return JSON_Array is
+   begin
+      return json_abitanti_in_bus;
+   end get_json_abitanti_in_bus;
+   function get_json_luoghi return JSON_Array is
+   begin
+      return json_luoghi;
+   end get_json_luoghi;
    function get_from_abitanti return Natural is
    begin
       return from_abitanti;
@@ -159,10 +175,20 @@ package body data_quartiere is
       return size_json_abitanti;
    end get_num_abitanti;
 
+   function get_num_autobus return Natural is
+   begin
+      return size_json_autobus;
+   end get_num_autobus;
+
    function get_num_task return Natural is
    begin
       return num_task;
    end get_num_task;
+
+   function get_num_linee_fermate return Natural is
+   begin
+      return num_linee_fermate;
+   end get_num_linee_fermate;
 
    function get_recovery return Boolean is
    begin

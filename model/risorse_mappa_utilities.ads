@@ -32,6 +32,8 @@ package risorse_mappa_utilities is
 
    type traiettoria_cambio_corsia is tagged private;
 
+   function create_array_abitanti_in_bus return set;
+
    function create_array_urbane(json_roads: JSON_array; from: Natural; to: Natural) return strade_urbane_features;
 
    function create_array_ingressi(json_roads: JSON_array; from: Natural; to: Natural) return strade_ingresso_features;

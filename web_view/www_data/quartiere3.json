@@ -1358,557 +1358,138 @@
         ],
         "linea": [
           [
-            "ingresso",
-            3,
-            29
-          ],
-          [
-            "incrocio",
-            3,
-            4
-          ],
-          [
-            "urbana",
-            3,
-            5
-          ],
-          [
-            "incrocio",
-            3,
-            3
-          ],
-          [
-            "urbana",
-            3,
-            1
-          ],
-          [
-            "incrocio",
-            1,
-            19
-          ],
-          [
-            "ingresso",
             1,
             31
           ],
           [
-            "incrocio",
-            1,
-            10
-          ],
-          [
-            "ingresso",
             1,
             30
           ],
           [
-            "incrocio",
-            1,
-            11
-          ],
-          [
-            "ingresso",
             1,
             29
           ],
           [
-            "incrocio",
-            1,
-            12
-          ],
-          [
-            "ingresso",
             1,
             28
           ],
           [
-            "incrocio",
-            1,
-            13
-          ],
-          [
-            "ingresso",
             1,
             27
           ],
           [
-            "incrocio",
-            1,
-            14
-          ],
-          [
-            "ingresso",
             1,
             26
           ],
           [
-            "incrocio",
-            1,
-            15
-          ],
-          [
-            "ingresso",
             1,
             25
           ],
           [
-            "incrocio",
-            1,
-            16
-          ],
-          [
-            "ingresso",
             1,
             32
           ],
           [
-            "incrocio",
-            1,
-            17
-          ],
-          [
-            "ingresso",
             1,
             33
           ],
           [
-            "incrocio",
-            1,
-            18
-          ],
-          [
-            "ingresso",
             1,
             34
           ],
           [
-            "incrocio",
-            1,
-            22
-          ],
-          [
-            "urbana",
-            2,
-            1
-          ],
-          [
-            "incrocio",
-            2,
-            5
-          ],
-          [
-            "urbana",
-            2,
-            2
-          ],
-          [
-            "incrocio",
-            2,
-            1
-          ],
-          [
-            "urbana",
-            2,
-            3
-          ],
-          [
-            "incrocio",
-            1,
-            20
-          ],
-          [
-            "ingresso",
             1,
             41
           ],
           [
-            "incrocio",
-            1,
-            1
-          ],
-          [
-            "ingresso",
             1,
             39
           ],
           [
-            "incrocio",
-            1,
-            18
-          ],
-          [
-            "urbana",
-            1,
-            9
-          ],
-          [
-            "incrocio",
-            1,
-            17
-          ],
-          [
-            "ingresso",
             1,
             57
           ],
           [
-            "incrocio",
-            1,
-            96
-          ],
-          [
-            "ingresso",
             1,
             55
           ],
           [
-            "incrocio",
-            1,
-            5
-          ],
-          [
-            "ingresso",
             1,
             54
           ],
           [
-            "incrocio",
-            1,
-            15
-          ],
-          [
-            "urbana",
-            1,
-            2
-          ],
-          [
-            "incrocio",
-            1,
-            14
-          ],
-          [
-            "ingresso",
             1,
             53
           ],
           [
-            "incrocio",
-            1,
-            5
-          ],
-          [
-            "ingresso",
             1,
             52
           ],
           [
-            "incrocio",
-            1,
-            13
-          ],
-          [
-            "urbana",
-            1,
-            4
-          ],
-          [
-            "incrocio",
-            1,
-            12
-          ],
-          [
-            "ingresso",
             1,
             51
           ],
           [
-            "incrocio",
-            1,
-            3
-          ],
-          [
-            "ingresso",
             1,
             49
           ],
           [
-            "incrocio",
-            1,
-            4
-          ],
-          [
-            "ingresso",
             1,
             50
           ],
           [
-            "incrocio",
-            1,
-            11
-          ],
-          [
-            "urbana",
-            1,
-            6
-          ],
-          [
-            "incrocio",
-            1,
-            10
-          ],
-          [
-            "ingresso",
             1,
             47
           ],
           [
-            "incrocio",
-            1,
-            4
-          ],
-          [
-            "ingresso",
             1,
             48
           ],
           [
-            "incrocio",
-            1,
-            9
-          ],
-          [
-            "ingresso",
             1,
             35
           ],
           [
-            "incrocio",
-            1,
-            19
-          ],
-          [
-            "urbana",
-            3,
-            1
-          ],
-          [
-            "incrocio",
-            3,
-            3
-          ],
-          [
-            "urbana",
-            3,
-            5
-          ],
-          [
-            "incrocio",
-            3,
-            4
-          ],
-          [
-            "urbana",
-            3,
-            6
-          ],
-          [
-            "incrocio",
-            3,
-            1
-          ],
-          [
-            "urbana",
-            3,
-            2
-          ],
-          [
-            "incrocio",
-            2,
-            12
-          ],
-          [
-            "ingresso",
             1,
             38
           ],
           [
-            "incrocio",
-            1,
-            7
-          ],
-          [
-            "ingresso",
             1,
             37
           ],
           [
-            "incrocio",
-            1,
-            8
-          ],
-          [
-            "ingresso",
             1,
             36
           ],
           [
-            "incrocio",
-            1,
-            9
-          ],
-          [
-            "urbana",
-            1,
-            24
-          ],
-          [
-            "incrocio",
-            1,
-            3
-          ],
-          [
-            "urbana",
-            1,
-            25
-          ],
-          [
-            "incrocio",
-            1,
-            3
-          ],
-          [
-            "ingresso",
             1,
             46
           ],
           [
-            "incrocio",
-            1,
-            8
-          ],
-          [
-            "urbana",
-            1,
-            13
-          ],
-          [
-            "incrocio",
-            1,
-            7
-          ],
-          [
-            "ingresso",
             1,
             45
           ],
           [
-            "incrocio",
-            1,
-            2
-          ],
-          [
-            "ingresso",
             1,
             44
           ],
           [
-            "incrocio",
-            1,
-            3
-          ],
-          [
-            "urbana",
-            1,
-            22
-          ],
-          [
-            "incrocio",
-            1,
-            8
-          ],
-          [
-            "urbana",
-            1,
-            13
-          ],
-          [
-            "incrocio",
-            1,
-            7
-          ],
-          [
-            "urbana",
-            1,
-            21
-          ],
-          [
-            "incrocio",
-            1,
-            2
-          ],
-          [
-            "ingresso",
             1,
             40
           ],
           [
-            "incrocio",
-            1,
-            1
-          ],
-          [
-            "urbana",
-            1,
-            17
-          ],
-          [
-            "incrocio",
-            1,
-            20
-          ],
-          [
-            "ingresso",
             1,
             42
           ],
           [
-            "incrocio",
-            1,
-            21
-          ],
-          [
-            "ingresso",
             1,
             43
           ],
           [
-            "incrocio",
-            1,
-            2
-          ],
-          [
-            "urbana",
-            1,
-            16
-          ],
-          [
-            "incrocio",
-            1,
-            1
-          ],
-          [
-            "ingresso",
             1,
             58
           ],
           [
-            "incrocio",
-            1,
-            6
-          ],
-          [
-            "ingresso",
             1,
             56
           ]
@@ -1939,367 +1520,86 @@
         ],
         "linea": [
           [
-            "ingresso",
-            3,
-            29
-          ],
-          [
-            "incrocio",
-            3,
-            4
-          ],
-          [
-            "urbana",
-            3,
-            6
-          ],
-          [
-            "incrocio",
-            3,
-            1
-          ],
-          [
-            "urbana",
-            3,
-            2
-          ],
-          [
-            "incrocio",
-            2,
-            12
-          ],
-          [
-            "ingresso",
             2,
             32
           ],
           [
-            "incrocio",
-            2,
-            11
-          ],
-          [
-            "ingresso",
             2,
             33
           ],
           [
-            "incrocio",
-            2,
-            4
-          ],
-          [
-            "ingresso",
             2,
             36
           ],
           [
-            "incrocio",
-            2,
-            13
-          ],
-          [
-            "ingresso",
             2,
             35
           ],
           [
-            "incrocio",
-            2,
-            10
-          ],
-          [
-            "ingresso",
             2,
             30
           ],
           [
-            "incrocio",
-            2,
-            3
-          ],
-          [
-            "ingresso",
             2,
             34
           ],
           [
-            "incrocio",
-            2,
-            4
-          ],
-          [
-            "urbana",
-            2,
-            18
-          ],
-          [
-            "incrocio",
-            2,
-            11
-          ],
-          [
-            "ingresso",
             2,
             31
           ],
           [
-            "incrocio",
-            2,
-            2
-          ],
-          [
-            "ingresso",
             2,
             27
           ],
           [
-            "incrocio",
-            2,
-            3
-          ],
-          [
-            "urbana",
-            2,
-            15
-          ],
-          [
-            "incrocio",
-            2,
-            10
-          ],
-          [
-            "ingresso",
             2,
             29
           ],
           [
-            "incrocio",
-            2,
-            9
-          ],
-          [
-            "ingresso",
             2,
             24
           ],
           [
-            "incrocio",
-            2,
-            8
-          ],
-          [
-            "ingresso",
             2,
             28
           ],
           [
-            "incrocio",
-            2,
-            3
-          ],
-          [
-            "urbana",
-            2,
-            12
-          ],
-          [
-            "incrocio",
-            2,
-            2
-          ],
-          [
-            "ingresso",
             2,
             25
           ],
           [
-            "incrocio",
-            2,
-            1
-          ],
-          [
-            "ingresso",
             2,
             18
           ],
           [
-            "incrocio",
-            1,
-            20
-          ],
-          [
-            "urbana",
-            1,
-            17
-          ],
-          [
-            "incrocio",
-            1,
-            1
-          ],
-          [
-            "urbana",
-            1,
-            15
-          ],
-          [
-            "incrocio",
-            1,
-            18
-          ],
-          [
-            "urbana",
-            1,
-            10
-          ],
-          [
-            "incrocio",
-            1,
-            22
-          ],
-          [
-            "ingresso",
             2,
             16
           ],
           [
-            "incrocio",
-            2,
-            5
-          ],
-          [
-            "ingresso",
             2,
             21
           ],
           [
-            "incrocio",
-            2,
-            7
-          ],
-          [
-            "ingresso",
             2,
             20
           ],
           [
-            "incrocio",
-            2,
-            6
-          ],
-          [
-            "ingresso",
             2,
             22
           ],
           [
-            "incrocio",
-            2,
-            8
-          ],
-          [
-            "incrocio",
-            2,
-            9
-          ],
-          [
-            "incrocio",
-            2,
-            9
-          ],
-          [
-            "ingresso",
             2,
             23
           ],
           [
-            "incrocio",
-            2,
-            7
-          ],
-          [
-            "urbana",
-            2,
-            5
-          ],
-          [
-            "incrocio",
-            2,
-            6
-          ],
-          [
-            "ingresso",
             2,
             19
           ],
           [
-            "incrocio",
-            2,
-            1
-          ],
-          [
-            "ingresso",
             2,
             17
           ],
           [
-            "incrocio",
-            2,
-            5
-          ],
-          [
-            "urbana",
-            2,
-            6
-          ],
-          [
-            "incrocio",
-            2,
-            7
-          ],
-          [
-            "urbana",
-            2,
-            8
-          ],
-          [
-            "incrocio",
-            2,
-            9
-          ],
-          [
-            "urbana",
-            2,
-            14
-          ],
-          [
-            "incrocio",
-            2,
-            10
-          ],
-          [
-            "incrocio",
-            2,
-            15
-          ],
-          [
-            "incrocio",
-            2,
-            3
-          ],
-          [
-            "incrocio",
-            2,
-            12
-          ],
-          [
-            "incrocio",
-            2,
-            2
-          ],
-          [
-            "ingresso",
             2,
             26
           ]
@@ -2330,227 +1630,58 @@
         ],
         "linea": [
           [
-            "ingresso",
             3,
             29
           ],
           [
-            "incrocio",
-            3,
-            4
-          ],
-          [
-            "ingresso",
             3,
             34
           ],
           [
-            "incrocio",
-            3,
-            3
-          ],
-          [
-            "ingresso",
             3,
             30
           ],
           [
-            "incrocio",
-            1,
-            19
-          ],
-          [
-            "urbana",
-            1,
-            11
-          ],
-          [
-            "incrocio",
-            1,
-            9
-          ],
-          [
-            "urbana",
-            1,
-            12
-          ],
-          [
-            "incrocio",
-            1,
-            8
-          ],
-          [
-            "urbana",
-            1,
-            13
-          ],
-          [
-            "incrocio",
-            1,
-            7
-          ],
-          [
-            "urbana",
-            1,
-            14
-          ],
-          [
-            "incrocio",
-            2,
-            12
-          ],
-          [
-            "ingresso",
             3,
             31
           ],
           [
-            "incrocio",
-            3,
-            1
-          ],
-          [
-            "ingresso",
             3,
             39
           ],
           [
-            "incrocio",
-            3,
-            5
-          ],
-          [
-            "ingresso",
             3,
             38
           ],
           [
-            "incrocio",
-            3,
-            3
-          ],
-          [
-            "urbana",
-            3,
-            5
-          ],
-          [
-            "incrocio",
-            3,
-            4
-          ],
-          [
-            "ingresso",
             3,
             35
           ],
           [
-            "incrocio",
-            3,
-            1
-          ],
-          [
-            "ingresso",
             3,
             36
           ],
           [
-            "incrocio",
-            3,
-            2
-          ],
-          [
-            "ingresso",
             3,
             37
           ],
           [
-            "incrocio",
-            3,
-            7
-          ],
-          [
-            "ingresso",
             3,
             33
           ],
           [
-            "incrocio",
-            2,
-            13
-          ],
-          [
-            "urbana",
-            2,
-            21
-          ],
-          [
-            "incrocio",
-            2,
-            4
-          ],
-          [
-            "ingresso",
             3,
             32
           ],
           [
-            "incrocio",
-            3,
-            2
-          ],
-          [
-            "ingresso",
             3,
             40
           ],
           [
-            "incrocio",
-            3,
-            6
-          ],
-          [
-            "ingresso",
             3,
             41
           ],
           [
-            "incrocio",
-            3,
-            5
-          ],
-          [
-            "urbana",
-            3,
-            11
-          ],
-          [
-            "incrocio",
-            3,
-            1
-          ],
-          [
-            "urbana",
-            3,
-            7
-          ],
-          [
-            "incrocio",
-            3,
-            2
-          ],
-          [
-            "urbana",
-            3,
-            12
-          ],
-          [
-            "incrocio",
-            3,
-            6
-          ],
-          [
-            "ingresso",
             3,
             42
           ]
@@ -3026,6 +2157,42 @@
       "max_acceleration": 9.00000E+00,
       "comfortable_deceleration": 5.05000E+01,
       "desired_velocity": 7.50000E+01
+    },
+    {
+      "id_abitante": 114
+    },
+    {
+      "id_abitante": 115
+    },
+    {
+      "id_abitante": 116
+    },
+    {
+      "id_abitante": 117
+    },
+    {
+      "id_abitante": 118
+    },
+    {
+      "id_abitante": 119
+    },
+    {
+      "id_abitante": 120
+    },
+    {
+      "id_abitante": 121
+    },
+    {
+      "id_abitante": 122
+    },
+    {
+      "id_abitante": 123
+    },
+    {
+      "id_abitante": 124
+    },
+    {
+      "id_abitante": 125
     }
   ],
   "bici": [
@@ -3534,76 +2701,78 @@
   ],
   "autobus": [
     {
-      "id_autobus": 1,
+      "id_autobus": 114,
       "stazione_partenza": 29,
-      "linea": "1",
+      "linea": 1,
       "jolly": false
     },
     {
-      "id_autobus": 2,
+      "id_autobus": 115,
       "stazione_partenza": 29,
-      "linea": "1",
+      "linea": 1,
       "jolly": false
     },
     {
-      "id_autobus": 3,
+      "id_autobus": 116,
       "stazione_partenza": 29,
-      "linea": "2",
+      "linea": 2,
       "jolly": false
     },
     {
-      "id_autobus": 4,
+      "id_autobus": 117,
       "stazione_partenza": 29,
-      "linea": "2",
+      "linea": 2,
       "jolly": false
     },
     {
-      "id_autobus": 5,
+      "id_autobus": 118,
       "stazione_partenza": 29,
-      "linea": "3",
+      "linea": 3,
       "jolly": false
     },
     {
-      "id_autobus": 6,
+      "id_autobus": 119,
       "stazione_partenza": 29,
-      "linea": "3",
+      "linea": 3,
       "jolly": false
     },
     {
-      "id_autobus": 7,
+      "id_autobus": 120,
       "stazione_partenza": 29,
-      "linea": "1",
+      "linea": 1,
       "jolly": true
     },
     {
-      "id_autobus": 8,
+      "id_autobus": 121,
       "stazione_partenza": 29,
-      "linea": "1",
+      "linea": 1,
       "jolly": true
     },
     {
-      "id_autobus": 9,
+      "id_autobus": 122,
       "stazione_partenza": 29,
-      "linea": "2",
+      "linea": 2,
       "jolly": true
     },
     {
-      "id_autobus": 10,
+      "id_autobus": 123,
       "stazione_partenza": 29,
-      "linea": "2",
+      "linea": 2,
       "jolly": true
     },
     {
-      "id_autobus": 11,
+      "id_autobus": 124,
       "stazione_partenza": 29,
-      "linea": "3",
+      "linea": 3,
       "jolly": true
     },
     {
-      "id_autobus": 12,
+      "id_autobus": 125,
       "stazione_partenza": 29,
-      "linea": "3",
+      "linea": 3,
       "jolly": true
     }
+  ],
+  "abitanti_in_bus": [
   ]
 }

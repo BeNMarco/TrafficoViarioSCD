@@ -71,6 +71,7 @@ function MapStyle(){
 	this.pavementWidth = 3;
 	this.dashArray = [6,4];
 	this.zebraDash = [2,2];
+	this.middlePathEntranceDashOffset = 5;
 }
 
 /**
@@ -115,9 +116,9 @@ Street.prototype.draw = function(style){
 	this.path = new Path(this.guidingPath.pathData);
 	this.path.strokeColor = style.laneColor;
 	this.path.strokeWidth = style.laneWidth*this.nLanes*2+style.pavementWidth*2;
-	this.guidingPath.strokeColor = style.lineColor;
-	this.guidingPath.strokeWidth = style.lineWidth;
-	this.guidingPath.moveAbove(this.path);
+	//this.guidingPath.strokeColor = style.lineColor;
+	//this.guidingPath.strokeWidth = style.lineWidth;
+	//this.guidingPath.moveAbove(this.path);
 	//this.guidingPath.fullySelected = true;
 
 	// drawing the separation lines
@@ -134,28 +135,88 @@ Street.prototype.draw = function(style){
 	}
 
 	// drawing the pedestrian lines
-	var pedestrianPaths = {true: [], false: []};
-	var middlePaths = {true: [], false: []};
+	var pedestrianPaths = {true: [{start:0, end:this.guidingPath.length, type:'pavement'}], 
+		false: [{start:0, end:this.guidingPath.length, type:'pavement'}]};
+	var middlePaths = null;
+	//console.log(this.sideStreets);
+	if((Object.keys(this.sideStreets[false]).length+Object.keys(this.sideStreets[true]).length) > 0){
+		middlePaths = middlePaths = {true: [], false: []};
+		for(var side in this.sideStreets){
+			//pedestrianPaths[side][0] = {start:0, end:this.guidingPath.length, type:'pavement'};
+			//middlePaths[side][0] = {start:0, end:this.guidingPath.length, type:'continuous'};
+			var prev = 0;
+			for(var index in this.sideStreets[side]){
+				var curStr = this.sideStreets[side][index];
+				var d = /*side ? this.guidingPath.length - curStr.entranceDistance :*/ curStr.entranceDistance;
+				var crossStart = d - curStr.nLanes*style.laneWidth;
+				var crossEnd = d + curStr.nLanes*style.laneWidth;
+				pedestrianPaths[side][prev].end = crossStart;
+				//middlePaths[side][prev].end = crossStart;
+				prev++;
+				pedestrianPaths[side][prev] = {start: crossStart, end:crossEnd, type:'zebra'};
+				middlePaths[side].push({start: Math.max(0,crossStart-style.middlePathEntranceDashOffset), end: Math.min(this.guidingPath.length,crossEnd+style.middlePathEntranceDashOffset), type:'dashed'});
+				prev++;
+				pedestrianPaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'pavement'};
+				// middlePaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'continuous'};
+				this.sideStreets[side][index].paths = this.prepareSidestreetsAccessPaths(style, curStr, crossStart, crossEnd, side);
+			}	
+		}
 
-	for(var side in this.sideStreets){
-		pedestrianPaths[side][0] = {start:0, end:this.guidingPath.length, type:'pavement'};
-		middlePaths[side][0] = {start:0, end:this.guidingPath.length, type:'continuous'};
-		var prev = 0;
-		for(var index in this.sideStreets[side]){
-			var curStr = this.sideStreets[side][index];
-			var d = /*side ? this.guidingPath.length - curStr.entranceDistance :*/ curStr.entranceDistance;
-			var crossStart = d - curStr.nLanes*style.laneWidth;
-			var crossEnd = d + curStr.nLanes*style.laneWidth;
-			pedestrianPaths[side][prev].end = crossStart;
-			middlePaths[side][prev].end = crossStart;
-			prev++;
-			pedestrianPaths[side][prev] = {start: crossStart, end:crossEnd, type:'zebra'};
-			middlePaths[side][prev] = {start: crossStart, end:crossEnd, type:'dashed'};
-			prev++;
-			pedestrianPaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'pavement'};
-			middlePaths[side][prev] = {start: crossEnd, end:this.guidingPath.length, type:'continuous'};
-			this.sideStreets[side][index].paths = this.prepareSidestreetsAccessPaths(style, curStr, crossStart, crossEnd, side);
-		}	
+		var tmpMiddlePaths = [];
+		var tmpT, tmpF;
+
+		while(middlePaths[true].length > 0 || middlePaths[false].length > 0)
+		{
+			tmpT = tmpT == null ? middlePaths[true].shift() : tmpT;
+			tmpF = tmpF == null ? middlePaths[false].shift() : tmpF;
+			if(tmpT && tmpF)
+			{
+				if(tmpT.start < tmpF.start)
+				{
+					tmpMiddlePaths.push(tmpT);
+					tmpT = null;
+				}
+				else
+				{
+					tmpMiddlePaths.push(tmpF);
+					tmpF = null;
+				}
+			}
+			else
+			{
+				if(tmpT) tmpMiddlePaths.push(tmpT);
+				if(tmpF) tmpMiddlePaths.push(tmpF);
+				tmpT = null;
+				tmpF = null;
+			}
+		}
+
+		var prevMid = tmpMiddlePaths.shift();
+		middlePaths = [{start:0, end:prevMid.start-1, type:'continuous'}, prevMid];
+
+		var arrIdx = 1;
+		var lastOut = null;
+
+		
+		while(tmpMiddlePaths.length > 0)
+		{
+			lastOut = tmpMiddlePaths.shift();
+			if(prevMid.end > lastOut.start)
+			{
+				// merge the two
+				prevMid.end = lastOut.end;
+			}
+			else 
+			{
+				// add prev and a continuous line
+				middlePaths.push({start:prevMid.end, end:lastOut.start-1, type:'continuous'});
+				prevMid = lastOut;
+				middlePaths.push(prevMid);
+			}
+		}
+
+		var lastPathStart = middlePaths[middlePaths.length-1] != null ? middlePaths[middlePaths.length-1].end : 0;
+		middlePaths.push({start:lastPathStart, end:this.guidingPath.length, type:'continuous'});
 	}
 
 	if(style.debug)
@@ -169,6 +230,7 @@ Street.prototype.draw = function(style){
 	}
 	
 	this.drawPedestrianLines(pedestrianPaths, style, precision);
+	this.drawMiddleLine(middlePaths, style, precision);
 
 	if(this.id != ""){
 		var signPath = pathOffset(this.guidingPath, this.nLanes+style.laneWidth + 4*style.pavementWidth, precision, {strokeWidth:0, strokColo:'black', dashArray: null});

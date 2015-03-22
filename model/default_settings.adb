@@ -82,45 +82,101 @@ package body default_settings is
       return new_float(default_length_bici);
    end get_default_length_bici;
 
-   function get_default_desired_velocity_auto return new_float is
-      default_desired_velocity_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("desired_velocity");
+   function get_default_desired_velocity_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_desired_velocity_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_desired_velocity_auto:= json.Get("desired_velocity");
       return new_float(default_desired_velocity_auto);
    end get_default_desired_velocity_auto;
 
-   function get_default_time_headway_auto return new_float is
-      default_time_headway_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("time_headway");
+   function get_default_time_headway_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_time_headway_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_time_headway_auto:= json.Get("time_headway");
       return new_float(default_time_headway_auto);
    end get_default_time_headway_auto;
 
-   function get_default_max_acceleration_auto return new_float is
-      default_max_acceleration_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("max_acceleration");
+   function get_default_max_acceleration_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_max_acceleration_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_max_acceleration_auto:= json.Get("max_acceleration");
       return new_float(default_max_acceleration_auto);
    end get_default_max_acceleration_auto;
 
-   function get_default_comfortable_deceleration_auto return new_float is
-      default_comfortable_deceleration_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("comfortable_deceleration");
+   function get_default_comfortable_deceleration_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_comfortable_deceleration_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_comfortable_deceleration_auto:= json.Get("comfortable_deceleration");
       return new_float(default_comfortable_deceleration_auto);
    end get_default_comfortable_deceleration_auto;
 
-   function get_default_s0_auto return new_float is
-      default_s0_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("s0");
+   function get_default_s0_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_s0_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_s0_auto:= json.Get("s0");
       return new_float(default_s0_auto);
    end get_default_s0_auto;
 
-   function get_default_length_auto return new_float is
-      default_length_auto: Float:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("length");
+   function get_default_length_auto(is_bus: Boolean) return new_float is
+      json: JSON_Value;
+      default_length_auto: Float;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_length_auto:= json.Get("length");
       return new_float(default_length_auto);
    end get_default_length_auto;
 
-   function get_default_num_posti_auto return Positive is
-      default_num_posti_auto: Positive:= Get(Val => get_json_default_movement_entity, Field => "default_auto").Get("num_posti");
+   function get_default_num_posti_auto(is_bus: Boolean) return Positive is
+      json: JSON_Value;
+      default_num_posti_auto: Positive;
    begin
+      case is_bus is
+         when True =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_autobus");
+         when False =>
+            json:= Get(Val => get_json_default_movement_entity, Field => "default_auto");
+      end case;
+      default_num_posti_auto:= json.Get("num_posti");
       return default_num_posti_auto;
    end get_default_num_posti_auto;
 

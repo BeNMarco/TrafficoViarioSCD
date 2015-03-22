@@ -249,6 +249,10 @@ package mailbox_risorse_attive is
       function get_last_abitante_in_marciapiede(range_2: id_corsie) return posizione_abitanti_on_road;
 
       procedure configure(risorsa: strada_ingresso_features; inizio_moto: Boolean);
+
+      procedure add_abitante_in_fermata(identificativo_abitante: tratto);
+      function create_array_abitanti_in_fermata return set_tratti;
+      procedure aggiorna_abitanti_in_fermata(abitanti_saliti_in_bus: set_tratti);
    private
       index_inizio_moto: Boolean;
       risorsa_features: strada_ingresso_features;
@@ -270,6 +274,10 @@ package mailbox_risorse_attive is
       bici_temp: ptr_list_posizione_abitanti_on_road:= null;
       main_strada_number_entity: number_entity(False..True,1..1):= (others => (others => 0));
       marciapiedi_number_entity: number_entity(False..True,1..2):= (others => (others => 0));
+
+      abitanti_waiting_bus: ptr_lista_passeggeri:= null;
+      num_abitanti_waiting_bus: Natural:= 0;
+
    end resource_segmento_ingresso;
    type ptr_resource_segmento_ingresso is access all resource_segmento_ingresso;
    type resource_segmenti_ingressi is array(Positive range <>) of ptr_resource_segmento_ingresso;

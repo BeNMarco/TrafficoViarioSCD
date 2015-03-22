@@ -75,7 +75,7 @@ package body resource_map_inventory is
    end wrap_type_registro_ref_rt_quartieri;
 
    procedure configure_quartiere is
-      local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_from_abitanti,get_to_abitanti);
+      local_abitanti: list_abitanti_quartiere:= create_array_abitanti(get_json_abitanti,get_json_autobus,get_from_abitanti,get_to_abitanti);
       local_pedoni: list_pedoni_quartiere:= create_array_pedoni(get_json_pedoni,get_from_abitanti,get_to_abitanti);
       local_bici: list_bici_quartiere:= create_array_bici(get_json_bici,get_from_abitanti,get_to_abitanti);
       local_auto: list_auto_quartiere:= create_array_auto(get_json_auto,get_from_abitanti,get_to_abitanti);
@@ -105,6 +105,9 @@ package body resource_map_inventory is
       -- end
       registra_gestore_semafori(get_id_quartiere,ptr_rt_handler_semafori_quartiere(semafori_quartiere_obj));
 
+      registra_quartiere_entities_life(get_id_quartiere,ptr_rt_quartiere_entities_life(get_quartiere_entities_life_obj));
+      registra_quartiere_gestore_bus(get_id_quartiere,ptr_rt_gestore_bus_quartiere(get_gestore_bus_quartiere_obj));
+      
       Put_Line("*****///////*******id quartiere " & Positive'Image(get_id_quartiere));
       registra_local_synchronized_obj(get_id_quartiere,ptr_rt_synchronization_tasks(synchronization_tasks_partition));
 
@@ -119,7 +122,11 @@ package body resource_map_inventory is
       --ora tutti i rt_ref dei quartieri sono settati
       -- end checkpoint
       obj_registro_ref_rt_quartieri.set_registro_ref_rt_quartieri(get_ref_rt_quartieri);
-
+      -- dopo il checkpoint tt i quartieri hanno registrato il loro gestore di autobus
+      -- posso andare a prendermi tutti i riferimenti con configure_ref_gestori_bus_remoti
+      -- per avere in locale una copia dei riferimenti remoti
+      get_gestore_bus_quartiere_obj.configure_ref_gestori_bus_remoti;
+      
       gps.registra_strade_quartiere(get_id_quartiere,get_urbane,get_ingressi);
       gps.registra_incroci_quartiere(get_id_quartiere,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
 

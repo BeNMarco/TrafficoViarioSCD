@@ -44,7 +44,9 @@ package the_name_server is
    procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life);
    function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life;
 
-
+   procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere);
+   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
+   function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri;
    -- web server
    procedure registra_webserver(my_web: Access_WebServer_Remote_Interface);
    function get_webServer return Access_WebServer_Remote_Interface;
@@ -143,6 +145,18 @@ private
 
    type ptr_registro_quartiere_entities_life is access registro_quartiere_entities_life;
    registro_quartiere_entities_life_obj: ptr_registro_quartiere_entities_life;
+
+   protected type registro_quartieri_gestori_bus(numero_quartieri: Positive) is
+      procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere);
+      function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
+      function get_registro return registro_gestori_bus_quartieri;
+   private
+      registro: registro_gestori_bus_quartieri(1..numero_quartieri);
+   end registro_quartieri_gestori_bus;
+
+   type ptr_registro_quartieri_gestori_bus is access registro_quartieri_gestori_bus;
+   registro_quartieri_gestori_bus_obj: ptr_registro_quartieri_gestori_bus;
+
 
    gps: ptr_gps_interface:= null;
 

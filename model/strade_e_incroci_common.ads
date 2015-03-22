@@ -5,7 +5,10 @@ use numerical_types;
 package strade_e_incroci_common is
    pragma Pure;
 
+   error_in_conversione_da_stringa: exception;
+
    type type_strade is (urbana,ingresso);
+   type type_ingresso is (abitato,fermata);
    type entity_type is (empty,urbana,ingresso,incrocio_a_4,incrocio_a_3,rotonda_a_4);
 
    subtype id_corsie is Positive range 1..2;
@@ -17,6 +20,7 @@ package strade_e_incroci_common is
    function to_string_incroci_type(obj: traiettoria_incroci_type) return String;
    function to_string_ingressi_type(obj: traiettoria_ingressi_type) return String;
    function convert_to_traiettoria_incroci(obj: String) return traiettoria_incroci_type;
+   function convert_string_to_type_ingresso(tipo: String) return type_ingresso;
 
    type rt_strada_features is abstract tagged private;
    function get_lunghezza_road(road: rt_strada_features) return new_float;
@@ -95,14 +99,14 @@ package strade_e_incroci_common is
 
    function create_new_ingresso(val_tipo: type_strade;val_id: Positive;val_id_quartiere: Positive;
                                 val_lunghezza: new_float;val_num_corsie: Positive;val_id_main_strada: Positive;
-                                val_distance_from_road_head: new_float; polo: Boolean) return strada_ingresso_features;
+                                val_distance_from_road_head: new_float; polo: Boolean; val_tipo_ingresso: type_ingresso) return strada_ingresso_features;
 
    function create_tratto(id_quartiere: Natural; id_tratto: Natural) return tratto;
 
    function create_percorso(route: percorso; distance: new_float) return route_and_distance;
 
    function create_abitante(id_abitante: Natural; id_quartiere: Natural; id_luogo_casa: Natural;
-                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying) return abitante;
+                            id_quartiere_luogo_lavoro: Natural; id_luogo_lavoro: Natural; mezzo: means_of_carrying; is_a_bus: Boolean; jolly: Boolean; jolly_to_quartiere: Natural) return abitante;
 
    function create_pedone(id_abitante: Natural; id_quartiere: Natural:= 0; desired_velocity: Float;
                           time_headway: Float; max_acceleration: Float; comfortable_deceleration: Float;
@@ -125,6 +129,7 @@ package strade_e_incroci_common is
    function get_id_main_strada_ingresso(road: strada_ingresso_features) return Positive;
    function get_distance_from_road_head_ingresso(road: strada_ingresso_features) return new_float;
    function get_polo_ingresso(road: strada_ingresso_features) return Boolean;
+   function get_type_ingresso(road: strada_ingresso_features) return type_ingresso;
 
    -- begin get methods road_incrocio_features
    function get_id_quartiere_road_incrocio(road: road_incrocio_features) return Positive;
@@ -138,6 +143,9 @@ package strade_e_incroci_common is
    function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural;
    function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural;
    function get_mezzo_abitante(residente: abitante) return means_of_carrying;
+   function is_a_bus(residente: abitante) return Boolean;
+   function is_a_bus_jolly(residente: abitante) return Boolean;
+   function is_a_jolly_to_quartiere(residente: abitante) return Natural;
 
    procedure set_mezzo_abitante(residente: in out abitante; mezzo: means_of_carrying);
 
@@ -187,6 +195,35 @@ package strade_e_incroci_common is
 
    function create_new_posizione_abitante_from_copy(posizione_abitante: posizione_abitanti_on_road) return posizione_abitanti_on_road;
 
+   type resource_type is (urbana,incrocio,ingresso);
+
+   function convert_string_to_resource_type(tipo_risorsa: String) return resource_type;
+
+   type tratti_fermata is array(Positive range <>) of tratto;
+   type destination_tratto is tagged private;
+
+   function get_quartiere_jolly_to_go(obj: destination_tratto) return Positive;
+   function get_tratto_jolly_to_go(obj: destination_tratto) return tratto'Class;
+
+   function create_destination(to_id_quartiere: Positive; to_place: tratto'Class) return destination_tratto;
+
+   type destination_tratti is array(Positive range <>) of destination_tratto;
+   type linea_bus is tagged private;
+
+   type set_tratti is array(Positive range <>) of tratto;
+
+   function get_numero_fermate(obj: linea_bus) return Natural;
+   function get_num_tratto(obj: linea_bus; num_tratto: Positive) return tratto'Class;
+   function get_jolly_quartiere_to_go(obj: linea_bus; num_jolly_quartiere_to_go: Positive) return tratto'Class;
+
+   function create_linea_bus(from_id_quartiere: Positive; to_id_quartiere: Positive; linea: access tratti_fermata; jolly: access destination_tratti) return linea_bus;
+
+   type linee_bus is array(Positive range <>) of linea_bus;
+
+   type tuple_abitanti is array(Positive range <>) of tratto;
+
+   type set is array(Positive range <>) of Natural;
+
 private
 
    type estremo_urbana is tagged record
@@ -210,6 +247,7 @@ private
       					-- si tratta sempre di una strada locale e non remota
       distance_from_road_head : new_float; -- distanza dalle coordinate from della strada principale
       polo: Boolean;
+      tipo_ingresso: type_ingresso;
    end record;
 
    type road_incrocio_features is tagged record
@@ -233,6 +271,10 @@ private
       move_by: means_of_carrying:=  walking;
    end record;
 
+   -- NOTA type abitante per gli autobus:
+   -- id_luogo_casa => stazione_partenza
+   -- id_quartiere_luogo_lavoro => jolly
+   -- id_luogo_lavoro => linea_da_percorrere;
    type abitante is tagged record
       id_abitante: Natural:= 0;
       id_quartiere: Natural:= 0;
@@ -240,6 +282,9 @@ private
       id_quartiere_luogo_lavoro: Natural:= 0;
       id_luogo_lavoro: Natural:= 0;
       mezzo: means_of_carrying;
+      bus: Boolean:= False;
+      jolly: Boolean:= False;
+      jolly_to_quartiere: Natural:= 0;
    end record;
 
    type move_parameters is tagged record
@@ -283,5 +328,16 @@ private
       backup_corsia_to_go: Natural;
    end record;
 
+   type destination_tratto is tagged record
+      to_id_quartiere: Positive;
+      to_place: tratto;
+   end record;
+
+   type linea_bus is tagged record
+      from_id_quartiere: Positive;
+      to_id_quartiere: Positive;
+      linea: access tratti_fermata;
+      jolly: access destination_tratti;
+   end record;
 
 end strade_e_incroci_common;

@@ -3733,6 +3733,71 @@ package body mailbox_risorse_attive is
          end case;
       end get_last_abitante_in_marciapiede;
 
+      procedure add_abitante_in_fermata(identificativo_abitante: tratto) is
+         ab_to_add: lista_passeggeri:= create_lista_passeggeri(identificativo_abitante,null);
+         prec_list: ptr_lista_passeggeri;
+         list: ptr_lista_passeggeri;
+      begin
+         if abitanti_waiting_bus=null then
+            abitanti_waiting_bus:= new lista_passeggeri'(ab_to_add);
+         else
+            prec_list:= null;
+            list:= abitanti_waiting_bus;
+            while list/=null loop
+               prec_list:= list;
+               list:= list.get_next;
+            end loop;
+            prec_list.set_next(new lista_passeggeri'(ab_to_add));
+         end if;
+         num_abitanti_waiting_bus:= num_abitanti_waiting_bus+1;
+      end add_abitante_in_fermata;
+
+      function create_array_abitanti_in_fermata return set_tratti is
+         array_abitanti: set_tratti(1..num_abitanti_waiting_bus);
+         list: ptr_lista_passeggeri;
+      begin
+         list:= abitanti_waiting_bus;
+         for i in 1..num_abitanti_waiting_bus loop
+            if list=null then
+               raise list_abitanti_error;
+            end if;
+            array_abitanti(i):= list.get_identificativo_abitante;
+            list:= list.get_next;
+         end loop;
+         return array_abitanti;
+      end create_array_abitanti_in_fermata;
+
+      procedure aggiorna_abitanti_in_fermata(abitanti_saliti_in_bus: set_tratti) is
+         list: ptr_lista_passeggeri;
+         prec_list: ptr_lista_passeggeri;
+         segnale: Boolean;
+      begin
+         -- abitanti_saliti_in_bus è un array in cui se si trova
+         -- un tratto(0,0) allora non ci sono più abitanti significativi nell'array
+         for i in abitanti_saliti_in_bus'Range loop
+            if abitanti_saliti_in_bus(i).get_id_quartiere_tratto=0 then
+               return;
+            end if;
+            -- si ha un abitante significativo
+            list:= abitanti_waiting_bus;
+            prec_list:= null;
+            segnale:= True;
+            while segnale and then list/=null loop
+               if list.get_identificativo_abitante=abitanti_saliti_in_bus(i) then
+                  segnale:= False;
+                  num_abitanti_waiting_bus:= num_abitanti_waiting_bus-1;
+                  if prec_list=null then
+                     abitanti_waiting_bus:= abitanti_waiting_bus.get_next;
+                  else
+                     prec_list.set_next(list.get_next);
+                  end if;
+               else
+                  list:= list.get_next;
+               end if;
+            end loop;
+         end loop;
+      end aggiorna_abitanti_in_fermata;
+
       procedure configure(risorsa: strada_ingresso_features; inizio_moto: Boolean) is
       begin
          risorsa_features:= risorsa;

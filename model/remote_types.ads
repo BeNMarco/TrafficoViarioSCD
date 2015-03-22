@@ -19,6 +19,8 @@ package remote_types is
    function get_current_tratto(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
    function get_number_steps_to_finish_route(obj: access rt_location_abitanti; id_abitante: Positive) return Natural is abstract;
    function get_current_position(obj: access rt_location_abitanti; id_abitante: Positive) return Positive is abstract;
+   function get_destination_abitante_in_bus(obj: access rt_location_abitanti; id_abitante: Positive) return tratto is abstract;
+   procedure set_destination_abitante_in_bus(obj: access rt_location_abitanti; id_abitante: Positive; destination: tratto) is abstract;
    type gps_abitanti_quartieri is array(Positive range <>) of ptr_rt_location_abitanti;
 
    type rt_quartiere_utilities is synchronized interface;
@@ -32,9 +34,21 @@ package remote_types is
    function get_type_entity(obj: access rt_quartiere_utilities; id_entità: Positive) return entity_type is abstract;
    function get_id_main_road_from_id_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Natural is abstract;
    function get_index_luogo_from_id_json(obj: access rt_quartiere_utilities; json_key: Positive) return Positive is abstract;
-   function get_from_ingressi_quartiere(obj: access rt_quartiere_utilities) return Natural is abstract;
+   --function get_from_ingressi_quartiere(obj: access rt_quartiere_utilities) return Natural is abstract;
    function is_incrocio(obj: access rt_quartiere_utilities; id_risorsa: Positive) return Boolean is abstract;
+   function get_from_type_resource_quartiere(obj: access rt_quartiere_utilities; resource: resource_type) return Natural is abstract;
+   function get_to_type_resource_quartiere(obj: access rt_quartiere_utilities; resource: resource_type) return Natural is abstract;
+   function get_id_fermata_id_urbana(obj: access rt_quartiere_utilities; id_urbana: Positive) return Natural is abstract;
+
    type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
+
+   type rt_gestore_bus_quartiere is synchronized interface;
+   type ptr_rt_gestore_bus_quartiere is access all rt_gestore_bus_quartiere'Class;
+   procedure autobus_arrived_at_fermata(obj: access rt_gestore_bus_quartiere; to_id_autobus: Positive; abitanti: set_tratti; from_fermata: tratto) is abstract;
+   function get_num_fermate_rimaste(obj: access rt_gestore_bus_quartiere; id_autobus: Positive) return Natural is abstract;
+   function get_num_fermata_arrived(id_autobus: Positive) return Positive is abstract;
+
+   type registro_gestori_bus_quartieri is array(Positive range <>) of ptr_rt_gestore_bus_quartiere;
 
    type rt_handler_semafori_quartiere is abstract tagged limited private;
    type ptr_rt_handler_semafori_quartiere is access all rt_handler_semafori_quartiere'Class;
@@ -75,6 +89,8 @@ package remote_types is
    procedure calcola_bound_avanzamento_in_incrocio(obj: access rt_incrocio; index_road: in out Natural; indice: Natural; traiettoria_car: traiettoria_incroci_type; corsia: id_corsie; num_car: Natural; bound_distance: in out new_float; stop_entity: in out Boolean; distance_to_next_car: in out new_float; from_id_quartiere_road: Natural:= 0; from_id_road: Natural:= 0) is abstract;
 
    procedure new_abitante_to_move(obj: access rt_ingresso; id_quartiere: Positive; id_abitante: Positive; mezzo: means_of_carrying) is abstract;
+   procedure add_abitante_in_fermata(obj: access rt_ingresso; identificativo_abitante: tratto) is abstract;
+   procedure aggiorna_abitanti_in_fermata(obj: access rt_ingresso; abitanti_saliti_in_bus: set_tratti) is abstract;
 
    type set_resources_ingressi is array(Positive range <>) of ptr_rt_ingresso;
    type set_resources_urbane is array(Positive range <>) of ptr_rt_urbana;
@@ -114,8 +130,9 @@ package remote_types is
 
    type rt_quartiere_entities_life is abstract tagged limited private;
    type ptr_rt_quartiere_entities_life is access all rt_quartiere_entities_life'Class;
-   --pragma Asynchronous(ptr_rt_quartiere_entities_life);
+   pragma Asynchronous(ptr_rt_quartiere_entities_life);
    procedure abitante_is_arrived(obj: rt_quartiere_entities_life; id_abitante: Positive) is abstract;
+   procedure abitante_scende_dal_bus(obj: rt_quartiere_entities_life; id_abitante: Positive; alla_fermata: tratto) is abstract;
    -- to set an asynchronus procedure you must have all IN parameter
    -- to set a synchronus procedure you must have IN-OUT parameters
 

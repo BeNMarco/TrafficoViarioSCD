@@ -101,6 +101,12 @@ Simulation.prototype.initPrevState = function(state) {
 	}
 }
 
+Simulation.prototype.getNewDistacnce = function(distance, prevPosition)
+{
+	var curDist = (distance < 0) ? 0 : distance;
+	return prevPosition + ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+}
+
 Simulation.prototype.moveObjects = function(time) {
 	this.currentState.stateTime += time;
 	var len = this.currentState.cars.length
@@ -128,7 +134,7 @@ Simulation.prototype.moveObjects = function(time) {
 				newDistance = curCarState.distanza;
 			}
 			// otherwise we compute the correct position
-			else if (doesExists(curCar.prevState)) {
+			else {
 				var prevState = curCar.prevState;
 				// if the object switched from a place to another
 				// if(curCar.where !=
@@ -187,9 +193,8 @@ Simulation.prototype.moveObjects = function(time) {
 						* prevPosition
 						+ 1
 						* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
-			} else {
-
 			}
+
 			var newPos = null;
 			switch (curCarState.where) {
 			case 'strada':

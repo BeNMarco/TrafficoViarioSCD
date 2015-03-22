@@ -15,9 +15,9 @@ function EntitiesStyle(){
 	this.carColor = 'red';
 	this.busShape = {type:'Rectangle', args: {point:[0,0],size:[8,15]}};
 	this.busColor = 'blue';
-	this.bikeShape = {type:'Circle', args: {center:[0,0], radius:3}};
+	this.bikeShape = {type:'Circle', args: {center:[0,0], radius:0.5}};
 	this.bikeColor = 'green';
-	this.pedestrianShape = {type:'Circle', args: {center:[0,0], radius:3}};
+	this.pedestrianShape = {type:'Circle', args: {center:[0,0], radius:0.5}};
 	this.pedestrianColor = 'pink';
 }
 

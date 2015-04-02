@@ -74,7 +74,8 @@ pragma Elaborate_Body;
 
 
    protected type report_log is new rt_report_log with
-      procedure configure;
+        procedure configure;
+         procedure finish(id_quartiere: Positive);
       --procedure write(stringa: String);
       procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean);
    private

@@ -32,6 +32,13 @@ use numerical_types;
 
 package body mailbox_risorse_attive is
 
+   procedure close_mailbox is
+   begin
+      for i in urbane_segmento_resources'Range loop
+         urbane_segmento_resources(i).exit_system;
+      end loop;
+   end close_mailbox;
+
    function calculate_bound_to_overtake(abitante: ptr_list_posizione_abitanti_on_road; polo: Boolean; id_urbana: Positive) return new_float is
       distance: new_float;
    begin
@@ -206,6 +213,16 @@ package body mailbox_risorse_attive is
 
    protected body resource_segmento_urbana is
 
+      function get_id_risorsa return Positive is
+      begin
+         return id_risorsa;
+      end get_id_risorsa;
+
+      function get_id_quartiere_risorsa return Positive is
+      begin
+         return get_id_quartiere;
+      end get_id_quartiere_risorsa;
+
       procedure create_img(json_1: out JSON_Value) is
          --json_2: JSON_Array;
          --json_3: JSON_Value;
@@ -343,14 +360,26 @@ package body mailbox_risorse_attive is
 
       end recovery_resource;
 
-      entry ingresso_wait_turno when finish_delta_urbana is
+      entry ingresso_wait_turno when (exit_system_stato or else finish_delta_urbana) is
       begin
-         num_ingressi_ready:=num_ingressi_ready+1;
-         if num_ingressi_ready=num_ingressi then
-            finish_delta_urbana:= False;
-            num_ingressi_ready:= 0;
+         if exit_system_stato=False then
+            num_ingressi_ready:=num_ingressi_ready+1;
+            if num_ingressi_ready=num_ingressi then
+               finish_delta_urbana:= False;
+               num_ingressi_ready:= 0;
+            end if;
          end if;
       end ingresso_wait_turno;
+
+      --entry wait_update_view when finish_update_view is
+      --begin
+      --   null;
+      --end wait_update_view;
+
+      --procedure view_updated(val: Boolean) is
+      --begin
+      --   finish_update_view:= val;
+      --end view_updated;
 
       procedure delta_terminate is
       begin
@@ -358,13 +387,46 @@ package body mailbox_risorse_attive is
          finish_delta_urbana:= True;
       end delta_terminate;
 
-      function get_num_estremi_urbana return Positive is
+      function get_num_estremi_urbana return Natural is
+         array_estremi_strada_urbana: estremi_strada_urbana:= get_estremi_urbana(id_risorsa);
+         val: Natural;
       begin
-         if array_estremi_strada_urbana(2)=null then
-            return 1;
+         if array_estremi_strada_urbana(1).get_id_quartiere_estremo_urbana=0 then
+            val:= 0;
          else
-            return 2;
+            declare
+               temp_re: registro_quartieri:= get_quartiere_utilities_obj.get_saved_partitions;
+            begin
+               --array_estremi_strada_urbana(1)/=null
+               --> temp_estremi(1).get_id_quartiere_estremo_urbana/=0
+               if temp_re(array_estremi_strada_urbana(1).get_id_quartiere_estremo_urbana)/=null then
+                  -- ritorna almeno 1
+                  if get_quartiere_utilities_obj.is_a_quartiere_to_wait(array_estremi_strada_urbana(1).get_id_quartiere_estremo_urbana) then
+                     if array_estremi_strada_urbana(2).get_id_quartiere_estremo_urbana=0 then
+                        val:= 1;
+                     else
+                        --array_estremi_strada_urbana(2)/=null
+                        --> temp_estremi(2).get_id_quartiere_estremo_urbana/=0
+                        if temp_re(array_estremi_strada_urbana(2).get_id_quartiere_estremo_urbana)/=null then
+                           if get_quartiere_utilities_obj.is_a_quartiere_to_wait(array_estremi_strada_urbana(2).get_id_quartiere_estremo_urbana) then
+                              val:= 2;
+                           else
+                              val:= 1;
+                           end if;
+                        else
+                           val:= 1;
+                        end if;
+                     end if;
+                  else
+                     val:= 0;
+                  end if;
+               else
+                  val:= 0;
+               end if;
+            end;
          end if;
+
+         return val;
       end get_num_estremi_urbana;
 
       function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road is
@@ -379,9 +441,11 @@ package body mailbox_risorse_attive is
          return null;
       end slide_list_road;
 
-      entry wait_incroci when get_num_estremi_urbana=num_delta_incroci_finished is
+      entry wait_incroci when (exit_system_stato or else (get_num_estremi_urbana=num_delta_incroci_finished)) is
       begin
-         num_delta_incroci_finished:= 0;
+         if exit_system_stato=False then
+            num_delta_incroci_finished:= 0;
+         end if;
       end wait_incroci;
 
       procedure delta_incrocio_finished is
@@ -411,11 +475,6 @@ package body mailbox_risorse_attive is
          end loop;
 
       end configure;
-
-      procedure set_estremi_urbana(estremi: estremi_resource_strada_urbana) is
-      begin
-         array_estremi_strada_urbana:= estremi;
-      end set_estremi_urbana;
 
       procedure aggiungi_entità_from_ingresso(mezzo: means_of_carrying; id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type;
                                               id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_da_prendere: trajectory_to_follow) is
@@ -562,8 +621,6 @@ package body mailbox_risorse_attive is
          state_view_abitante: JSON_Value;
          bound_overtaken: new_float;
 
-         ab: posizione_abitanti_on_road;
-
          main_list: ptr_list_posizione_abitanti_on_road;
          fine_ingresso_distance: new_float;
          car_length: new_float;
@@ -628,7 +685,6 @@ package body mailbox_risorse_attive is
                            abitante.set_came_from_ingresso(True);  --  set flag to True
                            while list_macchine_in_strada/=null and then list_macchine_in_strada.posizione_abitante.get_where_now_posizione_abitanti<abitante.get_where_now_posizione_abitanti loop
                               prec_list_macchine_in_strada:= list_macchine_in_strada;
-                              ab:= prec_list_macchine_in_strada.posizione_abitante;
                               list_macchine_in_strada:= list_macchine_in_strada.next;
                            end loop;
                            new_abitante:= create_new_list_posizione_abitante(abitante,list_macchine_in_strada);
@@ -657,8 +713,9 @@ package body mailbox_risorse_attive is
                            if list.posizione_abitante.get_where_now_posizione_abitanti<length_traiettoria then
                               list.posizione_abitante.set_where_now_abitante(list.posizione_abitante.get_where_next_posizione_abitanti);
                               if list.posizione_abitante.get_where_now_posizione_abitanti>=length_traiettoria then
-                                 get_ingressi_segmento_resources(ordered_ingressi_polo(polo)(i)).new_car_finish_route(list.posizione_abitante);
-                                 list.posizione_abitante.set_where_now_abitante(new_float'Last);
+                                 set_traiettorie_ingressi(key_ingresso,traiettoria):= set_traiettorie_ingressi(key_ingresso,traiettoria).next;
+                                 --get_ingressi_segmento_resources(ordered_ingressi_polo(polo)(i)).new_car_finish_route(list.posizione_abitante);
+                                 --list.posizione_abitante.set_where_now_abitante(new_float'Last);
                               else
                                  state_view_abitante:= create_car_traiettoria_ingresso_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),polo,Float(get_ingresso_from_id(ordered_ingressi_polo(polo)(i)).get_distance_from_road_head_ingresso),traiettoria);
                                  Append(state_view_abitanti,state_view_abitante);
@@ -714,9 +771,12 @@ package body mailbox_risorse_attive is
          state_view_abitante: JSON_Value;
          distance_ingresso: new_float;
          flag_overtake_next_corsia: Boolean;
-         ab: posizione_abitanti_on_road;
+
          polo_ingresso: Boolean;
          log_str: Unbounded_String;
+         pragma warnings(off);
+         default_abitante: posizione_abitanti_on_road;
+         pragma warnings(on);
       begin
          for i in main_strada'Range(1) loop
             for j in main_strada'Range(2) loop
@@ -847,13 +907,12 @@ package body mailbox_risorse_attive is
                            end if;
                            list_abitanti_traiettoria:= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory,not_ordered),traiettoria);
                            -- update view state
-                           state_view_abitante:= create_car_traiettoria_ingresso_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(main_list.posizione_abitante.get_where_now_posizione_abitanti),polo_ingresso,Float(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso),traiettoria);
-                           Append(state_view_abitanti,state_view_abitante);
+                           --state_view_abitante:= create_car_traiettoria_ingresso_state(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(main_list.posizione_abitante.get_where_now_posizione_abitanti),polo_ingresso,Float(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_distance_from_road_head_ingresso),traiettoria);
+                           --Append(state_view_abitanti,state_view_abitante);
                            -- end update
                            prec_list_abitanti_traiettoria:= null;
                            while list_abitanti_traiettoria/=null loop
                               prec_list_abitanti_traiettoria:= list_abitanti_traiettoria;
-                              ab:= prec_list_abitanti_traiettoria.posizione_abitante;
                               list_abitanti_traiettoria:= list_abitanti_traiettoria.next;
                            end loop;
                            if prec_list_abitanti_traiettoria=null then
@@ -884,7 +943,18 @@ package body mailbox_risorse_attive is
             end loop;
          end loop;
 
-         -- controllo di possibili errori
+         for i in main_strada'Range(1) loop
+            for j in main_strada'Range(2) loop
+               if backup_temp_cars_in_transizione(i,j).get_destination.get_departure_corsia/=0 then
+                  Put_Line("temp da incrocio in urbana " & Positive'Image(backup_temp_cars_in_transizione(i,j).get_id_abitante_posizione_abitanti) & " " & new_float'Image(backup_temp_cars_in_transizione(i,j).get_where_now_posizione_abitanti));
+                  state_view_abitante:= create_car_urbana_state(backup_temp_cars_in_transizione(i,j).get_id_quartiere_posizione_abitanti,backup_temp_cars_in_transizione(i,j).get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(backup_temp_cars_in_transizione(i,j).get_where_now_posizione_abitanti),i,j);
+                  Append(state_view_abitanti,state_view_abitante);
+               end if;
+               backup_temp_cars_in_transizione(i,j):= default_abitante;
+            end loop;
+         end loop;
+
+                  -- controllo di possibili errori
          for i in main_strada'Range(1) loop
             for j in main_strada'Range(2) loop
                main_list:= main_strada(i,j);
@@ -1546,7 +1616,6 @@ package body mailbox_risorse_attive is
                   end if;
                   main_strada(polo,num_corsia):= new_abitante;
                   main_strada_number_entity(polo,num_corsia):= main_strada_number_entity(polo,num_corsia)+1;
-                  temp_cars_in_transizione(polo,num_corsia).set_destination(create_trajectory_to_follow(0,0,0,0,empty));
                end if;
             end loop;
          end loop;
@@ -1555,6 +1624,9 @@ package body mailbox_risorse_attive is
       procedure sposta_bipedi_in_transizione_da_incroci is
          list: ptr_list_posizione_abitanti_on_road;
          new_abitante: ptr_list_posizione_abitanti_on_road;
+         pragma warnings(off);
+         default_abitante: posizione_abitanti_on_road;
+         pragma warnings(on);
       begin
          for polo in Boolean'Range loop
             for num_corsia in id_corsie'Range loop
@@ -1564,7 +1636,6 @@ package body mailbox_risorse_attive is
                   new_abitante.posizione_abitante:= temp_bipedi_in_transizione(polo,num_corsia);
                   new_abitante.next:= list;
                   marciapiedi(polo,num_corsia):= new_abitante;
-                  temp_bipedi_in_transizione(polo,num_corsia).set_destination(create_trajectory_to_follow(0,0,0,0,empty));
                end if;
             end loop;
          end loop;
@@ -1589,8 +1660,10 @@ package body mailbox_risorse_attive is
       begin
          for polo in Boolean'Range loop
             for num_corsia in id_corsie'Range loop
+               backup_temp_cars_in_transizione(polo,num_corsia):= temp_cars_in_transizione(polo,num_corsia);
                temp_cars_in_transizione(polo,num_corsia):= default_abitante;
                temp_cars_in_transizione(polo,num_corsia).set_destination(create_trajectory_to_follow(0,0,0,0,empty));
+               backup_temp_bipedi_in_transizione(polo,num_corsia):= temp_bipedi_in_transizione(polo,num_corsia);
                temp_bipedi_in_transizione(polo,num_corsia):= default_abitante;
                temp_bipedi_in_transizione(polo,num_corsia).set_destination(create_trajectory_to_follow(0,0,0,0,empty));
             end loop;
@@ -1780,9 +1853,16 @@ package body mailbox_risorse_attive is
       -- HANNO INGRESSI CON MACCHINE IN SVOLTA CHE INTERSECANO CON LA TRAIETTORIA uscita_andata
       function is_index_ingresso_in_svolta(ingresso: Positive; traiettoria: traiettoria_ingressi_type) return Boolean is
          abitante: ptr_list_posizione_abitanti_on_road;
+         altro_ab: ptr_list_posizione_abitanti_on_road;
       begin
          -- cambia da traiettoria a traiettoria
          abitante:= get_abitante_from_ingresso(ingresso,traiettoria);
+         if (traiettoria=entrata_andata or else traiettoria=entrata_ritorno) and abitante=null then
+            altro_ab:= get_ingressi_segmento_resources(ingresso).get_first_abitante_to_exit_from_urbana(car);
+            if altro_ab/=null and then altro_ab.posizione_abitante.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(altro_ab.posizione_abitante.get_id_quartiere_posizione_abitanti,altro_ab.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva<0.0 then
+               return True;
+            end if;
+         end if;
          if abitante=null then
             return False;
          end if;
@@ -2671,17 +2751,20 @@ package body mailbox_risorse_attive is
                if in_corsia=2 then
                   if list_traiettorie_uscita_andata/=null and then list_traiettorie_uscita_andata.posizione_abitante.get_where_now_posizione_abitanti>0.0 then
                      distance_one:= distance_ingresso;
-                  elsif list_traiettorie_uscita_ritorno/=null and then (list_traiettorie_uscita_ritorno.posizione_abitante.get_where_now_posizione_abitanti>0.0 and then (list_traiettorie_uscita_ritorno.posizione_abitante.get_where_now_posizione_abitanti-
+                  end if;
+                  if list_traiettorie_uscita_ritorno/=null and then (list_traiettorie_uscita_ritorno.posizione_abitante.get_where_now_posizione_abitanti>0.0 and then (list_traiettorie_uscita_ritorno.posizione_abitante.get_where_now_posizione_abitanti-
                     get_quartiere_utilities_obj.get_auto_quartiere(list_traiettorie_uscita_ritorno.posizione_abitante.get_id_quartiere_posizione_abitanti,
                                                                    list_traiettorie_uscita_ritorno.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie)) then
                      distance_one:= distance_ingresso;
-                  elsif car_distance<=distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia then
+                  end if;
+                  if car_distance<=distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia then
                      if list_traiettorie_entrata_ritorno/=null and then list_traiettorie_entrata_ritorno.posizione_abitante.get_where_now_posizione_abitanti>get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie then
                                                                          --and then (list_traiettorie_entrata_ritorno.posizione_abitante.get_where_now_posizione_abitanti-
                     							 --get_quartiere_utilities_obj.get_auto_quartiere(list_traiettorie_entrata_ritorno.posizione_abitante.get_id_quartiere_posizione_abitanti,
                                                                          --list_traiettorie_entrata_ritorno.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva>get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie)) then
                         distance_one:= distance_ingresso-get_larghezza_corsia-get_larghezza_marciapiede;
-                     elsif list_traiettorie_entrata_andata/=null and then list_traiettorie_entrata_andata.posizione_abitante.get_where_now_posizione_abitanti>=0.0 then
+                     end if;
+                     if list_traiettorie_entrata_andata/=null and then list_traiettorie_entrata_andata.posizione_abitante.get_where_now_posizione_abitanti>=0.0 then
                         car_length:= get_quartiere_utilities_obj.get_auto_quartiere(list_traiettorie_entrata_andata.posizione_abitante.get_id_quartiere_posizione_abitanti,
                                                                                     list_traiettorie_entrata_andata.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                         if list_traiettorie_entrata_andata.next/=null then
@@ -2704,7 +2787,8 @@ package body mailbox_risorse_attive is
                                                                                list_traiettorie_uscita_ritorno.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_traiettoria_ingresso(uscita_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie)) then
                      distance_one:= distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia;
                      Put_Line("stop 1656 " & new_float'Image(car_distance) & " uscita ritorno: " & new_float'Image(list_traiettorie_uscita_ritorno.posizione_abitante.get_where_now_posizione_abitanti));
-                  elsif car_distance<=distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia then
+                  end if;
+                  if car_distance<=distance_ingresso-get_larghezza_marciapiede-get_larghezza_corsia then
                      if list_traiettorie_entrata_ritorno/=null and then (list_traiettorie_entrata_ritorno.posizione_abitante.get_where_now_posizione_abitanti>get_traiettoria_ingresso(entrata_ritorno).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie
                                                                          and then (list_traiettorie_entrata_ritorno.posizione_abitante.get_where_now_posizione_abitanti-
                                                                                      get_quartiere_utilities_obj.get_auto_quartiere(list_traiettorie_entrata_ritorno.posizione_abitante.get_id_quartiere_posizione_abitanti,
@@ -2933,7 +3017,7 @@ package body mailbox_risorse_attive is
          return calculate_distance_ingressi_from_given_distance(polo_to_consider,in_corsia,car_distance);
       end calculate_distance_to_next_ingressi;
 
-      function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean is
+      function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean; altro_ab: ptr_list_posizione_abitanti_on_road) return Boolean is
          list: ptr_list_posizione_abitanti_on_road;
          prec_list: ptr_list_posizione_abitanti_on_road:= null;
          move_entity: move_parameters;
@@ -2952,7 +3036,13 @@ package body mailbox_risorse_attive is
                      costante:= get_traiettoria_cambio_corsia.get_lunghezza_lineare_traiettoria;
                   end if;
                   if (list.posizione_abitante.get_where_now_posizione_abitanti+costante>=distance-(get_larghezza_marciapiede+get_larghezza_corsia)*3.0 and list.posizione_abitante.get_where_now_posizione_abitanti<=distance+get_larghezza_marciapiede+get_larghezza_corsia+min_veicolo_distance) then
-                     return False;
+                     -- ottimizzazione
+                     if altro_ab=null then
+                        return False;
+                     end if;
+                     if altro_ab/=null and then list.posizione_abitante.get_where_now_posizione_abitanti>=distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                        return False;
+                     end if;
                   end if;
                else
                   -- l'abitante è in sorpasso verso la corsia 1 ma non ha ancora
@@ -2990,7 +3080,13 @@ package body mailbox_risorse_attive is
                         --Put_Line("check uscita andata " & Positive'Image(prec_list.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(prec_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " where now " & new_float'Image(prec_list.posizione_abitante.get_where_now_posizione_abitanti) & " where next " & new_float'Image(prec_list.posizione_abitante.get_where_next_posizione_abitanti));
                         return True;
                      else
-                        return False;
+                        -- ottimizzazione
+                        if altro_ab/=null and then prec_list.posizione_abitante.get_where_now_posizione_abitanti<distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                           -- allora si troverà davanti l'abitante in entrata andata
+                           return True;
+                        else
+                           return False;
+                        end if;
                      end if;
                   else
                      if prec_list.posizione_abitante.get_where_now_posizione_abitanti+get_traiettoria_cambio_corsia.get_lunghezza_lineare_traiettoria/2.0<distance then
@@ -3004,7 +3100,12 @@ package body mailbox_risorse_attive is
                      --Put_Line("check uscita andata " & Positive'Image(prec_list.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(prec_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " where now " & new_float'Image(prec_list.posizione_abitante.get_where_now_posizione_abitanti) & " where next " & new_float'Image(prec_list.posizione_abitante.get_where_next_posizione_abitanti));
                      return True;
                   else
-                     return False;
+                     -- ottimizzazione
+                     if altro_ab/=null and then prec_list.posizione_abitante.get_where_next_posizione_abitanti<distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                        return True;
+                     else
+                        return False;
+                     end if;
                   end if;
                end if;
             end if;
@@ -3020,7 +3121,13 @@ package body mailbox_risorse_attive is
                      costante:= get_traiettoria_cambio_corsia.get_lunghezza_lineare_traiettoria;
                   end if;
                   if (list.posizione_abitante.get_where_now_posizione_abitanti+costante>=distance-(get_larghezza_marciapiede+get_larghezza_corsia)*3.0 and list.posizione_abitante.get_where_now_posizione_abitanti<=distance+get_larghezza_marciapiede+get_larghezza_corsia) then
-                     return False;
+                     -- ottimizzazione
+                     if altro_ab=null then
+                        return False;
+                     end if;
+                     if altro_ab/=null and then list.posizione_abitante.get_where_now_posizione_abitanti>=distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                        return False;
+                     end if;
                   end if;
                else
                   -- se l'abitante è in sorpasso significa che è in 1 e ha
@@ -3067,7 +3174,13 @@ package body mailbox_risorse_attive is
                         --Put_Line("check uscita andata " & Positive'Image(prec_list.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(prec_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " where now " & new_float'Image(prec_list.posizione_abitante.get_where_now_posizione_abitanti) & " where next " & new_float'Image(prec_list.posizione_abitante.get_where_next_posizione_abitanti));
                         return True;
                      else
-                        return False;
+                        -- ottimizzazione
+                        if altro_ab/=null and then prec_list.posizione_abitante.get_where_now_posizione_abitanti<distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                           -- allora si troverà davanti l'abitante in entrata andata
+                           return True;
+                        else
+                           return False;
+                        end if;
                      end if;
                   else
                      if prec_list.posizione_abitante.get_where_now_posizione_abitanti+get_traiettoria_cambio_corsia.get_lunghezza_lineare_traiettoria/2.0<distance-max_larghezza_veicolo then
@@ -3081,7 +3194,12 @@ package body mailbox_risorse_attive is
                      --Put_Line("check uscita andata " & Positive'Image(prec_list.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(prec_list.posizione_abitante.get_id_abitante_posizione_abitanti) & " where now " & new_float'Image(prec_list.posizione_abitante.get_where_now_posizione_abitanti) & " where next " & new_float'Image(prec_list.posizione_abitante.get_where_next_posizione_abitanti));
                      return True;
                   else
-                     return False;
+                     -- ottimizzazione
+                     if altro_ab/=null and then prec_list.posizione_abitante.get_where_next_posizione_abitanti<distance-get_larghezza_corsia-get_larghezza_marciapiede then
+                        return True;
+                     else
+                        return False;
+                     end if;
                   end if;
                end if;
             end if;
@@ -3202,9 +3320,23 @@ package body mailbox_risorse_attive is
          return True;
       end get_abilitazione_cambio_traiettoria_bipede;
 
+      procedure exit_system is
+      begin
+         exit_system_stato:= True;
+      end exit_system;
+
    end resource_segmento_urbana;
 
    protected body resource_segmento_ingresso is
+      function get_id_risorsa return Positive is
+      begin
+         return id_risorsa;
+      end get_id_risorsa;
+
+      function get_id_quartiere_risorsa return Positive is
+      begin
+         return get_id_quartiere;
+      end get_id_quartiere_risorsa;
 
       procedure create_img(json_1: out JSON_Value) is
          --list: ptr_list_posizione_abitanti_on_road;
@@ -3447,6 +3579,10 @@ package body mailbox_risorse_attive is
          list: ptr_list_posizione_abitanti_on_road;
          mezzo: means_of_carrying;
          in_uscita: Boolean;
+         --position: new_float;
+         pragma warnings(off);
+         default_abitante: posizione_abitanti_on_road;
+         pragma warnings(on);
       begin
          for i in main_strada'Range(1) loop
             list:= main_strada(i,1);
@@ -3462,6 +3598,14 @@ package body mailbox_risorse_attive is
                list:= list.next;
             end loop;
          end loop;
+
+         -- UPDATE VIEW DELL'ABITANTE IN TRANSIZIONE
+         if backup_temp_car_finish_route.get_id_quartiere_posizione_abitanti/=0 then
+            state_view_abitante:= create_car_ingresso_state(backup_temp_car_finish_route.get_id_quartiere_posizione_abitanti,backup_temp_car_finish_route.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(backup_temp_car_finish_route.get_where_now_posizione_abitanti),False);
+            Append(state_view_abitanti,state_view_abitante);
+            Put_Line("id_abitante in temp aggiornata view " & Positive'Image(backup_temp_car_finish_route.get_id_abitante_posizione_abitanti) & " where " & new_float'Image(backup_temp_car_finish_route.get_where_now_posizione_abitanti));
+            backup_temp_car_finish_route:= default_abitante;
+         end if;
 
          -- controllo di possibili errori
          for i in main_strada'Range(1) loop
@@ -3602,6 +3746,7 @@ package body mailbox_risorse_attive is
       begin
          if temp_car_finish_route.get_id_quartiere_posizione_abitanti/=0 then
             new_abitante:= create_new_list_posizione_abitante(create_new_posizione_abitante_from_copy(temp_car_finish_route),main_strada(not index_inizio_moto,1));
+            new_abitante.posizione_abitante.set_where_now_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti);
             if new_abitante.posizione_abitante.get_destination.get_corsia_to_go_trajectory=2 then -- traiettoria da entrata_andata
                new_abitante.posizione_abitante.set_where_next_abitante(new_abitante.posizione_abitante.get_where_now_posizione_abitanti-get_traiettoria_ingresso(entrata_andata).get_lunghezza);
             else
@@ -3617,6 +3762,8 @@ package body mailbox_risorse_attive is
             end if;
             main_strada(not index_inizio_moto,1):= new_abitante;
             main_strada_number_entity(not index_inizio_moto,1):= main_strada_number_entity(not index_inizio_moto,1)+1;
+            Put_Line("id_abitante spostato dai temp " & Positive'Image(temp_car_finish_route.get_id_abitante_posizione_abitanti));
+            backup_temp_car_finish_route:= new_abitante.posizione_abitante;
             temp_car_finish_route:= default_abitante;
          end if;
 
@@ -3632,6 +3779,7 @@ package body mailbox_risorse_attive is
             end if;
             marciapiedi(not index_inizio_moto,1):= new_abitante;
             marciapiedi_number_entity(not index_inizio_moto,1):= marciapiedi_number_entity(not index_inizio_moto,1)+1;
+            backup_temp_bici_finish_route:= new_abitante.posizione_abitante;
             temp_bici_finish_route:= default_abitante;
          end if;
 
@@ -3647,6 +3795,7 @@ package body mailbox_risorse_attive is
             end if;
             marciapiedi(not index_inizio_moto,2):= new_abitante;
             marciapiedi_number_entity(not index_inizio_moto,2):= marciapiedi_number_entity(not index_inizio_moto,2)+1;
+            backup_temp_pedone_finish_route:= new_abitante.posizione_abitante;
             temp_pedone_finish_route:= default_abitante;
          end if;
       end sposta_abitanti_in_entrata_ingresso;
@@ -3685,6 +3834,11 @@ package body mailbox_risorse_attive is
                return pedoni_temp;
          end case;
       end get_temp_marciapiede;
+
+      function get_temp_car_in_entrata return posizione_abitanti_on_road is
+      begin
+         return temp_car_finish_route;
+      end get_temp_car_in_entrata;
 
       function get_index_inizio_moto return Boolean is
       begin
@@ -3817,6 +3971,16 @@ package body mailbox_risorse_attive is
 
    protected body resource_segmento_incrocio is
 
+      function get_id_risorsa return Positive is
+      begin
+         return id_risorsa;
+      end get_id_risorsa;
+
+      function get_id_quartiere_risorsa return Positive is
+      begin
+         return get_id_quartiere;
+      end get_id_quartiere_risorsa;
+
       procedure update_avanzamento_abitante(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: new_float; new_speed: new_float; step_is_just_calculated: Boolean:= False) is
       begin
          if new_speed>0.0 then
@@ -3905,14 +4069,14 @@ package body mailbox_risorse_attive is
          end if;
       end get_num_urbane_to_wait;
 
-      entry wait_turno when finish_delta_incrocio is
-      begin
-         num_urbane_ready:=num_urbane_ready+1;
-         if num_urbane_ready=get_num_urbane_to_wait then
-            finish_delta_incrocio:= False;
-            num_urbane_ready:= 0;
-         end if;
-      end wait_turno;
+      --entry wait_turno when finish_delta_incrocio is
+      --begin
+      --   num_urbane_ready:=num_urbane_ready+1;
+      --   if num_urbane_ready=get_num_urbane_to_wait then
+      --      finish_delta_incrocio:= False;
+      --      num_urbane_ready:= 0;
+      --   end if;
+      --end wait_turno;
 
       procedure delta_terminate is
       begin
@@ -3995,6 +4159,20 @@ package body mailbox_risorse_attive is
       begin
          for i in 1..size_incrocio loop
             for j in id_corsie'Range loop
+               abitante:= temp_car_to_move(i,j);
+               if abitante.get_id_quartiere_posizione_abitanti/=0 then
+                  new_abitante:= new list_posizione_abitanti_on_road;
+                  new_abitante.posizione_abitante:= abitante;
+                  new_abitante.next:= car_to_move(i,j);
+                  car_to_move(i,j):= new_abitante;
+                  temp_car_to_move(i,j):= default_abitante;
+               end if;
+            end loop;
+         end loop;
+
+
+         for i in 1..size_incrocio loop
+            for j in id_corsie'Range loop
                list:= car_to_move(i,j);
                prec_list:= null;
                while list/=null loop
@@ -4035,18 +4213,6 @@ package body mailbox_risorse_attive is
             end loop;
          end loop;
 
-         for i in 1..size_incrocio loop
-            for j in id_corsie'Range loop
-               abitante:= temp_car_to_move(i,j);
-               if abitante.get_id_quartiere_posizione_abitanti/=0 then
-                  new_abitante:= new list_posizione_abitanti_on_road;
-                  new_abitante.posizione_abitante:= abitante;
-                  new_abitante.next:= car_to_move(i,j);
-                  car_to_move(i,j):= new_abitante;
-                  temp_car_to_move(i,j):= default_abitante;
-               end if;
-            end loop;
-         end loop;
       end update_avanzamento_cars;
 
       procedure update_avanzamento_bipedi(state_view_abitanti: in out JSON_Array) is
@@ -4498,7 +4664,6 @@ package body mailbox_risorse_attive is
                               quantità_percorsa:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                            end if;
                            if quantità_percorsa-get_quartiere_utilities_obj.get_auto_quartiere(list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<limite then
-                              Put_Line("STOP RIGA 2600 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                               stop_entity:= True;
                               --if traiettoria_near_car=dritto_2 then
                               --   stop_entity:= True;
@@ -4515,7 +4680,6 @@ package body mailbox_risorse_attive is
                            end if;
                            if traiettoria_car=dritto_1 then
                               stop_entity:= True;
-                              Put_Line("STOP RIGA 2617 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                               --if list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti+quantità_percorsa-
                               --  get_quartiere_utilities_obj.get_auto_quartiere(list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva>=get_traiettoria_incrocio(sinistra).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie then
                               --   update_bound_next_car_in_incrocio(bound_distance,get_larghezza_marciapiede+get_larghezza_corsia*2.0); --  larghezza di una mezza strada
@@ -4600,19 +4764,16 @@ package body mailbox_risorse_attive is
                                     --   update_bound_next_car_in_incrocio(bound_distance,get_larghezza_marciapiede+get_larghezza_corsia*3.0); -- 1 strada e 1/2
                                     --end if;
                                     stop_entity:= True;
-                                    Put_Line("STOP RIGA 2702 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                                  end if;
                               elsif traiettoria_car=sinistra then
                                  if traiettoria_near_car=dritto_1 then
                                     stop_entity:= True;
-                                    Put_Line("STOP RIGA 2707 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                                     --update_bound_next_car_in_incrocio(bound_distance,get_traiettoria_incrocio(sinistra).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie);
                                  end if;
                               end if;
                            elsif traiettoria_near_car=destra and traiettoria_car=dritto_2 then -- per z=1 non entrerà mai
                               --update_bound_next_car_in_incrocio(bound_distance,get_larghezza_marciapiede+get_larghezza_corsia*3.0); -- 1 strada e 1/2
                               stop_entity:= True;
-                              Put_Line("STOP RIGA 2714 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                            elsif traiettoria_near_car=sinistra then-- per z=2 non entrerà mai
                               if list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=get_traiettoria_incrocio(sinistra).get_lunghezza_traiettoria_incrocio then
                                  road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,index_other_road,traiettoria_near_car));
@@ -4624,21 +4785,17 @@ package body mailbox_risorse_attive is
                                  if quantità_percorsa-get_quartiere_utilities_obj.get_auto_quartiere(list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                                   list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_traiettoria_incrocio(sinistra).get_intersezioni_incrocio(dritto_1).get_distanza_intersezione_incrocio+max_larghezza_veicolo then
                                     stop_entity:= True;
-                                    Put_Line("STOP RIGA 2726 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
-                                    --update_bound_next_car_in_incrocio(bound_distance,get_larghezza_marciapiede+get_larghezza_corsia);  -- la si fa avanzare sino ad una corsia
                                  end if;
                               elsif traiettoria_car=dritto_2 then
                                  if quantità_percorsa-get_quartiere_utilities_obj.get_auto_quartiere(list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                                   list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_traiettoria_incrocio(sinistra).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie+max_larghezza_veicolo then
                                     --update_bound_next_car_in_incrocio(bound_distance,get_larghezza_marciapiede+get_larghezza_corsia*1.5);  -- la si fa avanzare sino ad una corsia
                                     stop_entity:= True;
-                                    Put_Line("STOP RIGA 2734 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                                  end if;
                               elsif traiettoria_car=sinistra then
                                  if quantità_percorsa-get_quartiere_utilities_obj.get_auto_quartiere(list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                                   list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_traiettoria_incrocio(sinistra).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie then
                                     stop_entity:= True; -- si ferma la macchina che vuole andare a sinistra
-                                    Put_Line("STOP RIGA 2740 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                                  end if;
                               end if;
                            end if;
@@ -4767,7 +4924,6 @@ package body mailbox_risorse_attive is
                  get_quartiere_utilities_obj.get_auto_quartiere(list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                 list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_larghezza_corsia+get_larghezza_marciapiede then
                   stop_entity:= True;
-                  Put_Line("STOP RIGA 2864 " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                end if;
                if stop_entity=False then
                   if list_near_car/=null then  -- si ha una macchina davanti che è in svolta a dx
@@ -4838,14 +4994,12 @@ package body mailbox_risorse_attive is
                   traiettoria_near_car:= list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow;
                   if traiettoria_near_car=destra then
                      stop_entity:= True;
-                     Put_Line("STOP RIGA 2913 " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                   else  --  =sinistra
                      if list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-
                        get_quartiere_utilities_obj.get_auto_quartiere(list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                       list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<
                        get_traiettoria_incrocio(sinistra).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
                         stop_entity:= True;
-                        Put_Line("STOP RIGA 2920 " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti));
                      end if;
                   end if;
                end if;
@@ -4945,11 +5099,11 @@ package body mailbox_risorse_attive is
                                        end if;
                                     end if;
                                     stop_entity:= True;
-                                    if list_car=null then
-                                       Put_Line("STOP RIGA 2971 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
-                                    else
-                                       Put_Line("STOP RIGA 2971 " & Positive'Image(list_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " a causa di " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " where: " & new_float'Image(list_car.posizione_abitante.get_where_now_posizione_abitanti));
-                                    end if;
+                                    --if list_car=null then
+                                    --   Put_Line("STOP RIGA 2971 " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti));
+                                    --else
+                                    --   Put_Line("STOP RIGA 2971 " & Positive'Image(list_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " a causa di " & Positive'Image(list_near_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " where: " & new_float'Image(list_car.posizione_abitante.get_where_now_posizione_abitanti));
+                                    --end if;
                                  end if;
                               end if;
                            end if;
@@ -4983,11 +5137,11 @@ package body mailbox_risorse_attive is
                     get_quartiere_utilities_obj.get_auto_quartiere(list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,
                                                                             list_near_other_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva<get_larghezza_marciapiede+get_larghezza_corsia*1.5 then
                      stop_entity:= True;
-                     if list_car=null then
-                        Put_Line("STOP RIGA 3005 " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti));
-                     else
-                        Put_Line("STOP RIGA 3005 " & Positive'Image(list_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " a causa di " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " where: " & new_float'Image(list_car.posizione_abitante.get_where_now_posizione_abitanti));
-                     end if;
+                     --if list_car=null then
+                     --  Put_Line("STOP RIGA 3005 " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti));
+                     --else
+                     --   Put_Line("STOP RIGA 3005 " & Positive'Image(list_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " a causa di " & Positive'Image(list_near_other_car.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_near_other_car.posizione_abitante.get_id_abitante_posizione_abitanti) & " where: " & new_float'Image(list_car.posizione_abitante.get_where_now_posizione_abitanti));
+                     --end if;
                   end if;
                end if;
                if stop_entity=False then
@@ -5076,17 +5230,6 @@ package body mailbox_risorse_attive is
 
    end resource_segmento_incrocio;
 
-   protected body resource_segmento_rotonda is
-      entry wait_turno when True is
-      begin
-         null;
-      end wait_turno;
-      procedure delta_terminate is
-      begin
-         null;
-      end delta_terminate;
-   end resource_segmento_rotonda;
-
    function get_urbane_segmento_resources(index: Positive) return ptr_resource_segmento_urbana is
    begin
       return urbane_segmento_resources(index);
@@ -5108,15 +5251,15 @@ package body mailbox_risorse_attive is
       return null;
    end get_incroci_segmento_resources;
 
-   function get_rotonde_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
-   begin
-      if index>=get_from_rotonde_a_4 and index<=get_to_rotonde_a_4 then
-         return get_rotonde_a_4_segmento_resources(index);
-      elsif index>=get_from_rotonde_a_3 and index<=get_to_rotonde_a_3 then
-         return get_rotonde_a_3_segmento_resources(index);
-      end if;
-      return null;
-   end get_rotonde_segmento_resources;
+   --function get_rotonde_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
+   --begin
+   --   if index>=get_from_rotonde_a_4 and index<=get_to_rotonde_a_4 then
+   --      return get_rotonde_a_4_segmento_resources(index);
+   --   elsif index>=get_from_rotonde_a_3 and index<=get_to_rotonde_a_3 then
+   --      return get_rotonde_a_3_segmento_resources(index);
+   --   end if;
+   --   return null;
+   --end get_rotonde_segmento_resources;
 
    function get_incroci_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_incrocio is
    begin
@@ -5128,15 +5271,15 @@ package body mailbox_risorse_attive is
       return incroci_a_3_segmento_resources(index);
    end get_incroci_a_3_segmento_resources;
 
-   function get_rotonde_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
-   begin
-      return rotonde_a_4_segmento_resources(index);
-   end get_rotonde_a_4_segmento_resources;
+   --function get_rotonde_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
+   --begin
+   --   return rotonde_a_4_segmento_resources(index);
+   --end get_rotonde_a_4_segmento_resources;
 
-   function get_rotonde_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
-   begin
-      return rotonde_a_3_segmento_resources(index);
-   end get_rotonde_a_3_segmento_resources;
+   --function get_rotonde_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda is
+   --begin
+   --   return rotonde_a_3_segmento_resources(index);
+   --end get_rotonde_a_3_segmento_resources;
 
    function get_ingressi_urbana(id_urbana: Positive) return ptr_id_ingressi_urbane is
    begin
@@ -5203,13 +5346,13 @@ package body mailbox_risorse_attive is
       val_ptr_resource_urbana: ptr_resource_segmento_urbana;
       val_ptr_resource_ingresso: ptr_resource_segmento_ingresso;
       val_ptr_resource_incrocio: ptr_resource_segmento_incrocio;
-      val_ptr_resource_rotonda: ptr_resource_segmento_rotonda;
+      --val_ptr_resource_rotonda: ptr_resource_segmento_rotonda;
       ptr_resource_urbane: ptr_resource_segmenti_urbane:= new resource_segmenti_urbane(get_from_urbane..get_to_urbane);
       ptr_resource_ingressi: ptr_resource_segmenti_ingressi:= new resource_segmenti_ingressi(get_from_ingressi..get_to_ingressi);
       ptr_resource_incroci_a_4: ptr_resource_segmenti_incroci:= new resource_segmenti_incroci(get_from_incroci_a_4..get_to_incroci_a_4);
       ptr_resource_incroci_a_3: ptr_resource_segmenti_incroci:= new resource_segmenti_incroci(get_from_incroci_a_3..get_to_incroci_a_3);
-      ptr_resource_rotonde_a_4: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_4);
-      ptr_resource_rotonde_a_3: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_3..get_to_rotonde_a_3);
+      --ptr_resource_rotonde_a_4: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_4);
+      --ptr_resource_rotonde_a_3: ptr_resource_segmenti_rotonde:= new resource_segmenti_rotonde(get_from_rotonde_a_3..get_to_rotonde_a_3);
       ingressi_per_urbana: num_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => 0);
       ingressi_per_urbana_per_polo: num_ingressi_urbana_per_polo(get_from_urbane..get_to_urbane,False..True):= (others => (others => 0));
       index_ingressi: id_ingressi_urbane(get_from_urbane..get_to_urbane):= (others => 1);
@@ -5280,17 +5423,6 @@ package body mailbox_risorse_attive is
       end loop;
       incroci_a_3_segmento_resources:= ptr_resource_incroci_a_3;
 
-      for i in get_from_rotonde_a_4..get_to_rotonde_a_4 loop
-         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1); --TO DO
-         ptr_resource_rotonde_a_4(i):= val_ptr_resource_rotonda;
-      end loop;
-      rotonde_a_4_segmento_resources:= ptr_resource_rotonde_a_4;
-
-      for i in get_from_rotonde_a_3..get_to_rotonde_a_3 loop
-         val_ptr_resource_rotonda:= new resource_segmento_rotonda(i,1,1); --TO DO
-         ptr_resource_rotonde_a_3(i):= val_ptr_resource_rotonda;
-      end loop;
-      rotonde_a_3_segmento_resources:= ptr_resource_rotonde_a_3;
    end create_mailbox_entità;
 
    function get_list_ingressi_urbana(id_urbana: Positive) return ptr_list_ingressi_per_urbana is

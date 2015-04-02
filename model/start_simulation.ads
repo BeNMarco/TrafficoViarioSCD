@@ -8,6 +8,9 @@ package start_simulation is
 
    procedure start_entity_to_move;
 
+   procedure recovery_start_entity_to_move;
+
+private
    procedure start_autobus_to_move;
 
 end start_simulation;

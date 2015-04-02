@@ -12,6 +12,26 @@ use data_quartiere;
 
 package body handle_semafori is
 
+  procedure set_num_delta_semafori(obj: in out handler_semafori_quartiere; num_delta: Natural) is
+   begin
+      obj.delta_semafori:= num_delta;
+   end set_num_delta_semafori;
+
+   procedure set_id_turno(obj: in out handler_semafori_quartiere; num_turno: Positive) is
+   begin
+      obj.id_turno:= num_turno;
+   end set_id_turno;
+
+   function get_id_turno(obj: handler_semafori_quartiere) return Positive is
+   begin
+      return obj.id_turno;
+   end get_id_turno;
+
+   function get_num_delta_semafori(obj: handler_semafori_quartiere) return Natural is
+   begin
+      return obj.delta_semafori;
+   end get_num_delta_semafori;
+
    procedure change_semafori(obj: handler_semafori_quartiere) is
       from: Natural;
       to: Natural;

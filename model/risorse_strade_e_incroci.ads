@@ -36,25 +36,26 @@ package risorse_strade_e_incroci is
 
    procedure update_avanzamento_bipedi_in_uscita_ritorno(mailbox: ptr_resource_segmento_urbana; list_abitanti_sidewalk_pedoni: ptr_list_posizione_abitanti_on_road; list_abitanti_sidewalk_bici: ptr_list_posizione_abitanti_on_road; prec_list_abitanti_sidewalk_pedoni: ptr_list_posizione_abitanti_on_road; prec_list_abitanti_sidewalk_bici: ptr_list_posizione_abitanti_on_road; mezzo: means_of_carrying; index_ingresso_opposite_direction: Positive; current_ingressi_structure_type_to_not_consider: ingressi_type; polo: Boolean; id_road: Positive);
 
+   procedure exit_task;
+
    task type core_avanzamento_urbane is new core_avanzamento with
       entry configure(id: Positive);
+      entry kill;
    end core_avanzamento_urbane;
 
    task type core_avanzamento_ingressi is new core_avanzamento with
       entry configure(id: Positive);
+      entry kill;
    end core_avanzamento_ingressi;
-
-   task type core_avanzamento_rotonde is new core_avanzamento with
-      entry configure(id: Positive);
-   end core_avanzamento_rotonde;
 
    task type core_avanzamento_incroci is new core_avanzamento with
       entry configure(id: Positive);
+      entry kill;
    end core_avanzamento_incroci;
 
    type task_container_urbane is array(Positive range <>) of core_avanzamento_urbane;
    type task_container_ingressi is array(Positive range <>) of core_avanzamento_ingressi;
-   type task_container_rotonde is array(Positive range <>) of core_avanzamento_rotonde;
+   --type task_container_rotonde is array(Positive range <>) of core_avanzamento_rotonde;
    type task_container_incroci is array(Positive range <>) of core_avanzamento_incroci;
 
    procedure configure_tasks;
@@ -75,7 +76,7 @@ package risorse_strade_e_incroci is
    procedure calculate_distance_to_next_car_on_road(car_in_corsia: ptr_list_posizione_abitanti_on_road; next_car: ptr_list_posizione_abitanti_on_road; next_car_in_near_corsia: ptr_list_posizione_abitanti_on_road; from_corsia: id_corsie; next_car_on_road: out ptr_list_posizione_abitanti_on_road; next_car_on_road_distance: out new_float);
 
    procedure calculate_parameters_car_in_uscita(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; distance_ingresso: new_float; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
-   procedure calculate_parameters_car_in_entrata(list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
+   procedure calculate_parameters_car_in_entrata(id_ingresso: Positive; list_abitanti: ptr_list_posizione_abitanti_on_road; traiettoria_rimasta_da_percorrere: new_float; next_abitante: ptr_list_posizione_abitanti_on_road; distance_to_stop_line: new_float; traiettoria_to_go: traiettoria_ingressi_type; next_pos_abitante: in out new_float; acceleration: out new_float; new_step: out new_float; new_speed: out new_float);
 
    procedure fix_advance_parameters(mezzo: means_of_carrying; acceleration: in out new_float; new_speed: in out new_float; new_step: in out new_float; speed_abitante: new_float; distance_to_next: new_float; distanza_stop_line: new_float);
 
@@ -88,6 +89,6 @@ private
    task_urbane: task_container_urbane(get_from_urbane..get_to_urbane);
    task_ingressi: task_container_ingressi(get_from_ingressi..get_to_ingressi);
    task_incroci: task_container_incroci(get_from_incroci_a_4..get_to_incroci_a_3);
-   task_rotonde: task_container_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_3);
+   --task_rotonde: task_container_rotonde(get_from_rotonde_a_4..get_to_rotonde_a_3);
 
 end risorse_strade_e_incroci;

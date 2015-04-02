@@ -146,6 +146,11 @@ package body WebServer is
          WS_Wrapper.invia_aggiornamento(data, quartiere);
       end invia_aggiornamento;
 
+      function is_alive return Boolean is
+      begin
+         return True;
+      end is_alive;
+      
       procedure Init is
       begin
          WS_Wrapper.Init;

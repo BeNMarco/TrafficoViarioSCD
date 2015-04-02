@@ -2,12 +2,14 @@ with Ada.Text_IO;
 --with Ada.Task_Identification;
 --with Ada.Dynamic_Priorities;
 --with System;
+with support_type_gps_utilities;
 
 with strade_e_incroci_common;
 with Ada.Exceptions;
 
 use Ada.Text_IO;
 use Ada.Exceptions;
+use support_type_gps_utilities;
 --use Ada.Task_Identification;
 --use Ada.Dynamic_Priorities;
 --use System;
@@ -88,6 +90,11 @@ package body gps_utilities is
 
    protected body registro_strade_resource is
 
+      function is_alive return Boolean is
+      begin
+         return True;
+      end is_alive;
+
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso is
          array_route: percorso(1..size);
          next_route: ptr_percorso:= route;
@@ -106,14 +113,16 @@ package body gps_utilities is
       begin
          for i in grafo'Range
          loop
-            for j in grafo(i)'Range
-            loop
-               for z in 1..4
+            if grafo(i)/=null then
+               for j in grafo(i)'Range
                loop
-                  Put_Line("Nodo:(" & Integer'Image(i) & "," & Integer'Image(j) & "), adiacente:[quartiere_spigolo:" & Integer'Image(grafo(i)(j)(z).get_id_quartiere_strada) & ",id_spigolo:"
+                  for z in 1..4
+                  loop
+                     Put_Line("Nodo:(" & Integer'Image(i) & "," & Integer'Image(j) & "), adiacente:[quartiere_spigolo:" & Integer'Image(grafo(i)(j)(z).get_id_quartiere_strada) & ",id_spigolo:"
                            & Integer'Image(grafo(i)(j)(z).get_id_strada) & ",quartiere_adiacente:" & Integer'Image(grafo(i)(j)(z).get_id_quartiere_adiacente) & ",id_adiacente:" & Integer'Image(grafo(i)(j)(z).get_id_adiacente) & "]");
+                  end loop;
                end loop;
-            end loop;
+            end if;
          end loop;
       end print_grafo;
 
@@ -123,16 +132,266 @@ package body gps_utilities is
          return_estremi: estremi_strade_urbane(hash_strade'First..hash_strade'Last,1..2);
       begin
          --Put_Line("estremi urbana" & Any_Priority'Image(Get_Priority(Ada.Task_Identification.Current_Task)));
-         --Put_Line("estremi id urbana " & Positive'Image(id_urbana));
-
-         for i in hash_strade'Range loop
+         Put_Line("estremi id urbana " & Positive'Image(id_quartiere));
+         for i in hash_strade.all'Range loop
             estremi:= hash_urbane_quartieri(id_quartiere)(i);
             return_estremi(i,1):= create_estremo_urbana(estremi(1).id_quartiere,estremi(1).id_incrocio,estremi(1).polo);
             return_estremi(i,2):= create_estremo_urbana(estremi(2).id_quartiere,estremi(2).id_incrocio,estremi(2).polo);
+            Put_Line("ESTREMI QUARTIERE " & Positive'Image(id_quartiere));
+            Put_Line(Positive'Image(estremi(1).id_quartiere) & " " & Positive'Image(estremi(1).id_incrocio));
+            Put_Line(Positive'Image(estremi(2).id_quartiere) & " " & Positive'Image(estremi(2).id_incrocio));
          end loop;
-
+         --Put_Line("estremi id quart " & Positive'Image(id_quartiere));
          return return_estremi;
       end get_estremi_strade_urbane;
+
+      procedure pulisci_grafo is
+         default_list_adiacenti: list_adiacenti;
+         pragma Warnings(off);
+         default_index_incrocio: index_incroci;
+         pragma Warnings(on);
+      begin
+         for i in 1..num_quartieri loop
+            if grafo(i)/=null then
+               for z in grafo(i).all'Range loop
+                  grafo(i)(z):= default_list_adiacenti;
+               end loop;
+            end if;
+         end loop;
+         for i in 1..num_quartieri loop
+            if hash_urbane_quartieri(i)/=null then
+               for j in hash_urbane_quartieri(i).all'Range loop
+                  hash_urbane_quartieri(i)(j)(1):= default_index_incrocio;
+                  hash_urbane_quartieri(i)(j)(2):= default_index_incrocio;
+               end loop;
+            end if;
+         end loop;
+      end pulisci_grafo;
+
+      procedure reset_state is
+      begin
+         min_first_incroci:= Natural'Last;
+         max_last_incroci:= Natural'First;
+      end reset_state;
+
+      procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
+                                           ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
+                                           incroci_a_3: list_incroci_a_3) is
+         incrocio_a_4: list_road_incrocio_a_4;
+         incrocio_a_3: list_road_incrocio_a_3;
+         --rotonda_a_4: list_road_incrocio_a_4;
+         --rotonda_a_3: list_road_incrocio_a_3;
+         incrocio_features: road_incrocio_features;
+         indice_incrocio: index_incroci;
+         val_id_quartiere: Positive;
+         val_id_strada: Positive;
+         val_polo: Boolean;
+
+         quartiere_strade: ptr_hash_quartiere_strade;
+         val_id_quartiere_index_incrocio_estremo_1: Natural;
+         val_id_incrocio_index_incrocio_estremo_1: Natural;
+         val_id_quartiere_index_incrocio_estremo_2: Natural;
+         val_id_incrocio_index_incrocio_estremo_2: Natural;
+         estremo_1: index_incroci;
+         estremo_2: index_incroci;
+         adiacente_1: adiacente;
+         adiacente_2: adiacente;
+         adiacente_3: adiacente;
+         adiacente_4: adiacente;
+         index_to_place: Positive := 1;
+      begin
+
+         Free_strade_urbane_features(cache_urbane(id_quartiere));
+         if cache_urbane(id_quartiere)=null then
+            cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
+         end if;
+
+         Free_hash_quartiere_strade(hash_urbane_quartieri(id_quartiere));
+         if hash_urbane_quartieri(id_quartiere)=null then
+            hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
+         end if;
+
+         Free_strade_ingresso_features(cache_ingressi(id_quartiere));
+         if cache_ingressi(id_quartiere)=null then
+            cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
+         end if;
+
+         Free_list_incroci_a_4(cache_incroci_a_4(id_quartiere));
+         Free_list_incroci_a_3(cache_incroci_a_3(id_quartiere));
+         if cache_incroci_a_4(id_quartiere)=null then
+            cache_incroci_a_4(id_quartiere):= new list_incroci_a_4'(incroci_a_4);
+         end if;
+         if cache_incroci_a_3(id_quartiere)=null then
+            cache_incroci_a_3(id_quartiere):= new list_incroci_a_3'(incroci_a_3);
+         end if;
+
+         --Free_nodi_quartiere(grafo(id_quartiere));
+         if grafo(id_quartiere)=null then
+            grafo(id_quartiere):= new nodi_quartiere(incroci_a_4'First..incroci_a_3'Last);
+         end if;
+         pulisci_grafo;
+
+         -- La numerazione \E8 progressiva seguendo l'ordine: incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3
+         if incroci_a_4'First<incroci_a_4'Last and incroci_a_4'First<min_first_incroci then
+            min_first_incroci:= incroci_a_4'First;
+         end if;
+         if incroci_a_3'First<incroci_a_3'Last and incroci_a_3'Last>max_last_incroci then
+            max_last_incroci:= incroci_a_3'Last;
+         end if;
+
+         -- elaborazione incroci a 4
+         --Put_Line("costruzione" & Positive'Image(id_quartiere));
+         for j in 1..num_quartieri loop
+            if cache_incroci_a_4(j)/=null then
+               for incrocio in cache_incroci_a_4(j)'Range loop
+                  incrocio_a_4:= cache_incroci_a_4(j)(incrocio);
+                  for road in 1..4 loop
+                     incrocio_features:= incrocio_a_4(road);
+                     val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
+                     val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
+                     val_polo:= incrocio_features.get_polo_road_incrocio;
+                     if hash_urbane_quartieri(val_id_quartiere)/=null then
+                        indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
+                        if indice_incrocio.get_id_quartiere_index_incroci = 0 then
+                           hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
+                             create_new_index_incrocio(val_id_quartiere => j, val_id_incrocio => incrocio, val_polo => val_polo);
+                        else
+                           hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
+                             create_new_index_incrocio(val_id_quartiere => j, val_id_incrocio => incrocio, val_polo => val_polo);
+                        end if;
+                     end if;
+                  end loop;
+               end loop;
+            end if;
+         end loop;
+
+         -- elaborazione incroci a 3
+         --Put_Line("costruzione" & Positive'Image(id_quartiere));
+         for j in 1..num_quartieri loop
+            if cache_incroci_a_3(j)/=null then
+               for incrocio in cache_incroci_a_3(j)'Range loop
+                  incrocio_a_3:= cache_incroci_a_3(j)(incrocio);
+                  for road in 1..3 loop
+                     incrocio_features:= incrocio_a_3(road);
+                     val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
+                     val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
+                     val_polo:= incrocio_features.get_polo_road_incrocio;
+                     if hash_urbane_quartieri(val_id_quartiere)/=null then
+                        indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
+                        if indice_incrocio.get_id_quartiere_index_incroci = 0 then
+                           hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
+                             create_new_index_incrocio(val_id_quartiere => j, val_id_incrocio => incrocio, val_polo => val_polo);
+                        else
+                           hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
+                             create_new_index_incrocio(val_id_quartiere => j, val_id_incrocio => incrocio, val_polo => val_polo);
+                        end if;
+                     end if;
+                  end loop;
+               end loop;
+            end if;
+         end loop;
+
+         numero_globale_incroci:= 0;
+         for i in 1..num_quartieri loop
+            if grafo(i)/=null then
+               numero_globale_incroci:= numero_globale_incroci+grafo(i).all'Length;
+            end if;
+         end loop;
+
+         --num_incroci_quartieri_registrati:= num_incroci_quartieri_registrati + 1;
+         --Put_Line("incroci registrati" & Positive'Image(num_incroci_quartieri_registrati));
+         if True then--num_incroci_quartieri_registrati = num_quartieri then
+            -- il grafo pu\F2 essere costruito
+            Put_Line("costruzione grafo");
+            for quartiere in 1..num_quartieri loop
+               quartiere_strade:= hash_urbane_quartieri(quartiere);
+               if cache_incroci_a_4(quartiere)/=null or else cache_incroci_a_3(quartiere)/=null then
+                  for strada in quartiere_strade'Range loop
+                     estremo_1:= quartiere_strade(strada)(1);
+                     estremo_2:= quartiere_strade(strada)(2);
+                     val_id_quartiere_index_incrocio_estremo_1:= estremo_1.get_id_quartiere_index_incroci;
+                     val_id_incrocio_index_incrocio_estremo_1:= estremo_1.get_id_incrocio_index_incroci;
+                     val_id_quartiere_index_incrocio_estremo_2:= estremo_2.get_id_quartiere_index_incroci;
+                     val_id_incrocio_index_incrocio_estremo_2:= estremo_2.get_id_incrocio_index_incroci;
+
+                     if val_id_quartiere_index_incrocio_estremo_1 /= 0 then
+                        if val_id_quartiere_index_incrocio_estremo_2 /= 0 then
+                           -- begin sistemazione lato estremo1->estremo2
+                           if grafo(val_id_quartiere_index_incrocio_estremo_1)/=null then
+                              adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(1);
+                              adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(2);
+                              adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(3);
+                              adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(4);
+                              if adiacente_1.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 1;
+                              elsif adiacente_2.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 2;
+                              elsif adiacente_3.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 3;
+                              elsif adiacente_4.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 4;
+                              end if;
+                              grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(index_to_place):=
+                                create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
+                                               val_id_quartiere_adiacente => val_id_quartiere_index_incrocio_estremo_2,
+                                               val_id_adiacente => val_id_incrocio_index_incrocio_estremo_2);
+                              -- end sistemazione lato estremo1->estremo2
+                           end if;
+                           if grafo(val_id_quartiere_index_incrocio_estremo_2)/=null then
+                              -- begin sistemazione lato estremo2->estremo1
+                              adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(1);
+                              adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(2);
+                              adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(3);
+                              adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(4);
+                              if adiacente_1.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 1;
+                              elsif adiacente_2.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 2;
+                              elsif adiacente_3.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 3;
+                              elsif adiacente_4.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 4;
+                              end if;
+                              grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(index_to_place):=
+                                create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
+                                                  val_id_quartiere_adiacente => val_id_quartiere_index_incrocio_estremo_1,
+                                                  val_id_adiacente => val_id_incrocio_index_incrocio_estremo_1);
+                           end if;
+                           -- end sistemazione lato estremo2->estremo1
+                        else
+                           if grafo(val_id_quartiere_index_incrocio_estremo_1)/=null then
+                              adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(1);
+                              adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(2);
+                              adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(3);
+                              adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(4);
+                              if adiacente_1.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 1;
+                              elsif adiacente_2.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 2;
+                              elsif adiacente_3.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 3;
+                              elsif adiacente_4.get_id_quartiere_strada = 0 then
+                                 index_to_place:= 4;
+                              end if;
+                              grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(index_to_place):=
+                                create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
+                                                  val_id_quartiere_adiacente => 0,
+                                                  val_id_adiacente => 0);
+                           end if;
+                        end if;
+                     else
+                        Put_Line("Errore la strada non \E8 raggiungibile");
+                        -- ERRORE LA STRADA \C8 ISOLATA, (NON \C8 RAGGIUNGIBILE NEL GRAFO)
+                        null;
+                     end if;
+                  end loop;
+               end if;
+            end loop;
+            Put_Line("Effettuata registrazione nodi grafo");
+            --num_strade_quartieri:= 0;
+            print_grafo;
+         end if;
+      end registra_mappa_quartiere;
 
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance is
@@ -182,6 +441,7 @@ package body gps_utilities is
          estremo: index_incroci;
          estremo_to_consider: Boolean:= False; -- True se estremo_1, False se estremo_2
       begin
+
          --new_from_id_luogo:= cache_ingressi(from_id_quartiere).all'First +from_id_luogo-1;
          --new_to_id_luogo:= cache_ingressi(to_id_quartiere).all'First  +to_id_luogo-1;
          new_from_id_luogo:= from_id_luogo;
@@ -253,7 +513,16 @@ package body gps_utilities is
                            to_consider(last_index_lista).id_quartiere:= adiacenti(i).id_quartiere_adiacente;
                            to_consider(last_index_lista).id_incrocio:= adiacenti(i).id_adiacente;
                         end if;
-                        spigolo:= cache_urbane(adiacenti(i).id_quartiere_strada)(adiacenti(i).id_strada);
+                        --Put_Line("ab " & Positive'Image(id_abitante) & " quart adiacente " & Positive'Image(adiacenti(i).id_quartiere_adiacente) & " ref " & Positive'Image(adiacenti(i).id_quartiere_strada) & " " & Positive'Image(adiacenti(i).id_strada));
+                        begin
+                           spigolo:= cache_urbane(adiacenti(i).id_quartiere_strada)(adiacenti(i).id_strada);
+                        exception
+                           when others =>
+                              PUT_LINE("johnny request " & Positive'Image(id_abitante));
+                              Put_Line("ab " & Positive'Image(id_abitante) & " quart adiacente " & Positive'Image(adiacenti(i).id_quartiere_adiacente) & " ref " & Positive'Image(adiacenti(i).id_quartiere_strada) & " " & Positive'Image(adiacenti(i).id_strada));
+
+                              raise;
+                        end;
                         if coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).distanza> spigolo.get_lunghezza_road + coda_nodi(id_quartiere_minimo,id_incrocio_minimo).distanza then
                            coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).distanza:= coda_nodi(id_quartiere_minimo,id_incrocio_minimo).distanza + spigolo.get_lunghezza_road;
                            coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).precedente.id_quartiere:= id_quartiere_minimo;
@@ -268,6 +537,15 @@ package body gps_utilities is
                estremi:= hash_urbane_quartieri(to_id_quartiere)(ingresso_arrivo.get_id_main_strada_ingresso);
                estremo_1_arrivo:= estremi(1);
                estremo_2_arrivo:= estremi(2);
+               if estremo_1_arrivo.id_quartiere/=0 then
+                  if coda_nodi(estremo_1_arrivo.id_quartiere,estremo_1_arrivo.id_incrocio).distanza=new_float'Last then
+                     return create_percorso(route => create_array_percorso(0,null), distance => new_float'Last);
+                  end if;
+               elsif estremo_2_arrivo.id_quartiere/=0 then
+                  if coda_nodi(estremo_2_arrivo.id_quartiere,estremo_2_arrivo.id_incrocio).distanza=new_float'Last then
+                     return create_percorso(route => create_array_percorso(0,null), distance => new_float'Last);
+                  end if;
+               end if;
                distanza_estremo_1:= new_float'Last;
                distanza_estremo_2:= new_float'Last;
                distanza:= new_float'Last;
@@ -531,233 +809,13 @@ package body gps_utilities is
             index:= index + 1;
          end loop;
          -- viene creato l'array che deve essere tornato
-         return create_percorso(route => create_array_percorso(size_route,ptr_route), distance => min_distanza);
+         declare
+            p: percorso:= create_array_percorso(size_route,ptr_route);
+         begin
+            Free_percorso(ptr_route);
+            return create_percorso(route => p, distance => min_distanza);
+         end;
       end calcola_percorso;
-
-      procedure registra_strade_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
-                                          ingressi: strade_ingresso_features) is
-      begin
-         cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
-         hash_urbane_quartieri(id_quartiere):= new hash_quartiere_strade(urbane'Range);
-
-         cache_ingressi(id_quartiere):= new strade_ingresso_features'(ingressi);
-         num_strade_quartieri:= num_strade_quartieri+1;
-      end registra_strade_quartiere;
-
-      entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
-                                       incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                       rotonde_a_3: list_incroci_a_3) when num_strade_quartieri=num_quartieri is
-         incrocio_a_4: list_road_incrocio_a_4;
-         incrocio_a_3: list_road_incrocio_a_3;
-         rotonda_a_4: list_road_incrocio_a_4;
-         rotonda_a_3: list_road_incrocio_a_3;
-         incrocio_features: road_incrocio_features;
-         indice_incrocio: index_incroci;
-         val_id_quartiere: Positive;
-         val_id_strada: Positive;
-         val_polo: Boolean;
-
-         quartiere_strade: access hash_quartiere_strade;
-         val_id_quartiere_index_incrocio_estremo_1: Natural;
-         val_id_incrocio_index_incrocio_estremo_1: Natural;
-         val_id_quartiere_index_incrocio_estremo_2: Natural;
-         val_id_incrocio_index_incrocio_estremo_2: Natural;
-         estremo_1: index_incroci;
-         estremo_2: index_incroci;
-         adiacente_1: adiacente;
-         adiacente_2: adiacente;
-         adiacente_3: adiacente;
-         adiacente_4: adiacente;
-         index_to_place: Positive := 1;
-      begin
-
-         if num_incroci_quartieri_registrati = 0 then
-            min_first_incroci:= Natural'Last;
-            max_last_incroci:= Natural'First;
-         end if;
-         -- La numerazione è progressiva seguendo l'ordine: incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3
-         if incroci_a_4'First<incroci_a_4'Last and incroci_a_4'First<min_first_incroci then
-            min_first_incroci:= incroci_a_4'First;
-         elsif incroci_a_3'First<incroci_a_3'Last and incroci_a_3'First<min_first_incroci then
-            min_first_incroci:= incroci_a_3'First;
-         elsif rotonde_a_4'First<rotonde_a_4'Last and rotonde_a_4'First<min_first_incroci then
-            min_first_incroci:= rotonde_a_4'First;
-         elsif rotonde_a_3'First<rotonde_a_3'Last and rotonde_a_3'First<min_first_incroci then
-            min_first_incroci:= rotonde_a_3'First;
-         end if;
-         if rotonde_a_3'First<rotonde_a_3'Last and rotonde_a_3'Last>max_last_incroci then
-            max_last_incroci:= rotonde_a_3'Last;
-         elsif rotonde_a_4'First<rotonde_a_4'Last and rotonde_a_4'Last>max_last_incroci then
-            max_last_incroci:= rotonde_a_4'Last;
-         elsif incroci_a_3'First<incroci_a_3'Last and incroci_a_3'Last>max_last_incroci then
-            max_last_incroci:= incroci_a_3'Last;
-         elsif incroci_a_4'First<incroci_a_4'Last and incroci_a_4'Last>max_last_incroci then
-            max_last_incroci:= incroci_a_4'Last;
-         end if;
-
-
-         -- elaborazione incroci a 4
-         Put_Line("costruzione" & Positive'Image(id_quartiere));
-         for incrocio in incroci_a_4'Range loop
-            incrocio_a_4:= incroci_a_4(incrocio);
-            for road in 1..4 loop
-               incrocio_features:= incrocio_a_4(road);
-               val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
-               val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
-               val_polo:= incrocio_features.get_polo_road_incrocio;
-               indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
-               if indice_incrocio.get_id_quartiere_index_incroci = 0 then
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => incrocio, val_polo => val_polo);
-               else
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => incrocio, val_polo => val_polo);
-               end if;
-            end loop;
-         end loop;
-         -- elaborazione incroci a 3
-         Put_Line("costruzione" & Positive'Image(id_quartiere));
-         for incrocio in incroci_a_3'Range loop
-            incrocio_a_3:= incroci_a_3(incrocio);
-            for road in 1..3 loop
-               incrocio_features:= incrocio_a_3(road);
-               val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
-               val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
-               val_polo:= incrocio_features.get_polo_road_incrocio;
-               indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
-               if indice_incrocio.get_id_quartiere_index_incroci = 0 then
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => incrocio, val_polo => val_polo);
-               else
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => incrocio, val_polo => val_polo);
-               end if;
-            end loop;
-         end loop;
-         Put_Line("costruzione" & Positive'Image(id_quartiere));
-         -- elaborazione rotonde a 4
-         for rotonda in rotonde_a_4'Range loop
-            rotonda_a_4:= rotonde_a_4(rotonda);
-            for road in 1..4 loop
-               incrocio_features:= rotonda_a_4(road);
-               val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
-               val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
-               val_polo:= incrocio_features.get_polo_road_incrocio;
-               indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
-               if indice_incrocio.get_id_quartiere_index_incroci = 0 then
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => rotonda, val_polo => val_polo);
-               else
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => rotonda, val_polo => val_polo);
-               end if;
-            end loop;
-         end loop;
-         -- elaborazione rotonde a 3
-         for rotonda in rotonde_a_3'Range loop
-            rotonda_a_3:= rotonde_a_3(rotonda);
-            for road in 1..3 loop
-               incrocio_features:= rotonda_a_3(road);
-               val_id_quartiere:= incrocio_features.get_id_quartiere_road_incrocio;
-               val_id_strada:= incrocio_features.get_id_strada_road_incrocio;
-               val_polo:= incrocio_features.get_polo_road_incrocio;
-               indice_incrocio:= hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1);
-               if indice_incrocio.get_id_quartiere_index_incroci = 0 then
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(1):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => rotonda, val_polo => val_polo);
-               else
-                  hash_urbane_quartieri(val_id_quartiere)(val_id_strada)(2):=
-                       create_new_index_incrocio(val_id_quartiere => id_quartiere, val_id_incrocio => rotonda, val_polo => val_polo);
-               end if;
-            end loop;
-         end loop;
-         grafo(id_quartiere):= new nodi_quartiere(incroci_a_4'First..rotonde_a_3'Last);
-         numero_globale_incroci:= numero_globale_incroci + grafo(id_quartiere)'Length;
-
-         num_incroci_quartieri_registrati:= num_incroci_quartieri_registrati + 1;
-         Put_Line("incroci registrati" & Positive'Image(num_incroci_quartieri_registrati));
-         if num_incroci_quartieri_registrati = num_quartieri then
-            -- il grafo può essere costruito
-            Put_Line("costruzione grafo");
-            for quartiere in hash_urbane_quartieri'Range loop
-               quartiere_strade:= hash_urbane_quartieri(quartiere);
-               for strada in quartiere_strade'Range loop
-                  estremo_1:= quartiere_strade(strada)(1);
-                  estremo_2:= quartiere_strade(strada)(2);
-                  val_id_quartiere_index_incrocio_estremo_1:= estremo_1.get_id_quartiere_index_incroci;
-                  val_id_incrocio_index_incrocio_estremo_1:= estremo_1.get_id_incrocio_index_incroci;
-                  val_id_quartiere_index_incrocio_estremo_2:= estremo_2.get_id_quartiere_index_incroci;
-                  val_id_incrocio_index_incrocio_estremo_2:= estremo_2.get_id_incrocio_index_incroci;
-                  if val_id_quartiere_index_incrocio_estremo_1 /= 0 then
-                     if val_id_quartiere_index_incrocio_estremo_2 /= 0 then
-                        -- begin sistemazione lato estremo1->estremo2
-                        adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(1);
-                        adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(2);
-                        adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(3);
-                        adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(4);
-                        if adiacente_1.get_id_quartiere_strada = 0 then
-                           index_to_place:= 1;
-                        elsif adiacente_2.get_id_quartiere_strada = 0 then
-                           index_to_place:= 2;
-                        elsif adiacente_3.get_id_quartiere_strada = 0 then
-                           index_to_place:= 3;
-                        elsif adiacente_4.get_id_quartiere_strada = 0 then
-                           index_to_place:= 4;
-                        end if;
-                        grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(index_to_place):=
-                          create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
-                                               val_id_quartiere_adiacente => val_id_quartiere_index_incrocio_estremo_2,
-                                               val_id_adiacente => val_id_incrocio_index_incrocio_estremo_2);
-                        -- end sistemazione lato estremo1->estremo2
-                        -- begin sistemazione lato estremo2->estremo1
-                        adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(1);
-                        adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(2);
-                        adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(3);
-                        adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(4);
-                        if adiacente_1.get_id_quartiere_strada = 0 then
-                           index_to_place:= 1;
-                        elsif adiacente_2.get_id_quartiere_strada = 0 then
-                           index_to_place:= 2;
-                        elsif adiacente_3.get_id_quartiere_strada = 0 then
-                           index_to_place:= 3;
-                        elsif adiacente_4.get_id_quartiere_strada = 0 then
-                           index_to_place:= 4;
-                        end if;
-                        grafo(val_id_quartiere_index_incrocio_estremo_2)(val_id_incrocio_index_incrocio_estremo_2)(index_to_place):=
-                          create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
-                                               val_id_quartiere_adiacente => val_id_quartiere_index_incrocio_estremo_1,
-                                               val_id_adiacente => val_id_incrocio_index_incrocio_estremo_1);
-                        -- end sistemazione lato estremo2->estremo1
-                     else
-                        adiacente_1:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(1);
-                        adiacente_2:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(2);
-                        adiacente_3:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(3);
-                        adiacente_4:= grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(4);
-                        if adiacente_1.get_id_quartiere_strada = 0 then
-                           index_to_place:= 1;
-                        elsif adiacente_2.get_id_quartiere_strada = 0 then
-                           index_to_place:= 2;
-                        elsif adiacente_3.get_id_quartiere_strada = 0 then
-                           index_to_place:= 3;
-                        elsif adiacente_4.get_id_quartiere_strada = 0 then
-                           index_to_place:= 4;
-                        end if;
-                        grafo(val_id_quartiere_index_incrocio_estremo_1)(val_id_incrocio_index_incrocio_estremo_1)(index_to_place):=
-                          create_new_adiacente(val_id_quartiere_strada => quartiere, val_id_strada => strada,
-                                               val_id_quartiere_adiacente => 0,
-                                               val_id_adiacente => 0);
-                     end if;
-                  else
-                     -- ERRORE LA STRADA È ISOLATA, (NON È RAGGIUNGIBILE NEL GRAFO)
-                     null;
-                  end if;
-               end loop;
-            end loop;
-            Put_Line("Effettuata registrazione nodi grafo");
-            num_strade_quartieri:= 0;
-            print_grafo;
-         end if;
-      end registra_incroci_quartiere;
 
    end registro_strade_resource;
 

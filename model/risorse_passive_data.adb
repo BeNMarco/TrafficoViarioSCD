@@ -2,6 +2,10 @@ with GNATCOLL.JSON;
 with Ada.Text_IO;
 with Ada.Strings.Unbounded;
 with Polyorb.Parameters;
+with System_error;
+with Ada.Exceptions;
+with Ada.Strings.Unbounded;
+with System.RPC;
 
 with absolute_path;
 with risorse_mappa_utilities;
@@ -17,6 +21,7 @@ use GNATCOLL.JSON;
 use Ada.Text_IO;
 use Polyorb.Parameters;
 
+use System_error;
 use absolute_path;
 use risorse_mappa_utilities;
 use strade_e_incroci_common;
@@ -26,6 +31,8 @@ use global_data;
 use snapshot_interface;
 use JSON_Helper;
 use the_name_server;
+use Ada.Exceptions;
+use Ada.Strings.Unbounded;
 
 package body risorse_passive_data is
 
@@ -163,28 +170,22 @@ package body risorse_passive_data is
    end get_traiettoria_cambio_corsia;
 
    protected body quartiere_utilities is
-      procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is
+
+      procedure registra_cfg_quartiere(id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+                                              bici: list_bici_quartiere; auto: list_auto_quartiere; location_abitanti: ptr_rt_location_abitanti) is
       begin
          rt_classi_locate_abitanti(id_quartiere):= location_abitanti;
-         waiting_cfg.incrementa_classi_locate_abitanti;
-      end registra_classe_locate_abitanti_quartiere;
+         entità_abitanti(id_quartiere):= new list_abitanti_quartiere'(abitanti);
+         entità_pedoni(id_quartiere):= new list_pedoni_quartiere'(pedoni);
+         entità_bici(id_quartiere):= new list_bici_quartiere'(bici);
+         entità_auto(id_quartiere):= new list_auto_quartiere'(auto);
+         cache_remoti_registrati(id_quartiere):= True;
+      end registra_cfg_quartiere;
 
-      procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
-                                  bici: list_bici_quartiere; auto: list_auto_quartiere) is
+      function is_configured_cache_quartiere(id_quartiere: Positive) return Boolean is
       begin
-
-         entità_abitanti(from_id_quartiere):= new list_abitanti_quartiere'(abitanti);
-         entità_pedoni(from_id_quartiere):= new list_pedoni_quartiere'(pedoni);
-         entità_bici(from_id_quartiere):= new list_bici_quartiere'(bici);
-         entità_auto(from_id_quartiere):= new list_auto_quartiere'(auto);
-
-         waiting_cfg.incrementa_num_quartieri_abitanti;
-      end registra_abitanti;
-
-      procedure registra_mappa(id_quartiere: Positive) is
-      begin
-         waiting_cfg.incrementa_resource_mappa_quartieri;
-      end registra_mappa;
+         return cache_remoti_registrati(id_quartiere);
+      end is_configured_cache_quartiere;
 
       procedure get_cfg_incrocio(id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural) is
          incrocio_a_3: list_road_incrocio_a_3;
@@ -225,6 +226,27 @@ package body risorse_passive_data is
             end loop;
          end if;
       end get_cfg_incrocio;
+
+      function get_all_abitanti_quartiere return list_abitanti_quartiere is
+      begin
+         return entità_abitanti(get_id_quartiere).all;
+      end get_all_abitanti_quartiere;
+      function get_all_pedoni_quartiere return list_pedoni_quartiere is
+      begin
+         return entità_pedoni(get_id_quartiere).all;
+      end get_all_pedoni_quartiere;
+      function get_all_bici_quartiere return list_bici_quartiere is
+      begin
+         return entità_bici(get_id_quartiere).all;
+      end get_all_bici_quartiere;
+      function get_all_auto_quartiere return list_auto_quartiere is
+      begin
+         return entità_auto(get_id_quartiere).all;
+      end get_all_auto_quartiere;
+      function get_locate_abitanti_quartiere(id_quartiere: Positive) return ptr_rt_location_abitanti is
+      begin
+         return rt_classi_locate_abitanti(id_quartiere);
+      end get_locate_abitanti_quartiere;
 
       function get_type_entity(id_entità: Positive) return entity_type is
       begin
@@ -328,6 +350,34 @@ package body risorse_passive_data is
          return get_id_fermata_from_id_urbana(id_urbana);
       end get_id_fermata_id_urbana;
 
+      procedure set_synch_cache(registro: registro_quartieri) is
+      begin
+         synch_cache:= registro;
+      end set_synch_cache;
+
+      function get_saved_partitions return registro_quartieri is
+      begin
+         return synch_cache;
+      end get_saved_partitions;
+
+      function is_a_new_quartiere(id_quartiere: Positive) return Boolean is
+      begin
+         if synch_cache(id_quartiere)=null then
+            return True;
+         end if;
+         return False;
+      end is_a_new_quartiere;
+
+      procedure set_quartieri_to_not_wait(queue: boolean_queue) is
+      begin
+         not_wait_quartieri:= queue;
+      end set_quartieri_to_not_wait;
+
+      function is_a_quartiere_to_wait(id_quartiere: Positive) return Boolean is
+      begin
+         return not not_wait_quartieri(id_quartiere);
+      end is_a_quartiere_to_wait;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is
@@ -340,49 +390,22 @@ package body risorse_passive_data is
       return gestore_bus_quartiere_obj;
    end get_gestore_bus_quartiere_obj;
 
-   protected body type_waiting_cfg is
-      procedure incrementa_classi_locate_abitanti is
-      begin
-         num_classi_locate_abitanti:= num_classi_locate_abitanti+1;
-      end incrementa_classi_locate_abitanti;
-
-      procedure incrementa_num_quartieri_abitanti is
-      begin
-         num_abitanti_quartieri_registrati:= num_abitanti_quartieri_registrati+1;
-      end incrementa_num_quartieri_abitanti;
-
-      procedure incrementa_resource_mappa_quartieri is
-      begin
-         num_quartieri_resource_registrate:= num_quartieri_resource_registrate+1;
-      end incrementa_resource_mappa_quartieri;
-
-      entry wait_cfg when num_classi_locate_abitanti=numero_quartieri and num_abitanti_quartieri_registrati=numero_quartieri and num_quartieri_resource_registrate=numero_quartieri is
-      begin
-         -- il prima che arriva si prende la configurazione della mappa creata
-         if inventory_estremi_is_set=False then
-            inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
-            for i in get_from_urbane..get_to_urbane loop
-               if inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana/=0 then
-                  inventory_estremi(i,1):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,1).get_id_incrocio_estremo_urbana);
-               else
-                  inventory_estremi(i,1):= null;
-               end if;
-               if inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana/=0 then
-                  inventory_estremi(i,2):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,2).get_id_incrocio_estremo_urbana);
-               else
-                  inventory_estremi(i,2):= null;
-               end if;
-            end loop;
-            inventory_estremi_is_set:= True;
-         end if;
-      end wait_cfg;
-
-   end type_waiting_cfg;
-
-   procedure wait_settings_all_quartieri is
+   procedure reconfigure_estremi_urbane is
    begin
-      waiting_cfg.wait_cfg;
-   end wait_settings_all_quartieri;
+      inventory_estremi_urbane:= get_server_gps.get_estremi_strade_urbane(get_id_quartiere);
+      for i in get_from_urbane..get_to_urbane loop
+         if inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana/=0 then
+            inventory_estremi(i,1):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,1).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,1).get_id_incrocio_estremo_urbana);
+         else
+            inventory_estremi(i,1):= null;
+         end if;
+         if inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana/=0 then
+            inventory_estremi(i,2):= get_id_incrocio_quartiere(inventory_estremi_urbane(i,2).get_id_quartiere_estremo_urbana,inventory_estremi_urbane(i,2).get_id_incrocio_estremo_urbana);
+         else
+            inventory_estremi(i,2):= null;
+         end if;
+      end loop;
+   end reconfigure_estremi_urbane;
 
    function get_resource_estremi_urbana(id_urbana: Positive) return estremi_resource_strada_urbana is
       estremi: estremi_resource_strada_urbana;
@@ -633,10 +656,6 @@ package body risorse_passive_data is
    protected body gestore_bus_quartiere is
       -- configure può essere chiamata solo dopo l'avvenuto check-point
       -- in configure di resource_map_inventory
-      procedure configure_ref_gestori_bus_remoti is
-      begin
-         registro_gestori_autobus_quartieri:= get_registro_gestori_bus_quartieri;
-      end configure_ref_gestori_bus_remoti;
 
       procedure autobus_arrived_at_fermata(to_id_autobus: Positive; abitanti: set_tratti; from_fermata: tratto) is
          id_urbana_to_go: Positive;
@@ -647,12 +666,13 @@ package body risorse_passive_data is
          autobus: abitante:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,to_id_autobus);
          list: ptr_lista_passeggeri:= passeggeri_bus(to_id_autobus);
          prec_list: ptr_lista_passeggeri:= null;
-         mailbox_fermata: ptr_rt_ingresso:= get_id_ingresso_quartiere(from_fermata.get_id_quartiere_tratto,from_fermata.get_id_tratto);
+         mailbox_fermata: ptr_rt_ingresso:= null;
          jolly_arrived: Boolean:= False;
          abitante_is_arrived: Boolean;
       begin
          -- l'abitante è arrivato alla fermata
          -- fa scendere abitanti
+         mailbox_fermata:= get_id_ingresso_quartiere(from_fermata.get_id_quartiere_tratto,from_fermata.get_id_tratto);
          prec_list:= null;
          if autobus.is_a_bus_jolly and linee_autobus(autobus.get_id_luogo_lavoro_from_abitante).get_numero_fermate=stato_bus(to_id_autobus).index_fermata then
             jolly_arrived:= True;
@@ -782,15 +802,21 @@ package body risorse_passive_data is
    end gestore_bus_quartiere;
 
    procedure configure_quartiere_obj is
+      num_quartieri: Positive;
    begin
-      quartiere_cfg:= new quartiere_utilities(get_num_quartieri);
+      num_quartieri:= get_num_quartieri;
+
+      quartiere_cfg:= new quartiere_utilities(num_quartieri);
       locate_abitanti_quartiere:= new location_abitanti(get_to_abitanti-get_from_abitanti+1);
-      waiting_cfg:= new type_waiting_cfg(get_num_quartieri);
       quartiere_entities_life_obj:= new quartiere_entities_life;
-      gestore_bus_quartiere_obj:= new gestore_bus_quartiere(get_num_quartieri,get_num_autobus);
+      gestore_bus_quartiere_obj:= new gestore_bus_quartiere(num_quartieri,get_num_autobus);
+
+      create_linee_fermate;
 
       configure_map_fermate_urbane;
+
    end configure_quartiere_obj;
+
 
    procedure configure_map_fermate_urbane is
       num_fermate: Natural:= 0;
@@ -804,17 +830,25 @@ package body risorse_passive_data is
       Put_Line("numero fermate quartiere " & Positive'Image(get_id_quartiere) & " " & Positive'Image(num_fermate));
    end configure_map_fermate_urbane;
 
+   procedure update_percorso_abitante_arrived(percorso: route_and_distance; residente: abitante) is
+   begin
+      Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      print_percorso(percorso.get_percorso_from_route_and_distance);
+      Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso);
+   end update_percorso_abitante_arrived;
+
    procedure abitante_is_arrived(obj: quartiere_entities_life; id_abitante: Positive) is
       resource_locate_abitanti: ptr_location_abitanti:= get_locate_abitanti_quartiere;
       arrived_tratto: tratto;
       tratto_to_go: tratto;
       residente: abitante;
-      percorso: access route_and_distance;
       segnale: Boolean;
       mezzo: means_of_carrying;
       id_urbana: Positive;
       id_fermata: Positive;
       destination: tratto;
+      error_state: Boolean:= False;
    begin
       arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
@@ -833,8 +867,12 @@ package body risorse_passive_data is
          else
             get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
          end if;
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(from_id_quartiere => arrived_tratto.get_id_quartiere_tratto, from_id_luogo => arrived_tratto.get_id_tratto,
-                                                                            to_id_quartiere => arrived_tratto.get_id_quartiere_tratto, to_id_luogo => id_fermata,id_quartiere => get_id_quartiere,id_abitante => id_abitante));
+         declare
+            percorso: route_and_distance:= get_server_gps.calcola_percorso(from_id_quartiere => arrived_tratto.get_id_quartiere_tratto, from_id_luogo => arrived_tratto.get_id_tratto,
+                                                                              to_id_quartiere => arrived_tratto.get_id_quartiere_tratto, to_id_luogo => id_fermata,id_quartiere => get_id_quartiere,id_abitante => id_abitante);
+         begin
+            update_percorso_abitante_arrived(percorso,residente);
+         end;
       elsif residente.is_a_bus then
          Put_Line("BUSSSSS " & Positive'Image(id_abitante) & " " & Positive'Image(get_id_quartiere));
          if get_gestore_bus_quartiere_obj.get_num_fermate_rimaste(id_abitante)=0 then
@@ -862,39 +900,56 @@ package body risorse_passive_data is
                tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante)+1));
             end if;
          end if;
-         percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante));
+         declare
+            percorso: route_and_distance:= get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante);
+         begin
+            update_percorso_abitante_arrived(percorso,residente);
+         end;
       else
          if get_id_quartiere=arrived_tratto.get_id_quartiere_tratto and
            residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1=arrived_tratto.get_id_tratto then
             -- l'abitante si trova a casa
             -- lo si manda a lavorare
-            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1,get_id_quartiere,id_abitante));
+            declare
+               percorso: route_and_distance:= get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1,get_id_quartiere,id_abitante);
+            begin
+               update_percorso_abitante_arrived(percorso,residente);
+            end;
          elsif residente.get_id_quartiere_luogo_lavoro_from_abitante=arrived_tratto.get_id_quartiere_tratto and
            residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1=arrived_tratto.get_id_tratto then
             -- l'abitante è a lavoro
             -- lo si manda a casa
-            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));
-            --get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
+            declare
+               percorso: route_and_distance:= get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante);
+            begin
+               update_percorso_abitante_arrived(percorso,residente);
+            end;
          else  -- lo si manda a casa cmq
-            percorso:= new route_and_distance'(get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante));--get_quartiere_cfg(residente.get_id_quartiere_from_abitante).get_from_ingressi_quartiere-1));
+            declare
+               percorso: route_and_distance:= get_server_gps.calcola_percorso(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto,residente.get_id_quartiere_from_abitante,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,get_id_quartiere,id_abitante);
+            begin
+               update_percorso_abitante_arrived(percorso,residente);
+            end;
          end if;
       end if;
 
-
       -- Invio richiesta ASINCRONA
-
-      Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-      print_percorso(percorso.get_percorso_from_route_and_distance);
-      Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-      get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso.all);
       ptr_rt_ingresso(get_id_ingresso_quartiere(arrived_tratto.get_id_quartiere_tratto,arrived_tratto.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,mezzo);
-
+   exception
+      when System.RPC.Communication_Error =>
+         log_system_error.set_error(altro,error_state);
+         -- se i task sono in select statement li chiudo
+         Put_Line("partizione remota non raggiungibile.");
+      when Error: others =>
+         log_system_error.set_error(altro,error_state);
+         -- se i task sono in select statement li chiudo
+         Put_Line(Exception_Information(Error));
    end abitante_is_arrived;
 
    procedure abitante_scende_dal_bus(obj: quartiere_entities_life; id_abitante: Positive; alla_fermata: tratto) is
-      percorso: access route_and_distance;
       tratto_to_go: tratto;
       residente: abitante;
+      error_state: Boolean:= False;
    begin
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
 
@@ -902,12 +957,23 @@ package body risorse_passive_data is
 
       tratto_to_go:= get_location_abitanti_quartiere.get_destination_abitante_in_bus(id_abitante);
 
-      percorso:= new route_and_distance'(get_server_gps.calcola_percorso(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante));
-      Put_Line("request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-      print_percorso(percorso.get_percorso_from_route_and_distance);
-      Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-      ptr_rt_ingresso(get_id_ingresso_quartiere(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,walking);
-
+      declare
+         percorso: route_and_distance:= get_server_gps.calcola_percorso(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante);
+      begin
+         Put_Line("request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         print_percorso(percorso.get_percorso_from_route_and_distance);
+         Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         ptr_rt_ingresso(get_id_ingresso_quartiere(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,walking);
+      end;
+   exception
+      when System.RPC.Communication_Error =>
+         log_system_error.set_error(altro,error_state);
+         -- se i task sono in select statement li chiudo
+         Put_Line("partizione remota non raggiungibile.");
+      when Error: others =>
+         log_system_error.set_error(altro,error_state);
+         -- se i task sono in select statement li chiudo
+         Put_Line(Exception_Information(Error));
    end abitante_scende_dal_bus;
 
    function get_quartiere_entities_life_obj return ptr_quartiere_entities_life is
@@ -940,7 +1006,7 @@ package body risorse_passive_data is
       return locate_abitanti_quartiere;
    end get_location_abitanti_quartiere;
 
-   procedure configure_linee_fermate is
+   procedure create_linee_fermate is
       json_fermate: JSON_Array:= get_json_fermate_autobus;
       temp1_json_value: JSON_Value;
       temp2_json_value: JSON_Value;
@@ -949,7 +1015,6 @@ package body risorse_passive_data is
       temp2_json_array: JSON_Array;
       id_quartiere: Positive;
       id_tratto: Positive;
-      ref_quartieri: registro_quartieri:= get_ref_rt_quartieri;
       linea: access tratti_fermata;
       jollys: access destination_tratti;
       jolly_to: Positive;
@@ -963,8 +1028,7 @@ package body risorse_passive_data is
             temp2_json_array:= Get(Get(temp1_json_array,j));
             id_quartiere:= Get(Get(temp2_json_array,1));
             id_tratto:= Get(Get(temp2_json_array,2));
-            id_tratto:= ref_quartieri(id_quartiere).get_from_type_resource_quartiere(ingresso)+id_tratto-1;
-            linea(j):= create_tratto(id_quartiere,id_tratto);
+            linea(j):= create_tratto_updated(create_tratto(id_quartiere,id_tratto),False);
          end loop;
          temp1_json_array:= Get(temp1_json_value,"jolly");
          jollys:= new destination_tratti(1..Length(temp1_json_array));
@@ -974,17 +1038,128 @@ package body risorse_passive_data is
             temp2_json_array:= Get(Get(temp2_json_value,"at"));
             id_quartiere:= Get(Get(temp2_json_array,1));
             id_tratto:= Get(Get(temp2_json_array,2));
-            id_tratto:= ref_quartieri(id_quartiere).get_from_type_resource_quartiere(ingresso)+id_tratto-1;
             jollys(j):= create_destination(jolly_to,create_tratto(id_quartiere,id_tratto));
          end loop;
          temp1_json_array:= Get(temp1_json_value,"from_to");
          linee_autobus(i):= create_linea_bus(Get(Get(temp1_json_array,1)),Get(Get(temp1_json_array,2)),linea,jollys);
       end loop;
+   end create_linee_fermate;
+
+   procedure configure_linee_fermate is
+      ref_quartieri: registro_quartieri:= get_ref_rt_quartieri;
+      linea: access tratti_fermata;
+      jollys: access destination_tratti;
+   begin
+      for i in linee_autobus'Range loop
+         if linee_autobus(i).is_updated_linea=False then
+            linea:= linee_autobus(i).get_linea_bus;
+            for j in linea.all'Range loop
+               if linea(j).is_tratto_updated=False then
+                  if linea(j).get_tratto.get_id_quartiere_tratto=get_id_quartiere then
+                     linea(j).update_tratto(create_tratto(get_id_quartiere,linea(j).get_tratto.get_id_tratto+get_from_ingressi-1));
+                     linea(j).set_tratto_updated(True);
+                  else
+                     if ref_quartieri(linea(j).get_tratto.get_id_quartiere_tratto)/=null then
+                        linea(j).update_tratto(create_tratto(linea(j).get_tratto.get_id_quartiere_tratto,ref_quartieri(linea(j).get_tratto.get_id_quartiere_tratto).get_from_type_resource_quartiere(ingresso)+linea(j).get_tratto.get_id_tratto-1));
+                        linea(j).set_tratto_updated(True);
+                     end if;
+                  end if;
+               end if;
+            end loop;
+         end if;
+         jollys:= linee_autobus(i).get_destination_jolly;
+         for j in jollys.all'Range loop
+            if jollys(j).is_updated=False then
+               if jollys(j).get_quartiere_jolly_to_go=get_id_quartiere then
+                  jollys(j).update_destination(create_tratto(get_id_quartiere,jollys(j).get_tratto_jolly_to_go.get_id_tratto+get_from_ingressi-1));
+                  jollys(j).set_destination_updated(True);
+               else
+                  if ref_quartieri(jollys(j).get_quartiere_jolly_to_go)/=null then
+                     jollys(j).update_destination(create_tratto(jollys(j).get_tratto_jolly_to_go.get_id_quartiere_tratto,ref_quartieri(jollys(j).get_quartiere_jolly_to_go).get_from_type_resource_quartiere(ingresso)+jollys(j).get_tratto_jolly_to_go.get_id_tratto-1));
+                     jollys(j).set_destination_updated(True);
+                  end if;
+               end if;
+            end if;
+         end loop;
+      end loop;
+      fermate_configured:= True;
    end configure_linee_fermate;
+
+   function fermate_are_configured return Boolean is
+   begin
+      return fermate_configured;
+   end fermate_are_configured;
 
    function get_traiettoria_incrocio(traiettoria: traiettoria_incroci_type) return traiettoria_incrocio is
    begin
       return traiettorie_incroci(traiettoria);
    end get_traiettoria_incrocio;
+
+   function create_lista_tupla(tupla: tratto'Class; next: ptr_lista_tuple) return lista_tuple'Class is
+      elemento: lista_tuple;
+   begin
+      elemento.identificativo_tupla:= tratto(tupla);
+      elemento.next:= next;
+      return elemento;
+   end create_lista_tupla;
+
+   function get_tupla(obj: lista_tuple) return tratto'Class is
+   begin
+      return obj.identificativo_tupla;
+   end get_tupla;
+
+   function get_next_tupla(obj: lista_tuple) return ptr_lista_tuple is
+   begin
+      return obj.next;
+   end get_next_tupla;
+
+   --procedure set_next_tupla(obj: in out lista_tuple; next: ptr_lista_tuple) is
+   --begin
+   --   obj.next:= next;
+   --end set_next_tupla;
+
+   protected body coda_abitanti_to_restart is
+      procedure enqueue_abitante(entità: abitante) is
+         prec_list: ptr_lista_tuple:= null;
+         list: ptr_lista_tuple:= abitanti_non_partiti;
+      begin
+         while list/=null loop
+            prec_list:= list;
+            list:= list.get_next_tupla;
+         end loop;
+         if prec_list=null then
+            abitanti_non_partiti:= new lista_tuple'(lista_tuple(create_lista_tupla(create_tratto(entità.get_id_quartiere_from_abitante,entità.get_id_abitante_from_abitante),null)));
+         else
+            prec_list.next:= new lista_tuple'(lista_tuple(create_lista_tupla(create_tratto(entità.get_id_quartiere_from_abitante,entità.get_id_abitante_from_abitante),null)));
+         end if;
+      end enqueue_abitante;
+
+      procedure dequeue_abitante(entità: abitante; next_element_list: in out ptr_lista_tuple) is
+         prec_list: ptr_lista_tuple:= null;
+         list: ptr_lista_tuple:= abitanti_non_partiti;
+      begin
+         while list/=null loop
+            if list.identificativo_tupla.get_id_quartiere_tratto=entità.get_id_quartiere_from_abitante and then
+              list.identificativo_tupla.get_id_tratto=entità.get_id_abitante_from_abitante then
+               if prec_list=null then
+                  abitanti_non_partiti:= list.next;
+               else
+                  prec_list.next:= list.next;
+               end if;
+               next_element_list:= list.next;
+               return;
+            end if;
+            prec_list:= list;
+            list:= list.next;
+         end loop;
+      end dequeue_abitante;
+
+      function get_abitanti_non_partiti return ptr_lista_tuple is
+      begin
+         return abitanti_non_partiti;
+      end get_abitanti_non_partiti;
+
+   end coda_abitanti_to_restart;
+
 
 end risorse_passive_data;

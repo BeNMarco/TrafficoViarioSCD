@@ -107,136 +107,146 @@ Simulation.prototype.getNewDistacnce = function(distance, prevPosition)
 	return prevPosition + ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 }
 
+Simulation.prototype.addNewCar = function(carState)
+{
+	curCar = new Car(carState.id_abitante, carState.id_quartiere_abitante);
+	curCar.draw(this.objects.style);
+	curCar.show();
+	this.objects.cars[carState.id_quartiere_abitante+"_"+carState.id_abitante] = curCar;
+}
+
+Simulation.prototype.moveCar = function(time, c)
+{
+	var curCarState = this.currentState.cars[c];
+	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
+	var curCar = this.objects.cars[curCarID];
+	if(curCar == null)
+	{
+		console.log("New car!");
+		this.addNewCar(curCarState);
+	}
+	try {
+		var newDistance = 0;
+		var prevPosition = 0;
+
+		// if the previous state is empty (simulation just initiated) we
+		// put
+		// the object at the position given by the state
+		if (!doesExists(this.prevState)) {
+			newDistance = curCarState.distanza;
+		}
+		// otherwise we compute the correct position
+		else {
+			var prevState = curCar.prevState;
+			// if the object switched from a place to another
+			// if(curCar.where !=
+			// this.prevState.cars[curCar.id_abitante].where){
+			try {
+				if (curCarState.where != prevState.where) {
+					// if the initial position in the current state is
+					// set
+					// we use it, otherwise we use 0
+					prevPosition = curCarState.inizio !== undefined ? curCarState.inizio
+							: 0;
+					if (curCarState.where == 'strada'
+							&& prevState.where == 'traiettoria_ingresso') {
+						prevPosition = prevState.distanza_ingresso + 10;
+						if(curCarState.id_where == 29){
+							console.log("("+curCarState.id_abitante+") now: " + curCarState.where + " before:"
+								+ prevState.where + " prevPosition:"
+								+ prevPosition);
+						}
+					}
+
+					if(curCarState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
+					{
+						prevPosition = prevState.distanza_inizio + 20;
+					}
+					
+					/*
+					if (curCarState.id_abitante == debugTarget) {
+						console.log("now: " + curCarState.where + " before:"
+								+ prevState.where + " prevPosition:"
+								+ prevPosition);
+					}*/
+
+				}
+				// otherwise simply take the position from the previous
+				// state
+				else {
+					prevPosition = prevState.distanza;
+					if (curCarState.where == 'strada_ingresso'
+							&& (prevState.in_uscita != curCarState.in_uscita)) {
+						prevPosition = 0;
+					}
+				}
+			} catch (err) {
+				console.log("curCar:");
+				console.log(curCarState);
+				console.log("prevState:");
+				console.log(prevState);
+				console.log("this.prevSate:");
+				console.log(this.prevSate);
+				console.log(err);
+				throw err;
+			}
+			var curDist = (curCarState.distanza < 0) ? 0 : curCarState.distanza;
+			newDistance = 1
+					* prevPosition
+					+ 1
+					* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+		}
+
+		var newPos = null;
+		switch (curCarState.where) {
+		case 'strada':
+			newPos = this.map.streets[curCarState.id_where].getPositionAt(
+					newDistance, curCarState.polo, curCarState.corsia - 1);
+			break;
+		case 'strada_ingresso':
+			newPos = this.map.entranceStreets[curCarState.id_where]
+					.getPositionAt(newDistance, !curCarState.in_uscita,
+							curCarState.corsia - 1);
+			break;
+		case 'traiettoria_ingresso':
+			newPos = this.map.streets[curCarState.id_where]
+					.getPositionAtEntrancePath(curCarState.polo,
+							curCarState.distanza_ingresso,
+							curCarState.traiettoria, newDistance);
+			break;
+		case 'incrocio':
+			newPos = this.map.crossroads[curCarState.id_where]
+					.getPositionAt(newDistance, curCarState.strada_ingresso,
+							curCarState.quartiere_strada_ingresso,
+							curCarState.direzione);
+			
+			break;
+		case 'cambio_corsia':
+			var path = this.map.streets[curCarState.id_where]
+					.getOvertakingPath(curCarState.distanza_inizio,
+							curCarState.polo, curCarState.corsia_inizio - 1,
+							curCarState.corsia_fine - 1, 20);
+			var loc = path.getLocationAt(newDistance);
+			newPos = {
+				position : loc.point,
+				angle : loc.tangent.angle
+			}
+			break;
+		}
+		curCar.move(newPos.position, newPos.angle);
+	} catch (e) {
+		console.log("Got exception");
+		console.log(e);
+		console.log(curCarState);
+	}
+}
+
 Simulation.prototype.moveObjects = function(time) {
 	this.currentState.stateTime += time;
 	var len = this.currentState.cars.length
 	for (var c = 0; c < len; c++) {
 		// for(var c in this.currentState.cars){
-		var curCarState = this.currentState.cars[c];
-		var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
-		var curCar = this.objects.cars[curCarID];
-		if(curCar == null)
-		{
-			console.log("New car!");
-			curCar = new Car(curCarState.id_abitante, curCarState.id_quartiere_abitante);
-			curCar.draw(this.objects.style);
-			curCar.show();
-			this.objects.cars[curCarID] = curCar;
-		}
-		try {
-			var newDistance = 0;
-			var prevPosition = 0;
-
-			// if the previous state is empty (simulation just initiated) we
-			// put
-			// the object at the position given by the state
-			if (!doesExists(this.prevState)) {
-				newDistance = curCarState.distanza;
-			}
-			// otherwise we compute the correct position
-			else {
-				var prevState = curCar.prevState;
-				// if the object switched from a place to another
-				// if(curCar.where !=
-				// this.prevState.cars[curCar.id_abitante].where){
-				try {
-					if (curCarState.where != prevState.where) {
-						// if the initial position in the current state is
-						// set
-						// we use it, otherwise we use 0
-						prevPosition = curCarState.inizio !== undefined ? curCarState.inizio
-								: 0;
-						if (curCarState.where == 'strada'
-								&& prevState.where == 'traiettoria_ingresso') {
-							prevPosition = prevState.distanza_ingresso + 10;
-							if(curCarState.id_where == 29){
-								console.log("("+curCarState.id_abitante+") now: " + curCarState.where + " before:"
-									+ prevState.where + " prevPosition:"
-									+ prevPosition);
-							}
-						}
-
-						if(curCarState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
-						{
-							prevPosition = prevState.distanza_inizio + 20;
-						}
-						
-						/*
-						if (curCarState.id_abitante == debugTarget) {
-							console.log("now: " + curCarState.where + " before:"
-									+ prevState.where + " prevPosition:"
-									+ prevPosition);
-						}*/
-
-					}
-					// otherwise simply take the position from the previous
-					// state
-					else {
-						prevPosition = prevState.distanza;
-						if (curCarState.where == 'strada_ingresso'
-								&& (prevState.in_uscita != curCarState.in_uscita)) {
-							prevPosition = 0;
-						}
-					}
-				} catch (err) {
-					console.log("curCar:");
-					console.log(curCarState);
-					console.log("prevState:");
-					console.log(prevState);
-					console.log("this.prevSate:");
-					console.log(this.prevSate);
-					console.log(err);
-					throw err;
-				}
-				var curDist = (curCarState.distanza < 0) ? 0 : curCarState.distanza;
-				newDistance = 1
-						* prevPosition
-						+ 1
-						* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
-			}
-
-			var newPos = null;
-			switch (curCarState.where) {
-			case 'strada':
-				newPos = this.map.streets[curCarState.id_where].getPositionAt(
-						newDistance, curCarState.polo, curCarState.corsia - 1);
-				break;
-			case 'strada_ingresso':
-				newPos = this.map.entranceStreets[curCarState.id_where]
-						.getPositionAt(newDistance, !curCarState.in_uscita,
-								curCarState.corsia - 1);
-				break;
-			case 'traiettoria_ingresso':
-				newPos = this.map.streets[curCarState.id_where]
-						.getPositionAtEntrancePath(curCarState.polo,
-								curCarState.distanza_ingresso,
-								curCarState.traiettoria, newDistance);
-				break;
-			case 'incrocio':
-				newPos = this.map.crossroads[curCarState.id_where]
-						.getPositionAt(newDistance, curCarState.strada_ingresso,
-								curCarState.quartiere_strada_ingresso,
-								curCarState.direzione);
-				
-				break;
-			case 'cambio_corsia':
-				var path = this.map.streets[curCarState.id_where]
-						.getOvertakingPath(curCarState.distanza_inizio,
-								curCarState.polo, curCarState.corsia_inizio - 1,
-								curCarState.corsia_fine - 1, 20);
-				var loc = path.getLocationAt(newDistance);
-				newPos = {
-					position : loc.point,
-					angle : loc.tangent.angle
-				}
-				break;
-			}
-			curCar.move(newPos.position, newPos.angle);
-		} catch (e) {
-			console.log("Got exception");
-			console.log(e);
-			console.log(curCarState);
-		}
+		this.moveCar(time, c);
 	}
 }
 

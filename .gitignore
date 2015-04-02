@@ -30,3 +30,4 @@ num_progressivo_pacchetti.ad*
 data/snapshot/quartiere*_snapshot.json
 data/log/quartiere*_stallo.json
 data/abilita_invio_aggiornamenti.json
+web_view/www_data/quartiere*

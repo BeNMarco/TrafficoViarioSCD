@@ -1,6 +1,7 @@
 with Text_IO;
 with Ada.Calendar;
 with remote_types;
+with System.RPC;
 
 use Text_IO;
 use Ada.Calendar;
@@ -8,290 +9,335 @@ use remote_types;
 
 package body the_name_server is
 
-   procedure registra_quartiere_log(id_quartiere: Positive; file_log: ptr_rt_report_log) is
+   function is_server_registered return Boolean is
    begin
-      registro_log_quartieri_obj.registra_quartiere_log(id_quartiere,file_log);
-   end registra_quartiere_log;
-
-   function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+      return servers_ref.is_server_registered;
+   end is_server_registered;
+   function is_web_server_registered return Boolean is
    begin
-      return registro_log_quartieri_obj.get_log_quartiere(id_quartiere);
-   end get_log_quartiere;
-
-   procedure registra_webserver(my_web: Access_WebServer_Remote_Interface) is
+      return servers_ref.is_web_server_registered;
+   end is_web_server_registered;
+   function is_quartiere_registered(id: Positive) return Boolean is
    begin
-      web:= my_web;
-   end registra_webserver;
+      return cfg_quartieri_obj.is_quartiere_registered(id);
+   end is_quartiere_registered;
 
-   function get_webServer return Access_WebServer_Remote_Interface is
-   begin
-      loop
-         delay until (Clock + 1.0);
-         exit when web/=null;
-      end loop;
-      return web;
-   end get_webServer;
+   protected body servers_ref is
 
-   procedure registra_server_gps(my_gps: ptr_gps_interface) is
-   begin
-      gps:= my_gps;
-   end registra_server_gps;
-
-   function get_server_gps return ptr_gps_interface is
-   begin
-      while gps=null loop
-         delay until (Clock + 1.0);
-      end loop;
-      return gps;
-   end get_server_gps;
-
-   procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites) is
-   begin
-      registro_ref_quartieri_obj.registra_quartiere(id_quartiere,rt_quartiere);
-   end registra_quartiere;
-
-   function get_ref_rt_quartieri return registro_quartieri is
-   begin
-      return registro_ref_quartieri_obj.get_ref_rt_quartieri;
-   end get_ref_rt_quartieri;
-
-   function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
-   begin
-      while registro_ref_quartieri_obj.get_ref_quartiere(id_quartiere)=null loop
-         delay until (Clock + 1.0);
-      end loop;
-      return registro_ref_quartieri_obj.get_ref_quartiere(id_quartiere);
-   end get_ref_quartiere;
-
-   procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks) is
-   begin
-      registro_local_synchronized_objects_obj.registra_local_synchronized_obj(id_quartiere,obj);
-   end registra_local_synchronized_obj;
-
-   function get_ref_local_synchronized_obj return registro_local_synchronized_obj is
-   begin
-      return registro_local_synchronized_objects_obj.get_ref_local_synchronized_obj;
-   end get_ref_local_synchronized_obj;
-
-   protected body registro_log_quartieri is
-      procedure registra_quartiere_log(id_quartiere: Positive; file_log: ptr_rt_report_log) is
+      procedure registra_webserver(my_web: Access_WebServer_Remote_Interface) is
       begin
-         registro(id_quartiere):= file_log;
-      end registra_quartiere_log;
+         registered(2):= True;
+         web:= my_web;
+      end registra_webserver;
 
-      function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+      procedure registra_server_gps(my_gps: ptr_gps_interface) is
       begin
-         return registro(id_quartiere);
-      end get_log_quartiere;
-   end registro_log_quartieri;
+         registered(1):= True;
+         gps:= my_gps;
+      end registra_server_gps;
 
-   protected body registro_ref_quartieri is
-      procedure registra_quartiere(id_quartiere: Positive; rt_quartiere: ptr_rt_quartiere_utilitites) is
+      function get_server_gps return ptr_gps_interface is
       begin
-         registro(id_quartiere):= rt_quartiere;
-      end registra_quartiere;
+         return gps;
+      end get_server_gps;
 
-      function get_ref_rt_quartieri return registro_quartieri is
+      function get_webServer return Access_WebServer_Remote_Interface is
       begin
-         return registro;
-      end get_ref_rt_quartieri;
+         return web;
+      end get_webServer;
 
-      function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+      function is_server_registered return Boolean is
       begin
-         return registro(id_quartiere);
-      end get_ref_quartiere;
+         return registered(1);
+      end is_server_registered;
 
-   end registro_ref_quartieri;
-
-   protected body registro_risorse_strade is
-
-      procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci) is
+      function is_web_server_registered return Boolean is
       begin
-         registro_ingressi(id_quartiere):= new set_resources_ingressi'(set_ingressi);
-         registro_urbane(id_quartiere):= new set_resources_urbane'(set_urbane);
-         registro_incroci(id_quartiere):= new set_resources_incroci'(set_incroci);
-      end registra_risorse_quartiere;
+         return registered(2);
+      end is_web_server_registered;
 
-      function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
-      begin
-         return registro_ingressi(id_quartiere)(id_risorsa);
-      end get_id_ingresso_quartiere;
+   end servers_ref;
 
-      function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
-      begin
-         return registro_urbane(id_quartiere)(id_risorsa);
-      end get_id_urbana_quartiere;
-
-      function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
-      begin
-         return registro_incroci(id_quartiere)(id_risorsa);
-      end get_id_incrocio_quartiere;
-
-   end registro_risorse_strade;
-
-   procedure registra_synchronization_tasks_object(obj: ptr_rt_task_synchronization) is
-   begin
-      task_synchronization_obj:= obj;
-   end registra_synchronization_tasks_object;
-
-   function get_synchronization_tasks_object return ptr_rt_task_synchronization is
-   begin
-      loop
-         delay until (Clock + 1.0);
-         exit when task_synchronization_obj/=null;
-      end loop;
-      return task_synchronization_obj;
-   end get_synchronization_tasks_object;
-
-   procedure registra_risorse_quartiere(id_quartiere: Positive; set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci) is
-   begin
-      registro_risorse_strade_obj.registra_risorse_quartiere(id_quartiere,set_ingressi,set_urbane,set_incroci);
-   end registra_risorse_quartiere;
-
-   function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
-   begin
-      return registro_risorse_strade_obj.get_id_ingresso_quartiere(id_quartiere,id_risorsa);
-   end get_id_ingresso_quartiere;
-
-   function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
-   begin
-      return registro_risorse_strade_obj.get_id_urbana_quartiere(id_quartiere,id_risorsa);
-   end get_id_urbana_quartiere;
-
-   function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
-   begin
-      return registro_risorse_strade_obj.get_id_incrocio_quartiere(id_quartiere,id_risorsa);
-   end get_id_incrocio_quartiere;
-
-   procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
-   begin
-      registro_gestori_semafori_obj.registra_gestore_semafori(id_quartiere,handler_semafori_quartiere);
-   end registra_gestore_semafori;
-   function get_gestori_quartiere return handler_semafori is
-   begin
-      return registro_gestori_semafori_obj.get_gestori_quartiere;
-   end get_gestori_quartiere;
-
-   procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life) is
-   begin
-      registro_quartiere_entities_life_obj.registra_quartiere_entities_life(id_quartiere,obj);
-   end registra_quartiere_entities_life;
-
-   function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
-   begin
-      return registro_quartiere_entities_life_obj.get_quartiere_entities_life(id_quartiere);
-   end get_quartiere_entities_life;
-
-   procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere) is
-   begin
-      registro_quartieri_gestori_bus_obj.registra_quartiere_gestore_bus(id_quartiere,obj);
-   end registra_quartiere_gestore_bus;
-   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
-   begin
-      return registro_quartieri_gestori_bus_obj.get_quartiere_gestore_bus(id_quartiere);
-   end get_quartiere_gestore_bus;
-   function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri is
-   begin
-      return registro_quartieri_gestori_bus_obj.get_registro;
-   end get_registro_gestori_bus_quartieri;
-
-   protected body registro_gestori_semafori is
-      procedure registra_gestore_semafori(id_quartiere: Positive; handler_semafori_quartiere: ptr_rt_handler_semafori_quartiere) is
-      begin
-         registro(id_quartiere):= handler_semafori_quartiere;
-      end registra_gestore_semafori;
-
-      function get_gestori_quartiere return handler_semafori is
-      begin
-         return registro;
-      end get_gestori_quartiere;
-
-   end registro_gestori_semafori;
-
-   protected body get_my_mappa is
-      procedure registra_mappa(id: out Positive) is
-      begin
-         num_mappa:= num_mappa+1;
-         id:= num_mappa;
-      end registra_mappa;
-   end get_my_mappa;
-
-   protected body registro_local_synchronized_objects is
-
-      procedure registra_local_synchronized_obj(id_quartiere: Positive; obj: ptr_rt_synchronization_tasks) is
-      begin
-         registro(id_quartiere):= obj;
-      end registra_local_synchronized_obj;
-
-      function get_ref_local_synchronized_obj return registro_local_synchronized_obj is
-      begin
-         return registro;
-      end get_ref_local_synchronized_obj;
-
-   end registro_local_synchronized_objects;
-
-   protected body registro_quartiere_entities_life is
-      procedure registra_quartiere_entities_life(id_quartiere: Positive; obj: ptr_rt_quartiere_entities_life) is
-      begin
-         registro(id_quartiere):= obj;
-      end registra_quartiere_entities_life;
-
-      function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
-      begin
-         return registro(id_quartiere);
-      end get_quartiere_entities_life;
-
-   end registro_quartiere_entities_life;
-
-   protected body registro_quartieri_gestori_bus is
-      procedure registra_quartiere_gestore_bus(id_quartiere: Positive; obj: ptr_rt_gestore_bus_quartiere) is
-      begin
-         registro(id_quartiere):= obj;
-      end registra_quartiere_gestore_bus;
-
-      function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
-      begin
-         return registro(id_quartiere);
-      end get_quartiere_gestore_bus;
-
-      function get_registro return registro_gestori_bus_quartieri is
-      begin
-         return registro;
-      end get_registro;
-   end registro_quartieri_gestori_bus;
-
-   procedure configure_num_quartieri_name_server(numero_quartieri: in Positive) is
+   procedure configure_num_quartieri_name_server(numero_quartieri: Positive) is
    begin
       num_quartieri:= numero_quartieri;
-      registro_ref_quartieri_obj:= new registro_ref_quartieri(numero_quartieri);
-      registro_risorse_strade_obj:= new registro_risorse_strade(numero_quartieri);
-      registro_gestori_semafori_obj:= new registro_gestori_semafori(numero_quartieri);
-      registro_local_synchronized_objects_obj:= new registro_local_synchronized_objects(numero_quartieri);
-      registro_quartiere_entities_life_obj:= new registro_quartiere_entities_life(numero_quartieri);
-      registro_log_quartieri_obj:= new registro_log_quartieri(numero_quartieri);
-      registro_quartieri_gestori_bus_obj:= new registro_quartieri_gestori_bus(numero_quartieri);
+      cfg_quartieri_obj:= new cfg_quartieri(numero_quartieri);
    end configure_num_quartieri_name_server;
 
    function rci_parameters_are_set return Boolean is
    begin
-      while not (is_set_synchonized_obj and (registro_ref_quartieri_obj/=null and
-                                               (registro_risorse_strade_obj/=null and (registro_gestori_semafori_obj/=null and (registro_local_synchronized_objects_obj/=null and (registro_quartiere_entities_life_obj/=null and (registro_log_quartieri_obj/=null and (gps/=null and (task_synchronization_obj/=null and registro_quartieri_gestori_bus_obj/=null))))))))) loop
+      while cfg_quartieri_obj=null loop
          delay until (Clock + 1.0);
       end loop;
-
-      --   exit when (is_set_synchonized_obj and (registro_ref_quartieri_obj/=null and
-      --                                            (registro_risorse_strade_obj/=null and (registro_gestori_semafori_obj/=null and (registro_local_synchronized_objects_obj/=null and (registro_quartiere_entities_life_obj/=null and (registro_log_quartieri_obj/=null and (gps/=null and (task_synchronization_obj/=null and registro_quartieri_gestori_bus_obj/=null))))))));
-      --end loop;
       return True;
    end rci_parameters_are_set;
 
    function get_num_quartieri return Positive is
    begin
-      loop
+      while num_quartieri=0 loop
          delay until (Clock + 1.0);
-         exit when num_quartieri/=0;
       end loop;
       return num_quartieri;
    end get_num_quartieri;
+
+   function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+   begin
+      return cfg_quartieri_obj.get_log_quartiere(id_quartiere);
+   end get_log_quartiere;
+
+   procedure registra_webserver(my_web: Access_WebServer_Remote_Interface; all_ok: in out Boolean) is
+   begin
+      all_ok:= True;
+      if servers_ref.get_webServer/=null then
+         all_ok:= False;
+         return;
+      end if;
+      servers_ref.registra_webserver(my_web);
+   end registra_webserver;
+
+   function get_webServer return Access_WebServer_Remote_Interface is
+   begin
+      while servers_ref.get_webServer=null loop
+         delay until (Clock + 1.0);
+      end loop;
+      return servers_ref.get_webServer;
+   end get_webServer;
+
+   procedure registra_server_gps(my_gps: ptr_gps_interface; all_ok: in out Boolean) is
+   begin
+      all_ok:= True;
+      if servers_ref.get_server_gps/=null then
+         all_ok:= False;
+         return;
+      end if;
+      servers_ref.registra_server_gps(my_gps);
+   end registra_server_gps;
+
+   function get_server_gps return ptr_gps_interface is
+   begin
+      while servers_ref.get_server_gps=null loop
+         delay until (Clock + 1.0);
+      end loop;
+      return servers_ref.get_server_gps;
+   end get_server_gps;
+
+   procedure registra_quartiere(id_quartiere: Positive;
+                                set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci;
+                                entities_life: ptr_rt_quartiere_entities_life;
+                                gestore_bus: ptr_rt_gestore_bus_quartiere;
+                                report_log: ptr_rt_report_log;
+                                quartiere_utilities: ptr_rt_quartiere_utilitites;
+                                synch_local_obj: ptr_rt_synchronization_partitions_type;
+                                all_ok: in out Boolean) is
+   begin
+      begin
+         all_ok:= True;
+         if cfg_quartieri_obj.get_ref_quartiere(id_quartiere)/=null then
+            all_ok:= False;
+            return;
+         end if;
+         cfg_quartieri_obj.registra_quartiere(id_quartiere,
+                                              set_ingressi,set_urbane,set_incroci,
+                                              entities_life,gestore_bus,report_log,
+                                              quartiere_utilities,synch_local_obj);
+      exception
+         when others =>
+            -- ERRORE NELLA REGISTRAZIONE DEL QUARTIERE id_quartiere
+            all_ok:= False;
+      end;
+   end registra_quartiere;
+
+   procedure quartiere_has_registered_map(id_quartiere: Positive) is
+   begin
+      cfg_quartieri_obj.quartiere_has_registered_map(id_quartiere);
+   end quartiere_has_registered_map;
+
+   protected body cfg_quartieri is
+      procedure registra_quartiere(id_quartiere: Positive;
+                                   set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci;
+                                   entities_life: ptr_rt_quartiere_entities_life;
+                                   gestore_bus: ptr_rt_gestore_bus_quartiere;
+                                   report_log: ptr_rt_report_log;
+                                   quartiere_utilities: ptr_rt_quartiere_utilitites;
+                                   synch_local_obj: ptr_rt_synchronization_partitions_type) is
+      begin
+         registro_quartieri_util(id_quartiere):= quartiere_utilities;
+
+         registro_log(id_quartiere):= report_log;
+
+         if registro_ingressi(id_quartiere)=null then
+            registro_ingressi(id_quartiere):= new set_resources_ingressi'(set_ingressi);
+         else
+            for i in registro_ingressi'Range loop
+               registro_ingressi(id_quartiere)(i):= set_ingressi(i);
+            end loop;
+         end if;
+         if registro_urbane(id_quartiere)=null then
+            registro_urbane(id_quartiere):= new set_resources_urbane'(set_urbane);
+         else
+            for i in registro_urbane'Range loop
+               registro_urbane(id_quartiere)(i):= set_urbane(i);
+            end loop;
+         end if;
+         if registro_incroci(id_quartiere)=null then
+            registro_incroci(id_quartiere):= new set_resources_incroci'(set_incroci);
+         else
+            for i in registro_incroci'Range loop
+               registro_incroci(id_quartiere)(i):= set_incroci(i);
+            end loop;
+         end if;
+
+         registro_lifes(id_quartiere):= entities_life;
+
+         registro_bus(id_quartiere):= gestore_bus;
+
+         registro_synch_quartieri(id_quartiere):= synch_local_obj;
+
+         registered(id_quartiere):= True;
+
+      end registra_quartiere;
+
+      procedure quartiere_has_registered_map(id_quartiere: Positive) is
+      begin
+         map_registered(id_quartiere):= True;
+      end quartiere_has_registered_map;
+
+      function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
+      begin
+         if registro_log(id_quartiere)/=null then
+            return registro_log(id_quartiere);
+         end if;
+         return null;
+      end get_log_quartiere;
+
+      function get_ref_rt_quartieri return registro_quartieri is
+      begin
+         return registro_quartieri_util;
+      end get_ref_rt_quartieri;
+
+      function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+      begin
+         if map_registered(id_quartiere) then
+            return registro_quartieri_util(id_quartiere);
+         else
+            return null;
+         end if;
+      end get_ref_quartiere;
+
+      function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
+      begin
+         if registro_ingressi(id_quartiere)/=null then
+            return registro_ingressi(id_quartiere)(id_risorsa);
+         else
+            return null;
+         end if;
+      end get_id_ingresso_quartiere;
+
+      function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
+      begin
+         if registro_urbane(id_quartiere)/=null then
+            return registro_urbane(id_quartiere)(id_risorsa);
+         else
+            return null;
+         end if;
+      end get_id_urbana_quartiere;
+
+      function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
+      begin
+         if registro_incroci(id_quartiere)/=null then
+            return registro_incroci(id_quartiere)(id_risorsa);
+         else
+            return null;
+         end if;
+      end get_id_incrocio_quartiere;
+
+      function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
+      begin
+         return registro_lifes(id_quartiere);
+      end get_quartiere_entities_life;
+
+      function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+      begin
+         return registro_bus(id_quartiere);
+      end get_quartiere_gestore_bus;
+
+      function get_registro_gestori_bus return registro_gestori_bus_quartieri is
+      begin
+         return registro_bus;
+      end get_registro_gestori_bus;
+
+      function get_synchronizer_quartiere(id_quartiere: Positive) return ptr_rt_synchronization_partitions_type is
+      begin
+         return registro_synch_quartieri(id_quartiere);
+      end get_synchronizer_quartiere;
+
+      function get_registro_quartieri return registro_quartieri is
+         return_registro: registro_quartieri(1..num_quartieri):= (others => null);
+      begin
+         for i in 1..num_quartieri loop
+            if map_registered(i) then
+               return_registro(i):= registro_quartieri_util(i);
+            end if;
+         end loop;
+
+         return return_registro;
+      end get_registro_quartieri;
+
+      function is_quartiere_registered(id: Positive) return Boolean is
+      begin
+         return registered(id);
+      end is_quartiere_registered;
+
+   end cfg_quartieri;
+
+   function get_ref_rt_quartieri return registro_quartieri is
+   begin
+      return cfg_quartieri_obj.get_ref_rt_quartieri;
+   end get_ref_rt_quartieri;
+
+   function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites is
+   begin
+      return cfg_quartieri_obj.get_ref_quartiere(id_quartiere);
+   end get_ref_quartiere;
+
+   function get_id_ingresso_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_ingresso is
+   begin
+      return cfg_quartieri_obj.get_id_ingresso_quartiere(id_quartiere,id_risorsa);
+   end get_id_ingresso_quartiere;
+
+   function get_id_urbana_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_urbana is
+   begin
+      return cfg_quartieri_obj.get_id_urbana_quartiere(id_quartiere,id_risorsa);
+   end get_id_urbana_quartiere;
+
+   function get_id_incrocio_quartiere(id_quartiere: Positive; id_risorsa: Positive) return ptr_rt_incrocio is
+   begin
+      return cfg_quartieri_obj.get_id_incrocio_quartiere(id_quartiere,id_risorsa);
+   end get_id_incrocio_quartiere;
+
+   function get_quartiere_entities_life(id_quartiere: Positive) return ptr_rt_quartiere_entities_life is
+   begin
+      return cfg_quartieri_obj.get_quartiere_entities_life(id_quartiere);
+   end get_quartiere_entities_life;
+
+   function get_registro_quartieri return registro_quartieri is
+   begin
+      return cfg_quartieri_obj.get_registro_quartieri;
+   end get_registro_quartieri;
+
+   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+   begin
+      return cfg_quartieri_obj.get_quartiere_gestore_bus(id_quartiere);
+   end get_quartiere_gestore_bus;
+
+   function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri is
+   begin
+      return cfg_quartieri_obj.get_registro_gestori_bus;
+   end get_registro_gestori_bus_quartieri;
+
+   function get_synchronizer_quartiere(id_quartiere: Positive) return ptr_rt_synchronization_partitions_type is
+   begin
+      return cfg_quartieri_obj.get_synchronizer_quartiere(id_quartiere);
+   end get_synchronizer_quartiere;
 
 end the_name_server;

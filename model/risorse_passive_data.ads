@@ -55,13 +55,22 @@ package risorse_passive_data is
 
    function get_traiettoria_cambio_corsia return traiettoria_cambio_corsia;
 
+   type set_remoti is array(Positive range <>) of Boolean;
+   
    protected type quartiere_utilities(num_quartieri: Positive) is new rt_quartiere_utilities with
-      procedure registra_classe_locate_abitanti_quartiere(id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti);
-      procedure registra_abitanti(from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
-                                  bici: list_bici_quartiere; auto: list_auto_quartiere);
-      procedure registra_mappa(id_quartiere: Positive);
+
+      procedure registra_cfg_quartiere(id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+                                              bici: list_bici_quartiere; auto: list_auto_quartiere; location_abitanti: ptr_rt_location_abitanti);
       procedure get_cfg_incrocio(id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural);
 
+      function is_configured_cache_quartiere(id_quartiere: Positive) return Boolean;
+      
+      function get_all_abitanti_quartiere return list_abitanti_quartiere;
+      function get_all_pedoni_quartiere return list_pedoni_quartiere;
+      function get_all_bici_quartiere return list_bici_quartiere;
+      function get_all_auto_quartiere return list_auto_quartiere;
+      function get_locate_abitanti_quartiere(id_quartiere: Positive) return ptr_rt_location_abitanti;
+      
       function get_type_entity(id_entità: Positive) return entity_type;
       function get_id_main_road_from_id_ingresso(id_ingresso: Positive) return Natural;
       function get_polo_ingresso(id_ingresso: Positive) return Boolean;
@@ -77,7 +86,14 @@ package risorse_passive_data is
       function get_to_type_resource_quartiere(resource: resource_type) return Natural;      
       function is_incrocio(id_risorsa: Positive) return Boolean;
       function get_id_fermata_id_urbana(id_urbana: Positive) return Natural;
-
+      
+      procedure set_synch_cache(registro: registro_quartieri);
+      function get_saved_partitions return registro_quartieri;
+      function is_a_new_quartiere(id_quartiere: Positive)  return Boolean;
+      
+      procedure set_quartieri_to_not_wait(queue: boolean_queue);
+      function is_a_quartiere_to_wait(id_quartiere: Positive) return Boolean;
+      
    private
 
       entità_abitanti: list_abitanti_quartieri(1..num_quartieri);
@@ -87,13 +103,18 @@ package risorse_passive_data is
 
       -- array i quali oggetti sono del tipo ptr_rt_location_abitanti per ottenere le informazioni esposte sopra per gps_abitanti
       rt_classi_locate_abitanti: gps_abitanti_quartieri(1..num_quartieri);
+      
+      cache_remoti_registrati: set_remoti(1..num_quartieri):= (others => False);
+      synch_cache: registro_quartieri(1..num_quartieri):= (others => null);
+      
+      not_wait_quartieri: boolean_queue(1..num_quartieri):= (others => False);
    end quartiere_utilities;
 
    type ptr_quartiere_utilities is access all quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities;
 
-   procedure wait_settings_all_quartieri;
+   procedure reconfigure_estremi_urbane;
 
    type estremi_resource_strada_urbana is array(Positive range 1..2) of ptr_rt_incrocio;
    type estremi_strada_urbana is array(Positive range 1..2) of estremo_urbana;
@@ -149,10 +170,9 @@ package risorse_passive_data is
    
    procedure configure_map_fermate_urbane;
    
-   -- ATTENZIONE!!!!!11 LA SEGUENTE PROCEDURA PUÒ ESSERE CHIAMATA SOLO
-   -- DOPO ESSERSI ACCERTATI CHE TUTTI I QUARTIERI SI SONO CONFIGURATI
-   -- NECESSARIA CHIAMARLA DOPO ESSERSI MESSI IN ATTESA SU waiting_cfg.wait_cfg
+   procedure create_linee_fermate;
    procedure configure_linee_fermate;
+   function fermate_are_configured return Boolean;
    
    type location_autobus is tagged private;
    type stato_avanzamento_autobus is array(Positive range <>) of location_autobus;
@@ -170,7 +190,6 @@ package risorse_passive_data is
    protected type gestore_bus_quartiere(num_quartieri: Positive; num_autobus: Natural) is new rt_gestore_bus_quartiere with
       -- configure_gestori_remoti può essere chiamata solo dopo l'avvenuto check-point
       -- in configure di resource_map_inventory
-        procedure configure_ref_gestori_bus_remoti;
       
       procedure autobus_arrived_at_fermata(to_id_autobus: Positive; abitanti: set_tratti; from_fermata: tratto);
       procedure avanza_fermata(id_autobus: Positive);
@@ -191,20 +210,6 @@ package risorse_passive_data is
    type ptr_gestore_bus_quartiere is access all gestore_bus_quartiere'Class;
    
    function get_gestore_bus_quartiere_obj return ptr_gestore_bus_quartiere;
-
-   protected type type_waiting_cfg(numero_quartieri: Positive) is
-      procedure incrementa_classi_locate_abitanti;
-      procedure incrementa_num_quartieri_abitanti;
-      procedure incrementa_resource_mappa_quartieri;
-      entry wait_cfg;
-   private
-      num_classi_locate_abitanti: Natural:= 0;
-      num_abitanti_quartieri_registrati: Natural:= 0;
-      num_quartieri_resource_registrate: Natural:= 0;
-      inventory_estremi_is_set: Boolean:= False;
-   end type_waiting_cfg;
-
-   type ptr_type_waiting_cfg is access type_waiting_cfg;
    
    type quartiere_entities_life is new rt_quartiere_entities_life with null record;
    type ptr_quartiere_entities_life is access all quartiere_entities_life;
@@ -222,8 +227,29 @@ package risorse_passive_data is
    
    function get_location_abitanti_quartiere return ptr_location_abitanti;
 
+   type lista_tuple is tagged private;
+   type ptr_lista_tuple is access lista_tuple;
+   
+   function create_lista_tupla(tupla: tratto'Class; next: ptr_lista_tuple) return lista_tuple'Class;
+   function get_tupla(obj: lista_tuple) return tratto'Class;
+   function get_next_tupla(obj: lista_tuple) return ptr_lista_tuple;
+   --procedure set_next_tupla(obj: in out lista_tuple; next: ptr_lista_tuple);
+
+   protected coda_abitanti_to_restart is
+      procedure enqueue_abitante(entità: abitante);
+      procedure dequeue_abitante(entità: abitante; next_element_list: in out ptr_lista_tuple);
+      function get_abitanti_non_partiti return ptr_lista_tuple;
+   private
+      abitanti_non_partiti: ptr_lista_tuple;
+   end coda_abitanti_to_restart;
+  
 private
 
+  type lista_tuple is tagged record
+      identificativo_tupla: tratto;
+      next: ptr_lista_tuple;
+   end record;
+   
    type location_autobus is tagged record
       index_fermata: Natural:= 0;
       revert_percorso: Boolean:= False;
@@ -234,8 +260,9 @@ private
       next: ptr_lista_passeggeri:= null;
    end record;
    
-   waiting_cfg: ptr_type_waiting_cfg:= null;  
-
+   
+   fermate_configured: Boolean:= False;
+      
    quartiere_cfg: ptr_quartiere_utilities:= null;
    
    gestore_bus_quartiere_obj: ptr_gestore_bus_quartiere:= null;
@@ -280,6 +307,10 @@ private
    default_comfortable_deceleration_bici: new_float:= get_default_comfortable_deceleration_bici;
    default_s0_bici: new_float:= get_default_s0_bici;
    default_length_bici: new_float:= get_default_length_bici;
+   
+
+   
+
 
    --default_desired_velocity_auto: new_float:= get_default_desired_velocity_auto;
    --default_time_headway_auto: new_float:= get_default_time_headway_auto;

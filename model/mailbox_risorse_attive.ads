@@ -70,6 +70,9 @@ package mailbox_risorse_attive is
    type attraveramento_cars is array (Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
+      function get_id_risorsa return Positive;
+      function get_id_quartiere_risorsa return Positive;
+
       entry ingresso_wait_turno;
       procedure delta_terminate;
 
@@ -80,7 +83,6 @@ package mailbox_risorse_attive is
       procedure create_img(json_1: out JSON_Value);
       procedure recovery_resource;
 
-      procedure set_estremi_urbana(estremi: estremi_resource_strada_urbana);
       procedure aggiungi_entità_from_ingresso(mezzo: means_of_carrying; id_ingresso: Positive; type_traiettoria: traiettoria_ingressi_type; id_quartiere_abitante: Positive; id_abitante: Positive; traiettoria_da_prendere: trajectory_to_follow);
       procedure configure(risorsa: strada_urbana_features; list_ingressi: ptr_list_ingressi_per_urbana;
                           list_ingressi_polo_true: ptr_list_ingressi_per_urbana; list_ingressi_polo_false: ptr_list_ingressi_per_urbana);
@@ -130,7 +132,7 @@ package mailbox_risorse_attive is
       -- get_next_abitante_on_road viene usato SIA DA quelle macchine in traiettoria di ingresso per ottenere a che distanza si trova la macchina successiva nella corsia in cui si deve immettere
       -- SIA dagli incroci per vedere la progressione di avanzamento delle macchine(in questo caso viene chiamato da get_distanza_percorsa_first_abitante)
       function get_next_abitante_on_road(from_distance: new_float; range_1: Boolean; range_2: id_corsie; from_ingresso: Boolean:= True) return ptr_list_posizione_abitanti_on_road; -- l'abitante sulla strada che sta davanti data la posizione from
-      function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean) return Boolean;
+      function can_abitante_move(distance: new_float; key_ingresso: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean; altro_ab: ptr_list_posizione_abitanti_on_road) return Boolean;
       function can_abitante_continue_move(distance: new_float; num_corsia_to_check: Positive; traiettoria: traiettoria_ingressi_type; polo_ingresso: Boolean; abitante_altra_traiettoria: ptr_list_posizione_abitanti_on_road:= null) return Boolean;
       function get_abitanti_to_move(type_structure: data_structures_types; range_1: Boolean; range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
       function get_number_entity_on_road(polo: Boolean; num_corsia: id_corsie) return Natural;
@@ -170,17 +172,22 @@ package mailbox_risorse_attive is
       -- metodo richiamato per vedere se è possibile inserire gli abitanti
       -- nella traiettoria per muoversi a destra
       function get_abilitazione_cambio_traiettoria_bipede(mezzo: means_of_carrying) return Boolean;
+
+      procedure exit_system;
+
    private
-      function get_num_estremi_urbana return Positive;
+      function get_num_estremi_urbana return Natural;
       function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
 
+      exit_system_stato: Boolean:= False;
       num_delta_incroci_finished: Natural:= 0;
-      array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
+      --array_estremi_strada_urbana: estremi_resource_strada_urbana:= (others => null);
       index_ingressi: indici_ingressi(1..num_ingressi);
       ordered_ingressi_polo: ordered_indici_ingressi(False..True):= (False => new indici_ingressi(1..num_ingressi_polo_false),True => new indici_ingressi(1..num_ingressi_polo_true));
       ordered_ingressi_polo_svolta: ordered_ingressi_in_svolta(False..True):= (False => new ingressi_in_svolta(1..num_ingressi_polo_false),True => new ingressi_in_svolta(1..num_ingressi_polo_true));
       risorsa_features: strada_urbana_features;
       finish_delta_urbana: Boolean:= False;
+      finish_update_view: Boolean:= False;
       num_ingressi_ready: Natural:= 0;
       -- l'immagine va creata per i prossimi elementi
       set_traiettorie_ingressi: array_traiettorie_ingressi(1..num_ingressi,traiettoria_ingressi_type'First..traiettoria_ingressi_type'Last);
@@ -190,6 +197,10 @@ package mailbox_risorse_attive is
       --marciapiedi_num_pedoni_bici: number_entity(False..True,1..2):= (others => (others => 0));
       temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
       temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
+
+      backup_temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
+      backup_temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
+
 
       abilita_attraversamento_bipedi_from_begin: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));
       abilita_attraversamento_bipedi_from_mezzaria: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));
@@ -206,6 +217,8 @@ package mailbox_risorse_attive is
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
    protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso and backup_interface with
+      function get_id_risorsa return Positive;
+      function get_id_quartiere_risorsa return Positive;
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
@@ -238,6 +251,7 @@ package mailbox_risorse_attive is
       function get_number_entity_marciapiede(range_1: Boolean; range_2: id_corsie) return Natural;
       function get_temp_main_strada return ptr_list_posizione_abitanti_on_road;
       function get_temp_marciapiede(range_2: id_corsie) return ptr_list_posizione_abitanti_on_road;
+      function get_temp_car_in_entrata return posizione_abitanti_on_road;
       function get_index_inizio_moto return Boolean;
 
       -- get_first_abitante_to_exit_from_urbana viene richiesto dall'urbana per trovare
@@ -264,9 +278,15 @@ package mailbox_risorse_attive is
       car_avanzamento_in_urbana: new_float:= 0.0;
       pedone_avanzamento_in_urbana: new_float:= 0.0;
       bici_avanzamento_in_urbana: new_float:= 0.0;
+
       temp_car_finish_route: posizione_abitanti_on_road;
       temp_bici_finish_route: posizione_abitanti_on_road;
       temp_pedone_finish_route: posizione_abitanti_on_road;
+
+      backup_temp_car_finish_route: posizione_abitanti_on_road;
+      backup_temp_bici_finish_route: posizione_abitanti_on_road;
+      backup_temp_pedone_finish_route: posizione_abitanti_on_road;
+
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..2); -- RANGE2=1 sono le bici; RANGE2=1 sono i pedoni
       main_strada_temp: ptr_list_posizione_abitanti_on_road:= null;
@@ -290,7 +310,8 @@ package mailbox_risorse_attive is
    type temp_bipedi_to_move_in_incroci is array(Positive range <>, id_corsie range <>) of ptr_list_posizione_abitanti_on_road;
 
    protected type resource_segmento_incrocio(id_risorsa: Positive; size_incrocio: Positive) is new rt_incrocio and backup_interface with
-      entry wait_turno;
+      function get_id_risorsa return Positive;
+      function get_id_quartiere_risorsa return Positive;
 
       -- metodo usato per creare una snapshot
       procedure create_img(json_1: out JSON_Value);
@@ -330,6 +351,7 @@ package mailbox_risorse_attive is
    private
       function slide_list(num_urbana: Positive; num_corsia: id_corsie; index_to_slide: Positive) return ptr_list_posizione_abitanti_on_road;
       function get_num_urbane_to_wait return Positive;
+
       num_urbane_ready: Natural:= 0;
       finish_delta_incrocio: Boolean:= False;
       -- l'immagine va creata per i prossimi elementi
@@ -344,13 +366,14 @@ package mailbox_risorse_attive is
    type resource_segmenti_incroci is array(Positive range <>) of ptr_resource_segmento_incrocio;
    type ptr_resource_segmenti_incroci is access all resource_segmenti_incroci;
 
-   protected type resource_segmento_rotonda(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
-      entry wait_turno;
-      procedure delta_terminate;
-   end resource_segmento_rotonda;
-   type ptr_resource_segmento_rotonda is access all resource_segmento_rotonda;
-   type resource_segmenti_rotonde is array(Positive range <>) of ptr_resource_segmento_rotonda;
-   type ptr_resource_segmenti_rotonde is access all resource_segmenti_rotonde;
+   --protected type resource_segmento_rotonda(id_risorsa: Positive; max_num_auto: Positive; max_num_pedoni: Positive) is new rt_segmento with
+
+   --   entry wait_turno;
+   --   procedure delta_terminate;
+   --end resource_segmento_rotonda;
+   --type ptr_resource_segmento_rotonda is access all resource_segmento_rotonda;
+   --type resource_segmenti_rotonde is array(Positive range <>) of ptr_resource_segmento_rotonda;
+   --type ptr_resource_segmenti_rotonde is access all resource_segmenti_rotonde;
 
    function get_min_length_entità(entity: entità) return new_float;
 
@@ -359,9 +382,9 @@ package mailbox_risorse_attive is
    function get_incroci_segmento_resources(index: Positive) return ptr_resource_segmento_incrocio;
    function get_incroci_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_incrocio;
    function get_incroci_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_incrocio;
-   function get_rotonde_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
-   function get_rotonde_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
-   function get_rotonde_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
+   --function get_rotonde_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
+   --function get_rotonde_a_4_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
+   --function get_rotonde_a_3_segmento_resources(index: Positive) return ptr_resource_segmento_rotonda;
 
    type id_ingressi_urbane is array(Positive range <>) of Positive;
    type ptr_id_ingressi_urbane is access all id_ingressi_urbane;
@@ -382,6 +405,8 @@ package mailbox_risorse_attive is
 
    function calulate_index_road_to_go(id_incrocio: Positive; from_index: Positive; traiettoria: traiettoria_incroci_type) return Natural;
    function calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_incrocio: Positive; from_index: Positive; traiettoria: traiettoria_incroci_type) return Natural;
+
+   procedure close_mailbox;
 private
 
    type list_posizione_abitanti_on_road is tagged record
@@ -399,8 +424,8 @@ private
    ingressi_segmento_resources: ptr_resource_segmenti_ingressi;
    incroci_a_4_segmento_resources: ptr_resource_segmenti_incroci;
    incroci_a_3_segmento_resources: ptr_resource_segmenti_incroci;
-   rotonde_a_4_segmento_resources: ptr_resource_segmenti_rotonde;
-   rotonde_a_3_segmento_resources: ptr_resource_segmenti_rotonde;
+   --rotonde_a_4_segmento_resources: ptr_resource_segmenti_rotonde;
+   --rotonde_a_3_segmento_resources: ptr_resource_segmenti_rotonde;
    ingressi_urbane: ingressi_of_urbane(get_from_urbane..get_to_urbane);
 
    id_ingressi_per_urbana: array_index_ingressi_urbana(get_from_urbane..get_to_urbane):= (others => null);

@@ -44,7 +44,20 @@ package strade_e_incroci_common is
 
    type move_settings is (desired_velocity,time_headway,max_acceleration,comfortable_deceleration,s0,length,num_posti);
 
+   type means_of_carrying is (walking, bike, car);
+
    type abitante is tagged private;
+
+   function get_id_abitante_from_abitante(residente: abitante) return Natural;
+   function get_id_quartiere_from_abitante(residente: abitante) return Natural;
+   function get_id_luogo_casa_from_abitante(residente: abitante) return Natural;
+   function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural;
+   function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural;
+   function get_mezzo_abitante(residente: abitante) return means_of_carrying;
+   function is_a_bus(residente: abitante) return Boolean;
+   function is_a_bus_jolly(residente: abitante) return Boolean;
+   function is_a_jolly_to_quartiere(residente: abitante) return Natural;
+
    type move_parameters is tagged private;
 
    function get_id_abitante_entità_passiva(obj: move_parameters) return Positive;
@@ -85,7 +98,7 @@ package strade_e_incroci_common is
    type percorso is array(Positive range <>) of tratto;
    type route_and_distance(size_percorso: Natural) is tagged private; -- tipo usato per rappresentare il percorso minimo da una certo luogo di partenza
 
-   type means_of_carrying is (walking, bike, car);
+
    type stato_percorso is tagged private;
 
    type estremo_urbana is tagged private;
@@ -137,15 +150,6 @@ package strade_e_incroci_common is
    function get_polo_road_incrocio(road: road_incrocio_features) return Boolean;
    -- end get methods road_incrocio_features
 
-   function get_id_abitante_from_abitante(residente: abitante) return Natural;
-   function get_id_quartiere_from_abitante(residente: abitante) return Natural;
-   function get_id_luogo_casa_from_abitante(residente: abitante) return Natural;
-   function get_id_quartiere_luogo_lavoro_from_abitante(residente: abitante) return Natural;
-   function get_id_luogo_lavoro_from_abitante(residente: abitante) return Natural;
-   function get_mezzo_abitante(residente: abitante) return means_of_carrying;
-   function is_a_bus(residente: abitante) return Boolean;
-   function is_a_bus_jolly(residente: abitante) return Boolean;
-   function is_a_jolly_to_quartiere(residente: abitante) return Natural;
 
    procedure set_mezzo_abitante(residente: in out abitante; mezzo: means_of_carrying);
 
@@ -154,6 +158,7 @@ package strade_e_incroci_common is
 
    function get_percorso_from_route_and_distance(route: route_and_distance) return percorso;
    function get_distance_from_route_and_distance(route: route_and_distance) return new_float;
+   function get_size_percorso(route: route_and_distance) return Natural;
 
    type trajectory_to_follow is tagged private;
    type posizione_abitanti_on_road is tagged private;
@@ -199,11 +204,21 @@ package strade_e_incroci_common is
 
    function convert_string_to_resource_type(tipo_risorsa: String) return resource_type;
 
-   type tratti_fermata is array(Positive range <>) of tratto;
+   type tratto_updated is tagged private;
+   function create_tratto_updated(pezzo: tratto'Class; updated: Boolean) return tratto_updated;
+   function get_tratto(obj: tratto_updated) return tratto'Class;
+   function is_tratto_updated(obj: tratto_updated) return Boolean;
+   procedure update_tratto(obj: in out tratto_updated; new_tratto: tratto'Class);
+   procedure set_tratto_updated(obj: in out tratto_updated; val: Boolean);
+
+   type tratti_fermata is array(Positive range <>) of tratto_updated;
    type destination_tratto is tagged private;
 
    function get_quartiere_jolly_to_go(obj: destination_tratto) return Positive;
    function get_tratto_jolly_to_go(obj: destination_tratto) return tratto'Class;
+   function is_updated(obj: destination_tratto) return Boolean;
+   procedure update_destination(obj: in out destination_tratto; new_destination: tratto'Class);
+   procedure set_destination_updated(obj: in out destination_tratto; val: Boolean);
 
    function create_destination(to_id_quartiere: Positive; to_place: tratto'Class) return destination_tratto;
 
@@ -215,6 +230,10 @@ package strade_e_incroci_common is
    function get_numero_fermate(obj: linea_bus) return Natural;
    function get_num_tratto(obj: linea_bus; num_tratto: Positive) return tratto'Class;
    function get_jolly_quartiere_to_go(obj: linea_bus; num_jolly_quartiere_to_go: Positive) return tratto'Class;
+   function get_linea_bus(obj: linea_bus) return access tratti_fermata;
+   function get_destination_jolly(obj: linea_bus) return access destination_tratti;
+   function is_updated_linea(obj: linea_bus) return Boolean;
+   function is_updated_jolly(obj: linea_bus; id_quartiere: Positive) return Boolean;
 
    function create_linea_bus(from_id_quartiere: Positive; to_id_quartiere: Positive; linea: access tratti_fermata; jolly: access destination_tratti) return linea_bus;
 
@@ -223,7 +242,7 @@ package strade_e_incroci_common is
    type tuple_abitanti is array(Positive range <>) of tratto;
 
    type set is array(Positive range <>) of Natural;
-
+   type boolean_queue is array(Positive range <>) of Boolean;
 private
 
    type estremo_urbana is tagged record
@@ -331,6 +350,12 @@ private
    type destination_tratto is tagged record
       to_id_quartiere: Positive;
       to_place: tratto;
+      updated: Boolean:= False;
+   end record;
+
+   type tratto_updated is tagged record
+      pezzo: tratto;
+      updated: Boolean:= False;
    end record;
 
    type linea_bus is tagged record

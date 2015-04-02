@@ -209,6 +209,21 @@ package body data_quartiere is
          Close(OutFile);
       end configure;
 
+      procedure finish(id_quartiere: Positive) is
+         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
+      begin
+         --if id_quartiere=get_id_quartiere then
+            if state_stallo.Has_Field(Positive'Image(id_quartiere)) then
+               state_stallo.Set_Field(Positive'Image(id_quartiere),state_stallo.Get(Positive'Image(id_quartiere))+1);
+            else
+               state_stallo.Set_Field(Positive'Image(id_quartiere),1);
+            end if;
+            Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_stallo.json", Mode => Out_File);
+            Put_Line(OutFile, Write(state_stallo,False));
+            Close(OutFile);
+         --end if;
+      end finish;
+
       procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is
          state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
       begin

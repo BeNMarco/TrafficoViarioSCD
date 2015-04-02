@@ -1,3 +1,5 @@
+with Ada.Unchecked_Deallocation;
+
 with strade_e_incroci_common;
 with remote_types;
 with global_data;
@@ -9,6 +11,20 @@ use global_data;
 use numerical_types;
 
 package gps_utilities is
+
+
+   type ptr_list_incroci_a_4 is access list_incroci_a_4;
+   type ptr_list_incroci_a_3 is access list_incroci_a_3;
+
+   procedure Free_list_incroci_a_4 is new Ada.Unchecked_Deallocation
+     (Object => list_incroci_a_4, Name => ptr_list_incroci_a_4);
+
+   procedure Free_list_incroci_a_3 is new Ada.Unchecked_Deallocation
+     (Object => list_incroci_a_3, Name => ptr_list_incroci_a_3);
+
+
+   type incroci_a_4_quartiere is array(Positive range <>) of ptr_list_incroci_a_4;
+   type incroci_a_3_quartiere is array(Positive range <>) of ptr_list_incroci_a_3;
 
    type index_incroci is tagged private;
    type estremi_incrocio is array(Positive range 1..2) of index_incroci;
@@ -46,19 +62,23 @@ package gps_utilities is
    function create_new_adiacente(val_id_quartiere_strada: Natural; val_id_strada: Natural;
                                  val_id_quartiere_adiacente: Natural; val_id_adiacente: Natural) return adiacente;
 
+   type set_q is array(Positive range <>) of Boolean;
+
    protected type registro_strade_resource(num_quartieri: Positive) is new gps_interface with
 
-      --procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features; ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
-      --                                 incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-      --                                   rotonde_a_3: list_incroci_a_3);
-      procedure registra_strade_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
-                                          ingressi: strade_ingresso_features);
-      entry registra_incroci_quartiere(id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
-                                           incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                           rotonde_a_3: list_incroci_a_3);
+      function is_alive return Boolean;
       function calcola_percorso(from_id_quartiere: Positive; from_id_luogo: Positive;
                                 to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance;
       function get_estremi_strade_urbane(id_quartiere: Positive) return estremi_strade_urbane;
+
+      procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
+                                           ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
+                                         incroci_a_3: list_incroci_a_3);
+
+      procedure pulisci_grafo;
+
+      procedure reset_state;
+
    private
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;
@@ -66,13 +86,14 @@ package gps_utilities is
 
       cache_urbane: urbane_quartiere(1..num_quartieri);
       cache_ingressi: ingressi_quartiere(1..num_quartieri);
+      cache_incroci_a_4: incroci_a_4_quartiere(1..num_quartieri);
+      cache_incroci_a_3: incroci_a_3_quartiere(1..num_quartieri);
       hash_urbane_quartieri: hash_quartieri_strade(1..num_quartieri);
+
       grafo: grafo_mappa(1..num_quartieri);
-      num_incroci_quartieri_registrati: Natural:= 0;
-      min_first_incroci: Natural:= 0;
-      max_last_incroci: Natural:= 0;
+      min_first_incroci: Natural:= Natural'Last;
+      max_last_incroci: Natural:= Natural'First;
       numero_globale_incroci: Natural:= 0;
-      num_strade_quartieri: Natural:= 0;
    end registro_strade_resource;
 
    type ptr_registro_strade_resource is access all registro_strade_resource;

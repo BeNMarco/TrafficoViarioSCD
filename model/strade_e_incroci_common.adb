@@ -166,6 +166,10 @@ package body strade_e_incroci_common is
    begin
       return route.distance_from_start;
    end get_distance_from_route_and_distance;
+   function get_size_percorso(route: route_and_distance) return Natural is
+   begin
+      return route.size_percorso;
+   end get_size_percorso;
    function get_id_abitante_entità_passiva(obj: move_parameters) return Positive is
    begin
       return obj.id_abitante;
@@ -545,6 +549,34 @@ package body strade_e_incroci_common is
       raise error_in_conversione_da_stringa;
    end convert_string_to_resource_type;
 
+   function create_tratto_updated(pezzo: tratto'Class; updated: Boolean) return tratto_updated is
+      obj: tratto_updated;
+   begin
+      obj.pezzo:= tratto(pezzo);
+      obj.updated:= updated;
+      return obj;
+   end create_tratto_updated;
+
+   function get_tratto(obj: tratto_updated) return tratto'Class is
+   begin
+      return obj.pezzo;
+   end get_tratto;
+
+   function is_tratto_updated(obj: tratto_updated) return Boolean is
+   begin
+      return obj.updated;
+   end is_tratto_updated;
+
+   procedure update_tratto(obj: in out tratto_updated; new_tratto: tratto'Class) is
+   begin
+      obj.pezzo:= tratto(new_tratto);
+   end update_tratto;
+   procedure set_tratto_updated(obj: in out tratto_updated; val: Boolean) is
+   begin
+      obj.updated:= val;
+   end set_tratto_updated;
+
+
    function create_destination(to_id_quartiere: Positive; to_place: tratto'Class) return destination_tratto is
       ptr_destination: destination_tratto;
    begin
@@ -561,6 +593,18 @@ package body strade_e_incroci_common is
    begin
       return obj.to_place;
    end get_tratto_jolly_to_go;
+   function is_updated(obj: destination_tratto) return Boolean is
+   begin
+      return obj.updated;
+   end is_updated;
+   procedure update_destination(obj: in out destination_tratto; new_destination: tratto'Class) is
+   begin
+      obj.to_place:= tratto(new_destination);
+   end update_destination;
+   procedure set_destination_updated(obj: in out destination_tratto; val: Boolean) is
+   begin
+      obj.updated:= val;
+   end set_destination_updated;
 
    function create_linea_bus(from_id_quartiere: Positive; to_id_quartiere: Positive; linea: access tratti_fermata; jolly: access destination_tratti) return linea_bus is
       ptr_linea: linea_bus;
@@ -580,7 +624,7 @@ package body strade_e_incroci_common is
    function get_num_tratto(obj: linea_bus; num_tratto: Positive) return tratto'Class is
    begin
       if num_tratto<=obj.linea.all'Last then
-         return obj.linea(num_tratto);
+         return obj.linea(num_tratto).pezzo;
       else
          return create_tratto(0,0);
       end if;
@@ -595,5 +639,34 @@ package body strade_e_incroci_common is
       end loop;
       return create_tratto(0,0);
    end get_jolly_quartiere_to_go;
+
+   function get_linea_bus(obj: linea_bus) return access tratti_fermata is
+   begin
+      return obj.linea;
+   end get_linea_bus;
+   function get_destination_jolly(obj: linea_bus) return access destination_tratti is
+   begin
+      return obj.jolly;
+   end get_destination_jolly;
+   function is_updated_linea(obj: linea_bus) return Boolean is
+   begin
+      for i in obj.linea.all'Range loop
+         if obj.linea(i).updated=False then
+            return False;
+         end if;
+      end loop;
+      return True;
+   end is_updated_linea;
+   function is_updated_jolly(obj: linea_bus; id_quartiere: Positive) return Boolean is
+   begin
+      for i in obj.jolly.all'Range loop
+         if obj.jolly(i).to_id_quartiere=id_quartiere then
+            if obj.jolly(i).updated=False then
+               return False;
+            end if;
+         end if;
+      end loop;
+      return True;
+   end is_updated_jolly;
 
 end strade_e_incroci_common;

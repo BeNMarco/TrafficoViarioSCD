@@ -20,6 +20,7 @@ webserver
 nameserver
 name_server
 server
+partitions/
 view/partitions/
 view/dsa/
 *dsa-nameserver.sh

@@ -25,10 +25,12 @@ package remote_types is
 
    type rt_quartiere_utilities is synchronized interface;
    type ptr_rt_quartiere_utilitites is access all rt_quartiere_utilities'Class;
-   procedure registra_classe_locate_abitanti_quartiere(obj: access rt_quartiere_utilities; id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is abstract;
-   procedure registra_abitanti(obj: access rt_quartiere_utilities; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
-                               bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
-   procedure registra_mappa(obj: access rt_quartiere_utilities; id_quartiere: Positive) is abstract;
+   type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
+
+   --procedure registra_classe_locate_abitanti_quartiere(obj: access rt_quartiere_utilities; id_quartiere: Positive; location_abitanti: ptr_rt_location_abitanti) is abstract;
+   --procedure registra_abitanti(obj: access rt_quartiere_utilities; from_id_quartiere: Positive; abitanti: list_abitanti_quartiere; pedoni: list_pedoni_quartiere;
+   --                            bici: list_bici_quartiere; auto: list_auto_quartiere) is abstract;
+   --procedure registra_mappa(obj: access rt_quartiere_utilities; id_quartiere: Positive) is abstract;
    procedure get_cfg_incrocio(obj: access rt_quartiere_utilities; id_incrocio: Positive; from_road: tratto; to_road: tratto; key_road_from: out Natural; key_road_to: out Natural; id_road_mancante: out Natural) is abstract;
    function get_polo_ingresso(obj: access rt_quartiere_utilities; id_ingresso: Positive) return Boolean is abstract;
    function get_type_entity(obj: access rt_quartiere_utilities; id_entità: Positive) return entity_type is abstract;
@@ -39,8 +41,14 @@ package remote_types is
    function get_from_type_resource_quartiere(obj: access rt_quartiere_utilities; resource: resource_type) return Natural is abstract;
    function get_to_type_resource_quartiere(obj: access rt_quartiere_utilities; resource: resource_type) return Natural is abstract;
    function get_id_fermata_id_urbana(obj: access rt_quartiere_utilities; id_urbana: Positive) return Natural is abstract;
+   function get_all_abitanti_quartiere(obj: access rt_quartiere_utilities) return list_abitanti_quartiere is abstract;
+   function get_all_pedoni_quartiere(obj: access rt_quartiere_utilities) return list_pedoni_quartiere is abstract;
+   function get_all_bici_quartiere(obj: access rt_quartiere_utilities) return list_bici_quartiere is abstract;
+   function get_all_auto_quartiere(obj: access rt_quartiere_utilities) return list_auto_quartiere is abstract;
+   function get_locate_abitanti_quartiere(obj: access rt_quartiere_utilities; id_quartiere: Positive) return ptr_rt_location_abitanti is abstract;
+   function get_saved_partitions(obj: access rt_quartiere_utilities) return registro_quartieri is abstract;
+   function is_a_new_quartiere (obj: access rt_quartiere_utilities; id_quartiere: Positive) return Boolean is abstract;
 
-   type registro_quartieri is array(Positive range <>) of ptr_rt_quartiere_utilitites;
 
    type rt_gestore_bus_quartiere is synchronized interface;
    type ptr_rt_gestore_bus_quartiere is access all rt_gestore_bus_quartiere'Class;
@@ -50,18 +58,12 @@ package remote_types is
 
    type registro_gestori_bus_quartieri is array(Positive range <>) of ptr_rt_gestore_bus_quartiere;
 
-   type rt_handler_semafori_quartiere is abstract tagged limited private;
-   type ptr_rt_handler_semafori_quartiere is access all rt_handler_semafori_quartiere'Class;
-   type handler_semafori is array(Positive range <>) of ptr_rt_handler_semafori_quartiere;
-   procedure change_semafori(obj: rt_handler_semafori_quartiere) is abstract;
-   procedure change_semafori_bipedi(obj: rt_handler_semafori_quartiere) is abstract;
-
       -- begin resource segmenti
    type rt_segmento is synchronized interface;
    type ptr_rt_segmento is access all rt_segmento'Class;
 
-   --procedure wait_turno(obj: access rt_segmento) is abstract;
-   --procedure delta_terminate(obj: access rt_segmento) is abstract;
+   function get_id_risorsa(obj: access rt_segmento) return Positive is abstract;
+   function get_id_quartiere_risorsa(obj: access rt_segmento) return Positive is abstract;
 
    type rt_incrocio is synchronized interface and rt_segmento;
    type ptr_rt_incrocio is access all rt_incrocio'Class;
@@ -97,35 +99,29 @@ package remote_types is
    type set_resources_incroci is array(Positive range <>) of ptr_rt_incrocio;
    type estremi_urbane is array(Positive range <>,Positive range <>) of ptr_rt_incrocio;
 
-   type rt_wait_all_quartieri is synchronized interface;
-   type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;
+   --type rt_wait_all_quartieri is synchronized interface;
+   --type ptr_rt_wait_all_quartieri is access all rt_wait_all_quartieri'Class;
    --pragma Asynchronous(ptr_rt_wait_all_quartieri);
-   procedure all_quartieri_set(obj: access rt_wait_all_quartieri) is abstract;
+   --procedure all_quartieri_set(obj: access rt_wait_all_quartieri) is abstract;
 
-   type rt_task_synchronization is synchronized interface;
-   type ptr_rt_task_synchronization is access all rt_task_synchronization'Class;
-   procedure all_task_partition_are_ready(obj: access rt_task_synchronization; id: Positive) is abstract;
-   --procedure wait_awake_all_partitions(obj: access rt_task_synchronization) is abstract;
-   --procedure last_task_partition_ready(obj: access rt_task_synchronization) is abstract;
+   type rt_synchronization_partitions_type is synchronized interface;
+   type ptr_rt_synchronization_partitions_type is access all rt_synchronization_partitions_type'Class;
+   procedure partition_is_ready(obj: access rt_synchronization_partitions_type; id: Positive; registro_q_remoto: registro_quartieri) is abstract;
+   procedure wait_synch_quartiere(obj: access rt_synchronization_partitions_type; from_quartiere: Positive) is abstract;
+   procedure clean_new_partition(obj: access rt_synchronization_partitions_type; clean_registry: registro_quartieri) is abstract;
+   --procedure partition_is_synchronized(obj: access rt_synchronization_partitions_type; send_by_id_quartiere: Positive; synch: Boolean) is abstract;
 
-   type rt_synchronization_tasks is synchronized interface;
-   type ptr_rt_synchronization_tasks is access all rt_synchronization_tasks'Class;
-   pragma Asynchronous(ptr_rt_synchronization_tasks);
-   procedure wake(obj: access rt_synchronization_tasks) is abstract;
-   type registro_local_synchronized_obj is array(Positive range <>) of ptr_rt_synchronization_tasks;
 
    -- begin gps
    type gps_interface is synchronized interface;
    type ptr_gps_interface is access all gps_interface'Class;
    function get_estremi_strade_urbane(obj: access gps_interface; id_quartiere: Positive) return estremi_strade_urbane is abstract;
-   procedure registra_strade_quartiere(obj: access gps_interface; id_quartiere: Positive; urbane: strade_urbane_features;
-                                       ingressi: strade_ingresso_features) is abstract;
-   procedure registra_incroci_quartiere(obj: access gps_interface; id_quartiere: Positive; incroci_a_4: list_incroci_a_4;
-                                        incroci_a_3: list_incroci_a_3; rotonde_a_4: list_incroci_a_4;
-                                        rotonde_a_3: list_incroci_a_3) is abstract;
+   function is_alive(obj: access gps_interface) return Boolean is abstract;
+   procedure registra_mappa_quartiere(obj: access gps_interface; id_quartiere: Positive; urbane: strade_urbane_features;
+                                           ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
+                                            incroci_a_3: list_incroci_a_3) is abstract;
    function calcola_percorso(obj: access gps_interface; from_id_quartiere: Positive; from_id_luogo: Positive;
                              to_id_quartiere: Positive; to_id_luogo: Positive; id_quartiere: Positive; id_abitante: Positive) return route_and_distance is abstract;
-   --function get_estremi_urbana(obj: access gps_interface; id_quartiere: Positive; id_urbana: Positive) return estremi_urbana is abstract;
    -- end gps
 
    type rt_quartiere_entities_life is abstract tagged limited private;
@@ -142,13 +138,16 @@ package remote_types is
    type Access_WebServer_Remote_Interface is access all WebServer_Remote_Interface'Class;
 
    procedure registra_mappa_quartiere(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
+   function is_alive(This: access WebServer_Remote_Interface) return Boolean is abstract;
    pragma Asynchronous(Access_WebServer_Remote_Interface);
    procedure invia_aggiornamento(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
+
    --END REMOTE TYPES WEB SERVER
 
 
    type rt_report_log is synchronized interface;
    type ptr_rt_report_log is access all rt_report_log'Class;
+   procedure finish(id_quartiere: Positive) is abstract;
    pragma Asynchronous(ptr_rt_report_log);
    procedure write_state_stallo(obj: access rt_report_log; id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is abstract;
 

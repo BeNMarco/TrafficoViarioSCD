@@ -1,8 +1,8 @@
 with remote_types;
 with Ada.Text_IO;
 with webserver;
-with global_data;
 with the_name_server;
+with System.RPC;
 
 with AWS.Server;
 with AWS.Config;
@@ -18,29 +18,40 @@ use type AWS.Net.Socket_Access;
 
 use remote_types;
 use WebServer;
-use global_data;
 
 procedure webserver_starter is
-  WebS : Access_Remote_Proxy_Type := new Remote_Proxy_Type(get_num_quartieri);
-  WebSRef : Access_WebServer_Remote_Interface := Access_WebServer_Remote_Interface(WebS);
-  -- I : Natural;
-  -- Last : Integer;
-  -- Par : String (1 .. 255) := (others => '');
-  -- M : String(1 .. 255);
-  -- L : Natural;
+   WebS : Access_Remote_Proxy_Type:= new Remote_Proxy_Type(get_num_quartieri);
+   WebSRef : Access_WebServer_Remote_Interface:= Access_WebServer_Remote_Interface(WebS);
+   all_ok: Boolean:= True;
+   exit_system: Boolean:= False;
 begin
-  Ada.Text_IO.Put_Line("Starting the webserver");
-  WebS.Init;
-  -- WebS.registra_mappa_quartiere("Good",1);
-  the_name_server.registra_webserver(WebSRef);
-  Ada.Text_IO.Put_Line("Server is up, waiting for remote partitions..");
+   begin
+      WebS.Init;
+      the_name_server.registra_webserver(WebSRef,all_ok);
+      if all_ok=False then
+         -- server già registrato
+         return;
+      end if;
+   exception
+      when others =>
+         return;
+   end;
 
+   Ada.Text_IO.Put_Line("Starting the webserver");
+   Ada.Text_IO.Put_Line("Server is up, waiting for remote partitions..");
 
-  Text_IO.Put_Line ("You can now press Q to exit.");
+   loop
+      delay 1.0;
+      begin
+         if is_web_server_registered then
+            null;
+         end if;
+      exception
+         when others =>
+            exit_system:= True;
+      end;
+      exit when exit_system;
+   end loop;
 
-  AWS.Server.Wait (Server.Q_Key_Pressed);
-
-   --  Now shuthdown the servers (HTTP and WebClient)
-
-  WebS.Shutdown;
+   WebS.Shutdown;
 end webserver_starter;

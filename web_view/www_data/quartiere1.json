@@ -2368,360 +2368,6 @@
   "rotonde_a_3": [
   ],
   "fermate_autobus": [
-    [
-      {
-        "from_to": [
-          1,
-          1
-        ],
-        "linea": [
-          [
-            1,
-            31
-          ],
-          [
-            1,
-            30
-          ],
-          [
-            1,
-            29
-          ],
-          [
-            1,
-            28
-          ],
-          [
-            1,
-            27
-          ],
-          [
-            1,
-            26
-          ],
-          [
-            1,
-            25
-          ],
-          [
-            1,
-            32
-          ],
-          [
-            1,
-            33
-          ],
-          [
-            1,
-            34
-          ],
-          [
-            1,
-            41
-          ],
-          [
-            1,
-            39
-          ],
-          [
-            1,
-            57
-          ],
-          [
-            1,
-            55
-          ],
-          [
-            1,
-            54
-          ],
-          [
-            1,
-            53
-          ],
-          [
-            1,
-            52
-          ],
-          [
-            1,
-            51
-          ],
-          [
-            1,
-            49
-          ],
-          [
-            1,
-            50
-          ],
-          [
-            1,
-            47
-          ],
-          [
-            1,
-            48
-          ],
-          [
-            1,
-            35
-          ],
-          [
-            1,
-            38
-          ],
-          [
-            1,
-            37
-          ],
-          [
-            1,
-            36
-          ],
-          [
-            1,
-            46
-          ],
-          [
-            1,
-            45
-          ],
-          [
-            1,
-            44
-          ],
-          [
-            1,
-            40
-          ],
-          [
-            1,
-            42
-          ],
-          [
-            1,
-            43
-          ],
-          [
-            1,
-            58
-          ],
-          [
-            1,
-            56
-          ]
-        ],
-        "jolly": [
-          {
-            "to": 2,
-            "at": [
-              2,
-              16
-            ]
-          },
-          {
-            "to": 3,
-            "at": [
-              3,
-              34
-            ]
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "from_to": [
-          2,
-          2
-        ],
-        "linea": [
-          [
-            2,
-            32
-          ],
-          [
-            2,
-            33
-          ],
-          [
-            2,
-            36
-          ],
-          [
-            2,
-            35
-          ],
-          [
-            2,
-            30
-          ],
-          [
-            2,
-            34
-          ],
-          [
-            2,
-            31
-          ],
-          [
-            2,
-            27
-          ],
-          [
-            2,
-            29
-          ],
-          [
-            2,
-            24
-          ],
-          [
-            2,
-            28
-          ],
-          [
-            2,
-            25
-          ],
-          [
-            2,
-            18
-          ],
-          [
-            2,
-            16
-          ],
-          [
-            2,
-            21
-          ],
-          [
-            2,
-            20
-          ],
-          [
-            2,
-            22
-          ],
-          [
-            2,
-            23
-          ],
-          [
-            2,
-            19
-          ],
-          [
-            2,
-            17
-          ],
-          [
-            2,
-            26
-          ]
-        ],
-        "jolly": [
-          {
-            "to": 1,
-            "at": [
-              1,
-              43
-            ]
-          },
-          {
-            "to": 3,
-            "at": [
-              3,
-              34
-            ]
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "from_to": [
-          3,
-          3
-        ],
-        "linea": [
-          [
-            3,
-            29
-          ],
-          [
-            3,
-            34
-          ],
-          [
-            3,
-            30
-          ],
-          [
-            3,
-            31
-          ],
-          [
-            3,
-            39
-          ],
-          [
-            3,
-            38
-          ],
-          [
-            3,
-            35
-          ],
-          [
-            3,
-            36
-          ],
-          [
-            3,
-            37
-          ],
-          [
-            3,
-            33
-          ],
-          [
-            3,
-            32
-          ],
-          [
-            3,
-            40
-          ],
-          [
-            3,
-            41
-          ],
-          [
-            3,
-            42
-          ]
-        ],
-        "jolly": [
-          {
-            "to": 1,
-            "at": [
-              1,
-              43
-            ]
-          },
-          {
-            "to": 2,
-            "at": [
-              2,
-              16
-            ]
-          }
-        ]
-      }
-    ]
   ],
   "pedoni": [
     {
@@ -2846,123 +2492,6 @@
     },
     {
       "id_abitante": 156
-    },
-    {
-      "id_abitante": 157
-    },
-    {
-      "id_abitante": 158
-    },
-    {
-      "id_abitante": 159
-    },
-    {
-      "id_abitante": 160
-    },
-    {
-      "id_abitante": 161
-    },
-    {
-      "id_abitante": 162
-    },
-    {
-      "id_abitante": 163
-    },
-    {
-      "id_abitante": 164
-    },
-    {
-      "id_abitante": 165
-    },
-    {
-      "id_abitante": 166
-    },
-    {
-      "id_abitante": 167
-    },
-    {
-      "id_abitante": 168
-    },
-    {
-      "id_abitante": 169
-    },
-    {
-      "id_abitante": 170
-    },
-    {
-      "id_abitante": 171
-    },
-    {
-      "id_abitante": 172
-    },
-    {
-      "id_abitante": 173
-    },
-    {
-      "id_abitante": 174
-    },
-    {
-      "id_abitante": 175
-    },
-    {
-      "id_abitante": 176
-    },
-    {
-      "id_abitante": 177
-    },
-    {
-      "id_abitante": 178
-    },
-    {
-      "id_abitante": 179
-    },
-    {
-      "id_abitante": 180
-    },
-    {
-      "id_abitante": 181
-    },
-    {
-      "id_abitante": 182
-    },
-    {
-      "id_abitante": 183
-    },
-    {
-      "id_abitante": 184
-    },
-    {
-      "id_abitante": 185
-    },
-    {
-      "id_abitante": 186
-    },
-    {
-      "id_abitante": 187
-    },
-    {
-      "id_abitante": 188
-    },
-    {
-      "id_abitante": 189
-    },
-    {
-      "id_abitante": 190
-    },
-    {
-      "id_abitante": 191
-    },
-    {
-      "id_abitante": 192
-    },
-    {
-      "id_abitante": 193
-    },
-    {
-      "id_abitante": 194
-    },
-    {
-      "id_abitante": 195
     }
   ],
   "auto": [
@@ -3207,166 +2736,7 @@
       "desired_velocity": 6.00000E+01
     },
     {
-      "id_abitante": 156,
-      "max_acceleration": 5.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.00000E+01
-    },
-    {
-      "id_abitante": 157,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.50000E+01
-    },
-    {
-      "id_abitante": 158,
-      "max_acceleration": 2.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.50000E+01
-    },
-    {
-      "id_abitante": 159,
-      "max_acceleration": 2.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 1.00000E+02
-    },
-    {
-      "id_abitante": 160,
-      "max_acceleration": 8.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 9.50000E+01
-    },
-    {
-      "id_abitante": 161,
-      "max_acceleration": 3.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 8.00000E+01
-    },
-    {
-      "id_abitante": 162,
-      "max_acceleration": 1.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.50000E+01
-    },
-    {
-      "id_abitante": 163,
-      "max_acceleration": 1.00000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.00000E+01
-    },
-    {
-      "id_abitante": 164,
-      "max_acceleration": 1.50000E+01,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 6.00000E+01
-    },
-    {
-      "id_abitante": 165,
-      "max_acceleration": 9.00000E+00,
-      "comfortable_deceleration": 5.05000E+01,
-      "desired_velocity": 7.50000E+01
-    },
-    {
-      "id_abitante": 166
-    },
-    {
-      "id_abitante": 167
-    },
-    {
-      "id_abitante": 168
-    },
-    {
-      "id_abitante": 169
-    },
-    {
-      "id_abitante": 170
-    },
-    {
-      "id_abitante": 171
-    },
-    {
-      "id_abitante": 172
-    },
-    {
-      "id_abitante": 173
-    },
-    {
-      "id_abitante": 174
-    },
-    {
-      "id_abitante": 175
-    },
-    {
-      "id_abitante": 176
-    },
-    {
-      "id_abitante": 177
-    },
-    {
-      "id_abitante": 178
-    },
-    {
-      "id_abitante": 179
-    },
-    {
-      "id_abitante": 180
-    },
-    {
-      "id_abitante": 181
-    },
-    {
-      "id_abitante": 182
-    },
-    {
-      "id_abitante": 183
-    },
-    {
-      "id_abitante": 184
-    },
-    {
-      "id_abitante": 185
-    },
-    {
-      "id_abitante": 186
-    },
-    {
-      "id_abitante": 187
-    },
-    {
-      "id_abitante": 188
-    },
-    {
-      "id_abitante": 189
-    },
-    {
-      "id_abitante": 190
-    },
-    {
-      "id_abitante": 191
-    },
-    {
-      "id_abitante": 192
-    },
-    {
-      "id_abitante": 193
-    },
-    {
-      "id_abitante": 194
-    },
-    {
-      "id_abitante": 195
-    },
-    {
-      "id_abitante": 196
-    },
-    {
-      "id_abitante": 197
-    },
-    {
-      "id_abitante": 198
-    },
-    {
-      "id_abitante": 199
+      "id_abitante": 156
     }
   ],
   "bici": [
@@ -3492,719 +2862,299 @@
     },
     {
       "id_abitante": 156
-    },
-    {
-      "id_abitante": 157
-    },
-    {
-      "id_abitante": 158
-    },
-    {
-      "id_abitante": 159
-    },
-    {
-      "id_abitante": 160
-    },
-    {
-      "id_abitante": 161
-    },
-    {
-      "id_abitante": 162
-    },
-    {
-      "id_abitante": 163
-    },
-    {
-      "id_abitante": 164
-    },
-    {
-      "id_abitante": 165
-    },
-    {
-      "id_abitante": 166
-    },
-    {
-      "id_abitante": 167
-    },
-    {
-      "id_abitante": 168
-    },
-    {
-      "id_abitante": 169
-    },
-    {
-      "id_abitante": 170
-    },
-    {
-      "id_abitante": 171
-    },
-    {
-      "id_abitante": 172
-    },
-    {
-      "id_abitante": 173
-    },
-    {
-      "id_abitante": 174
-    },
-    {
-      "id_abitante": 175
-    },
-    {
-      "id_abitante": 176
-    },
-    {
-      "id_abitante": 177
-    },
-    {
-      "id_abitante": 178
-    },
-    {
-      "id_abitante": 179
-    },
-    {
-      "id_abitante": 180
-    },
-    {
-      "id_abitante": 181
-    },
-    {
-      "id_abitante": 182
-    },
-    {
-      "id_abitante": 183
-    },
-    {
-      "id_abitante": 184
-    },
-    {
-      "id_abitante": 185
-    },
-    {
-      "id_abitante": 186
-    },
-    {
-      "id_abitante": 187
-    },
-    {
-      "id_abitante": 188
-    },
-    {
-      "id_abitante": 189
-    },
-    {
-      "id_abitante": 190
-    },
-    {
-      "id_abitante": 191
-    },
-    {
-      "id_abitante": 192
-    },
-    {
-      "id_abitante": 193
-    },
-    {
-      "id_abitante": 194
-    },
-    {
-      "id_abitante": 195
     }
   ],
   "abitanti": [
     {
       "id_abitante": 116,
-      "id_luogo_casa": 1,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 117,
-      "id_luogo_casa": 1,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 118,
-      "id_luogo_casa": 7,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 119,
-      "id_luogo_casa": 8,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 120,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 121,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 21,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 122,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 22,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 123,
-      "id_luogo_casa": 20,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 21,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 124,
-      "id_luogo_casa": 14,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 17,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 125,
-      "id_luogo_casa": 13,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 23,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 126,
-      "id_luogo_casa": 23,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 24,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 127,
-      "id_luogo_casa": 24,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 128,
-      "id_luogo_casa": 24,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 129,
-      "id_luogo_casa": 2,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 130,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 131,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 132,
-      "id_luogo_casa": 8,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 11,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 133,
-      "id_luogo_casa": 13,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 134,
-      "id_luogo_casa": 19,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 22,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 135,
-      "id_luogo_casa": 17,
+      "id_luogo_casa": 22,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 13,
+      "id_luogo_lavoro": 14,
       "mezzo": "car"
     },
     {
       "id_abitante": 136,
-      "id_luogo_casa": 15,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 12,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 137,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 138,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 139,
-      "id_luogo_casa": 7,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 140,
-      "id_luogo_casa": 8,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 141,
-      "id_luogo_casa": 8,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 142,
-      "id_luogo_casa": 6,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 9,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 143,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 23,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 144,
-      "id_luogo_casa": 9,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 145,
-      "id_luogo_casa": 10,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 20,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 146,
-      "id_luogo_casa": 16,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 6,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 147,
-      "id_luogo_casa": 17,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 8,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 148,
-      "id_luogo_casa": 18,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 9,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 149,
       "id_luogo_casa": 19,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 7,
+      "id_quartiere_luogo_lavoro": 1,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 150,
-      "id_luogo_casa": 20,
-      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
       "id_abitante": 151,
-      "id_luogo_casa": 22,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 3,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 152,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 4,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 153,
-      "id_luogo_casa": 10,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 5,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 154,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 5,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 155,
-      "id_luogo_casa": 14,
-      "id_quartiere_luogo_lavoro": 2,
-      "id_luogo_lavoro": 2,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 156,
-      "id_luogo_casa": 23,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 1,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 157,
-      "id_luogo_casa": 13,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 2,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 158,
-      "id_luogo_casa": 12,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 3,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 159,
-      "id_luogo_casa": 11,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 6,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 160,
-      "id_luogo_casa": 22,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 8,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 161,
-      "id_luogo_casa": 21,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 21,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 162,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 22,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 163,
-      "id_luogo_casa": 5,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 23,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 164,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 3,
-      "id_luogo_lavoro": 16,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 165,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 3,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 1,
       "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
-      "id_abitante": 166,
-      "id_luogo_casa": 1,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 167,
-      "id_luogo_casa": 1,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 8,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 168,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 169,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 170,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 171,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 21,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 172,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 22,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 173,
-      "id_luogo_casa": 20,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 21,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 174,
-      "id_luogo_casa": 14,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 17,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 175,
-      "id_luogo_casa": 13,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 23,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 176,
-      "id_luogo_casa": 23,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 24,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 177,
-      "id_luogo_casa": 24,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 178,
-      "id_luogo_casa": 24,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 179,
-      "id_luogo_casa": 2,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 180,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 6,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 181,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 4,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 182,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 11,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 183,
-      "id_luogo_casa": 13,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 184,
+      "id_abitante": 152,
       "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 22,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
-      "id_abitante": 185,
-      "id_luogo_casa": 17,
+      "id_abitante": 153,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 13,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
-      "id_abitante": 186,
-      "id_luogo_casa": 15,
+      "id_abitante": 154,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 12,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
-      "id_abitante": 187,
-      "id_luogo_casa": 9,
+      "id_abitante": 155,
+      "id_luogo_casa": 19,
       "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 5,
+      "id_luogo_lavoro": 15,
       "mezzo": "car"
     },
     {
-      "id_abitante": 188,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 7,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 189,
-      "id_luogo_casa": 7,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 190,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 3,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 191,
-      "id_luogo_casa": 8,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 2,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 192,
-      "id_luogo_casa": 6,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 9,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 193,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 23,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 194,
-      "id_luogo_casa": 9,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 10,
-      "mezzo": "car"
-    },
-    {
-      "id_abitante": 195,
-      "id_luogo_casa": 10,
-      "id_quartiere_luogo_lavoro": 1,
-      "id_luogo_lavoro": 20,
+      "id_abitante": 156,
+      "id_luogo_casa": 19,
+      "id_quartiere_luogo_lavoro": 2,
+      "id_luogo_lavoro": 1,
       "mezzo": "car"
     }
   ],
   "autobus": [
-    {
-      "id_autobus": 196,
-      "stazione_partenza": 29,
-      "linea": 1,
-      "jolly": false
-    },
-    {
-      "id_autobus": 197,
-      "stazione_partenza": 29,
-      "linea": 1,
-      "jolly": false
-    },
-    {
-      "id_autobus": 198,
-      "stazione_partenza": 29,
-      "linea": 2,
-      "jolly": false
-    },
-    {
-      "id_autobus": 199,
-      "stazione_partenza": 29,
-      "linea": 2,
-      "jolly": true,
-      "jolly_to_quartiere": 3
-    }
   ],
   "abitanti_in_bus": [
-    1,
-    2,
-    3,
-    4,
-    5
   ]
 }

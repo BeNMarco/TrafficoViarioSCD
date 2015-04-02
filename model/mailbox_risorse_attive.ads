@@ -392,8 +392,7 @@ package mailbox_risorse_attive is
    function get_ingressi_urbana(id_urbana: Positive) return ptr_id_ingressi_urbane;
 
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
-                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
-                                    rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3);
+                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3);
 
    type array_index_ingressi_urbana is array(Positive range <>) of ptr_list_ingressi_per_urbana;
    type array_index_ingressi_urbana_per_polo is array(Positive range <>, Boolean range <>) of ptr_list_ingressi_per_urbana;

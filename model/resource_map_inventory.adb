@@ -90,7 +90,7 @@ package body resource_map_inventory is
       -- crea mailbox task
       
       Put_Line(Positive'Image(get_id_quartiere) & " create risorse");
-      create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3,get_rotonde_a_4,get_rotonde_a_3);
+      create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3);
       registro_risorse_ingressi:= create_risorse_ingressi;
       registro_risorse_urbane:= create_risorse_urbane;
       registro_risorse_incroci:= create_risorse_incroci;

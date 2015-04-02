@@ -42,7 +42,7 @@ package the_name_server is
 
    function get_registro_quartieri return registro_quartieri;
 
-   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
+   function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
 
    function get_synchronizer_quartiere(id_quartiere: Positive) return ptr_rt_synchronization_partitions_type;
    -- web server

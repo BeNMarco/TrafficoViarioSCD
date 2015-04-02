@@ -5341,8 +5341,7 @@ package body mailbox_risorse_attive is
    end update_list_ingressi;
 
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
-                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
-                                    rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3) is
+                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3) is
       val_ptr_resource_urbana: ptr_resource_segmento_urbana;
       val_ptr_resource_ingresso: ptr_resource_segmento_ingresso;
       val_ptr_resource_incrocio: ptr_resource_segmento_incrocio;

@@ -91,14 +91,14 @@ package body risorse_passive_data is
    begin
       return incroci_a_3(index);
    end get_incrocio_a_3_from_id;
-   function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4 is
-   begin
-      return rotonde_a_4(index);
-   end get_rotonda_a_4_from_id;
-   function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3 is
-   begin
-      return rotonde_a_3(index);
-   end get_rotonda_a_3_from_id;
+   --function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4 is
+   --begin
+   --   return rotonde_a_4(index);
+   --end get_rotonda_a_4_from_id;
+   --function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3 is
+   --begin
+   --   return rotonde_a_3(index);
+   --end get_rotonda_a_3_from_id;
 
    function get_road_from_incrocio(index_incrocio: Positive; key_road: Positive) return road_incrocio_features is
       pragma Warnings(off);
@@ -141,14 +141,14 @@ package body risorse_passive_data is
    begin
       return incroci_a_3;
    end get_incroci_a_3;
-   function get_rotonde_a_4 return list_incroci_a_4 is
-   begin
-      return rotonde_a_4;
-   end get_rotonde_a_4;
-   function get_rotonde_a_3 return list_incroci_a_3 is
-   begin
-      return rotonde_a_3;
-   end get_rotonde_a_3;
+   --function get_rotonde_a_4 return list_incroci_a_4 is
+   --begin
+   --   return rotonde_a_4;
+   --end get_rotonde_a_4;
+   --function get_rotonde_a_3 return list_incroci_a_3 is
+   --begin
+   --   return rotonde_a_3;
+   --end get_rotonde_a_3;
 
    function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return new_float is
    begin
@@ -743,6 +743,7 @@ package body risorse_passive_data is
                end if;
                -- viene controllato se la fermata è da fare per l'autobus in questione
             end loop;
+
             mailbox_fermata.aggiorna_abitanti_in_fermata(overwrite_abitanti);
          end if;
       end autobus_arrived_at_fermata;
@@ -794,10 +795,10 @@ package body risorse_passive_data is
          return stato_bus(id_autobus).index_fermata;
       end get_num_fermata_arrived;
 
-      function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
-      begin
-         return registro_gestori_autobus_quartieri(id_quartiere);
-      end get_gestore_bus_quartiere;
+      --function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+      --begin
+      --   return registro_gestori_autobus_quartieri(id_quartiere);
+      --end get_gestore_bus_quartiere;
 
    end gestore_bus_quartiere;
 
@@ -874,6 +875,9 @@ package body risorse_passive_data is
             update_percorso_abitante_arrived(percorso,residente);
          end;
       elsif residente.is_a_bus then
+         --if id_abitante=125 and then arrived_tratto.get_id_tratto=47 then
+         --   error_state:= False;
+         --end if;
          Put_Line("BUSSSSS " & Positive'Image(id_abitante) & " " & Positive'Image(get_id_quartiere));
          if get_gestore_bus_quartiere_obj.get_num_fermate_rimaste(id_abitante)=0 then
             segnale:= False;
@@ -887,15 +891,26 @@ package body risorse_passive_data is
             end if;
             if segnale or else residente.is_a_bus_jolly=False then
                get_gestore_bus_quartiere_obj.revert_percorso(id_abitante);
-               if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
-                  tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate));
+               if segnale=False then
+                  -- non è un jolly
+                  get_gestore_bus_quartiere_obj.avanza_fermata(id_abitante);
+                  if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
+                     tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate-1));
+                  else
+                     tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(2));
+                  end if;
                else
-                  tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(1));
+                  -- è un jolly
+                  if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
+                     tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate));
+                  else
+                     tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(1));
+                  end if;
                end if;
             end if;
          else
             if get_gestore_bus_quartiere_obj.linea_is_reverted(id_abitante) then
-               tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate-(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante)+1)));
+               tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_numero_fermate-(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante))));
             else
                tratto_to_go:= tratto(linee_autobus(residente.get_id_luogo_lavoro_from_abitante).get_num_tratto(get_gestore_bus_quartiere_obj.get_num_fermata_arrived(id_abitante)+1));
             end if;
@@ -1049,7 +1064,9 @@ package body risorse_passive_data is
       ref_quartieri: registro_quartieri:= get_ref_rt_quartieri;
       linea: access tratti_fermata;
       jollys: access destination_tratti;
+      switch: Boolean;
    begin
+      switch:= True;
       for i in linee_autobus'Range loop
          if linee_autobus(i).is_updated_linea=False then
             linea:= linee_autobus(i).get_linea_bus;
@@ -1064,6 +1081,11 @@ package body risorse_passive_data is
                         linea(j).set_tratto_updated(True);
                      end if;
                   end if;
+               end if;
+            end loop;
+            for j in linea.all'Range loop
+               if linea(j).is_tratto_updated=False then
+                  switch:= False;
                end if;
             end loop;
          end if;
@@ -1081,8 +1103,15 @@ package body risorse_passive_data is
                end if;
             end if;
          end loop;
+         for j in jollys.all'Range loop
+            if jollys(j).is_updated=False then
+               switch:= False;
+            end if;
+         end loop;
       end loop;
-      fermate_configured:= True;
+      if switch then
+         fermate_configured:= True;
+      end if;
    end configure_linee_fermate;
 
    function fermate_are_configured return Boolean is

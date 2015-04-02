@@ -325,10 +325,10 @@ package body the_name_server is
       return cfg_quartieri_obj.get_registro_quartieri;
    end get_registro_quartieri;
 
-   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+   function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
    begin
       return cfg_quartieri_obj.get_quartiere_gestore_bus(id_quartiere);
-   end get_quartiere_gestore_bus;
+   end get_gestore_bus_quartiere;
 
    function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri is
    begin

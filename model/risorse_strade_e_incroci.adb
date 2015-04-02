@@ -173,6 +173,7 @@ package body risorse_strade_e_incroci is
       else
          corsia_traiettoria:= 0;
       end if;
+      Put_Line("next nodo inigresso request by " & Positive'Image(id_abitante));
       next_nodo:= get_quartiere_utilities_obj.get_classe_locate_abitanti(id_quartiere_abitante).get_next(id_abitante);
       if next_nodo.get_id_quartiere_tratto=get_id_quartiere and then (next_nodo.get_id_tratto>=get_from_ingressi and next_nodo.get_id_tratto<=get_to_ingressi) then
          if get_ingresso_from_id(from_ingresso).get_polo_ingresso=get_ingresso_from_id(next_nodo.get_id_tratto).get_polo_ingresso then
@@ -250,6 +251,7 @@ package body risorse_strade_e_incroci is
       id_road: Natural;
    begin
       -- next_nodo sarà o la strada corrente o un suo ingresso
+      Put_Line("next nodo request by " & Positive'Image(abitante.get_id_abitante_posizione_abitanti));
       next_nodo:= get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_next(abitante.get_id_abitante_posizione_abitanti);
       Put_Line(Positive'Image(get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)));
       if get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)<1 then
@@ -3436,10 +3438,10 @@ package body risorse_strade_e_incroci is
                   -- elaborazione corsia to go;    first_corsia è la corsia in cui la macchina è situata
                   Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task) & " corsia" & Positive'Image(first_corsia) & " polo " & Boolean'Image(current_polo_to_consider) & " quartiere" & Positive'Image(get_id_quartiere));
                   -- Put_Line("id_abitante overtaking " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_distance_on_overtaking_trajectory));
-                  if current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=127 and then
-                    current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>845.0 then
-                     stop_entity:= False;
-                  end if;
+                  --if current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=127 and then
+                  --  current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>845.0 then
+                  --   stop_entity:= False;
+                  --end if;
                   length_car_on_road:= get_quartiere_utilities_obj.get_auto_quartiere(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
 
                   -- BEGIN CONTROLLO SE IL SEMAFORO È VERDE
@@ -4582,7 +4584,7 @@ package body risorse_strade_e_incroci is
          exit_task;
          close_mailbox;
          if error_flag then
-            Put_Line("Unexpected exception incroci: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
+            Put_Line("Unexpected exception urbana: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
             Put_Line(Exception_Information(Error));
          end if;
    end core_avanzamento_urbane;
@@ -4927,7 +4929,7 @@ package body risorse_strade_e_incroci is
                get_quartiere_utilities_obj.get_classe_locate_abitanti(current_posizione_abitante.get_id_quartiere_posizione_abitanti).set_finish_route(current_posizione_abitante.get_id_abitante_posizione_abitanti);
                if get_ingresso_from_id(id_task).get_type_ingresso=fermata then
                   -- carica scarica abitanti
-                  get_gestore_bus_quartiere_obj.get_gestore_bus_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti).autobus_arrived_at_fermata(current_posizione_abitante.get_id_abitante_posizione_abitanti,mailbox.create_array_abitanti_in_fermata,create_tratto(get_id_quartiere,id_task));
+                  get_gestore_bus_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti).autobus_arrived_at_fermata(current_posizione_abitante.get_id_abitante_posizione_abitanti,mailbox.create_array_abitanti_in_fermata,create_tratto(get_id_quartiere,id_task));
                end if;
                get_quartiere_entities_life(current_posizione_abitante.get_id_quartiere_posizione_abitanti).abitante_is_arrived(current_posizione_abitante.get_id_abitante_posizione_abitanti);
             else
@@ -5009,7 +5011,7 @@ package body risorse_strade_e_incroci is
          exit_task;
          close_mailbox;
          if error_flag then
-            Put_Line("Unexpected exception incroci: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
+            Put_Line("Unexpected exception ingressi: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
             Put_Line(Exception_Information(Error));
          end if;
 

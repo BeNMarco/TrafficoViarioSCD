@@ -33,8 +33,8 @@ package risorse_passive_data is
    function get_ingresso_from_id(index: Positive) return strada_ingresso_features;
    function get_incrocio_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
    function get_incrocio_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
-   function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
-   function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
+   --function get_rotonda_a_4_from_id(index: Positive) return list_road_incrocio_a_4;
+   --function get_rotonda_a_3_from_id(index: Positive) return list_road_incrocio_a_3;
 
    function get_road_from_incrocio(index_incrocio: Positive; key_road: Positive) return road_incrocio_features;
    function get_index_road_from_incrocio(id_quartiere_road: Positive; id_road: Positive; id_incrocio: Positive) return Natural;
@@ -46,8 +46,8 @@ package risorse_passive_data is
    function get_ingressi return strade_ingresso_features;
    function get_incroci_a_4 return list_incroci_a_4;
    function get_incroci_a_3 return list_incroci_a_3;
-   function get_rotonde_a_4 return list_incroci_a_4;
-   function get_rotonde_a_3 return list_incroci_a_3;
+   --function get_rotonde_a_4 return list_incroci_a_4;
+   --function get_rotonde_a_3 return list_incroci_a_3;
 
    function get_distance_from_polo_percorrenza(road: strada_ingresso_features; polo: Boolean) return new_float;
 
@@ -94,8 +94,15 @@ package risorse_passive_data is
       procedure set_quartieri_to_not_wait(queue: boolean_queue);
       function is_a_quartiere_to_wait(id_quartiere: Positive) return Boolean;
       
+      procedure close_system;
+      function is_system_closing return Boolean;
+      
+      procedure all_can_be_closed;
+      function all_system_can_be_closed return Boolean;
    private
-
+      exit_partition_system: Boolean:= False;
+      exit_all_system: Boolean:= False;
+        
       entità_abitanti: list_abitanti_quartieri(1..num_quartieri);
       entità_pedoni: list_pedoni_quartieri(1..num_quartieri);
       entità_bici: list_bici_quartieri(1..num_quartieri);
@@ -199,10 +206,10 @@ package risorse_passive_data is
       function get_num_fermate_rimaste(id_autobus: Positive) return Natural; 
       function get_num_fermata_arrived(id_autobus: Positive) return Positive;
       
-      function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
+      --function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere;
       
    private
-      registro_gestori_autobus_quartieri: registro_gestori_bus_quartieri(1..num_quartieri);
+      --registro_gestori_autobus_quartieri: registro_gestori_bus_quartieri(1..num_quartieri);
       stato_bus: stato_avanzamento_autobus(get_to_abitanti-get_num_autobus+1..get_to_abitanti);
       passeggeri_bus: passeggeri_in_bus(get_to_abitanti-get_num_autobus+1..get_to_abitanti);
    end gestore_bus_quartiere;
@@ -273,8 +280,8 @@ private
    ingressi_features: strade_ingresso_features:= create_array_ingressi(json_roads => get_json_ingressi, from => get_from_ingressi, to => get_to_ingressi);
    incroci_a_4: list_incroci_a_4:= create_array_incroci_a_4(json_incroci => get_json_incroci_a_4, from => get_from_incroci_a_4, to => get_to_incroci_a_4);
    incroci_a_3: list_incroci_a_3:= create_array_incroci_a_3(json_incroci => get_json_incroci_a_3, from => get_from_incroci_a_3, to => get_to_incroci_a_3);
-   rotonde_a_4: list_incroci_a_4:= create_array_rotonde_a_4(json_incroci => get_json_rotonde_a_4, from => get_from_rotonde_a_4, to => get_to_rotonde_a_4);
-   rotonde_a_3: list_incroci_a_3:= create_array_rotonde_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
+   --rotonde_a_4: list_incroci_a_4:= create_array_rotonde_a_4(json_incroci => get_json_rotonde_a_4, from => get_from_rotonde_a_4, to => get_to_rotonde_a_4);
+   --rotonde_a_3: list_incroci_a_3:= create_array_rotonde_a_3(json_incroci => get_json_rotonde_a_3, from => get_from_rotonde_a_3, to => get_to_rotonde_a_3);
 
    linee_autobus: linee_bus(1..get_num_linee_fermate);
    abitanti_in_bus: set:= create_array_abitanti_in_bus;

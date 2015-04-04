@@ -766,8 +766,8 @@ package body mailbox_risorse_attive is
          traiettoria: traiettoria_ingressi_type;
          list_abitanti_traiettoria: ptr_list_posizione_abitanti_on_road;
          prec_list_abitanti_traiettoria: ptr_list_posizione_abitanti_on_road;
-         car_length: new_float;
-         fine_ingresso_distance: new_float;
+         --car_length: new_float;
+         --fine_ingresso_distance: new_float;
          state_view_abitante: JSON_Value;
          distance_ingresso: new_float;
          flag_overtake_next_corsia: Boolean;
@@ -785,24 +785,24 @@ package body mailbox_risorse_attive is
                next_element_list:= null;
                while main_list/=null loop
                   main_list.posizione_abitante.set_where_now_abitante(main_list.posizione_abitante.get_where_next_posizione_abitanti);
-                  if main_list.posizione_abitante.get_came_from_ingresso then
-                     -- se l'abitante sorpassa subito una volta uscito dall'ingresso
-                     car_length:= get_quartiere_utilities_obj.get_auto_quartiere(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                  --if main_list.posizione_abitante.get_came_from_ingresso then
+                  --   -- se l'abitante sorpassa subito una volta uscito dall'ingresso
+                  --   car_length:= get_quartiere_utilities_obj.get_auto_quartiere(main_list.posizione_abitante.get_id_quartiere_posizione_abitanti,main_list.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
 
-                     fine_ingresso_distance:= get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_from_ingresso),i)+get_larghezza_marciapiede+get_larghezza_corsia;
+                  --   fine_ingresso_distance:= get_distance_from_polo_percorrenza(get_ingresso_from_id(main_list.posizione_abitante.get_destination.get_from_ingresso),i)+get_larghezza_marciapiede+get_larghezza_corsia;
 
-                     if (main_list.posizione_abitante.get_in_overtaken and then main_list.posizione_abitante.get_where_now_posizione_abitanti+main_list.posizione_abitante.get_distance_on_overtaking_trajectory-car_length>=fine_ingresso_distance) or else
-                       (main_list.posizione_abitante.get_where_now_posizione_abitanti-car_length>=fine_ingresso_distance) then
-                        main_list.posizione_abitante.set_came_from_ingresso(False);
-                        -- lo state_view_abitante al + viene costruito nell'else ****
-                        if main_list.posizione_abitante.get_destination.get_departure_corsia=2 then
-                           set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata).next;
-                        else
-                           --Put_Line("Delete " & Positive'Image(get_id_quartiere) & " ingresso " & Natural'Image(main_list.posizione_abitante.get_destination.get_from_ingresso) & " id abitante " & Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti));
-                           set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno).next;
-                        end if;
-                     end if;
-                  end if;
+                  --   if (main_list.posizione_abitante.get_in_overtaken and then main_list.posizione_abitante.get_where_now_posizione_abitanti+main_list.posizione_abitante.get_distance_on_overtaking_trajectory-car_length>=fine_ingresso_distance) or else
+                  --     (main_list.posizione_abitante.get_where_now_posizione_abitanti-car_length>=fine_ingresso_distance) then
+                  --      main_list.posizione_abitante.set_came_from_ingresso(False);
+                  --      -- lo state_view_abitante al + viene costruito nell'else ****
+                  --      if main_list.posizione_abitante.get_destination.get_departure_corsia=2 then
+                  --         set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_andata).next;
+                  --      else
+                  --         --Put_Line("Delete " & Positive'Image(get_id_quartiere) & " ingresso " & Natural'Image(main_list.posizione_abitante.get_destination.get_from_ingresso) & " id abitante " & Positive'Image(main_list.posizione_abitante.get_id_abitante_posizione_abitanti));
+                  --         set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno):= set_traiettorie_ingressi(get_key_ingresso(main_list.posizione_abitante.get_destination.get_from_ingresso,not_ordered),uscita_ritorno).next;
+                  --      end if;
+                  --   end if;
+                  --end if;
                   flag_overtake_next_corsia:= False;
                   if main_list.posizione_abitante.get_in_overtaken then
                        --and main_list.posizione_abitante.get_flag_overtake_next_corsia then
@@ -5341,8 +5341,7 @@ package body mailbox_risorse_attive is
    end update_list_ingressi;
 
    procedure create_mailbox_entità(urbane: strade_urbane_features; ingressi: strade_ingresso_features;
-                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3;
-                                    rotonde_a_4: list_incroci_a_4; rotonde_a_3: list_incroci_a_3) is
+                                   incroci_a_4: list_incroci_a_4; incroci_a_3: list_incroci_a_3) is
       val_ptr_resource_urbana: ptr_resource_segmento_urbana;
       val_ptr_resource_ingresso: ptr_resource_segmento_ingresso;
       val_ptr_resource_incrocio: ptr_resource_segmento_incrocio;

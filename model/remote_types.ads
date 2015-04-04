@@ -47,8 +47,9 @@ package remote_types is
    function get_all_auto_quartiere(obj: access rt_quartiere_utilities) return list_auto_quartiere is abstract;
    function get_locate_abitanti_quartiere(obj: access rt_quartiere_utilities; id_quartiere: Positive) return ptr_rt_location_abitanti is abstract;
    function get_saved_partitions(obj: access rt_quartiere_utilities) return registro_quartieri is abstract;
-   function is_a_new_quartiere (obj: access rt_quartiere_utilities; id_quartiere: Positive) return Boolean is abstract;
-
+   function is_a_new_quartiere(obj: access rt_quartiere_utilities; id_quartiere: Positive) return Boolean is abstract;
+   procedure close_system(obj: access rt_quartiere_utilities) is abstract;
+   procedure all_can_be_closed(obj: access rt_quartiere_utilities) is abstract;
 
    type rt_gestore_bus_quartiere is synchronized interface;
    type ptr_rt_gestore_bus_quartiere is access all rt_gestore_bus_quartiere'Class;
@@ -117,6 +118,7 @@ package remote_types is
    type ptr_gps_interface is access all gps_interface'Class;
    function get_estremi_strade_urbane(obj: access gps_interface; id_quartiere: Positive) return estremi_strade_urbane is abstract;
    function is_alive(obj: access gps_interface) return Boolean is abstract;
+   procedure close_gps(obj: access gps_interface) is abstract;
    procedure registra_mappa_quartiere(obj: access gps_interface; id_quartiere: Positive; urbane: strade_urbane_features;
                                            ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
                                             incroci_a_3: list_incroci_a_3) is abstract;

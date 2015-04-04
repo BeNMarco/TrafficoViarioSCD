@@ -51,10 +51,10 @@ pragma Elaborate_Body;
    function get_to_incroci_a_3 return Natural;
    function get_from_incroci return Natural;
    function get_to_incroci return Natural;
-   function get_from_rotonde_a_4 return Natural;
-   function get_to_rotonde_a_4 return Natural;
-   function get_from_rotonde_a_3 return Natural;
-   function get_to_rotonde_a_3 return Natural;
+   --function get_from_rotonde_a_4 return Natural;
+   --function get_to_rotonde_a_4 return Natural;
+   --function get_from_rotonde_a_3 return Natural;
+   --function get_to_rotonde_a_3 return Natural;
    function get_json_pedoni return JSON_Array;
    function get_json_bici return JSON_Array;
    function get_json_auto return JSON_Array;
@@ -120,10 +120,10 @@ private
    to_incroci_a_4: Natural:= from_incroci_a_4-1+size_incroci_a_4;
    from_incroci_a_3: Natural:= to_incroci_a_4+1;
    to_incroci_a_3: Natural:= from_incroci_a_3-1+size_incroci_a_3;
-   from_rotonde_a_4: Natural:= to_incroci_a_3+1;
-   to_rotonde_a_4: Natural:= from_rotonde_a_4-1+size_rotonde_a_4;
-   from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
-   to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
+   --from_rotonde_a_4: Natural:= to_incroci_a_3+1;
+   --to_rotonde_a_4: Natural:= from_rotonde_a_4-1+size_rotonde_a_4;
+   --from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
+   --to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
 
    num_task: Natural:= size_json_urbane+size_json_ingressi+size_incroci_a_4+size_incroci_a_3+size_rotonde_a_4+size_rotonde_a_3;
 
@@ -137,7 +137,7 @@ private
    size_json_bici: Natural:= Length(json_bici);
    size_json_auto: Natural:= Length(json_auto);
    size_json_autobus: Natural:= Length(json_autobus);
-   from_abitanti: Natural:= to_rotonde_a_3+1;
+   from_abitanti: Natural:= to_incroci_a_3+1;
    to_abitanti: Natural:= from_abitanti-1+size_json_abitanti+size_json_autobus;
 
    json_default_move_settings: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/default_move_settings.json");

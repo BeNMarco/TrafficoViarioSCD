@@ -24,6 +24,23 @@ package body the_name_server is
 
    protected body servers_ref is
 
+      function server_is_closed return Boolean is
+      begin
+         return server_is_closed_val;
+      end server_is_closed;
+      procedure set_server_closure is
+      begin
+         server_is_closed_val:= True;
+      end set_server_closure;
+      function web_server_is_closed return Boolean is
+      begin
+         return web_server_is_closed_val;
+      end web_server_is_closed;
+      procedure set_web_server_closure is
+      begin
+         web_server_is_closed_val:= True;
+      end set_web_server_closure;
+
       procedure registra_webserver(my_web: Access_WebServer_Remote_Interface) is
       begin
          registered(2):= True;
@@ -68,6 +85,9 @@ package body the_name_server is
    begin
       while cfg_quartieri_obj=null loop
          delay until (Clock + 1.0);
+         if signal_quit_arrived then
+            return False;
+         end if;
       end loop;
       return True;
    end rci_parameters_are_set;
@@ -79,6 +99,36 @@ package body the_name_server is
       end loop;
       return num_quartieri;
    end get_num_quartieri;
+
+   procedure quit_signal is
+   begin
+      cfg_quartieri_obj.quit_signal;
+   end quit_signal;
+
+   procedure quartiere_non_ha_nuove_partizioni(id_quartiere: Positive) is
+   begin
+      cfg_quartieri_obj.quartiere_non_ha_nuove_partizioni(id_quartiere);
+   end quartiere_non_ha_nuove_partizioni;
+
+   function signal_quit_arrived return Boolean is
+   begin
+      return cfg_quartieri_obj.signal_quit_arrived;
+   end signal_quit_arrived;
+
+   function all_quartieri_has_finish_operations return Boolean is
+   begin
+      return cfg_quartieri_obj.all_quartieri_has_finish_operations;
+   end all_quartieri_has_finish_operations;
+
+   procedure quartiere_has_finished_all_operations(id_quartiere: Positive) is
+   begin
+      cfg_quartieri_obj.quartiere_has_finished_all_operations(id_quartiere);
+   end quartiere_has_finished_all_operations;
+
+   function has_quartiere_finish_all_operations(id_quartiere: Positive) return Boolean is
+   begin
+      return cfg_quartieri_obj.has_quartiere_finish_all_operations(id_quartiere);
+   end has_quartiere_finish_all_operations;
 
    function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
    begin
@@ -99,6 +149,9 @@ package body the_name_server is
    begin
       while servers_ref.get_webServer=null loop
          delay until (Clock + 1.0);
+         if signal_quit_arrived then
+            return null;
+         end if;
       end loop;
       return servers_ref.get_webServer;
    end get_webServer;
@@ -117,9 +170,29 @@ package body the_name_server is
    begin
       while servers_ref.get_server_gps=null loop
          delay until (Clock + 1.0);
+         if signal_quit_arrived then
+            return null;
+         end if;
       end loop;
       return servers_ref.get_server_gps;
    end get_server_gps;
+
+   function server_is_closed return Boolean is
+   begin
+      return servers_ref.server_is_closed;
+   end server_is_closed;
+   procedure set_server_closure is
+   begin
+      servers_ref.set_server_closure;
+   end set_server_closure;
+   function web_server_is_closed return Boolean is
+   begin
+      return servers_ref.web_server_is_closed;
+   end web_server_is_closed;
+   procedure set_web_server_closure is
+   begin
+      servers_ref.set_web_server_closure;
+   end set_web_server_closure;
 
    procedure registra_quartiere(id_quartiere: Positive;
                                 set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci;
@@ -129,6 +202,7 @@ package body the_name_server is
                                 quartiere_utilities: ptr_rt_quartiere_utilitites;
                                 synch_local_obj: ptr_rt_synchronization_partitions_type;
                                 all_ok: in out Boolean) is
+      registered: Boolean:= True;
    begin
       begin
          all_ok:= True;
@@ -139,7 +213,11 @@ package body the_name_server is
          cfg_quartieri_obj.registra_quartiere(id_quartiere,
                                               set_ingressi,set_urbane,set_incroci,
                                               entities_life,gestore_bus,report_log,
-                                              quartiere_utilities,synch_local_obj);
+                                              quartiere_utilities,synch_local_obj,
+                                              registered);
+         if registered=False then
+            all_ok:= False;
+         end if;
       exception
          when others =>
             -- ERRORE NELLA REGISTRAZIONE DEL QUARTIERE id_quartiere
@@ -152,6 +230,16 @@ package body the_name_server is
       cfg_quartieri_obj.quartiere_has_registered_map(id_quartiere);
    end quartiere_has_registered_map;
 
+   procedure quartiere_has_closed_tasks(id_quartiere: Positive) is
+   begin
+      cfg_quartieri_obj.quartiere_has_closed_tasks(id_quartiere);
+   end quartiere_has_closed_tasks;
+
+   function get_num_quartieri_up return Natural is
+   begin
+      return cfg_quartieri_obj.get_num_quartieri_up;
+   end get_num_quartieri_up;
+
    protected body cfg_quartieri is
       procedure registra_quartiere(id_quartiere: Positive;
                                    set_ingressi: set_resources_ingressi; set_urbane: set_resources_urbane; set_incroci: set_resources_incroci;
@@ -159,8 +247,14 @@ package body the_name_server is
                                    gestore_bus: ptr_rt_gestore_bus_quartiere;
                                    report_log: ptr_rt_report_log;
                                    quartiere_utilities: ptr_rt_quartiere_utilitites;
-                                   synch_local_obj: ptr_rt_synchronization_partitions_type) is
+                                   synch_local_obj: ptr_rt_synchronization_partitions_type;
+                                   all_ok: in out Boolean) is
       begin
+         all_ok:= True;
+         if quit then
+            all_ok:= False;
+         end if;
+
          registro_quartieri_util(id_quartiere):= quartiere_utilities;
 
          registro_log(id_quartiere):= report_log;
@@ -195,12 +289,68 @@ package body the_name_server is
 
          registered(id_quartiere):= True;
 
+         num_quartieri_up:= num_quartieri_up+1;
+
       end registra_quartiere;
 
       procedure quartiere_has_registered_map(id_quartiere: Positive) is
       begin
          map_registered(id_quartiere):= True;
       end quartiere_has_registered_map;
+
+      procedure quartiere_has_closed_tasks(id_quartiere: Positive) is
+         segnale: Boolean:= True;
+      begin
+         quartiere_with_closed_tasks(id_quartiere):= True;
+         for i in 1..max_num_quartieri loop
+            if registro_quartieri_util(i)/=null then
+               if quartiere_with_closed_tasks(i)=False then
+                  segnale:= False;
+               end if;
+            end if;
+         end loop;
+         if segnale then
+            for i in 1..max_num_quartieri loop
+               if registro_quartieri_util(i)/=null then
+                  registro_quartieri_util(i).all_can_be_closed;
+               end if;
+            end loop;
+         end if;
+      end quartiere_has_closed_tasks;
+
+      procedure quit_signal is
+      begin
+         quit:= True;
+      end quit_signal;
+
+      function signal_quit_arrived return Boolean is
+      begin
+         return quit;
+      end signal_quit_arrived;
+
+      procedure quartiere_non_ha_nuove_partizioni(id_quartiere: Positive) is
+         segnale: Boolean:= True;
+      begin
+         quartieri_without_new_partitions(id_quartiere):= True;
+         for i in 1..max_num_quartieri loop
+            if registro_quartieri_util(i)/=null and then quartieri_without_new_partitions(i)=False then
+               segnale:= False;
+            end if;
+         end loop;
+         if segnale then
+            -- tutti i quartieri sono senza nuove partizioni
+            for i in 1..max_num_quartieri loop
+               if registro_quartieri_util(i)/=null then
+                  registro_quartieri_util(i).close_system;
+               end if;
+            end loop;
+         end if;
+      end quartiere_non_ha_nuove_partizioni;
+
+      function get_num_quartieri_up return Natural is
+      begin
+         return num_quartieri_up;
+      end get_num_quartieri_up;
 
       function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log is
       begin
@@ -288,6 +438,32 @@ package body the_name_server is
          return registered(id);
       end is_quartiere_registered;
 
+      function all_quartieri_has_finish_operations return Boolean is
+      begin
+         return all_system_can_be_closed;
+      end all_quartieri_has_finish_operations;
+
+      procedure quartiere_has_finished_all_operations(id_quartiere: Positive) is
+         segnale: Boolean:= True;
+      begin
+         set_quartieri_finish_operations(id_quartiere):= True;
+         for i in 1..max_num_quartieri loop
+            if registro_quartieri_util(i)/=null then
+               if set_quartieri_finish_operations(i)=False then
+                  segnale:= False;
+               end if;
+            end if;
+         end loop;
+         if segnale then
+            all_system_can_be_closed:= True;
+         end if;
+      end quartiere_has_finished_all_operations;
+
+      function has_quartiere_finish_all_operations(id_quartiere: Positive) return Boolean is
+      begin
+         return set_quartieri_finish_operations(id_quartiere);
+      end has_quartiere_finish_all_operations;
+
    end cfg_quartieri;
 
    function get_ref_rt_quartieri return registro_quartieri is
@@ -325,10 +501,10 @@ package body the_name_server is
       return cfg_quartieri_obj.get_registro_quartieri;
    end get_registro_quartieri;
 
-   function get_quartiere_gestore_bus(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
+   function get_gestore_bus_quartiere(id_quartiere: Positive) return ptr_rt_gestore_bus_quartiere is
    begin
       return cfg_quartieri_obj.get_quartiere_gestore_bus(id_quartiere);
-   end get_quartiere_gestore_bus;
+   end get_gestore_bus_quartiere;
 
    function get_registro_gestori_bus_quartieri return registro_gestori_bus_quartieri is
    begin

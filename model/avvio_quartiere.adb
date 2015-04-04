@@ -124,7 +124,7 @@ package body avvio_quartiere is
       end loop;
 
       begin
-         get_webServer.registra_mappa_quartiere(Write(json_quartiere,False), get_id_quartiere);
+         get_webServer.registra_mappa_quartiere(Write(json_quartiere,False),get_id_quartiere);
       exception
          when System.RPC.Communication_Error =>
             log_system_error.set_error(webserver,error_state);
@@ -132,8 +132,8 @@ package body avvio_quartiere is
             log_system_error.set_error(altro,error_state);
       end;
 
-      -- prima di muovere le entità che effettuano delle chiamate ad altri quartieri
-      -- si aspetta che vengono configurati
+      -- prima di muovere le entità che effettuano delle chiamate ad altri
+      -- quartieri si aspetta che vengono configurati
       if log_system_error.is_in_error=False then
          start_entity_to_move;
       end if;
@@ -164,33 +164,41 @@ package body avvio_quartiere is
    begin
       loop
          delay 2.0;
-         for i in 1..get_num_quartieri loop
-            begin
-               if get_ref_quartiere(i)/=null then
-                  if get_ref_quartiere(i).is_a_new_quartiere(1) then
-                     null;
-                  end if;
-               end if;
-            exception
-               when others =>
-                  -- il nameserver non risponde quindi chiudo tutto
-                  log_system_error.set_error(altro,flag_to_updated);
-                  get_synchronization_partitions_object.exit_system;
-                  get_synchronization_tasks_partition_object.exit_system;
-                  for j in get_from_urbane..get_to_urbane loop
-                     get_urbane_segmento_resources(j).exit_system;
-                  end loop;
-                  flag_errore:= True;
-            end;
-         end loop;
+         --for i in 1..get_num_quartieri loop
+         --   begin
+         --      if get_ref_quartiere(i)/=null then
+         --         if get_ref_quartiere(i).is_a_new_quartiere(1) then
+         --            null;
+         --         end if;
+         --      end if;
+         --   exception
+         --      when others =>
+         --         -- il nameserver non risponde quindi chiudo tutto
+         --         log_system_error.set_error(altro,flag_to_updated);
+         --         get_synchronization_partitions_object.exit_system;
+         --         get_synchronization_tasks_partition_object.exit_system;
+         --         for j in get_from_urbane..get_to_urbane loop
+         --            get_urbane_segmento_resources(j).exit_system;
+         --         end loop;
+         --         flag_errore:= True;
+         --   end;
+         --end loop;
          if get_server_gps/=null and then get_server_gps.is_alive then
             null;
          end if;
          if get_webServer/=null and then get_webServer.is_alive then
             null;
          end if;
-         exit when flag_errore=True or log_system_error.is_in_error;
+         exit when log_system_error.is_in_error
+           or get_quartiere_utilities_obj.all_system_can_be_closed;
       end loop;
+
+      recovery_status.wait_finish_work;
+         -- qui si potrebbe ricostruire una snapshot del quartiere
+         -- prima di chiuderlo effettivamente
+
+      quartiere_has_finished_all_operations(get_id_quartiere);
+
    exception
       when others =>
          log_system_error.set_error(altro,flag_to_updated);

@@ -113,22 +113,22 @@ package body data_quartiere is
          return get_to_incroci_a_4;
       end if;
    end get_to_incroci;
-   function get_from_rotonde_a_4 return Natural is
-   begin
-      return from_rotonde_a_4;
-   end get_from_rotonde_a_4;
-   function get_to_rotonde_a_4 return Natural is
-   begin
-      return to_rotonde_a_4;
-   end get_to_rotonde_a_4;
-   function get_from_rotonde_a_3 return Natural is
-   begin
-      return from_rotonde_a_3;
-   end get_from_rotonde_a_3;
-   function get_to_rotonde_a_3 return Natural is
-   begin
-      return to_rotonde_a_3;
-   end get_to_rotonde_a_3;
+   --function get_from_rotonde_a_4 return Natural is
+   --begin
+   --   return from_rotonde_a_4;
+   --end get_from_rotonde_a_4;
+   --function get_to_rotonde_a_4 return Natural is
+   --begin
+   --   return to_rotonde_a_4;
+   --end get_to_rotonde_a_4;
+   --function get_from_rotonde_a_3 return Natural is
+   --begin
+   --   return from_rotonde_a_3;
+   --end get_from_rotonde_a_3;
+   --function get_to_rotonde_a_3 return Natural is
+   --begin
+   --   return to_rotonde_a_3;
+   --end get_to_rotonde_a_3;
    function get_json_pedoni return JSON_Array is
    begin
       return json_pedoni;

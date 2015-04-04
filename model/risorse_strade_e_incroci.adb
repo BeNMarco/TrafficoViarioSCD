@@ -173,6 +173,7 @@ package body risorse_strade_e_incroci is
       else
          corsia_traiettoria:= 0;
       end if;
+      Put_Line("next nodo inigresso request by " & Positive'Image(id_abitante));
       next_nodo:= get_quartiere_utilities_obj.get_classe_locate_abitanti(id_quartiere_abitante).get_next(id_abitante);
       if next_nodo.get_id_quartiere_tratto=get_id_quartiere and then (next_nodo.get_id_tratto>=get_from_ingressi and next_nodo.get_id_tratto<=get_to_ingressi) then
          if get_ingresso_from_id(from_ingresso).get_polo_ingresso=get_ingresso_from_id(next_nodo.get_id_tratto).get_polo_ingresso then
@@ -250,6 +251,7 @@ package body risorse_strade_e_incroci is
       id_road: Natural;
    begin
       -- next_nodo sarà o la strada corrente o un suo ingresso
+      Put_Line("next nodo request by " & Positive'Image(abitante.get_id_abitante_posizione_abitanti));
       next_nodo:= get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_next(abitante.get_id_abitante_posizione_abitanti);
       Put_Line(Positive'Image(get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)));
       if get_quartiere_utilities_obj.get_classe_locate_abitanti(abitante.get_id_quartiere_posizione_abitanti).get_number_steps_to_finish_route(abitante.get_id_abitante_posizione_abitanti)<1 then
@@ -1651,6 +1653,8 @@ package body risorse_strade_e_incroci is
       --index_ingresso_same_polo: Natural;
       --index_ingresso_opposite_polo: Natural;
       error_flag: Boolean:= False;
+
+      flag_chiusura_is_set: Boolean:= False;
    begin
       select
          accept configure(id: Positive) do
@@ -1693,6 +1697,9 @@ package body risorse_strade_e_incroci is
          mailbox.update_bipedi_on_traiettorie_ingressi(state_view_abitanti);
 
          --mailbox.view_updated(True);
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
 
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
@@ -3436,10 +3443,10 @@ package body risorse_strade_e_incroci is
                   -- elaborazione corsia to go;    first_corsia è la corsia in cui la macchina è situata
                   Put_Line("id_abitante " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_task) & " corsia" & Positive'Image(first_corsia) & " polo " & Boolean'Image(current_polo_to_consider) & " quartiere" & Positive'Image(get_id_quartiere));
                   -- Put_Line("id_abitante overtaking " & Float'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_distance_on_overtaking_trajectory));
-                  if current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=127 and then
-                    current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>845.0 then
-                     stop_entity:= False;
-                  end if;
+                  --if current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=127 and then
+                  --  current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>845.0 then
+                  --   stop_entity:= False;
+                  --end if;
                   length_car_on_road:= get_quartiere_utilities_obj.get_auto_quartiere(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
 
                   -- BEGIN CONTROLLO SE IL SEMAFORO È VERDE
@@ -4562,7 +4569,30 @@ package body risorse_strade_e_incroci is
          mailbox.delta_terminate;
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
+
+         -- l'urbana 1 è il rappresentante per la chiusura del quartiere in questione
+         if (id_task=1 and flag_chiusura_is_set=False) and signal_quit_arrived then
+            declare
+               registro: registro_quartieri:= get_quartiere_utilities_obj.get_saved_partitions;
+               able_to_stop: Boolean:= True;
+            begin
+               -- viene controllato se  il quartiere in questione
+               -- sta aspettando altri quartieri
+               for i in registro'Range loop
+                  if registro(i)/=null and then i/=get_id_quartiere then
+                     if get_quartiere_utilities_obj.is_a_quartiere_to_wait(i)=False then
+                        able_to_stop:= False;
+                     end if;
+                  end if;
+               end loop;
+               if able_to_stop then
+                  flag_chiusura_is_set:= True;
+                  quartiere_non_ha_nuove_partizioni(get_id_quartiere);
+               end if;
+            end;
+         end if;
+
       end loop;
 
    exception
@@ -4570,6 +4600,8 @@ package body risorse_strade_e_incroci is
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;
@@ -4582,7 +4614,7 @@ package body risorse_strade_e_incroci is
          exit_task;
          close_mailbox;
          if error_flag then
-            Put_Line("Unexpected exception incroci: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
+            Put_Line("Unexpected exception urbana: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
             Put_Line(Exception_Information(Error));
          end if;
    end core_avanzamento_urbane;
@@ -4654,6 +4686,11 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
 
          mailbox.update_position_entity(state_view_abitanti);
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
+
+
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          resource_main_strada.ingresso_wait_turno;
@@ -4927,7 +4964,7 @@ package body risorse_strade_e_incroci is
                get_quartiere_utilities_obj.get_classe_locate_abitanti(current_posizione_abitante.get_id_quartiere_posizione_abitanti).set_finish_route(current_posizione_abitante.get_id_abitante_posizione_abitanti);
                if get_ingresso_from_id(id_task).get_type_ingresso=fermata then
                   -- carica scarica abitanti
-                  get_gestore_bus_quartiere_obj.get_gestore_bus_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti).autobus_arrived_at_fermata(current_posizione_abitante.get_id_abitante_posizione_abitanti,mailbox.create_array_abitanti_in_fermata,create_tratto(get_id_quartiere,id_task));
+                  get_gestore_bus_quartiere(current_posizione_abitante.get_id_quartiere_posizione_abitanti).autobus_arrived_at_fermata(current_posizione_abitante.get_id_abitante_posizione_abitanti,mailbox.create_array_abitanti_in_fermata,create_tratto(get_id_quartiere,id_task));
                end if;
                get_quartiere_entities_life(current_posizione_abitante.get_id_quartiere_posizione_abitanti).abitante_is_arrived(current_posizione_abitante.get_id_abitante_posizione_abitanti);
             else
@@ -4989,7 +5026,7 @@ package body risorse_strade_e_incroci is
          --crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
       end loop;
    exception
@@ -4997,6 +5034,8 @@ package body risorse_strade_e_incroci is
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;
@@ -5009,7 +5048,7 @@ package body risorse_strade_e_incroci is
          exit_task;
          close_mailbox;
          if error_flag then
-            Put_Line("Unexpected exception incroci: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
+            Put_Line("Unexpected exception ingressi: " & Positive'Image(id_task) & " ID QU " & Positive'Image(get_id_quartiere));
             Put_Line(Exception_Information(Error));
          end if;
 
@@ -5096,6 +5135,11 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
          mailbox.update_avanzamento_cars(state_view_abitanti);
          mailbox.update_avanzamento_bipedi(state_view_abitanti);
+
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
+
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          for i in 1..mailbox.get_size_incrocio loop
@@ -5760,18 +5804,16 @@ package body risorse_strade_e_incroci is
             end if;
          end loop;
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
-         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
-         --if id_task=115 then
-         --   raise Storage_Error;
-         --end if;
       end loop;
    exception
       when system_error_exc =>
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;

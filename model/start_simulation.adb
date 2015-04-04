@@ -177,6 +177,19 @@ package body start_simulation is
       end loop;
    end start_autobus_to_move;
 
+   protected body recovery_status is
+      entry wait_finish_work when finish_recovery is
+      begin
+         null;
+      end wait_finish_work;
+
+      procedure work_is_finished is
+      begin
+         finish_recovery:= True;
+      end work_is_finished;
+   end recovery_status;
+
+
    procedure recovery_start_entity_to_move is
       list: ptr_lista_tuple;
       residente: abitante;
@@ -190,7 +203,7 @@ package body start_simulation is
       to_luogo: Positive;
    begin
       loop
-         delay 10.0;
+         delay 3.0;
          if fermate_are_configured=False then
             configure_linee_fermate;
          end if;
@@ -198,6 +211,7 @@ package body start_simulation is
          list:= coda_abitanti_to_restart.get_abitanti_non_partiti;
          while list/=null loop
             -- si controlla se l'abitante può partire
+            percorso_calcolato:= False;
             residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,list.get_tupla.get_id_tratto);
 
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
@@ -239,6 +253,7 @@ package body start_simulation is
                   end;
                end if;
             else
+               mezzo:= residente.get_mezzo_abitante;
                linea:= get_linea(residente.get_id_luogo_lavoro_from_abitante);
                stop_entity:= False;
                if linea.is_updated_linea then
@@ -264,7 +279,7 @@ package body start_simulation is
             end if;
             if percorso_calcolato then
                get_ingressi_segmento_resources(get_from_ingressi+residente.get_id_luogo_casa_from_abitante-1).new_abitante_to_move(residente.get_id_quartiere_from_abitante,residente.get_id_abitante_from_abitante,mezzo);
-               Put_Line("INSERITTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOO ABITANTE MANCANTEEEEEEEE************************");
+               --Put_Line("INSERITTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOO ABITANTE MANCANTEEEEEEEE************************");
             end if;
 
             if percorso_calcolato then
@@ -274,8 +289,15 @@ package body start_simulation is
             end if;
          end loop;
 
-         exit when log_system_error.is_in_error; -- INTANTO CONDIZIONE DI USCITA A FALSE
+         list:= coda_abitanti_to_restart.get_abitanti_non_partiti;
+         if list=null then
+            recovery_status.work_is_finished;
+            return;
+         end if;
+         exit when log_system_error.is_in_error
+           or get_quartiere_utilities_obj.all_system_can_be_closed;
       end loop;
+      recovery_status.work_is_finished;
    end recovery_start_entity_to_move;
 
 

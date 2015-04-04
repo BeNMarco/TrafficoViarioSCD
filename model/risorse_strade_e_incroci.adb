@@ -1653,6 +1653,8 @@ package body risorse_strade_e_incroci is
       --index_ingresso_same_polo: Natural;
       --index_ingresso_opposite_polo: Natural;
       error_flag: Boolean:= False;
+
+      flag_chiusura_is_set: Boolean:= False;
    begin
       select
          accept configure(id: Positive) do
@@ -1695,6 +1697,9 @@ package body risorse_strade_e_incroci is
          mailbox.update_bipedi_on_traiettorie_ingressi(state_view_abitanti);
 
          --mailbox.view_updated(True);
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
 
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
@@ -4564,7 +4569,30 @@ package body risorse_strade_e_incroci is
          mailbox.delta_terminate;
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
+
+         -- l'urbana 1 è il rappresentante per la chiusura del quartiere in questione
+         if (id_task=1 and flag_chiusura_is_set=False) and signal_quit_arrived then
+            declare
+               registro: registro_quartieri:= get_quartiere_utilities_obj.get_saved_partitions;
+               able_to_stop: Boolean:= True;
+            begin
+               -- viene controllato se  il quartiere in questione
+               -- sta aspettando altri quartieri
+               for i in registro'Range loop
+                  if registro(i)/=null and then i/=get_id_quartiere then
+                     if get_quartiere_utilities_obj.is_a_quartiere_to_wait(i)=False then
+                        able_to_stop:= False;
+                     end if;
+                  end if;
+               end loop;
+               if able_to_stop then
+                  flag_chiusura_is_set:= True;
+                  quartiere_non_ha_nuove_partizioni(get_id_quartiere);
+               end if;
+            end;
+         end if;
+
       end loop;
 
    exception
@@ -4572,6 +4600,8 @@ package body risorse_strade_e_incroci is
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;
@@ -4656,6 +4686,11 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
 
          mailbox.update_position_entity(state_view_abitanti);
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
+
+
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          resource_main_strada.ingresso_wait_turno;
@@ -4991,7 +5026,7 @@ package body risorse_strade_e_incroci is
          --crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
       end loop;
    exception
@@ -4999,6 +5034,8 @@ package body risorse_strade_e_incroci is
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;
@@ -5098,6 +5135,11 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
          mailbox.update_avanzamento_cars(state_view_abitanti);
          mailbox.update_avanzamento_bipedi(state_view_abitanti);
+
+         if get_quartiere_utilities_obj.is_system_closing then
+            raise regular_exit_system;
+         end if;
+
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
 
          for i in 1..mailbox.get_size_incrocio loop
@@ -5762,18 +5804,16 @@ package body risorse_strade_e_incroci is
             end if;
          end loop;
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
-         --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
-         --if id_task=115 then
-         --   raise Storage_Error;
-         --end if;
       end loop;
    exception
       when system_error_exc =>
          exit_task;
       when propaga_error =>
          close_mailbox;
+      when regular_exit_system =>
+         log_system_error.add_finished_task(id_task);
       when System.RPC.Communication_Error =>
          log_system_error.set_error(altro,error_flag);
          exit_task;

@@ -26,6 +26,10 @@ package the_name_server is
 
    procedure quartiere_has_registered_map(id_quartiere: Positive);
 
+   procedure quartiere_has_closed_tasks(id_quartiere: Positive);
+
+   function get_num_quartieri_up return Natural;
+
    function get_ref_rt_quartieri return registro_quartieri;
 
    function get_ref_quartiere(id_quartiere: Positive) return ptr_rt_quartiere_utilitites;
@@ -59,6 +63,18 @@ package the_name_server is
 
    type registro_synchronizer_quartieri is array(Positive range <>) of ptr_rt_synchronization_partitions_type;
 
+   procedure quit_signal;
+   procedure quartiere_non_ha_nuove_partizioni(id_quartiere: Positive);
+   function signal_quit_arrived return Boolean;
+
+   procedure quartiere_has_finished_all_operations(id_quartiere: Positive);
+   function has_quartiere_finish_all_operations(id_quartiere: Positive) return Boolean;
+   function all_quartieri_has_finish_operations return Boolean;
+
+   function server_is_closed return Boolean;
+   procedure set_server_closure;
+   function web_server_is_closed return Boolean;
+   procedure set_web_server_closure;
 private
 
    type set_versioni is array(Positive range <>) of Boolean;
@@ -73,9 +89,17 @@ private
       function is_server_registered return Boolean;
       function is_web_server_registered return Boolean;
 
+      function server_is_closed return Boolean;
+      procedure set_server_closure;
+      function web_server_is_closed return Boolean;
+      procedure set_web_server_closure;
+
    private
       gps: ptr_gps_interface:= null;
       web: Access_WebServer_Remote_Interface:= null;
+
+      server_is_closed_val: Boolean:= False;
+      web_server_is_closed_val: Boolean:= False;
 
       registered: set_versioni(1..2):= (others => False);  -- 1 è il gps; 2 il webserver
    end servers_ref;
@@ -93,9 +117,20 @@ private
                                    gestore_bus: ptr_rt_gestore_bus_quartiere;
                                    report_log: ptr_rt_report_log;
                                    quartiere_utilities: ptr_rt_quartiere_utilitites;
-                                   synch_local_obj: ptr_rt_synchronization_partitions_type);
+                                   synch_local_obj: ptr_rt_synchronization_partitions_type;
+                                   all_ok: in out Boolean);
 
       procedure quartiere_has_registered_map(id_quartiere: Positive);
+
+      procedure quartiere_has_closed_tasks(id_quartiere: Positive);
+
+      procedure quit_signal;
+
+      procedure quartiere_non_ha_nuove_partizioni(id_quartiere: Positive);
+
+      function get_num_quartieri_up return Natural;
+
+      function signal_quit_arrived return Boolean;
 
       function get_log_quartiere(id_quartiere: Positive) return ptr_rt_report_log;
 
@@ -116,6 +151,11 @@ private
       function get_registro_quartieri return registro_quartieri;
 
       function is_quartiere_registered(id: Positive) return Boolean;
+
+      function all_quartieri_has_finish_operations return Boolean;
+
+      procedure quartiere_has_finished_all_operations(id_quartiere: Positive);
+      function has_quartiere_finish_all_operations(id_quartiere: Positive) return Boolean;
    private
       registro_quartieri_util: registro_quartieri(1..max_num_quartieri);
 
@@ -133,6 +173,15 @@ private
       registered: set_versioni(1..max_num_quartieri):= (others => False);
 
       map_registered: set_versioni(1..max_num_quartieri):= (others => False);
+
+      quit: Boolean:= False;
+      quartieri_without_new_partitions: set_versioni(1..max_num_quartieri):= (others => False);
+      quartiere_with_closed_tasks: set_versioni(1..max_num_quartieri):= (others => False);
+
+      all_system_can_be_closed: Boolean:= False;
+      set_quartieri_finish_operations: set_versioni(1..max_num_quartieri):= (others => False);
+
+      num_quartieri_up: Natural:= 0;
    end cfg_quartieri;
 
    type ptr_cfg_quartieri is access cfg_quartieri;

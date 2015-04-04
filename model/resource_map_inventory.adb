@@ -110,7 +110,7 @@ package body resource_map_inventory is
       if set=False then
          log_system_error.set_error(name_server,error_state);
          -- quartiere già in uso
-         Put_Line("quartiere " & Positive'Image(get_id_quartiere) & " già instanziato.");
+         Put_Line("quartiere " & Positive'Image(get_id_quartiere) & " già instanziato o sistema in chiusura.");
          return;
       end if;
 

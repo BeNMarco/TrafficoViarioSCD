@@ -34,6 +34,7 @@ begin
       end if;
    exception
       when others =>
+         WebS.Shutdown;
          return;
    end;
 

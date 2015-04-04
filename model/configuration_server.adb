@@ -5,12 +5,10 @@ use Ada.Text_IO;
 with the_name_server;
 with remote_types;
 with gps_utilities;
-with System_error;
 
 use the_name_server;
 use remote_types;
 use gps_utilities;
-use System_error;
 
 procedure configuration_server is
    gps: ptr_registro_strade_resource;
@@ -33,8 +31,10 @@ begin
          when others =>
             return;
       end;
-      exit when False;
+      exit when gps.has_to_been_closed;
 
    end loop;
 
+   set_server_closure;
+   Put_Line("Il server è stato chiuso.");
 end configuration_server;

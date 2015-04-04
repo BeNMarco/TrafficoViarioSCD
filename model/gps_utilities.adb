@@ -174,6 +174,16 @@ package body gps_utilities is
          max_last_incroci:= Natural'First;
       end reset_state;
 
+      function has_to_been_closed return Boolean is
+      begin
+         return gps_has_to_been_closed;
+      end has_to_been_closed;
+
+      procedure close_gps is
+      begin
+         gps_has_to_been_closed:= True;
+      end close_gps;
+
       procedure registra_mappa_quartiere(id_quartiere: Positive; urbane: strade_urbane_features;
                                            ingressi: strade_ingresso_features; incroci_a_4: list_incroci_a_4;
                                            incroci_a_3: list_incroci_a_3) is

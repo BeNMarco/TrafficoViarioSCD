@@ -79,10 +79,14 @@ package gps_utilities is
 
       procedure reset_state;
 
+      function has_to_been_closed return Boolean;
+      procedure close_gps;
    private
 
       function create_array_percorso(size: Natural; route: ptr_percorso) return percorso;
       procedure print_grafo;
+
+      gps_has_to_been_closed: Boolean:= False;
 
       cache_urbane: urbane_quartiere(1..num_quartieri);
       cache_ingressi: ingressi_quartiere(1..num_quartieri);

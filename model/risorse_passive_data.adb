@@ -378,6 +378,24 @@ package body risorse_passive_data is
          return not not_wait_quartieri(id_quartiere);
       end is_a_quartiere_to_wait;
 
+      procedure close_system is
+      begin
+         exit_partition_system:= True;
+      end close_system;
+      function is_system_closing return Boolean is
+      begin
+         return exit_partition_system;
+      end is_system_closing;
+
+      procedure all_can_be_closed is
+      begin
+         exit_all_system:= True;
+      end all_can_be_closed;
+      function all_system_can_be_closed return Boolean is
+      begin
+         return exit_all_system;
+      end all_system_can_be_closed;
+
    end quartiere_utilities;
 
    function get_quartiere_utilities_obj return ptr_quartiere_utilities is

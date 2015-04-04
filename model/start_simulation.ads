@@ -10,6 +10,13 @@ package start_simulation is
 
    procedure recovery_start_entity_to_move;
 
+   protected recovery_status is
+      entry wait_finish_work;
+      procedure work_is_finished;
+   private
+      finish_recovery: Boolean:= False;
+   end recovery_status;
+
 private
    procedure start_autobus_to_move;
 

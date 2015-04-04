@@ -1,4 +1,12 @@
+with Ada.Text_IO;
 
+with data_quartiere;
+with the_name_server;
+
+use Ada.Text_IO;
+
+use data_quartiere;
+use the_name_server;
 
 package body System_error is
 
@@ -20,6 +28,23 @@ package body System_error is
       begin
          return error;
       end is_in_error;
+
+      --function all_tasks_are_exit return Boolean is
+      --begin
+      --   if num_task_finished=get_num_task then
+      --      return True;
+      --   end if;
+      --   return False;
+      --end all_tasks_are_exit;
+
+      procedure add_finished_task(id_task: Positive) is
+      begin
+         num_task_finished:= num_task_finished+1;
+         if num_task_finished=get_num_task then
+            Put_Line("Il quartiere sta terminando il suo lavoro.");
+            quartiere_has_closed_tasks(get_id_quartiere);
+         end if;
+      end add_finished_task;
 
    end log_system_error;
 

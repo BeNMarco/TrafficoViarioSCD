@@ -94,8 +94,15 @@ package risorse_passive_data is
       procedure set_quartieri_to_not_wait(queue: boolean_queue);
       function is_a_quartiere_to_wait(id_quartiere: Positive) return Boolean;
       
+      procedure close_system;
+      function is_system_closing return Boolean;
+      
+      procedure all_can_be_closed;
+      function all_system_can_be_closed return Boolean;
    private
-
+      exit_partition_system: Boolean:= False;
+      exit_all_system: Boolean:= False;
+        
       entità_abitanti: list_abitanti_quartieri(1..num_quartieri);
       entità_pedoni: list_pedoni_quartieri(1..num_quartieri);
       entità_bici: list_bici_quartieri(1..num_quartieri);

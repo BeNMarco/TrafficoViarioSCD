@@ -177,6 +177,19 @@ package body start_simulation is
       end loop;
    end start_autobus_to_move;
 
+   protected body recovery_status is
+      entry wait_finish_work when finish_recovery is
+      begin
+         null;
+      end wait_finish_work;
+
+      procedure work_is_finished is
+      begin
+         finish_recovery:= True;
+      end work_is_finished;
+   end recovery_status;
+
+
    procedure recovery_start_entity_to_move is
       list: ptr_lista_tuple;
       residente: abitante;
@@ -190,7 +203,7 @@ package body start_simulation is
       to_luogo: Positive;
    begin
       loop
-         delay 5.0;
+         delay 3.0;
          if fermate_are_configured=False then
             configure_linee_fermate;
          end if;
@@ -276,8 +289,15 @@ package body start_simulation is
             end if;
          end loop;
 
-         exit when log_system_error.is_in_error; -- INTANTO CONDIZIONE DI USCITA A FALSE
+         list:= coda_abitanti_to_restart.get_abitanti_non_partiti;
+         if list=null then
+            recovery_status.work_is_finished;
+            return;
+         end if;
+         exit when log_system_error.is_in_error
+           or get_quartiere_utilities_obj.all_system_can_be_closed;
       end loop;
+      recovery_status.work_is_finished;
    end recovery_start_entity_to_move;
 
 

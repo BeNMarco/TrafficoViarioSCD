@@ -24,6 +24,9 @@ with AWS.Messages;
 with AWS.MIME;
 with AWS.Templates;
 with AWS.Translator;
+with GNATCOLL.JSON; use GNATCOLL.JSON;
+
+with WebServer; use WebServer;
 
 package body WebSock_CB is
 
@@ -66,6 +69,7 @@ package body WebSock_CB is
    begin
       Text_IO.Put_Line ("Received : " & Message);
       
+      WebServer.set_richiesta_terminazione(True);
    end On_Message;
 
    -------------

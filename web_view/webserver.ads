@@ -14,6 +14,7 @@ with Ada.Finalization;
 with Page_CB;
 with Home_Page;
 with Districts_Repository;
+with the_name_server; use the_name_server;
 
 use Ada;
 use Ada.Finalization;
@@ -28,12 +29,17 @@ use Districts_Repository;
 
 package WebServer is
 
+	function get_richiesta_terminazione return Boolean;
+	procedure set_richiesta_terminazione(termina: Boolean);
+
 	type WebSocket_Registry_Type is array (Positive range <>) of Net.WebSocket.Registry.Recipient;
 
 	-- Calsse WebServer_Wrapper
 	-- Ha l'utilità di gestire l'interazione con il webserver AWS
 	-- E' Limited_Controlled in modo da gestire la chiusura del server
 	type WebServer_Wrapper_Type(Num : Integer) is new Limited_Controlled and Districts_Repository_Interface with private;
+
+	function get_webserver return WebServer_Wrapper_Type;
 
 	procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: string; quartiere : Natural);
 	procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural);
@@ -55,13 +61,13 @@ package WebServer is
 		procedure registra_mappa_quartiere(data: String; quartiere: Natural);
 		procedure invia_aggiornamento(data: String; quartiere: Natural);
 
-                function is_alive return Boolean; 
+    function is_alive return Boolean; 
       
 		procedure Init;
 		procedure Shutdown;
 
 	private
-		WS_Wrapper : WebServer_Wrapper_Type(Num);
+		-- WS_Wrapper : WebServer_Wrapper_Type := WebServer.get_webserver;
 	end Remote_Proxy_Type;
 
 	type Access_Remote_Proxy_Type is access Remote_Proxy_Type'Class;
@@ -75,10 +81,13 @@ private
 		Rcp_Registry : WebSocket_Registry_Type(1 .. Num);
 		WS     : Server.HTTP;
 		WsConfig : AWS.Config.Object;
-   		Root : Services.Dispatchers.URI.Handler;
-   		Max_Partitions : Integer := Num;
-   		Cur_Registered_Partitions : Integer := 0;
-   		Page_Handler_Registry : Districts_Registry_Type(1 .. Num);
+   	Root : Services.Dispatchers.URI.Handler;
+   	Max_Partitions : Integer := Num;
+   	Cur_Registered_Partitions : Integer := 0;
+   	Page_Handler_Registry : Districts_Registry_Type(1 .. Num);
 	end record;
+
+  Terminazione_Richiesta : Boolean := False;
+  WebServerObject : WebServer_Wrapper_Type(get_num_quartieri);
 
 end WebServer;

@@ -6,8 +6,14 @@ body {
 #canvas{cursor:-webkit-grab; cursor: -moz-grab;}
 
 #canvas-wrap{position:relative;}
-#zoom-controls-div{position: absolute; top: 20px; left:20px;}
-#zoom-controls-div a{
+#controls-div{
+	position: absolute; 
+	top: 40px; left:30px;
+	padding: 5px;
+	background-color: rgba(0,0,0,0.4);
+	/*opacity: 0.5;*/
+}
+#controls-div a{
 	display:block; 
 	background-color: white; 
 	text-decoration: none; 
@@ -18,7 +24,7 @@ body {
 	color: grey;
 }
 
-#zoom-controls-div a:hover{
+#controls-div a:hover{
 	color:black;
 }
 
@@ -30,6 +36,10 @@ body {
 #zoomOutBtn{
 	border-bottom-left-radius: 2px; 
 	border-bottom-right-radius: 2px;
+}
+
+#terminateBtn{
+
 }
 
 .loadingScreenWindow .ui-dialog-titlebar-close {display: none;}

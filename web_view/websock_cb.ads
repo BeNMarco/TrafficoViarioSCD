@@ -37,7 +37,7 @@ package WebSock_CB is
 
    --  My WebSocket, just display the messages
 
-   type Update_Websoket is new Net.WebSocket.Object with private;
+   type Update_Websoket is new Net.WebSocket.Object with private; 
 
    function Websocket_Factory
      (Socket  : Net.Socket_Access;

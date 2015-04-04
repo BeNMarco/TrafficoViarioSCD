@@ -186,11 +186,26 @@
 			//console.log(event);
 			//console.log(event.data);
 			//console.log(JSON.parse(event.data));
-			sim.addState(JSON.parse(event.data));
+			var msg = JSON.parse(event.data);
+			if(msg.type)
+			{
+				if(msg.type == "update")
+				{
+					sim.addState(msg);
+				}
+			}
 		}
 
 		ws1.onerror = function(event) {
 			console.log(event);
+		}
+	}
+
+	function requestTermination()
+	{
+		if(ws1)
+		{
+			ws1.send(JSON.stringify({type:"command", command:"stop"}));
 		}
 	}
 
@@ -422,7 +437,7 @@
 			<div id="progressbar"></div>
 		</div>
 		-->
-		<form>
+		<form style="display:none;">
 			<span id="debug"><a id="getData" href="#">Get data</a> - </span> <span
 				id="debugq"><a id="action1" href="#">Generate states</a> - </span> <span><a
 				id="action2" href="#">Create states</a> - </span> <span><a
@@ -433,7 +448,7 @@
 		</form>
 		<canvas id="canvas" resize hidpi="off"
 			style="background-color: #F0EDE5;"></canvas>
-		<div id="zoom-controls-div">
+		<div id="controls-div">
 			<p>
 				<a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a
 					id="zoomOutBtn" href="#" onClick="zoomOut()">-</a>
@@ -441,6 +456,12 @@
 			<p>
 				<a onClick="switchTrafficLights()">Switch</a>
 			</p>
+			<p>
+				<a id="terminateBtn" onClick="requestTermination()">T</a>
+			</p>
+		</div>
+		<div id="info-box">
+			
 		</div>
 	</div>
 </body>

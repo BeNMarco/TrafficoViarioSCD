@@ -3,6 +3,8 @@ with Ada.Text_IO;
 with Ada.Exceptions;
 use Ada.Exceptions;
 
+with Ada.Strings.Unbounded;
+
 with AWS.Config.Set;
 with AWS.Default;
 with AWS.Net.Log;
@@ -14,6 +16,8 @@ with AWS.Services.Page_Server;
 with AWS.Response;
 with AWS.Dispatchers;
 with AWS.Dispatchers.Callback;
+
+with GNATCOLL.JSON;
 
 with Page_CB;
 with Websock_CB;
@@ -33,6 +37,7 @@ use Ada;
 use AWS;
 use AWS.Config;
 use type AWS.Net.Socket_Access;
+use GNATCOLL.JSON;
 
 use remote_types;
 
@@ -44,7 +49,7 @@ package body WebServer is
    Admin_Dir : String := abs_path & "web_view/admin_data";
    WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
-   
+
    --protected body WebServer_Wrapper_Type is
    overriding procedure Finalize(This : in out WebServer_Wrapper_Type) is
    begin
@@ -70,12 +75,33 @@ package body WebServer is
    end registra_mappa_quartiere;
 
    procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural) is
+      JData : JSON_Value := Read(Strm => data,
+                                 Filename => "debug.txt");
    begin
       --Net.WebSocket.Registry.Send (This.Rcp_Registry(quartiere), data);
+      Set_Field(  Val => JData,
+                  Field_Name => "type",
+                  Field => "update");
+
       if quartiere in This.Rcp_Registry'Range then
-         Net.WebSocket.Registry.Send (This.Rcp_Registry(quartiere), data);
+         Net.WebSocket.Registry.Send (This.Rcp_Registry(quartiere), Write(JData));
       end if;
    end invia_aggiornamento;
+
+   function get_richiesta_terminazione return Boolean is
+   begin
+      return Terminazione_Richiesta;
+   end get_richiesta_terminazione;
+
+   procedure set_richiesta_terminazione(termina: Boolean) is
+   begin
+      Terminazione_Richiesta := termina;
+   end set_richiesta_terminazione;
+
+   function get_webserver return WebServer_Wrapper_Type is
+   begin
+      return WebServerObject;
+   end get_webserver;
 
    procedure Init(This : in out WebServer_Wrapper_Type) is
       JS_Compiler : JS_Page_Compiler_Handler;
@@ -138,12 +164,12 @@ package body WebServer is
    
       procedure registra_mappa_quartiere(data: String;  quartiere : Natural) is
       begin
-         WS_Wrapper.registra_mappa_quartiere(data, quartiere);
+         WebServer.get_webserver.registra_mappa_quartiere(data, quartiere);
       end registra_mappa_quartiere;
 
       procedure invia_aggiornamento(data: String; quartiere: Natural) is
       begin
-         WS_Wrapper.invia_aggiornamento(data, quartiere);
+         WebServer.get_webserver.invia_aggiornamento(data, quartiere);
       end invia_aggiornamento;
 
       function is_alive return Boolean is
@@ -153,12 +179,12 @@ package body WebServer is
       
       procedure Init is
       begin
-         WS_Wrapper.Init;
+         WebServer.get_webserver.Init;
       end Init;
 
       procedure Shutdown is
       begin 
-         WS_Wrapper.Shutdown;
+         WebServer.get_webserver.Shutdown;
       end Shutdown; 
 
    end Remote_Proxy_Type;

@@ -172,6 +172,17 @@
 		//$('#loadingDialog').dialog('destroy');
 	}
 
+	function openMessageDialog(text) {
+		$('#messageDialogText').html(text);
+		$('#messageDialog').modal('show');
+	}
+
+	function closeMessageDialog() {
+		$('#messageDialog').modal('hide');
+	}
+
+
+
 	function getUpdates() {
 		var target = "ws://" + server
 				+ "/quartiere@_ID_QUARTIERE_@/updatesStream";
@@ -192,10 +203,10 @@
 				if(msg.type == "update")
 				{
 					sim.addState(msg);
-				} else 
+				} 
+				else if (msg.type == "command" && msg.command == "terminate")
 				{
-					
-					console.log(msg);
+					openMessageDialog("Simulation terminated.<br />Now you can close your browser.");
 				}
 			}
 		}
@@ -427,6 +438,20 @@
 								<span class="sr-only">Loading</span>
 							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
+					</div>
+					<div class="modal-body">
+						<p id="messageDialogText"></p>
 					</div>
 				</div>
 			</div>

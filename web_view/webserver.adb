@@ -88,20 +88,32 @@ package body WebServer is
       end if;
    end invia_aggiornamento;
 
-   function get_richiesta_terminazione return Boolean is
-   begin
-      return Terminazione_Richiesta;
-   end get_richiesta_terminazione;
 
-   procedure set_richiesta_terminazione(termina: Boolean) is
+   procedure notifica_terminazione(This : in out WebServer_Wrapper_Type) is
+      JData : JSON_Value := Create_Object;
    begin
-      Terminazione_Richiesta := termina;
-   end set_richiesta_terminazione;
+      Set_Field(Val => JData, Field_Name => "type", Field => "command");
+      Set_Field(Val => JData, Field_Name => "command", Field => "terminate");
 
-   function get_webserver return WebServer_Wrapper_Type is
-   begin
-      return WebServerObject;
-   end get_webserver;
+      for recipient of This.Rcp_Registry loop
+         Net.WebSocket.Registry.Send (recipient , Write(JData));
+      end loop;
+   end notifica_terminazione;
+
+   -- function get_richiesta_terminazione return Boolean is
+   -- begin
+   --    -- return Terminazione_Richiesta;
+   -- end get_richiesta_terminazione;
+
+   -- procedure set_richiesta_terminazione(termina: Boolean) is
+   -- begin
+   --    Terminazione_Richiesta := termina;
+   -- end set_richiesta_terminazione;
+
+   -- function get_webserver return WebServer_Wrapper_Type is
+   -- begin
+   --    return WebServerObject;
+   -- end get_webserver;
 
    procedure Init(This : in out WebServer_Wrapper_Type) is
       JS_Compiler : JS_Page_Compiler_Handler;
@@ -164,12 +176,12 @@ package body WebServer is
    
       procedure registra_mappa_quartiere(data: String;  quartiere : Natural) is
       begin
-         WebServer.get_webserver.registra_mappa_quartiere(data, quartiere);
+         WS_Wrapper.registra_mappa_quartiere(data, quartiere);
       end registra_mappa_quartiere;
 
       procedure invia_aggiornamento(data: String; quartiere: Natural) is
       begin
-         WebServer.get_webserver.invia_aggiornamento(data, quartiere);
+         WS_Wrapper.invia_aggiornamento(data, quartiere);
       end invia_aggiornamento;
 
       function is_alive return Boolean is
@@ -179,13 +191,20 @@ package body WebServer is
       
       procedure Init is
       begin
-         WebServer.get_webserver.Init;
+         WS_Wrapper.Init;
+         Alive := True;
       end Init;
 
       procedure Shutdown is
       begin 
-         WebServer.get_webserver.Shutdown;
+         WS_Wrapper.Shutdown;
       end Shutdown; 
+
+      procedure close_webserver is
+      begin
+         WS_Wrapper.notifica_terminazione;
+         Alive := False;
+      end close_webserver;
 
    end Remote_Proxy_Type;
 

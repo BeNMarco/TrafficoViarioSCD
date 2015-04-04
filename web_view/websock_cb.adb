@@ -68,8 +68,8 @@ package body WebSock_CB is
      (Socket : in out Update_Websoket; Message : String) is
    begin
       Text_IO.Put_Line ("Received : " & Message);
-      
-      WebServer.set_richiesta_terminazione(True);
+
+      --WebServer.set_richiesta_terminazione(True);
    end On_Message;
 
    -------------

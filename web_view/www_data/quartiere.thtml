@@ -192,6 +192,10 @@
 				if(msg.type == "update")
 				{
 					sim.addState(msg);
+				} else 
+				{
+					
+					console.log(msg);
 				}
 			}
 		}

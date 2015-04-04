@@ -29,8 +29,8 @@ use Districts_Repository;
 
 package WebServer is
 
-	function get_richiesta_terminazione return Boolean;
-	procedure set_richiesta_terminazione(termina: Boolean);
+	-- function get_richiesta_terminazione return Boolean;
+	-- procedure set_richiesta_terminazione(termina: Boolean);
 
 	type WebSocket_Registry_Type is array (Positive range <>) of Net.WebSocket.Registry.Recipient;
 
@@ -39,10 +39,11 @@ package WebServer is
 	-- E' Limited_Controlled in modo da gestire la chiusura del server
 	type WebServer_Wrapper_Type(Num : Integer) is new Limited_Controlled and Districts_Repository_Interface with private;
 
-	function get_webserver return WebServer_Wrapper_Type;
+	-- function get_webserver return WebServer_Wrapper_Type;
 
 	procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: string; quartiere : Natural);
 	procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural);
+	procedure notifica_terminazione(This : in out WebServer_Wrapper_Type);
 
 	procedure Init(This : in out WebServer_Wrapper_Type);
 	procedure Shutdown(This : in out WebServer_Wrapper_Type);
@@ -62,12 +63,15 @@ package WebServer is
 		procedure invia_aggiornamento(data: String; quartiere: Natural);
 
     function is_alive return Boolean; 
+
+    procedure close_webserver;
       
 		procedure Init;
 		procedure Shutdown;
 
 	private
-		-- WS_Wrapper : WebServer_Wrapper_Type := WebServer.get_webserver;
+		WS_Wrapper : WebServer_Wrapper_Type(Num);
+		Alive : Boolean := False;
 	end Remote_Proxy_Type;
 
 	type Access_Remote_Proxy_Type is access Remote_Proxy_Type'Class;
@@ -87,7 +91,7 @@ private
    	Page_Handler_Registry : Districts_Registry_Type(1 .. Num);
 	end record;
 
-  Terminazione_Richiesta : Boolean := False;
-  WebServerObject : WebServer_Wrapper_Type(get_num_quartieri);
+  --Terminazione_Richiesta : Boolean := False;
+  --WebServerObject : WebServer_Wrapper_Type(get_num_quartieri);
 
 end WebServer;

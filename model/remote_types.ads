@@ -141,6 +141,7 @@ package remote_types is
 
    procedure registra_mappa_quartiere(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
    function is_alive(This: access WebServer_Remote_Interface) return Boolean is abstract;
+   procedure close_webserver(This: access WebServer_Remote_Interface) is abstract;
    pragma Asynchronous(Access_WebServer_Remote_Interface);
    procedure invia_aggiornamento(This: access WebServer_Remote_Interface; data: String; quartiere : Natural) is abstract;
 

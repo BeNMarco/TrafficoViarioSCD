@@ -51,8 +51,9 @@ begin
          when others =>
             exit_system:= True;
       end;
-      exit when exit_system;
+      exit when exit_system or not WebS.is_alive;
    end loop;
-
    WebS.Shutdown;
+   Ada.Text_IO.Put_Line("WebServer is gone away");
+   the_name_server.set_web_server_closure;
 end webserver_starter;

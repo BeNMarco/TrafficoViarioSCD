@@ -1,0 +1,24 @@
+\section{Strategia di avanzamento delle entità}
+Un primo approccio per l'avanzamento era quello di suddividere la strada in segmenti di breve lunghezza e permettere l'attraversamento di un segmento una sola entità per volta; questa strategia porta ad un avanzamento per distanze di sicurezza e l'aggiornamento della nuova posizione avrebbe portato ad un avanzamento "a scatti" del sistema al di la di eventuali ottimizzazioni. \\
+Quello che in realtà occorre considerare nell'avanzamento delle entità sono le proprietà intinseche dell'avanzamento, ovvero il tempo, lo spazio, l'accelerazione  e la decelarazione. La strategia scelta segue una logica di avanzamento secondo il modello IDM (Intelligent-Driver Model).
+L'avanzamento quindi avviene considerando, il \textbf{\textit{delta}} di tempo nel quale il mezzo deve avanzare, le proprietà del mezzo interessato, quali velocità corrente, velocità massima, coefficiente di accelerazione e di decelarazione, \textbf{\textit{distanza}} dal mezzo che sta davanti; in relazione a questi parametri viene calcolata una percentuale sull'accelerazione con cui il mezzo è stato configurato. Infine viene aggiornata la velocità corrente e la posizione finale del mezzo alla fine del delta di tempo imposto.
+
+\begin{equation}
+s^{*}(t)=s(0)+Tv(t)+\frac{v(t)\Delta{v(t)}}{2\sqrt{ab}}
+\end{equation}
+\begin{equation}
+a(t)=a[1-(\frac{v(t)}{v_{0}})^4-(\frac{s^{*}(t)}{s(t)})^2]
+\end{equation}
+
+$a$ è la massima accelerazione possibile; $v_{0}$ è la velocità desiderata; $v(t)$ è la velocità corrente; $s(t)$ è la distanza corrente dal mezzo che sta davanti; $s_{0}$ è la quantità minima di avanzamento; $s^*(t)$ è la distanza calcolata in funzione dei parametri di configurazione dei mezzi interessati; $T$ è un altro parametro di controllo per regolamentare la velocità.\\
+Infine è possibile aggiornare la velocità corrente della macchina e lo step di avanzamento($ns(t)$): \\
+
+\begin{equation}
+v(t)= v(t)+a\Delta
+\end{equation}
+\begin{equation}
+ns(t)= v(t)\Delta+0.5a\Delta^2
+\end{equation}
+
+con $\Delta$ uguale al tempo desiderato per calcolare la posizione del mezzo alla fine del $\Delta$ stesso. \\
+Il modello presentato permette quindi di rappresentare una realtà continua relativa all'avanzamento delle entità, discretizzando il tempo per una quantità $\Delta$; in pratica viene dato in input al modello IDM lo stato del mezzo contenente la posizione corrente e i parametri di avanzamento; il modello ritornerà l'aggiornamento della posizione del mezzo alla fine del $\Delta$.

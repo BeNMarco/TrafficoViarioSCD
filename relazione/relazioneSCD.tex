@@ -17,6 +17,7 @@
 \usepackage{listings}
 \usepackage{tabularx}
 \usepackage{amsthm}
+\usepackage{listings}
 \usepackage{mathtools}
 \hypersetup{colorlinks,breaklinks,linkcolor=blue,urlcolor=black}
 
@@ -25,6 +26,18 @@
 \graphicspath{{img/}} 
 
 \newcommand{\fncyblank}{\fancyhf{}}
+
+\lstnewenvironment{codiceada}[1][]
+{\noindent\minipage{\linewidth}\medskip
+\lstset{basicstyle=\footnotesize, columns=fullflexible,
+keywordstyle=\color{red}\bfseries, commentstyle=\color{blue},
+language=ADA, basicstyle=\small,
+numbers=left, numberstyle=\small,
+escapeinside={\%*}{*)},
+extendedchars=false, captionpos=b,
+title=\lstname, caption=\lstname,
+stepnumber=1, numbersep=5pt, frame=single, #1}}{\endminipage}
+
 %\newenvironment{abstract}%
 %{\fncyblank\null\vfill\begin{center}%
 %\bfseries\abstractname\end{center}}%
@@ -99,14 +112,17 @@ Analisi del progetto didattico di Sistemi Concorrenti e Distribuiti. Considerazi
 \newpage
 
 \tableofcontents
+
+
+
+
 \newpage
 \input{introduzione}
 \input{dominio}
 \input{distribuzione}
 \input{avanzamento_per_delta}
 \input{protocollo_synch}
-
-%\input{analisi_errori}
+\input{proto_ent_attive}
 %\newpage
 \appendix
 \end{document}

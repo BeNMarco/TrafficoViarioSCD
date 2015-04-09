@@ -2416,83 +2416,85 @@ package body risorse_strade_e_incroci is
          -- set flag overtake a True per i bipedi che da
          -- traiettoria uscita_dritto devono immettersi in uscita_ritorno
 
-         for range_1 in False..True loop
-            if range_1 then
-               current_ingressi_structure_type_to_consider:= ordered_polo_false;
-            else
-               current_ingressi_structure_type_to_consider:= ordered_polo_true;
-            end if;
-            list_abitanti_sidewalk_bici:= mailbox.get_abitanti_to_move(sidewalk,range_1,1);
-            list_abitanti_sidewalk_pedoni:= mailbox.get_abitanti_to_move(sidewalk,range_1,2);
-            prec_list_abitanti_sidewalk_bici:= null;
-            prec_list_abitanti_sidewalk_pedoni:= null;
-            for k in reverse mailbox.get_ordered_ingressi_from_polo(not range_1).all'Range loop
-               distance_ingresso_opposite_direction:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider)),range_1);
-               while list_abitanti_sidewalk_bici/=null and then list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
-                  prec_list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici;
-                  list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti;
-               end loop;
+         -- il seguente pezzo di codice è stato commentato perchè già eseguito dal metodo update_avanzamento_bipedi_in_uscita_ritorno
 
-               while list_abitanti_sidewalk_pedoni/=null and then list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
-                  prec_list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni;
-                  list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti;
-               end loop;
+         --for range_1 in False..True loop
+         --   if range_1 then
+         --      current_ingressi_structure_type_to_consider:= ordered_polo_false;
+         --   else
+         --      current_ingressi_structure_type_to_consider:= ordered_polo_true;
+         --   end if;
+         --   list_abitanti_sidewalk_bici:= mailbox.get_abitanti_to_move(sidewalk,range_1,1);
+         --   list_abitanti_sidewalk_pedoni:= mailbox.get_abitanti_to_move(sidewalk,range_1,2);
+         --   prec_list_abitanti_sidewalk_bici:= null;
+         --   prec_list_abitanti_sidewalk_pedoni:= null;
+         --   for k in reverse mailbox.get_ordered_ingressi_from_polo(not range_1).all'Range loop
+         --      distance_ingresso_opposite_direction:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider)),range_1);
+         --      while list_abitanti_sidewalk_bici/=null and then list_abitanti_sidewalk_bici.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
+         --         prec_list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici;
+         --         list_abitanti_sidewalk_bici:= list_abitanti_sidewalk_bici.get_next_from_list_posizione_abitanti;
+         --      end loop;
 
-               segnale:= True; -- per le bici
-               signal:= True; -- per i pedoni
-               for j in 1..2 loop
-                  if j=1 then
-                     list_abitanti:= list_abitanti_sidewalk_bici;
-                     prec_abitante:= prec_list_abitanti_sidewalk_bici;
-                  else
-                     list_abitanti:= list_abitanti_sidewalk_pedoni;
-                     prec_abitante:= prec_list_abitanti_sidewalk_pedoni;
-                  end if;
-                  if list_abitanti/=null then
-                     if j=1 then
-                        entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                        costante_additiva:= min_bici_distance;
-                     else
-                        entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                        costante_additiva:= min_pedone_distance;
-                     end if;
-                  end if;
-                  if list_abitanti/=null and then list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<distance_ingresso_opposite_direction-get_larghezza_corsia-costante_additiva then
-                     if j=1 then
-                        segnale:= False;
-                        signal:= False;
-                     else
-                        signal:= False;
-                     end if;
-                  end if;
-                  if prec_abitante/=null and then prec_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
-                     if j=1 then
-                        segnale:= False;
-                        signal:= False;
-                     else
-                        signal:= False;
-                     end if;
-                  end if;
-               end loop;
+         --      while list_abitanti_sidewalk_pedoni/=null and then list_abitanti_sidewalk_pedoni.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<distance_ingresso_opposite_direction-get_larghezza_corsia-get_larghezza_marciapiede loop
+         --         prec_list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni;
+         --         list_abitanti_sidewalk_pedoni:= list_abitanti_sidewalk_pedoni.get_next_from_list_posizione_abitanti;
+         --      end loop;
 
-               for j in 1..2 loop
-                  list_abitanti_on_traiettoria_ingresso:= null;
-                  if j=1 and signal then
-                     list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
-                  elsif j=2 and segnale then
-                     list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
-                  end if;
-                  while list_abitanti_on_traiettoria_ingresso/=null loop
-                     -- può essere scelta come traiettoria: uscita_dritto_bici o uscita_dritto_pedoni indifferentemente
-                     if list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_dritto_bici).get_lunghezza then
-                        mailbox.set_flag_abitante_can_overtake_to_next_corsia(list_abitanti_on_traiettoria_ingresso,True);
-                     end if;
-                     list_abitanti_on_traiettoria_ingresso:= list_abitanti_on_traiettoria_ingresso.get_next_from_list_posizione_abitanti;
-                  end loop;
-               end loop;
-                  -- la flag può essere settata a True se si ha un abitante
-            end loop;
-         end loop;
+         --      segnale:= True; -- per le bici
+         --      signal:= True; -- per i pedoni
+         --      for j in 1..2 loop
+         --         if j=1 then
+         --            list_abitanti:= list_abitanti_sidewalk_bici;
+         --            prec_abitante:= prec_list_abitanti_sidewalk_bici;
+         --         else
+         --            list_abitanti:= list_abitanti_sidewalk_pedoni;
+         --            prec_abitante:= prec_list_abitanti_sidewalk_pedoni;
+         --         end if;
+         --         if list_abitanti/=null then
+         --            if j=1 then
+         --               entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+         --               costante_additiva:= min_bici_distance;
+         --            else
+         --               entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+         --               costante_additiva:= min_pedone_distance;
+         --            end if;
+         --         end if;
+         --         if list_abitanti/=null and then list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<distance_ingresso_opposite_direction-get_larghezza_corsia-costante_additiva then
+         --            if j=1 then
+         --               segnale:= False;
+         --               signal:= False;
+         --            else
+         --               signal:= False;
+         --            end if;
+         --         end if;
+         --         if prec_abitante/=null and then prec_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>distance_ingresso_opposite_direction-get_larghezza_corsia*2.5-get_larghezza_marciapiede then
+         --            if j=1 then
+         --               segnale:= False;
+         --               signal:= False;
+         --            else
+         --               signal:= False;
+         --            end if;
+         --         end if;
+         --      end loop;
+
+         --      for j in 1..2 loop
+         --         list_abitanti_on_traiettoria_ingresso:= null;
+         --         if j=1 and signal then
+         --            list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
+         --         elsif j=2 and segnale then
+         --            list_abitanti_on_traiettoria_ingresso:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(k,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
+         --         end if;
+         --         while list_abitanti_on_traiettoria_ingresso/=null loop
+         --            -- può essere scelta come traiettoria: uscita_dritto_bici o uscita_dritto_pedoni indifferentemente
+         --            if list_abitanti_on_traiettoria_ingresso.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=get_traiettoria_ingresso(uscita_dritto_bici).get_lunghezza then
+         --               mailbox.set_flag_abitante_can_overtake_to_next_corsia(list_abitanti_on_traiettoria_ingresso,True);
+         --            end if;
+         --            list_abitanti_on_traiettoria_ingresso:= list_abitanti_on_traiettoria_ingresso.get_next_from_list_posizione_abitanti;
+         --         end loop;
+         --      end loop;
+         --         -- la flag può essere settata a True se si ha un abitante
+         --   end loop;
+         --end loop;
 
 
          for range_1 in False..True loop

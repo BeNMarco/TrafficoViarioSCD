@@ -1411,14 +1411,14 @@ package body mailbox_risorse_attive is
                         list_abitanti.posizione_abitante.set_where_now_abitante(list_abitanti.posizione_abitante.get_where_next_posizione_abitanti);
                         Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " traiettoria " & to_string_ingressi_type(traiettoria) & " mezzo " & means_of_carrying'Image(mezzo));
                         if list_abitanti.posizione_abitante.get_where_now_posizione_abitanti>=get_traiettoria_ingresso(traiettoria).get_lunghezza then
-                           if list_abitanti.next/=null then
-                              Put_Line("next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
-                              raise lista_abitanti_rotta;
-                           end if;
-                           new_abitante:= list_abitanti;
-                           list_abitanti:= null;
-                           new_abitante.posizione_abitante.set_where_next_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria).get_lunghezza);
-                           new_abitante.posizione_abitante.set_where_now_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti);
+                           --if list_abitanti.next/=null then
+                           --   Put_Line("next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
+                           --   raise lista_abitanti_rotta;
+                           --end if;
+                           --new_abitante:= list_abitanti;
+                           --list_abitanti:= null;
+                           --new_abitante.posizione_abitante.set_where_next_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria).get_lunghezza);
+                           --new_abitante.posizione_abitante.set_where_now_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti);
                            if prec_list_abitanti/=null then
                               prec_list_abitanti.next:= null;
                            else
@@ -1428,7 +1428,7 @@ package body mailbox_risorse_attive is
                                  set_traiettorie_ingressi(index,entrata_destra_pedoni):= null;
                               end if;
                            end if;
-                           get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante.posizione_abitante,h);
+                           --get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante.posizione_abitante,h);
                         end if;
                         prec_list_abitanti:= list_abitanti;
                         if list_abitanti/=null then
@@ -1470,14 +1470,14 @@ package body mailbox_risorse_attive is
                         list_abitanti.posizione_abitante.set_where_now_abitante(list_abitanti.posizione_abitante.get_where_next_posizione_abitanti);
                         Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " traiettoria " & to_string_ingressi_type(traiettoria) & " mezzo " & means_of_carrying'Image(mezzo));
                         if list_abitanti.posizione_abitante.get_where_now_posizione_abitanti>=get_traiettoria_ingresso(traiettoria).get_lunghezza then
-                           if list_abitanti.next/=null then
-                              Put_Line("next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
-                              raise lista_abitanti_rotta;
-                           end if;
-                           new_abitante:= list_abitanti;
-                           list_abitanti:= null;
-                           new_abitante.posizione_abitante.set_where_next_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria).get_lunghezza);
-                           new_abitante.posizione_abitante.set_where_now_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti);
+                           --if list_abitanti.next/=null then
+                           --   Put_Line("next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
+                           --   raise lista_abitanti_rotta;
+                           --end if;
+                           --new_abitante:= list_abitanti;
+                           --list_abitanti:= null;
+                           --new_abitante.posizione_abitante.set_where_next_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria).get_lunghezza);
+                           --new_abitante.posizione_abitante.set_where_now_abitante(new_abitante.posizione_abitante.get_where_next_posizione_abitanti);
                            if prec_list_abitanti/=null then
                               prec_list_abitanti.next:= null;
                            else
@@ -1487,7 +1487,7 @@ package body mailbox_risorse_attive is
                                  set_traiettorie_ingressi(index,entrata_dritto_pedoni):= null;
                               end if;
                            end if;
-                           get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante.posizione_abitante,h);
+                           --get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante.posizione_abitante,h);
                         end if;
                         prec_list_abitanti:= list_abitanti;
                         if list_abitanti/=null then

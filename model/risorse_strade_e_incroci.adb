@@ -1675,6 +1675,8 @@ package body risorse_strade_e_incroci is
       error_flag: Boolean:= False;
 
       flag_chiusura_is_set: Boolean:= False;
+
+      new_abitante: posizione_abitanti_on_road;
    begin
       select
          accept configure(id: Positive) do
@@ -3677,6 +3679,17 @@ package body risorse_strade_e_incroci is
                            get_log_stallo_quartiere.write_state_stallo(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,False);
                         end if;
 
+                        if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_ingresso(traiettoria_da_percorrere).get_lunghezza then
+                           if list_abitanti.get_next_from_list_posizione_abitanti/=null then
+                              Put_Line("next abitante is id:" & Positive'Image(list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti));
+                              raise lista_abitanti_rotta;
+                           end if;
+                           new_abitante:= posizione_abitanti_on_road(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti);
+                           new_abitante.set_where_next_abitante(new_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria_da_percorrere).get_lunghezza);
+                           new_abitante.set_where_now_abitante(new_abitante.get_where_next_posizione_abitanti);
+                           get_ingressi_segmento_resources(mailbox.get_index_ingresso_from_key(z,current_ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante,h);
+                        end if;
+
                      end if;
 
                      list_abitanti:= list_abitanti.get_next_from_list_posizione_abitanti;
@@ -3813,6 +3826,16 @@ package body risorse_strade_e_incroci is
                               get_log_stallo_quartiere.write_state_stallo(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,False);
                            end if;
 
+                           if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_ingresso(traiettoria_da_percorrere).get_lunghezza then
+                              if list_abitanti.get_next_from_list_posizione_abitanti/=null then
+                                 Put_Line("next abitante is id:" & Positive'Image(list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.get_next_from_list_posizione_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti));
+                                 raise lista_abitanti_rotta;
+                              end if;
+                              new_abitante:= posizione_abitanti_on_road(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti);
+                              new_abitante.set_where_next_abitante(new_abitante.get_where_next_posizione_abitanti-get_traiettoria_ingresso(traiettoria_da_percorrere).get_lunghezza);
+                              new_abitante.set_where_now_abitante(new_abitante.get_where_next_posizione_abitanti);
+                              get_ingressi_segmento_resources(mailbox.get_index_ingresso_from_key(z,current_ingressi_structure_type_to_consider)).new_bipede_finish_route(new_abitante,h);
+                           end if;
                         end if;
 
                         list_abitanti:= list_abitanti.get_next_from_list_posizione_abitanti;

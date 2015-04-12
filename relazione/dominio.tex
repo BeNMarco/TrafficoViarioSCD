@@ -1,0 +1,38 @@
+\section{Analisi del dominio del problema}
+In questa sezione viene descritta la consegna data integrata con i nostri requisiti funzionali. La consegna iniziale prevedeva la realizzazione di una simulazione del traffico in una città. \\
+L'obiettivo dell'analisi del dominio è quello di fissare dall'inizio quello che il simulatore deve fare in termini di funzionalità di cui l'attore dello spostamento deve essere dotato.
+
+\subsection{Entità rappresentate nella mappa della città}
+\label{firstmappa}
+La mappa della città è caratterizzata da strade dotate di doppia corsia per senso di marcia, d'ora in poi \textit{\textbf{strade principali}}, marciapiedi, piste ciclabili, \textit{\textbf{strade di ingresso}} al traffico, incroci, dotati di semaforo, con 3 o 4 strade e attraversamenti pedonali.\\
+Sono stati identificati come attori del traffico della città simulata: veicoli (auto e autobus), biciclette e pedoni.
+
+\subsection{Requisiti sullo spostamento delle entità}
+\begin{enumerate}
+\item {\textit{requisito relativo al mezzo di spostamento degli attori}}: deve essere data la possibilità di configurare il mezzo di spostamento dell'attore che verrà adottato poi per tutta la durata della simulazione;
+\item {\textit{requisito relativo ai luoghi di destinazione degli attori}}: un attore deve poter essere configurato in modo tale da muoversi nella città al fine di spostarsi verso un certo luogo di destinazione.
+Un attore quindi una volta raggiuta la destinazione dovrà reimmetersi nel traffico per raggiungere il luogo da cui era partito, iterando quindi l'avanzamento da luogo di partenza a luogo di destinazione e viceversa. L'obiettivo di questo requisito è quello di avere una situazione in cui nella città vi sia sempre del traffico nel caso in cui almeno un'entità sia presente.
+\end{enumerate}
+
+\subsection{Convenzioni sulla mappa}
+A seguito dell'analisi è stato convenuto riportare delle regole sulla realizzazione della mappa avendo fissato a priori le entità sulle quali gli attori dovevano eseguire lo spostamento, vedi \ref{firstmappa}.
+\begin{enumerate}
+\item una strada principale deve essere delimitata almeno da un incrocio e al più da due incroci;
+\item una strada di ingresso è una strada adibita all'entrata o all'uscita da o verso un certo luogo;
+\item una strada principale presenta due lati ai quali possono essere inserite delle strade di ingresso; quindi se su una stessa strada principale vengono inserite più strade di ingresso è convenuto imporre che queste strade tengano una distanza minima l'una dall'altra, indipendentemente dal lato della strada principale in cui vengono inserire; l'obiettivo è quello di evitare che si formi un incrocio tra strade di ingresso non regolamentate da semaforo;
+\item ogni strada principale contiene esattamente una fermata per l'autobus posta a seconda della configurazione della mappa su uno dei due lati della strada principale stessa.
+\end{enumerate}
+
+\subsection{Altri requisiti rilevati dall'analisi del dominio}
+Nell'analisi del dominio del problema sono state identificate quindi le entità che sono rilevanti per la realizzazione del simulatore e sono state definite delle regole e quindi delle limitazioni funzionali per la realizzazione della mappa. \\
+Sono emerse inoltre le seguenti funzionalità e requisiti a seguito di un'analisi a livello anche progettuale:
+\begin{enumerate}
+\item un entità del tipo veicolo che deve svoltare a sinistra al prossimo incrocio dovrà immettersi ad un certo punto nella corsia più a sinistra della strada che sta percorrendo; se il veicolo dovrà andare a destra dovrà immettersi nella corsia più a destra della strada che sta percorrendo e indifferentemente su entrambe le corsie se vuole procedere in direzione dritto;
+\item un entità del tipo veicolo deve poter agevolmente cambiare corsia su una strada principale in modo tale da poter raggiungere la corsia interessata in relazione alla destinazione da perseguire;
+\item il percorso che l'entità di tipo veicolo, bipede, o bici deve percorrere deve essere fissato a priori. \\
+Questa è una limitazione per la simulazione, ma per semplicità anche di implementazione è stato convenuto definire un percorso statico piuttosto che dinamico;
+\item un pedone o una bici non eseguono dei sorpassi, ma procedono secondo una politica FIFO nell'avanzamento rispettivamente nel marciapiede e nella pista ciclabile. 
+\end{enumerate}
+
+\newpage
+

@@ -43,7 +43,13 @@
 		return suppressErrorAlert;
 	};*/
 
-	enableSimulation = true;
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Great success! All the File APIs are supported.
+	} else {
+	  alert('The File APIs are not fully supported in this browser.');
+	}
+
+	enableSimulation = false;
 	myMap = new Map();
 	entities = new EntitiesRegistry();
 	entStyle = new EntitiesStyle();
@@ -279,9 +285,56 @@
 		//getUpdates();
 	}
 
+	function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    console.log(evt.target);
+    console.log(files);
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    var data = files[0];
+    var reader = new FileReader();
+
+    // Closure to capture the file information.
+    reader.onload = (function(theFile) {
+      return function(e) {
+        JsonObj = JSON.parse(e.target.result);
+         console.log(JsonObj);
+		
+		setTimeout(function(){openLoadingDialog(); loadMap(JsonObj)}, 30);
+      };
+    })(data);
+
+    // Read in the image file as a data URL.
+    reader.readAsText(data);
+  }
+
+  function loadMap(data)
+  {
+
+  	project.clear();
+  	myMap.resetData();
+  	myMap.load(data);
+		myMap.draw();
+		
+		entities.draw();
+		entities.hide();
+		myMap.bringTrafficLightsToFront();
+		mapLayer = project.activeLayer;
+		secondLayer = new Layer();
+		view.draw();
+  }
+
 	onload = function(e) {
 
 		entStyle.carShape.args.size = [ 3.5, 5 ];
+
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  	
+	  	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+		} else {
+		  alert('The File APIs are not fully supported in this browser.');
+		}
 
 		$('#loadingDialog').modal({
 			backdrop : 'static',
@@ -300,7 +353,6 @@
 
 		myMap.setStyle(style);
 		entities.setStyle(entStyle);
-		openLoadingDialog();
 
 		/*setTimeout(function() {
 			jQuery.getJSON("quartiere1/map.json",
@@ -314,6 +366,7 @@
 					});
 		}, 10);*/
 
+/*
 		setTimeout(function() {
 						myMap.load(map_data);
 						myMap.draw();
@@ -327,7 +380,10 @@
 		mapLayer = project.activeLayer;
 		secondLayer = new Layer();
 		view.draw();
-		//view.onFrame = update;
+		//view.onFrame = update;*/
+		openLoadingDialog();
+		setTimeout(function(){loadMap(map_data);}, 10);
+
 
 		var myTool = new Tool();
 		myTool.onMouseDown = function(event) {
@@ -489,6 +545,7 @@
 				id="action2" href="#">Create states</a> - </span> <span><a
 				id="action3" href="#" onClick="resetSimulation()">Reset
 					simulation</a> - </span> <span id="debugOutput"></span>
+			<input type="file" id="files" name="files" />
 			<span style="float:right;">Cached states: <span id="statesCount"></span> </span>
 		</div>
 		</form>

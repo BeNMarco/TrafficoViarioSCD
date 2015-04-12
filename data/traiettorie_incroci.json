@@ -1,7 +1,7 @@
 {
 "traiettorie_incrocio": {
-      "destra_pedoni": 2.0,
-      "destra_bici": 2.0,
+      "destra_pedoni": 1.3516073071226795,
+      "destra_bici": 4.054821921368038,
       "dritto_pedoni": 34.0,
       "dritto_bici": 34.0,
       "destra": {
@@ -12,7 +12,7 @@
         "strada_arrivo": {
           "corsia": 2
         },
-        "intersezione_bipedi": 8.71392999506322
+        "intersezione_bipedi": 8.713312353603342
       },
       "sinistra": {
         "lunghezza": 32.63980049957327,
@@ -42,7 +42,7 @@
             "distanza": 12.96204205862082
           }
         ],
-        "intersezione_bipedi": 29.63980049957327
+        "intersezione_bipedi": 29.63332050370114
       },
       "dritto_1": {
         "lunghezza": 34.0,

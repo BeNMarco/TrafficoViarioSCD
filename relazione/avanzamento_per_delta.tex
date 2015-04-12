@@ -1,6 +1,10 @@
 \section{Strategia di avanzamento delle entità}
 Un primo approccio per l'avanzamento delle entità era quello di suddividere la strada in segmenti di breve lunghezza e permettere l'attraversamento di un segmento una sola entità per volta; questa strategia porta ad un avanzamento per distanze di sicurezza, ma l'aggiornamento della nuova posizione avrebbe portato ad un avanzamento "a scatti" del sistema al di la di eventuali ottimizzazioni. \\
-Quello che in realtà occorre considerare nell'avanzamento delle entità sono le proprietà intinseche del moto di avanzamento, ovvero il tempo, lo spazio, l'accelerazione  e la decelarazione. La strategia scelta segue una logica di avanzamento secondo il modello IDM (Intelligent-Driver Model).
+Quello che in realtà occorre considerare nell'avanzamento delle entità sono le
+proprietà intinseche del moto di avanzamento, ovvero il tempo, lo spazio,
+l'accelerazione  e la decelarazione. La strategia scelta segue una logica di
+avanzamento secondo il modello IDM (Intelligent-Driver
+Model)~\cite{treiber2000microscopic}.
 Seguendo il modello IDM, l'avanzamento avviene considerando il \textbf{\textit{delta}} di tempo nel quale il mezzo deve avanzare e le proprietà del mezzo interessato. In relazione a questi parametri viene calcolata una percentuale sull'accelerazione massima con cui il mezzo è stato configurato. Infine utilizzando il valore dell'accelerazione ottenuto viene aggiornata la velocità corrente e la posizione finale del mezzo; questi nuovi valori saranno validi alla fine del delta di tempo relativo al periodo in cui sono stati calcolati. Di seguito vengono riportate le funzioni matematiche utilizzate per il calcolo dello spostamento delle entità:
 
 \begin{equation}

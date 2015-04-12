@@ -21,6 +21,7 @@
 \usepackage{mathtools}
 \hypersetup{colorlinks,breaklinks,linkcolor=blue,urlcolor=black}
 
+\usepackage[numbers,square,sort&compress]{natbib}
 \usepackage{fancyhdr}
 
 \graphicspath{{img/}} 
@@ -44,6 +45,14 @@ stepnumber=1, numbersep=5pt, frame=single, #1}}{\endminipage}
 %{\vfill\null}
 
 \renewcommand{\baselinestretch}{1.25}
+
+%% per commenti vari
+
+\usepackage[draft]{fixme} % remove draft option for final paper
+\fxsetup{layout=inline,theme=color}
+\FXRegisterAuthor{mn}{amn}{\color{green}mn} % marco negro
+\FXRegisterAuthor{mb}{amb}{\color{blue}mb} % marco baesso
+
 
 \pagestyle{fancy} 
 
@@ -114,8 +123,6 @@ Analisi del progetto didattico di Sistemi Concorrenti e Distribuiti. Considerazi
 \tableofcontents
 
 
-
-
 \newpage
 \input{introduzione}
 \input{dominio}
@@ -128,6 +135,14 @@ Analisi del progetto didattico di Sistemi Concorrenti e Distribuiti. Considerazi
 \input{snapshot}
 \input{chiusura}
 %\newpage
+
+\section{fixmes}
+\listoffixmes
+
 \appendix
+
+
+\bibliographystyle{abbrvnat}
+\bibliography{bibliografia}
 \end{document}
 

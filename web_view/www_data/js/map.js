@@ -4,6 +4,57 @@
 *	Descr: Map object to handle and render the map of the simulation
 */
 
+controllo = false;
+controlloIngressoPedoni = true;
+controlloIncrociAuto = true;
+controlloIncrociAuto1 = true;
+controlloIncrociAuto2 = true;
+showTraiettorieAuto = false;
+showTraiettoriePedoni = false;
+pathWidth = 0.3;
+bikeDash = [pathWidth, pathWidth];
+
+pathsToLift = new Array();
+
+function drawBPath(path, color1, color2, style)
+{
+	if(showTraiettoriePedoni)
+	{
+		bike = pathOffset(path, 0.25*style.pavementWidth);
+		bike.smooth();
+		ped = pathOffset(path, -0.25*style.pavementWidth);
+		ped.smooth();
+		bike.strokeWidth = pathWidth;
+		bike.strokeColor = color1;
+		ped.strokeWidth = pathWidth;
+		ped.strokeColor = color2;
+	}
+}
+
+
+function drawPath(path, color, dash)
+{
+	return drawPath(path, color, 0.5, dash);
+}
+
+function drawPath(path, color, thikness, dash)
+{
+	path.strokeWidth = thikness;
+	path.strokeColor = color;
+	path.visible = true;
+	path.dashArray = dash;
+	pathsToLift.push(path);
+	return path;
+}
+
+function liftPaths()
+{
+
+	for (var i = pathsToLift.length - 1; i >= 0; i--) {
+		pathsToLift[i].bringToFront();
+	};
+}
+
 function sortPoints(a,b){
 	var res = a.x-b.x;
 	if (res == 0){
@@ -29,22 +80,29 @@ function pathOffset(path, offset, precision, style, start, end){
 	*/
 	start = typeof start !== 'undefined' ? start : 0;
 	end = typeof end !== 'undefined' ? end : path.length;
+
+	//recommended precision: Math.ceil(path.length)
+	precision = typeof precision !== 'undefined' ? precision : Math.ceil(path.length);
 	var len = end - start;
 	if (end < path.length){
 		len +=1;
 	}
-	//len = path.length;
+
 	var copy = new Path();
-	if(typeof style !== 'undefined'){
-		copy.strokeColor = style.strokeColor;
-		copy.strokeWidth = style.strokeWidth;
-		copy.dashArray = style.dashArray;
-	} else {
+	if(typeof style === 'undefined'){
 		copy.strokeColor = path.strokeColor;
 		copy.strokeWidth = path.strokeWidth;
 		copy.dashArray = path.dashArray;
 	}
-	//recommended precision: Math.ceil(path.length)
+	else if (style == 0)
+	{
+		copy.visible = false;
+	} else {
+		copy.strokeColor = style.strokeColor;
+		copy.strokeWidth = style.strokeWidth;
+		copy.dashArray = style.dashArray;
+	}
+
 	for (var i = 0; i < precision + 1; i++) {
 		var pos = i / precision * len;
 		var point = path.getPointAt(pos+start);
@@ -54,6 +112,34 @@ function pathOffset(path, offset, precision, style, start, end){
 	}
 	//copy.simplify();
 	return copy;
+}
+
+function getPositionAtOffset(path, distance, side, offset)
+{
+	if (typeof side === 'string'){
+		side = (side === 'true');
+	}
+
+	distance = (distance < 0) ? 0 : distance;
+	distance = (distance > path.length) ? path.length : distance;
+	var loc = path.getLocationAt(distance);
+
+	offset = side ? offset : -offset;
+
+	var normal = path.getNormalAt(distance);
+	normal.length = offset;
+
+	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+}
+
+function setPathHandles(path, side)
+{
+	var tmpLoc = path.getLocationAt(path.length/2);
+	var tmpNorm = path.getNormalAt(path.length/2);
+	tmpNorm.length = side*path.length/2;
+	var tmpP = tmpLoc.point.subtract(tmpNorm);
+	path.firstSegment.handleOut = tmpP.subtract(path.firstSegment.point);
+	path.lastSegment.handleIn = tmpP.subtract(path.lastSegment.point);
 }
 
 /**
@@ -115,14 +201,33 @@ Street.prototype.setType = function(newType){
 Street.prototype.draw = function(style){
 	this.laneWidth = style.laneWidth;
 	this.pavementWidth = style.pavementWidth;
-	this.path = new Path(this.guidingPath.pathData);
+	if(this.type == 'entrance')
+	{
+		var from = this.guidingPath.firstSegment.point;
+		var to = this.mainStreetObj.guidingPath.getLocationAt(this.entranceDistance).point;
+		this.path = new Path(from, to);
+	} else {
+		this.path = new Path(this.guidingPath.pathData);
+	}
 	this.path.strokeColor = style.laneColor;
 	this.path.strokeWidth = style.laneWidth*this.nLanes*2+style.pavementWidth*2;
 	//this.guidingPath.strokeColor = style.lineColor;
 	//this.guidingPath.strokeWidth = style.lineWidth;
 	//this.guidingPath.moveAbove(this.path);
 	//this.guidingPath.fullySelected = true;
+	var precision = Math.ceil(this.guidingPath.length);
 
+	if(this.id != ""){
+		var signPath = pathOffset(this.guidingPath, this.nLanes+style.laneWidth + 4*style.pavementWidth, precision, {strokeWidth:0, strokColo:'black', dashArray: null});
+		var startPoint = signPath.getPointAt(signPath.length/3);
+		var text = new PointText(startPoint);
+		text.content = this.id;
+	}
+	this.path.sendToBack();
+}
+
+Street.prototype.drawHorizontalLines = function(style)
+{
 	// drawing the separation lines
 	var precision = Math.ceil(this.guidingPath.length);
 	var sepStyle = {strokeWidth: style.lineWidth, strokeColor:style.lineColor, dashArray: style.dashArray};
@@ -165,27 +270,9 @@ Street.prototype.draw = function(style){
 		}
 		middlePaths = this.prepareMiddleLinePaths(middlePaths);
 	}
-
-	if(style.debug)
-	{
-		var fromDot = new Path.Circle(this.guidingPath.firstSegment.point, 10);
-		fromDot.fillColor = 'red';
-		fromDot.bringToFront();
-		var toDot = new Path.Circle(this.guidingPath.lastSegment.point,10);
-		toDot.fillColor = 'green';
-		toDot.bringToFront();
-	}
 	
-	this.drawPedestrianLines(pedestrianPaths, style, precision);
 	this.drawMiddleLine(middlePaths, style, precision);
-
-	if(this.id != ""){
-		var signPath = pathOffset(this.guidingPath, this.nLanes+style.laneWidth + 4*style.pavementWidth, precision, {strokeWidth:0, strokColo:'black', dashArray: null});
-		var startPoint = signPath.getPointAt(signPath.length/3);
-		var text = new PointText(startPoint);
-		text.content = this.id;
-	}
-	this.path.sendToBack();
+	this.drawPedestrianLines(pedestrianPaths, style, precision);
 }
 
 Street.prototype.prepareMiddleLinePaths = function(middlePaths)
@@ -248,10 +335,10 @@ Street.prototype.prepareMiddleLinePaths = function(middlePaths)
 }
 
 Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossStart, crossEnd, side){
-	var enterignPath1 = new Path();
-	var exitingPath1 = new Path();
-	var enterignPath2 = new Path();
-	var exitingPath2_1 = new Path();
+	var entrata_andata = new Path();
+	var uscita_andata = new Path();
+	var entrata_ritorno = new Path();
+	var uscita_ritorno = new Path();
 	// var exitingPath2_2 = new Path();
 	var enterHandlePoint = null;
 	var exitHandlePoint = null;
@@ -260,15 +347,15 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 		side = (side === 'true');
 	}
 	if(!side){
-		enterignPath1.add(this.getPositionAt(crossStart, side, 1, false).position);
-		enterignPath1.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
-		exitingPath1.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
-		exitingPath1.add(this.getPositionAt(crossEnd, side, 1, false).position);
+		entrata_andata.add(this.getPositionAt(crossStart-style.pavementWidth, side, 1, false).position);
+		entrata_andata.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+		uscita_andata.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+		uscita_andata.add(this.getPositionAt(crossEnd+style.pavementWidth, side, 1, false).position);
 
-		enterignPath2.add(this.getPositionAt(crossEnd, !side, 0, false).position);
-		enterignPath2.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
-		exitingPath2_1.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
-		exitingPath2_1.add(this.getPositionAt(crossStart, !side, 0, false).position);
+		entrata_ritorno.add(this.getPositionAt(crossEnd+style.pavementWidth, !side, 0, false).position);
+		entrata_ritorno.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+		uscita_ritorno.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+		uscita_ritorno.add(this.getPositionAt(crossStart-style.pavementWidth, !side, 0, false).position);
 		// exitingPath2_2.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
 		// exitingPath2_2.add(this.getPositionAt(crossStart, !side, 1, false).position);
 
@@ -279,17 +366,17 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 		exitHandlePoint2_1 = this.getPositionAt(crossEnd-0.5*style.laneWidth, !side, 0, false).position;	
 		// exitHandlePoint2_2 = this.getPositionAt(crossEnd-0.5*style.laneWidth, !side, 1, false).position;				
 	} else {
-		exitingPath1.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
-		exitingPath1.add(this.getPositionAt(crossStart, side, 1, false).position);
-		enterignPath1.add(this.getPositionAt(crossEnd, side, 1, false).position);
-		enterignPath1.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+		uscita_andata.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+		uscita_andata.add(this.getPositionAt(crossStart-style.pavementWidth, side, 1, false).position);
+		entrata_andata.add(this.getPositionAt(crossEnd+style.pavementWidth, side, 1, false).position);
+		entrata_andata.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
 
-		exitingPath2_1.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
-		exitingPath2_1.add(this.getPositionAt(crossEnd, !side, 0, false).position);
+		uscita_ritorno.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
+		uscita_ritorno.add(this.getPositionAt(crossEnd+style.pavementWidth, !side, 0, false).position);
 		// exitingPath2_2.add(this.getSidestreetPositionAt(crossStart+0.5*style.laneWidth, side).position);
 		// exitingPath2_2.add(this.getPositionAt(crossEnd, !side, 1, false).position);
-		enterignPath2.add(this.getPositionAt(crossStart, !side, 0, false).position);
-		enterignPath2.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
+		entrata_ritorno.add(this.getPositionAt(crossStart-style.pavementWidth, !side, 0, false).position);
+		entrata_ritorno.add(this.getSidestreetPositionAt(crossEnd-0.5*style.laneWidth, side).position);
 
 		enterHandlePoint1 = this.getPositionAt(crossEnd-0.5*style.laneWidth, side, 1, false).position;
 		exitHandlePoint1 = this.getPositionAt(crossStart+0.5*style.laneWidth, side, 1, false).position;
@@ -299,62 +386,156 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 		// exitHandlePoint2_2 = this.getPositionAt(crossStart+0.5*style.laneWidth, !side, 1, false).position;		
 	}
 
-	enterignPath1.firstSegment.handleOut = enterHandlePoint1.subtract(enterignPath1.firstSegment.point);
-	enterignPath1.firstSegment.handleOut.length = 0.8*enterignPath1.firstSegment.handleOut.length;
-	enterignPath1.lastSegment.handleIn = enterHandlePoint1.subtract(enterignPath1.lastSegment.point);
-	enterignPath1.lastSegment.handleIn.length = 0.5*enterignPath1.lastSegment.handleIn.length;
-	enterignPath1.smooth();
-	//this.sideStreetsEntrancePaths["M"+this.id+"-S"+curStr.id] = {id:"M"+this.id+"-S"+curStr.id, principale: this.id, laterale:curStr.id, verso:'entrata', path:enterignPath1, polo:true};
-	sideStreetsEntrancePaths["entrata_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_in", principale: this.id, laterale:curStr.id, verso:'entrata', path:enterignPath1, polo:true};
+	entrata_andata.firstSegment.handleOut = enterHandlePoint1.subtract(entrata_andata.firstSegment.point);
+	entrata_andata.firstSegment.handleOut.length = 0.8*entrata_andata.firstSegment.handleOut.length;
+	entrata_andata.lastSegment.handleIn = enterHandlePoint1.subtract(entrata_andata.lastSegment.point);
+	entrata_andata.lastSegment.handleIn.length = 0.5*entrata_andata.lastSegment.handleIn.length;
+	entrata_andata.smooth();
+	entrata_andata.visible = false;
+	//this.sideStreetsEntrancePaths["M"+this.id+"-S"+curStr.id] = {id:"M"+this.id+"-S"+curStr.id, principale: this.id, laterale:curStr.id, verso:'entrata', path:entrata_andata, polo:true};
+	sideStreetsEntrancePaths["entrata_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_in", principale: this.id, laterale:curStr.id, verso:'entrata', path:entrata_andata, polo:true};
 
-	exitingPath1.firstSegment.handleOut = exitHandlePoint1.subtract(exitingPath1.firstSegment.point);
-	exitingPath1.firstSegment.handleOut.length = 0.5*exitingPath1.firstSegment.handleOut.length;
-	exitingPath1.lastSegment.handleIn = exitHandlePoint1.subtract(exitingPath1.lastSegment.point);
-	exitingPath1.lastSegment.handleIn.length = 0.8*exitingPath1.lastSegment.handleIn.length;
-	exitingPath1.smooth();
-	//this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};;
-	sideStreetsEntrancePaths["uscita_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_out", principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};
+	uscita_andata.firstSegment.handleOut = exitHandlePoint1.subtract(uscita_andata.firstSegment.point);
+	uscita_andata.firstSegment.handleOut.length = 0.5*uscita_andata.firstSegment.handleOut.length;
+	uscita_andata.lastSegment.handleIn = exitHandlePoint1.subtract(uscita_andata.lastSegment.point);
+	uscita_andata.lastSegment.handleIn.length = 0.8*uscita_andata.lastSegment.handleIn.length;
+	uscita_andata.smooth();
+	uscita_andata.visible = false;
+	//this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:uscita_andata, polo:true};;
+	sideStreetsEntrancePaths["uscita_andata"] = {id:"M"+this.id+"_go-S"+curStr.id+"_out", principale: this.id, laterale:curStr.id, verso:'uscita', path:uscita_andata, polo:true};
 
-	enterignPath2.firstSegment.handleOut = enterHandlePoint2.subtract(enterignPath2.firstSegment.point);
-	enterignPath2.firstSegment.handleOut.length = 0.8*enterignPath2.firstSegment.handleOut.length;
-	enterignPath2.lastSegment.handleIn = enterHandlePoint2.subtract(enterignPath2.lastSegment.point);
-	enterignPath2.lastSegment.handleIn.length = 0.5*enterignPath2.lastSegment.handleIn.length;
-	enterignPath2.smooth();
-	//this.sideStreetsEntrancePaths["M"+this.id+"-S"+curStr.id] = {id:"M"+this.id+"-S"+curStr.id, principale: this.id, laterale:curStr.id, verso:'entrata', path:enterignPath2, polo:true};
-	sideStreetsEntrancePaths["entrata_ritorno"] = {id:"M"+this.id+"_come-S"+curStr.id+"_in", principale: this.id, laterale:curStr.id, verso:'entrata', path:enterignPath2, polo:true};
+	entrata_ritorno.firstSegment.handleOut = enterHandlePoint2.subtract(entrata_ritorno.firstSegment.point);
+	entrata_ritorno.firstSegment.handleOut.length = 0.8*entrata_ritorno.firstSegment.handleOut.length;
+	entrata_ritorno.lastSegment.handleIn = enterHandlePoint2.subtract(entrata_ritorno.lastSegment.point);
+	entrata_ritorno.lastSegment.handleIn.length = 0.5*entrata_ritorno.lastSegment.handleIn.length;
+	entrata_ritorno.smooth();
+	entrata_ritorno.visible = false;
+	//this.sideStreetsEntrancePaths["M"+this.id+"-S"+curStr.id] = {id:"M"+this.id+"-S"+curStr.id, principale: this.id, laterale:curStr.id, verso:'entrata', path:entrata_ritorno, polo:true};
+	sideStreetsEntrancePaths["entrata_ritorno"] = {id:"M"+this.id+"_come-S"+curStr.id+"_in", principale: this.id, laterale:curStr.id, verso:'entrata', path:entrata_ritorno, polo:true};
 
-	exitingPath2_1.firstSegment.handleOut = exitHandlePoint2_1.subtract(exitingPath2_1.firstSegment.point);
-	exitingPath2_1.firstSegment.handleOut.length = 0.5*exitingPath2_1.firstSegment.handleOut.length;
-	exitingPath2_1.lastSegment.handleIn = exitHandlePoint2_1.subtract(exitingPath2_1.lastSegment.point);
-	exitingPath2_1.lastSegment.handleIn.length = 0.8*exitingPath2_1.lastSegment.handleIn.length;
-	exitingPath2_1.smooth();
-	//this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};;
-	sideStreetsEntrancePaths["uscita_ritorno"] = {id:"M"+this.id+"_come-S"+curStr.id+"_out_1", principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath2_1, polo:true};
+	uscita_ritorno.firstSegment.handleOut = exitHandlePoint2_1.subtract(uscita_ritorno.firstSegment.point);
+	uscita_ritorno.firstSegment.handleOut.length = 0.5*uscita_ritorno.firstSegment.handleOut.length;
+	uscita_ritorno.lastSegment.handleIn = exitHandlePoint2_1.subtract(uscita_ritorno.lastSegment.point);
+	uscita_ritorno.lastSegment.handleIn.length = 0.8*uscita_ritorno.lastSegment.handleIn.length;
+	uscita_ritorno.smooth();
+	uscita_ritorno.visible = false;
+	//this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:uscita_andata, polo:true};;
+	sideStreetsEntrancePaths["uscita_ritorno"] = {id:"M"+this.id+"_come-S"+curStr.id+"_out_1", principale: this.id, laterale:curStr.id, verso:'uscita', path:uscita_ritorno, polo:true};
 
 	// exitingPath2_2.firstSegment.handleOut = exitHandlePoint2_2.subtract(exitingPath2_2.firstSegment.point);
 	// exitingPath2_2.firstSegment.handleOut.length = 0.5*exitingPath2_2.firstSegment.handleOut.length;
 	// exitingPath2_2.lastSegment.handleIn = exitHandlePoint2_2.subtract(exitingPath2_2.lastSegment.point);
 	// exitingPath2_2.lastSegment.handleIn.length = 0.8*exitingPath2_2.lastSegment.handleIn.length;
 	// exitingPath2_2.smooth();
-	// //this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath1, polo:true};;
+	// //this.sideStreetsEntrancePaths["S"+curStr.id+"-M"+this.id] = {id:"S"+curStr.id+"-M"+this.id, principale: this.id, laterale:curStr.id, verso:'uscita', path:uscita_andata, polo:true};;
 	// sideStreetsEntrancePaths["uscita_ritorno_2"] = {id:"M"+this.id+"_come-S"+curStr.id+"_out_2", principale: this.id, laterale:curStr.id, verso:'uscita', path:exitingPath2_2, polo:true};
 
+	if(showTraiettorieAuto)
+	{
+		drawPath(uscita_andata, 'yellow');
+		drawPath(uscita_ritorno, 'green');
+		drawPath(entrata_andata, 'red');
+		drawPath(entrata_ritorno, 'blue');
+	}
+
+	if(!controlloIngressoPedoni)
+	{
+		var o = {
+			'entrata_andata' : entrata_andata.length,
+			'uscita_andata' : uscita_andata.length,
+			'entrata_ritorno': entrata_ritorno.length,
+			'uscita_ritorno': uscita_ritorno.length
+		};
+		traiettorie_ingresso_auto = {
+			'entrata_andata' : entrata_andata,
+			'uscita_andata' : uscita_andata,
+			'entrata_ritorno': entrata_ritorno,
+			'uscita_ritorno': uscita_ritorno
+		};
+		strada_check_ingressi_auto = this;
+		ingresso_check_ingressi_auto = curStr;
+		var p1 = new Path(this.getPositionAtOffset(crossStart, true, 50).position, this.getPositionAtOffset(crossStart, false, 50).position);
+		console.log(p1);
+		var p2 = new Path(this.getPositionAtOffset(crossEnd, true, 50).position, this.getPositionAtOffset(crossEnd, false, 50).position);
+		//p1.selected = true;
+		//p2.selected = true;
+		//uscita_ritorno.selected = true;
+		var intr = uscita_ritorno.getIntersections(p1)[0];
+		if(intr == null)
+		{
+			intr = uscita_ritorno.getIntersections(p2)[0];
+		}
+		console.log("traiettorie_ingresso_auto: "+JSON.stringify(o));
+		console.log("lunghezza uscita_ritorno: "+uscita_ritorno.getOffsetOf(intr.point));
+		controlloIngressoPedoni = true;
+	}
+
 	if(false/*style.debug*/){
-		exitingPath1.fullySelected = true;
-		enterignPath1.fullySelected = true;
-		exitingPath2_1.fullySelected = true;
+		uscita_andata.fullySelected = true;
+		entrata_andata.fullySelected = true;
+		uscita_ritorno.fullySelected = true;
 		//exitingPath2_2.fullySelected = true;
-		enterignPath2.fullySelected = true;
-		var c1 = new Path.Circle(exitingPath1.getPointAt(1), 0.5);
+		entrata_ritorno.fullySelected = true;
+		var c1 = new Path.Circle(uscita_andata.getPointAt(1), 0.5);
 		c1.fillColor = 'blue';
-		var c2 = new Path.Circle(enterignPath1.getPointAt(1), 0.5);
+		var c2 = new Path.Circle(entrata_andata.getPointAt(1), 0.5);
 		c2.fillColor = 'red';
-		var c3 = new Path.Circle(exitingPath2_1.getPointAt(1), 0.5);
+		var c3 = new Path.Circle(uscita_ritorno.getPointAt(1), 0.5);
 		c3.fillColor = 'blue';
-		var c4 = new Path.Circle(enterignPath2.getPointAt(1), 0.5);
+		var c4 = new Path.Circle(entrata_ritorno.getPointAt(1), 0.5);
 		c4.fillColor = 'red';
 	}
 	return sideStreetsEntrancePaths;
+}
+
+Street.prototype.setPathHandles = function(path, side)
+{
+	var tmpLoc = path.getLocationAt(path.length/2);
+	var tmpNorm = path.getNormalAt(path.length/2);
+	tmpNorm.length = side*path.length/2;
+	var tmpP = tmpLoc.point.subtract(tmpNorm);
+	path.firstSegment.handleOut = tmpP.subtract(path.firstSegment.point);
+	path.lastSegment.handleIn = tmpP.subtract(path.lastSegment.point);
+}
+
+function getParallelOffset(path1, offsetOn1, path2)
+{
+	var p1 = path1.getPointAt(offsetOn1);
+	var p2 = getPositionAtOffset(path1, offsetOn1, true, 50).position;
+	var pp = new Path(p1, p2);
+
+	var intersection = path2.getIntersections(pp)[0];
+	if(intersection == null)
+	{
+
+		p2 = getPositionAtOffset(path1, offsetOn1, false, 50).position;
+		pp = new Path(p1, p2);
+
+		intersection = path2.getIntersections(pp)[0];
+	}
+	var off = path2.getOffsetOf(intersection.point);
+	delete p1, p2, pp, intersection;
+	return off;
+}
+
+function adjustCurSeg(curSeg, guidingPath, parallelPath)
+{
+	var newSeg = {type: curSeg.type};
+	var len = curSeg.end - curSeg.start;
+	var mid = curSeg.start + len/2;
+	var newMid = getParallelOffset(guidingPath, mid, parallelPath);
+	if(curSeg.start == 0)
+	{
+		newSeg.start = 0;
+	} else {
+		newSeg.start = newMid - len/2;
+	}
+	if(curSeg.end == guidingPath.length){
+		newSeg.end = parallelPath.length;
+	} else {
+		newSeg.end = newMid + len/2;
+	}
+	return newSeg;
 }
 
 Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
@@ -377,43 +558,358 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 		}
 	}
 
+	var pOffset = this.nLanes*style.laneWidth+0.5*style.pavementWidth;
+	var parallelPaths = {
+		true : pathOffset(this.guidingPath, pOffset, undefined, 0),
+		false : pathOffset(this.guidingPath, -pOffset, undefined, 0)
+	};
+
 	for(var side in pedPath){
 		if (typeof side === 'string'){
 			sideB = (side === 'true');
-		}
+		} 
 		for(var seg in pedPath[side]){
 			var curSeg = pedPath[side][seg];
+			//var newSeg = adjustCurSeg(curSeg, this.guidingPath, parallelPath);
 			var offset = (this.nLanes*style.laneWidth + (curSeg.type == 'zebra' ? 0.5 : 0) * style.pavementWidth)*(side == 'true' ? 1 : -1);
-			var p = pathOffset(this.guidingPath, offset, precision, st[curSeg.type],curSeg.start, curSeg.end);
+			var p;
+			//var offset = ((curSeg.type == 'zebra' ? 0 : 0.5) * style.pavementWidth)*(side == 'true' ? 1 : -1);
+			// var p = pathOffset(parallelPath, 0, precision, st[newSeg.type],newSeg.start, newSeg.end);
 			if(curSeg.type == 'pavement')
 			{
 				// if the path is a pavement we draw the middle line to separate
 				// bikes from pedestrians
+				p  = pathOffset(this.guidingPath, offset, precision, st[curSeg.type],curSeg.start, curSeg.end);
 				var o = (this.nLanes*style.laneWidth+0.5*style.pavementWidth)*(side == 'true' ? 1 : -1);
 				var pMiddle = pathOffset(this.guidingPath, o, precision, st['middle'],curSeg.start, curSeg.end);
 			} else {
+				var newSeg = {};
+				newSeg[sideB] = adjustCurSeg(curSeg, this.guidingPath, parallelPaths[sideB]);
+				newSeg[!sideB] = adjustCurSeg(curSeg, this.guidingPath, parallelPaths[!sideB]);
+				p  = pathOffset(parallelPaths[sideB], 0, precision, st[newSeg[sideB].type],newSeg[sideB].start, newSeg[sideB].end);
 				// otherwise we have a crossing zebra so we need to add more zebras to cross the street
-				var offset = this.nLanes*this.laneWidth;
-				var c1 = new Path(this.getPositionAtOffset(curSeg.start-0.5*style.pavementWidth, true, offset).position, this.getPositionAtOffset(curSeg.start-0.5*style.pavementWidth, false, offset).position);
-				var c2 = new Path(this.getPositionAtOffset(curSeg.end+0.5*style.pavementWidth, false, offset).position, this.getPositionAtOffset(curSeg.end+0.5*style.pavementWidth, true, offset).position);
+				// var offset = this.nLanes*this.laneWidth;
+				// var c1 = new Path(this.getPositionAtOffset(curSeg.start-0.5*style.pavementWidth, true, offset).position, this.getPositionAtOffset(curSeg.start-0.5*style.pavementWidth, false, offset).position);
+				// var c2 = new Path(this.getPositionAtOffset(curSeg.end+0.5*style.pavementWidth, false, offset).position, this.getPositionAtOffset(curSeg.end+0.5*style.pavementWidth, true, offset).position);
+
+				var offset = 0.5*style.pavementWidth;
+
+				var entrata, uscita;
+				var c = 1;
+				if(!sideB)
+				{
+					var tmp = newSeg[sideB].start;
+					newSeg[sideB].start = newSeg[sideB].end;
+					newSeg[sideB].end = tmp;
+					var tmp = newSeg[!sideB].start;
+					newSeg[!sideB].start = newSeg[!sideB].end;
+					newSeg[!sideB].end = tmp;
+					c = -1;
+				}
+
+				uscita = new Path(
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].start-0.5*c*style.pavementWidth, 
+						!sideB, 
+						offset
+					).position, 
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].start-0.5*c*style.pavementWidth, 
+						sideB, 
+						offset
+					).position
+				);
+				entrata = new Path(
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].end+0.5*c*style.pavementWidth, 
+						sideB, 
+						offset
+					).position, 
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].end+0.5*c*style.pavementWidth, 
+						!sideB, 
+						offset
+					).position
+				);
+				/*
+				var c1 = new Path(
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].start-0.5*style.pavementWidth, 
+						!sideB, 
+						0.5*style.pavementWidth
+					).position, 
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].start-0.5*style.pavementWidth, 
+						sideB, 
+						0.5*style.pavementWidth
+					).position
+				);
+
 				c1.strokeWidth = style.pavementWidth;
-				c1.strokeColor = style.lineColor;
+				// c1.strokeColor = style.lineColor;
+				c1.strokeColor = 'red';
 				c1.dashArray = style.zebraDash;
 				//Path.Circle(c1.lastSegment.point, 1).fillColor = 'red';
 				c2.strokeWidth = style.pavementWidth;
 				c2.strokeColor = style.lineColor;
 				c2.dashArray = style.zebraDash;
 				//Path.Circle(c2.lastSegment.point, 1).fillColor = 'red';
+				*/
+
+				entrata.strokeWidth = style.pavementWidth;
+				// c1.strokeColor = style.lineColor;
+				entrata.strokeColor = style.lineColor;
+				entrata.dashArray = style.zebraDash;
+				//Path.Circle(c1.lastSegment.point, 1).fillColor = 'red';
+				uscita.strokeWidth = style.pavementWidth;
+				uscita.strokeColor = style.lineColor;
+				uscita.dashArray = style.zebraDash;
+				// var entrata, uscita, corr=1;
+				var bside = true;
+				if(side === 'true')
+				{
+					//entrata = c2;
+					// uscita = c1;
+				}
+				else 
+				{
+				  bside = false;
+					// entrata = c1;
+					// uscita = c2;
+					var tmp = curSeg.start;
+					curSeg.start = curSeg.end;
+					curSeg.end = tmp;
+					corr = -1;
+				}
+
+				// var entrata_dritto = new Path(entrata.lastSegment.point, this.getPositionAtOffset(curSeg.end+0.5*corr*style.pavementWidth, side === 'true', offset+style.pavementWidth).position);
+				// entrata_dritto.fullySelected = true;
+
+				var curSStr = this.sideStreets[side][curSeg.position];
+				var sideS_in_point = curSStr.getPositionAtOffset(curSStr.guidingPath.length, true, style.laneWidth+0.5*style.pavementWidth).position;
+				var sideS_in_bike = curSStr.getPositionAtOffset(curSStr.guidingPath.length, true, style.laneWidth+0.25*style.pavementWidth).position;
+				var sideS_in_ped = curSStr.getPositionAtOffset(curSStr.guidingPath.length, true, style.laneWidth+0.75*style.pavementWidth).position;
+				var sideS_out_point = curSStr.getPositionAtOffset(curSStr.guidingPath.length, false, style.laneWidth+0.5*style.pavementWidth).position;
+				var sideS_out_bike = curSStr.getPositionAtOffset(curSStr.guidingPath.length, false, style.laneWidth+0.25*style.pavementWidth).position;
+				var sideS_out_ped = curSStr.getPositionAtOffset(curSStr.guidingPath.length, false, style.laneWidth+0.75*style.pavementWidth).position;
+				var tmpNorm, tmpLoc, tmpP;
+
+
+				var entrata_dritto = new Path(entrata.lastSegment.point, sideS_in_point);
+				entrata_dritto.visible = false;
+
+				
+				var entrata_dritto_bici = new Path(getPositionAtOffset(entrata, 0, true, 0.25*style.pavementWidth).position, sideS_in_bike);
+				var entrata_dritto_pedoni = new Path(getPositionAtOffset(entrata, 0, false, 0.25*style.pavementWidth).position, sideS_in_ped);
+				entrata_dritto_bici.visible = false;
+				entrata_dritto_pedoni.visible = false;
+
+				// var entrata_destra = new Path(this.getPositionAtOffset(curSeg.end+(bside ? 1 : -1)*style.pavementWidth, bside, offset+0.5*style.pavementWidth).position, sideS_in_point);
+				// entrata_destra.visible = false;
+
+				// var entrata_destra_bici = new Path(this.getPositionAtOffset(curSeg.end+(bside ? 1 : -1)*style.pavementWidth, bside, offset+0.25*style.pavementWidth).position, sideS_in_bike);
+				var entrata_destra_bici = new Path(
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].end+(sideB ? 1 : -1)*style.pavementWidth, 
+						!sideB, 
+						0.25*style.pavementWidth
+					).position, 
+					sideS_in_bike
+				);
+				var entrata_destra_pedoni = new Path(
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].end+(bside ? 1 : -1)*style.pavementWidth,
+						sideB,
+						0.25*style.pavementWidth
+					).position,
+					sideS_in_ped
+				);
+
+				entrata_destra_bici.visible = false;
+				entrata_destra_pedoni.visible = false;
+				setPathHandles(entrata_destra_bici, -1);
+				setPathHandles(entrata_destra_pedoni, -1);
+
+				var entrata_ritorno = new Path(this.getPositionAtOffset(curSeg.end, !bside, offset+0.5*style.pavementWidth).position, entrata.firstSegment.point);
+				setPathHandles(entrata_ritorno, 1);
+				entrata_ritorno.visible = false;
+
+				var entrata_ritorno_bici = new Path(
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].end, 
+						sideB, 
+						0.25*style.pavementWidth
+					).position, 
+					getPositionAtOffset(
+						entrata, 
+						0, 
+						true, 
+						0.25*style.pavementWidth
+					).position
+				);
+				var entrata_ritorno_pedoni = new Path(
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].end, 
+						!sideB, 
+						0.25*style.pavementWidth
+					).position, 
+					getPositionAtOffset(
+						entrata, 
+						0, 
+						false, 
+						0.25*style.pavementWidth
+					).position
+				);
+				setPathHandles(entrata_ritorno_bici, 1);
+				setPathHandles(entrata_ritorno_pedoni, 1);
+				entrata_ritorno_bici.visible = false;
+				entrata_ritorno_pedoni.visible = false;
+
+				var uscita_dritto = new Path(sideS_out_point, uscita.firstSegment.point);
+				uscita_dritto.visible = false;
+
+				var usicta_dritto_bici = new Path(
+					sideS_out_bike,
+					getPositionAtOffset(
+						uscita, 
+						uscita.length, 
+						true,
+						0.25*style.pavementWidth
+					).position
+				);
+				var usicta_dritto_pedoni = new Path(
+					sideS_out_ped,
+					getPositionAtOffset(
+						uscita, 
+						uscita.length, 
+						false, 
+						0.25*style.pavementWidth
+					).position
+				);
+				usicta_dritto_bici.visible = false;
+				usicta_dritto_pedoni.visible = false;
+
+				var uscita_destra = new Path(sideS_out_point, this.getPositionAtOffset(curSeg.start+(bside ? -1 : 1)*style.pavementWidth, bside, offset+0.5*style.pavementWidth).position);
+				setPathHandles(uscita_destra,-1);
+				uscita_destra.visible = false;
+
+				var uscita_destra_bici = new Path(
+					sideS_out_bike,
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].start-(sideB ? 1 : -1)*style.pavementWidth, 
+						!sideB, 
+						0.25*style.pavementWidth
+					).position
+				);
+				var uscita_destra_pedoni = new Path(
+					sideS_out_ped,
+					getPositionAtOffset(
+						parallelPaths[sideB],
+						newSeg[sideB].start-(sideB ? 1 : -1)*style.pavementWidth, 
+						sideB, 
+						0.25*style.pavementWidth
+					).position
+				);
+				uscita_destra_bici.visible = false;
+				uscita_destra_pedoni.visible = false;
+				setPathHandles(uscita_destra_bici, -1);
+				setPathHandles(uscita_destra_pedoni, -1);
+
+
+				var uscita_ritorno = new Path(uscita.lastSegment.point, this.getPositionAtOffset(curSeg.start, !bside, offset+0.5*style.pavementWidth).position);
+				setPathHandles(uscita_ritorno, 1);
+				uscita_ritorno.visible = false;
+
+				var uscita_ritorno_bici = new Path(
+					getPositionAtOffset(
+						uscita, 
+						uscita.length, 
+						true, 
+						0.25*style.pavementWidth
+					).position, 
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].start, 
+						sideB, 
+						0.25*style.pavementWidth
+					).position
+				);
+				var uscita_ritorno_pedoni = new Path(
+					getPositionAtOffset(
+						uscita, 
+						uscita.length, 
+						false, 
+						0.25*style.pavementWidth
+					).position, 
+					getPositionAtOffset(
+						parallelPaths[!sideB],
+						newSeg[!sideB].start, 
+						!sideB, 
+						0.25*style.pavementWidth
+					).position
+				);
+				setPathHandles(uscita_ritorno_bici, 1);
+				setPathHandles(uscita_ritorno_pedoni, 1);
+				uscita_ritorno_bici.visible = false;
+				uscita_ritorno_pedoni.visible = false;
+
+				if(showTraiettoriePedoni){
+					drawPath(entrata_destra_pedoni, 'orange', pathWidth);
+					drawPath(entrata_destra_bici, 'orange', pathWidth, bikeDash);
+					drawPath(entrata_ritorno_pedoni, 'blue', pathWidth);
+					drawPath(entrata_ritorno_bici, 'blue', pathWidth, bikeDash);
+					drawPath(uscita_destra_pedoni, 'cyan', pathWidth);
+					drawPath(uscita_destra_bici, 'cyan', pathWidth, bikeDash);
+					drawPath(uscita_ritorno_pedoni, 'green', pathWidth);
+					drawPath(uscita_ritorno_bici, 'green', pathWidth, bikeDash);
+					drawPath(entrata_dritto_pedoni, 'red', pathWidth);
+					drawPath(entrata_dritto_bici, 'red', pathWidth, bikeDash);
+					drawPath(usicta_dritto_pedoni, 'violet', pathWidth);
+					drawPath(usicta_dritto_bici, 'violet', pathWidth, bikeDash);
+				}
 
 				this.pedestrianSidestreetPaths[side][curSeg.position] = 
 				{
-					"ingresso" : (side === 'true') ? c2 : c1,
-					"uscita" : (side === 'true') ? c1 : c2,
-					"attraversamento" : p
+					"entrata" : entrata,
+					"uscita" : uscita,
+					"attraversamento" : p,
+					"entrata_destra_pedoni": entrata_destra_pedoni,
+					"entrata_destra_bici": entrata_destra_bici,
+					"entrata_ritorno_pedoni": entrata_ritorno_pedoni,
+					"entrata_ritorno_bici": entrata_ritorno_bici,
+					"uscita_destra_pedoni": uscita_destra_pedoni,
+					"uscita_destra_bici": uscita_destra_bici,
+					"uscita_ritorno_pedoni": uscita_ritorno_pedoni,
+					"uscita_ritorno_bici": uscita_ritorno_bici,
+					"entrata_dritto_pedoni": entrata_dritto_pedoni,
+					"entrata_dritto_bici": entrata_dritto_bici,
+					"usicta_dritto_pedoni": usicta_dritto_pedoni,
+					"usicta_dritto_bici": usicta_dritto_bici
 				};
+
+				if(!controllo)
+				{
+					var o = {};
+					for(index in this.pedestrianSidestreetPaths[side][curSeg.position])
+					{
+						o[index] = this.pedestrianSidestreetPaths[side][curSeg.position][index].length;
+					}
+					traiettorie_ingresso_pedoni = this.pedestrianSidestreetPaths[side][curSeg.position];
+					console.log("traiettorie_ingresso_pedoni: "+JSON.stringify(o));
+					controllo = true;
+				}
 			}
-			//p.rasterize();
-			//p.remove();
 		}
 	}
 }
@@ -458,6 +954,7 @@ Street.prototype.addSideStreet = function(sideStreet){
 
 Street.prototype.getPositionAtOffset = function(distance, side, offset)
 {
+	/*
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
@@ -479,11 +976,13 @@ Street.prototype.getPositionAtOffset = function(distance, side, offset)
 	}
 
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+	*/
+	return getPositionAtOffset(this.guidingPath, distance, side, offset);
 }
 
 Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	//console.log(distance+"/"+this.guidingPath.length);
-	drive = typeof drive === 'undefined' ? true : false;
+	drive = typeof drive === 'undefined' ? true : drive;
 	/*
 	if (typeof side === 'string'){
 		side = (side === 'true');
@@ -519,13 +1018,22 @@ Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	*/
 }
 
-Street.prototype.getOnPavementPositionAt = function(distance, side, offsetInPavement)
+Street.prototype.getOnPavementPositionAt = function(distance, side, bike, drive)
 {
-	//	drive = typeof drive === 'undefined' ? true : false;
+	drive = typeof drive === 'undefined' ? true : drive;
+	if(drive && side){
+		distance = this.guidingPath.length - distance;
+	}
+	/*
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
+	*/
 
+	var offsetOnPavement = (bike ? 0.25 : 0.75)*this.pavementWidth;
+	var offset = this.nLanes*this.laneWidth + offsetOnPavement;
+
+	/*
 	distance = (distance < 0) ? 0 : distance;
 	distance = (distance > this.guidingPath.length) ? this.guidingPath.length : distance;
 
@@ -534,7 +1042,7 @@ Street.prototype.getOnPavementPositionAt = function(distance, side, offsetInPave
 	}
 	var loc = this.guidingPath.getLocationAt(distance);
 
-	var offset = this.nLanes*this.laneWidth + offsetInPavement;
+	var offset = this.nLanes*this.laneWidth + offsetOnPavement;
 	offset = side ? offset : -offset;
 
 	var normal = this.guidingPath.getNormalAt(distance);
@@ -548,6 +1056,8 @@ Street.prototype.getOnPavementPositionAt = function(distance, side, offsetInPave
 	}
 
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+	*/
+	return this.getPositionAtOffset(distance, side, offset);
 }
 
 Street.prototype.getOnZebraPositionAt = function(distance, side, distanceFromEntrance, way, bike)
@@ -558,6 +1068,8 @@ Street.prototype.getOnZebraPositionAt = function(distance, side, distanceFromEnt
 
 	var path = this.pedestrianSidestreetPaths[side][distanceFromEntrance][way];
 
+	var offset = this.pavementWidth * 0.25;
+	/*
 	distance = (distance < 0) ? 0 : distance;
 	distance = (distance > path.length) ? path.length : distance;
 
@@ -568,8 +1080,11 @@ Street.prototype.getOnZebraPositionAt = function(distance, side, distanceFromEnt
 	var normal = this.guidingPath.getNormalAt(distance);
 	normal.length = offset;
 	return {angle: loc.tangent.angle, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+	*/
+	return getPositionAtOffset(path, distance, bike, offset);
 }
 
+/*
 Street.prototype.getPedestrianPositionAt = function(distance, side)
 {
 	return this.getOnPavementPositionAt(distance, side, 0.75*this.pavementWidth);
@@ -579,7 +1094,7 @@ Street.prototype.getBikePositionAt = function(distance, side)
 {
 	return this.getOnPavementPositionAt(distance, side, 0.25*this.pavementWidth);
 }
-
+*/
 
 Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, crossingPath, distance){
 	//var loc = this.sideStreetsEntrancePaths[crossingPaths].getLocationAt(distance);
@@ -624,6 +1139,8 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 }
 
 Street.prototype.getSidestreetPositionAt = function(distance, side){
+	var offset = this.nLanes*this.laneWidth + this.pavementWidth;
+	/*
 	if (typeof side === 'string'){
 		side = (side === 'true');
 	}
@@ -635,7 +1152,8 @@ Street.prototype.getSidestreetPositionAt = function(distance, side){
 	var normal = this.guidingPath.getNormalAt(distance);
 	normal.length = offset;
 
-	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};
+	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};*/
+	return this.getPositionAtOffset(distance, side, offset);
 }
 
 Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toLane, moveLength){
@@ -659,6 +1177,7 @@ Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toL
 	p.firstSegment.handleOut.length = 0.5*moveLength;
 	p.lastSegment.handleIn = hp2.subtract(p2);
 	p.lastSegment.handleIn.length =  0.5*moveLength;
+	p.visible = false;
 	return p;
 }
 
@@ -741,14 +1260,15 @@ Crossroad.prototype.linkStreets = function(streets, district){
 Crossroad.prototype.draw = function(style){
 	delete this.group;
 	this.group = new Group();
+	this.pedestrianPaths = [];
 	var totalWidth = this.lanesNumber[0]*style.laneWidth+style.pavementWidth;
 	var totalHeight = this.lanesNumber[1]*style.laneWidth+style.pavementWidth;
 	var startP = new Point(this.center.x-totalWidth, this.center.y-totalHeight);
 
-	//if(style.debug){
+	if(style.debug){
 		this.label = new PointText(this.center);
 		this.label.content = this.id;
-	//}
+	}
 	var path = new Path.Rectangle(startP, new Size(totalWidth*2, totalHeight*2));
 	path.fillColor = style.laneColor;
 	
@@ -757,8 +1277,10 @@ Crossroad.prototype.draw = function(style){
 	var poleMap = {true: 'firstSegment', false: 'lastSegment'};
 
 	for (var i = 0; i < this.streetsRef.length; i++) {
+		var g = new Group();
 		var st = {color: style.lineColor, width: style.pavementWidth, dash: style.zebraDash};
 		var ped = style.pavementWidth/2;
+		var pedOffset = 0;
 
 		// creating the pedestrian paths to move the people
 		var pP = new Path();
@@ -771,18 +1293,74 @@ Crossroad.prototype.draw = function(style){
 			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-ped)
 			));
 		this.pedestrianPaths[i] = pP;
+		//pP.selected = true;
 
-		var g = new Group();
+		// creating the path that walk around the crossroad (for ped and bike)
+		var pedP = new Path();
+		pedP.add(new Point(
+			(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
+			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.75*style.pavementWidth)
+			));
+		pedP.add(new Point(
+			(path.position.x-this.lanesNumber[i%2]*style.laneWidth-0.75*style.pavementWidth),
+			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth)
+			));
+		pedP.visible = false;
+		setPathHandles(pedP,1);
+
+
+		var bikeP = new Path();
+		bikeP.add(new Point(
+			(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
+			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.25*style.pavementWidth)
+			));
+		bikeP.add(new Point(
+			(path.position.x-this.lanesNumber[i%2]*style.laneWidth-0.25*style.pavementWidth),
+			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth)
+			));
+		bikeP.visible = false;
+		setPathHandles(bikeP,1);
+
+		if(showTraiettoriePedoni){
+			drawPath(pedP, 'green', pathWidth);
+			drawPath(bikeP, 'green', pathWidth, [pathWidth, pathWidth]);
+			console.log("lunghezza pedoni sinistra: "+pedP.length);
+			console.log("lunghezza bici sinistra: "+bikeP.length);
+		}
+
+		this.pedestrianPaths[i] = {
+			'sinistra_pedoni': pedP,
+			'sinistra_bici' : bikeP
+		};
+
+		g.addChild(pedP);
+		g.addChild(bikeP);
 
 		this.crossingPaths[i] = {};	
 
 		if(this.streetsRef[i] == null){
-			// if there is no street we draw the pavement
+			// if there is no street we draw the middle line
 
-			ped = 0;
-			st.dash = [];
-			st.width = style.lineWidth;
+			pedOffset = style.pavementWidth;
+			st.dash = style.pavementMiddleDash;
+			st.width = style.lineWidth/2;
 			this.crossingPaths[i] = null;
+
+			// and the pavement
+			var pav = new Path();
+			pav.add(new Point(
+				(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
+				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth)
+				));
+			pav.add(new Point(
+				(path.position.x+this.lanesNumber[i%2]*style.laneWidth),
+				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth)
+				));
+			pav.strokeWidth = style.lineWidth;
+			pav.strokeColor = style.lineColor;
+
+			g.addChild(pav);
+
 		} else {
 			// otherwise we draw the zebra crossing (it is the defaul so no need to customize the style)
 			// but we draw the traffic lights and the cross trajectors
@@ -799,6 +1377,12 @@ Crossroad.prototype.draw = function(style){
 				crossPath.firstSegment.handleOut.length = crossPath.firstSegment.handleOut.length*0.60;
 				crossPath.lastSegment.handleIn = handlePoint.subtract(crossPath.lastSegment.point);
 				crossPath.lastSegment.handleIn.length = crossPath.lastSegment.handleIn.length*0.60;
+				crossPath.visible = false;
+
+				if(i == 2 && showTraiettorieAuto){
+					drawPath(crossPath, 'yellow').fullySelected = true;
+				}
+
 				this.crossingPaths[i]['sinistra'] = {
 					path:crossPath, 
 					id:this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+1)%4].id_strada+".l"+2,
@@ -808,9 +1392,30 @@ Crossroad.prototype.draw = function(style){
 				//this.crossingPaths[this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+1)%4].id_strada+".l"+2] = crossPath;
 				g.addChild(crossPath);
 
+				if(i == 2 && controlloIncrociAuto1){
+					controllo_sinistra = crossPath;
+					var ii = i+1;
+					var cc = new Path();
+					cc.add(new Point(
+						(path.position.x-this.lanesNumber[ii%2]*style.laneWidth),
+						(path.position.y-this.lanesNumber[(ii+1)%2]*style.laneWidth)
+						));
+					cc.add(new Point(
+						(path.position.x+this.lanesNumber[ii%2]*style.laneWidth),
+						(path.position.y-this.lanesNumber[(ii+1)%2]*style.laneWidth)
+						));
+					//cc.selected = true;
+					var intr = crossPath.getIntersections(cc)[0];
+					if(intr != null)
+					{
+						//console.log("intersezione incrocio sinistra: "+crossPath.getOffsetOf(intr.point));
+					}
+					g.addChild(cc);
+						controlloIncrociAuto1 = false;
+				}
 				debgArr.push(crossPath);
 			}
-			// creating the paths that goes straight through the crossroad
+			// creating the paths that go straight through the crossroad
 			if(this.streetsRef[(i+2)%4] != null){
 				var crossPath1 = new Path();
 				crossPath1.add(new Point(this.center.x-style.laneWidth*0.5, this.center.y-(style.laneWidth*2+style.pavementWidth)));
@@ -821,6 +1426,7 @@ Crossroad.prototype.draw = function(style){
 					start: {street: this.streetsRef[i].id_strada, lane: 1, index: i},
 					end: {street: this.streetsRef[(i+2)%4].id_strada, lane: 1, index: (i+2)%4},
 				};
+				crossPath1.visible = false;
 				//this.crossingPaths[this.id+"_s"+this.streetsRef[i].id_strada+".l"+1+"-"+"s"+this.streetsRef[(i+2)%4].id_strada+".l"+1] = crossPath1;
 				var crossPath2 = new Path();
 				crossPath2.add(new Point(this.center.x-style.laneWidth*1.5, this.center.y-(style.laneWidth*2+style.pavementWidth)));
@@ -831,9 +1437,15 @@ Crossroad.prototype.draw = function(style){
 					start: {street: this.streetsRef[i].id_strada, lane: 2, index: i},
 					end: {street: this.streetsRef[(i+2)%4].id_strada, lane: 2, index: (i+2)%4},
 				};
+				crossPath2.visible = false;
 				//this.crossingPaths[this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+2)%4].id_strada+".l"+2] = crossPath2;
 				g.addChild(crossPath1);
 				g.addChild(crossPath2);
+
+				if(i == 2 && showTraiettorieAuto){
+					drawPath(crossPath1, 'red');
+					drawPath(crossPath2, 'blue');
+				}
 
 				debgArr.push(crossPath1);
 				debgArr.push(crossPath2);
@@ -861,8 +1473,78 @@ Crossroad.prototype.draw = function(style){
 					start: {street: this.streetsRef[i].id_strada, lane: 1, index: i},
 					end: {street: this.streetsRef[(i+3)%4].id_strada, lane: 1, index: (i+3)%4},
 				};
+				crossPath.visible = false;
 				//this.crossingPaths[this.id+"_s"+this.streetsRef[i].id_strada+".l"+1+"-"+"s"+this.streetsRef[(i+3)%4].id_strada+".l"+1] = crossPath;
 				g.addChild(crossPath);
+
+				if(i == 2 && showTraiettorieAuto){
+					drawPath(crossPath, 'green');
+				}
+
+				if(i == 2 && controlloIncrociAuto2){
+					controllo_destra = crossPath;
+					var ii = i-1;
+					var cc = new Path();
+					cc.add(new Point(
+						(path.position.x-this.lanesNumber[ii%2]*style.laneWidth),
+						(path.position.y-this.lanesNumber[(ii+1)%2]*style.laneWidth)
+						));
+					cc.add(new Point(
+						(path.position.x+this.lanesNumber[ii%2]*style.laneWidth),
+						(path.position.y-this.lanesNumber[(ii+1)%2]*style.laneWidth)
+						));
+					//cc.selected = true;
+
+					var intr = crossPath.getIntersections(cc)[0];
+					if(intr != null)
+					{
+						//console.log("intersezione incrocio destra: "+crossPath.getOffsetOf(intr.point));
+					}
+					g.addChild(cc);
+					controlloIncrociAuto2 = false;
+				}
+
+				// creating the pedestrian paths that goes right
+				var pedP = new Path();
+				pedP.add(new Point(
+					(path.position.x-this.lanesNumber[i%2]*style.laneWidth-0.75*style.pavementWidth),
+					(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-style.pavementWidth)
+					));
+				pedP.add(new Point(
+					(path.position.x-this.lanesNumber[i%2]*style.laneWidth-style.pavementWidth),
+					(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.75*style.pavementWidth)
+					));
+				pedP.visible = false;
+				setPathHandles(pedP,-1);
+
+
+				var bikeP = new Path();
+				bikeP.add(new Point(
+					(path.position.x-this.lanesNumber[i%2]*style.laneWidth-0.25*style.pavementWidth),
+					(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-style.pavementWidth)
+					));
+				bikeP.add(new Point(
+					(path.position.x-this.lanesNumber[i%2]*style.laneWidth-style.pavementWidth),
+					(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.25*style.pavementWidth)
+					));
+				bikeP.visible = false;
+				setPathHandles(bikeP,-1);
+
+				if(showTraiettoriePedoni){
+					drawPath(pedP, 'orange', pathWidth);
+					drawPath(bikeP, 'orange', pathWidth, [pathWidth, pathWidth]);
+					console.log("lunghezza pedoni destra: "+pedP.length);
+					console.log("lunghezza bici destra: "+bikeP.length);
+				}
+
+				this.pedestrianPaths[i] = {
+					'destra_pedoni': pedP,
+					'destra_bici' : bikeP
+				};
+
+				g.addChild(pedP);
+				g.addChild(bikeP);
+
 
 				debgArr.push(crossPath);
 			}
@@ -894,11 +1576,11 @@ Crossroad.prototype.draw = function(style){
 
 		var p = new Path();
 		p.add(new Point(
-			(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
+			(path.position.x-this.lanesNumber[i%2]*style.laneWidth-pedOffset),
 			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-ped)
 			));
 		p.add(new Point(
-			(path.position.x+this.lanesNumber[i%2]*style.laneWidth),
+			(path.position.x+this.lanesNumber[i%2]*style.laneWidth+pedOffset),
 			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-ped)
 			));
 
@@ -911,6 +1593,48 @@ Crossroad.prototype.draw = function(style){
 		this.group.addChild(g);
 	}
 	this.group.rotate(this.angle%90); 
+
+	if(controlloIncrociAuto)
+	{
+		var cc1 = new Path();
+		cc1.add(new Point(
+			(path.position.x+2*style.laneWidth),
+			(path.position.y-2*style.laneWidth)
+			));
+		cc1.add(new Point(
+			(path.position.x+2*style.laneWidth),
+			(path.position.y+2*style.laneWidth)
+			));
+		//cc1.strokeWidth = 0.5;
+		//cc1.strokeColor = 'violet';
+		//cc1.selected = true;
+
+		var intr1 = controllo_destra.getIntersections(cc1)[0];
+		if(intr1 != null)
+		{
+			console.log("intersezione incrocio destra: "+controllo_destra.getOffsetOf(intr1.point)+" di "+controllo_destra.length);
+		}
+
+		var cc2 = new Path();
+		cc2.add(new Point(
+			(path.position.x-2*style.laneWidth),
+			(path.position.y-2*style.laneWidth)
+			));
+		cc2.add(new Point(
+			(path.position.x-2*style.laneWidth),
+			(path.position.y+2*style.laneWidth)
+			));
+		//cc2.strokeWidth = 0.5;
+		//cc2.strokeColor = 'violet';
+		//cc2.selected = true;
+
+		var intr2 = controllo_sinistra.getIntersections(cc2)[0];
+		if(intr2 != null)
+		{
+			console.log("intersezione incrocio sinistra: "+controllo_sinistra.getOffsetOf(intr2.point) +" di "+controllo_sinistra.length);
+		}
+		controlloIncrociAuto = false;
+	}
 
 	// adjusting the streets
 	for (var i = 0; i < this.streets.length; i++) {
@@ -1231,6 +1955,7 @@ Map.prototype.load = function(obj){
 		obj.strade_ingresso[i]['to'] = 0;
 		var str = new Street(obj.strade_ingresso[i]);
 		str.mainStreet = obj.strade_ingresso[i].strada_confinante;
+		str.mainStreetObj = this.streets[str.mainStreet];
 		str.entranceSide = obj.strade_ingresso[i].polo;
 		str.entranceDistance = obj.strade_ingresso[i].distanza_da_from;
 		str.setType('entrance');
@@ -1278,21 +2003,28 @@ Map.prototype.draw = function(){
 
 	for (var i in this.entranceStreets){
 
-		var mainStreet = this.streets[this.entranceStreets[i].mainStreet];
-		var side = this.entranceStreets[i].entranceSide ? 1 : -1;
+		var curStr = this.entranceStreets[i];
 
-		var entrDist = /*(side == 1) ? mainStreet.guidingPath.length - this.entranceStreets[i].entranceDistance :*/this.entranceStreets[i].entranceDistance;
+		var mainStreet = this.streets[curStr.mainStreet];
+		var side = curStr.entranceSide ? 1 : -1;
+
+		var entrDist = /*(side == 1) ? mainStreet.guidingPath.length - curStr.entranceDistance :*/curStr.entranceDistance;
 		var refPoint = mainStreet.guidingPath.getPointAt(entrDist);
 		var normalFrom = mainStreet.guidingPath.getNormalAt(entrDist);
 		normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
 		
 		var normalTo = mainStreet.guidingPath.getNormalAt(entrDist);
-		normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + this.entranceStreets[i].len);	
+		normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + curStr.len);	
 		
-		this.entranceStreets[i].from = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
-		this.entranceStreets[i].to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
-		this.entranceStreets[i].reposition();
-		this.entranceStreets[i].draw(this.mapStyle);
+		curStr.from = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
+		curStr.to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
+		curStr.reposition();
+		curStr.draw(this.mapStyle);
+		curStr.drawHorizontalLines(this.mapStyle);
+	}
+
+	for (var i in this.streets) {
+		this.streets[i].drawHorizontalLines(this.mapStyle);
 	}
 
 	if(typeof this.loadingProgressNotifier === 'function'){
@@ -1301,7 +2033,8 @@ Map.prototype.draw = function(){
 
 	for (var i in this.places){
 		this.places[i].setEnteringStreet(this.entranceStreets[this.places[i].entranceStreetId]);
-		this.places[i].draw(this.mapStyle);
+		if(this.entranceStreets[this.places[i].entranceStreetId] != null)
+			this.places[i].draw(this.mapStyle);
 	}
 
 	if(typeof this.finishDrawingCallback === 'function'){
@@ -1311,6 +2044,8 @@ Map.prototype.draw = function(){
 	if(typeof this.mapReadyCallback === 'function'){
 		this.mapReadyCallback();
 	}
+
+	liftPaths();
 }
 
 Map.prototype.bringTrafficLightsToFront = function()
@@ -1398,7 +2133,7 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 				},
 				{
 					traiettoria: 'linea_mezzaria',
-					//distanza:  enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.guidingPath)[0].point),
+					distanza:  enteringPaths['entrata_ritorno'].path.getOffsetOf(enteringPaths['entrata_ritorno'].path.getIntersections(street.guidingPath)[0].point),
 				}
 			]
 		},
@@ -1415,7 +2150,7 @@ Map.prototype.calcEntrancePathIntersections = function(street){
 				},
 				{
 					traiettoria: 'linea_mezzaria',
-					//distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.guidingPath)[0].point),
+					distanza: enteringPaths['uscita_ritorno'].path.getOffsetOf(enteringPaths['uscita_ritorno'].path.getIntersections(street.guidingPath)[0].point),
 				}
 			]
 		}

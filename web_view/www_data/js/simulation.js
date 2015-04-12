@@ -139,37 +139,28 @@ Simulation.prototype.moveCar = function(time, c)
 		else {
 			var prevState = curCar.prevState;
 			// if the object switched from a place to another
-			// if(curCar.where !=
-			// this.prevState.cars[curCar.id_abitante].where){
 			try {
 				if (curCarState.where != prevState.where) {
 					// if the initial position in the current state is
-					// set
-					// we use it, otherwise we use 0
+					// set we use it, otherwise we use 0
 					prevPosition = curCarState.inizio !== undefined ? curCarState.inizio
 							: 0;
 					if (curCarState.where == 'strada'
 							&& prevState.where == 'traiettoria_ingresso') {
 						prevPosition = prevState.distanza_ingresso + 10;
+					/*
 						if(curCarState.id_where == 29){
 							console.log("("+curCarState.id_abitante+") now: " + curCarState.where + " before:"
 								+ prevState.where + " prevPosition:"
 								+ prevPosition);
 						}
+					*/
 					}
 
 					if(curCarState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
 					{
 						prevPosition = prevState.distanza_inizio + 20;
 					}
-					
-					/*
-					if (curCarState.id_abitante == debugTarget) {
-						console.log("now: " + curCarState.where + " before:"
-								+ prevState.where + " prevPosition:"
-								+ prevPosition);
-					}*/
-
 				}
 				// otherwise simply take the position from the previous
 				// state

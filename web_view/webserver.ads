@@ -18,7 +18,7 @@ with the_name_server; use the_name_server;
 
 use Ada;
 use Ada.Finalization;
-use AWS;
+use AWS;	
 use AWS.Config;
 use type AWS.Net.Socket_Access;
 use AWS.Services.Dispatchers.URI;
@@ -38,6 +38,10 @@ package WebServer is
 	-- Ha l'utilità di gestire l'interazione con il webserver AWS
 	-- E' Limited_Controlled in modo da gestire la chiusura del server
 	type WebServer_Wrapper_Type(Num : Integer) is new Limited_Controlled and Districts_Repository_Interface with private;
+
+	type Access_WebServer_Wrapper_Type is access all WebServer_Wrapper_Type;
+
+	function get_webserver return Access_WebServer_Wrapper_Type;
 
 	-- function get_webserver return WebServer_Wrapper_Type;
 
@@ -70,7 +74,7 @@ package WebServer is
 		procedure Shutdown;
 
 	private
-		WS_Wrapper : WebServer_Wrapper_Type(Num);
+		WS_Wrapper : Access_WebServer_Wrapper_Type := get_webserver;--WebServer_Wrapper_Type(Num);
 		Alive : Boolean := False;
 	end Remote_Proxy_Type;
 
@@ -92,6 +96,6 @@ private
 	end record;
 
   --Terminazione_Richiesta : Boolean := False;
-  --WebServerObject : WebServer_Wrapper_Type(get_num_quartieri);
+  WebServerInstance : aliased WebServer_Wrapper_Type(get_num_quartieri);
 
 end WebServer;

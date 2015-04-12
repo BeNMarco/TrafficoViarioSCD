@@ -19,6 +19,7 @@
 with Ada.Characters.Handling;
 with Ada.Integer_Text_IO;
 with Ada.Text_IO;
+with Ada.Strings.Equal_Case_Insensitive;
 
 with AWS.Messages;
 with AWS.MIME;
@@ -29,6 +30,7 @@ with GNATCOLL.JSON; use GNATCOLL.JSON;
 with WebServer; use WebServer;
 
 package body WebSock_CB is
+
 
    use Ada;
    use type AWS.Net.WebSocket.Kind_Type;
@@ -66,9 +68,19 @@ package body WebSock_CB is
 
    overriding procedure On_Message
      (Socket : in out Update_Websoket; Message : String) is
-   begin
-      Text_IO.Put_Line ("Received : " & Message);
 
+     function eqic(Left, Right : String) return Boolean renames Ada.Strings.Equal_Case_Insensitive;
+
+     JMessage : JSON_Value := Read(Strm => Message,
+                                 Filename => "debug.txt");     
+   begin
+      if Has_Field(JMessage, "type") and eqic(Get(JMessage, "type"), "command") then
+         -- received a command message from the client
+         if eqic(Get(JMessage, "command"), "terminate") then
+            WebServer.get_webserver.notifica_terminazione;
+         end if;
+      end if;
+      
       --WebServer.set_richiesta_terminazione(True);
    end On_Message;
 

@@ -121,6 +121,19 @@ function EntitiesRegistry(){
 	this.style = new EntitiesStyle();
 }
 
+EntitiesRegistry.prototype.addCar = function(id, id_quartiere_abitante)
+{
+	curCar = new Car(id, id_quartiere_abitante);
+	curCar.draw(this.style);
+	curCar.show();
+	this.cars[id_quartiere_abitante+"_"+id] = curCar;
+}
+
+EntitiesRegistry.prototype.removeCar = function(id, id_quartiere_abitante)
+{
+	delete this.cars[id_quartiere_abitante+"_"+id];
+}
+
 EntitiesRegistry.prototype.setStyle = function(style){
 	this.style = style;
 }

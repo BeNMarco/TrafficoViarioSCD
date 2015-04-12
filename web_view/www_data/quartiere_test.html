@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Mappa quartiere @_ID_QUARTIERE_@</title>
+<title>Mappa quartiere test</title>
 <link rel="stylesheet" href="css/style.css">
 <!--
 	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
@@ -14,6 +14,7 @@
 
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/simulation.js"></script>
+<script type="text/javascript" src="quartiete1_data2.json"></script>
 <script type="text/javascript" src="js/entities.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
 <script type="text/javascript" src="js/utils/paper-full.js"></script>
@@ -22,6 +23,7 @@
 <!-- <script type="text/javascript" src="js/utils/jquery-ui.min.js"></script> -->
 <script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
 <script type="text/javascript">
+/*
 	window.onerror = function(msg, url, line, col, error) {
 		// Note that col & error are new to the HTML 5 spec and may not be 
 		// supported in every browser.  It worked for me in Chrome.
@@ -39,7 +41,7 @@
 		// If you return true, then error alerts (like in older versions of 
 		// Internet Explorer) will be suppressed.
 		return suppressErrorAlert;
-	};
+	};*/
 
 	enableSimulation = true;
 	myMap = new Map();
@@ -185,7 +187,7 @@
 
 	function getUpdates() {
 		var target = "ws://" + server
-				+ "/quartiere@_ID_QUARTIERE_@/updatesStream";
+				+ "/quartiere1/updatesStream";
 		console.log("Opening the websocket against " + target);
 		ws1 = new WebSocket(target);
 
@@ -300,8 +302,8 @@
 		entities.setStyle(entStyle);
 		openLoadingDialog();
 
-		setTimeout(function() {
-			jQuery.getJSON("quartiere@_ID_QUARTIERE_@/map.json",
+		/*setTimeout(function() {
+			jQuery.getJSON("quartiere1/map.json",
 					function(data) {
 						myMap.load(data);
 						myMap.draw();
@@ -310,7 +312,17 @@
 						entities.hide();
 						myMap.bringTrafficLightsToFront();
 					});
+		}, 10);*/
+
+		setTimeout(function() {
+						myMap.load(map_data);
+						myMap.draw();
+						//entities.load(data);
+						entities.draw();
+						entities.hide();
+						myMap.bringTrafficLightsToFront();
 		}, 10);
+		
 
 		mapLayer = project.activeLayer;
 		secondLayer = new Layer();

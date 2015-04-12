@@ -50,6 +50,11 @@ package body WebServer is
    WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
 
+   function get_webserver return Access_WebServer_Wrapper_Type is
+   begin
+      return WebServerInstance'Access;
+   end get_webserver;
+
    --protected body WebServer_Wrapper_Type is
    overriding procedure Finalize(This : in out WebServer_Wrapper_Type) is
    begin

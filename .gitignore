@@ -38,3 +38,4 @@ web_view/www_data/quartiere*
 *.aux
 *.gz
 *.toc
+*.lox

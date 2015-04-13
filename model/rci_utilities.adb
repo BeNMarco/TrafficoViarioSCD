@@ -101,8 +101,8 @@ begin
                raise;
             end if;
       end;
-      exit when (server_is_closed or
-        (signal_quit_arrived and get_server_gps=null));
+      exit when server_is_closed or
+        (signal_quit_arrived and get_server_gps=null);
    end loop;
    Put_Line("Server chiuso.");
 

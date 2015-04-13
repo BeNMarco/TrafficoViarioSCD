@@ -13,7 +13,7 @@ Ponendo il ruolo di entità attiva sulle entità del tipo veicolo, bici o pedoni
 Il ruolo di entità attiva dovrebbe ricadere quindi sulle entità di tipo strada o incrocio. Dato che la mappa presenta, una volta configurata e istanziata, una configurazione stabile si avrà che il sistema non instanzierà dinamicamente dei processi; inoltre ogni partizione per soddisfare le richieste di altre partizioni se dotata di un thread-pool risolve anche il problema dell'allocazione di thread per richieste remote da soddisfare.\\
 Seguendo questa strategia il sistema diviene scalabile sia in termini di distribuzione che di concorrenza.
 
-\subsection{Componenti oggetto della distribuzione}
+\subsection{Componenti oggetto della distribuzione}\label{subsec:distribuzione}
 \begin{figure}[H] % Example image
 \center{\includegraphics[width=1.0\linewidth]{DiagrammaComponenti}}
 \caption{Diagramma componenti.}

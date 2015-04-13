@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mappa quartiere test</title>
+<link rel="stylesheet" href="css/style.css">
+<!--
+	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
+	<link rel="stylesheet" href="js/themes/smoothness/jquery-ui.min.css">
+	<link rel="stylesheet" href="js/themes/smoothness/jquery.ui.theme.css">
+	-->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+<script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript" src="js/simulation.js"></script>
+<script type="text/javascript" src="js/entities.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/utils/paper-full.js"></script>
+<script type="text/javascript" src="js/utils/jquery.min.js"></script>
+<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+<!-- <script type="text/javascript" src="js/utils/jquery-ui.min.js"></script> -->
+<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+<script type="text/javascript">
+/*
+	window.onerror = function(msg, url, line, col, error) {
+		// Note that col & error are new to the HTML 5 spec and may not be 
+		// supported in every browser.  It worked for me in Chrome.
+		var extra = !col ? '' : '\ncolumn: ' + col;
+		extra += !error ? '' : '\nerror: ' + error;
+
+		// You can view the information in an alert to see things working like this:
+		console.log("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+		alert("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+
+		// TODO: Report this error via ajax so you can keep track
+		//       of what pages have JS issues
+
+		var suppressErrorAlert = true;
+		// If you return true, then error alerts (like in older versions of 
+		// Internet Explorer) will be suppressed.
+		return suppressErrorAlert;
+	};*/
+
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Great success! All the File APIs are supported.
+	} else {
+	  alert('The File APIs are not fully supported in this browser.');
+	}
+
+	myMap = new Map();
+
+
+	//myMap.onStartLoading(openLoadingDialog);
+	myMap.onFinishDrawing(closeLoadingDialog);
+	myMap.setProgressNotifier(setProgressText);
+	//myMap.onMapReady(carTest);
+
+	mapLayer = null;
+
+	paper.install(window);
+
+	var style = new MapStyle();
+	//style.debug = true;
+
+	var dDialog = null;
+
+	function startSimulation() {
+		console.log("start simulation");
+		sim.init();
+		entities.show();
+		myMap.bringTrafficLightsToFront();
+		if(enableSimulation){
+			view.onFrame = function(event) {
+				sim.updateState(event.delta * 1000);
+			}
+		}
+	}
+
+
+
+
+	function traslladar(a, b) {
+		var center = paper.project.view.center;
+		var desX = (a.x - b.x);
+		var desY = (a.y - b.y);
+
+		var newCenter = [ center.x + desX, center.y + desY ];
+		return newCenter;
+	}
+
+	function zoomIn() {
+		view.zoom = view.zoom * 1.1;
+	}
+
+	function zoomOut() {
+		view.zoom = view.zoom / 1.1;
+	}
+
+
+	function selectText(containerid) {
+
+		var node = document.getElementById(containerid);
+
+		if (document.selection) {
+			var range = document.body.createTextRange();
+			range.moveToElementText(node);
+			range.select();
+		} else if (window.getSelection) {
+			var range = document.createRange();
+			range.selectNodeContents(node);
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(range);
+		}
+	}
+
+	function openLoadingDialog() {
+		console.log("openLoadingDialog fired");
+		$('#loadingMessage').html(
+				"Please wait!<br />Loading and drawing the map");
+		$('#loadingDialog').modal('show');
+		//$('#outputData').text("Started loading and drawing");
+	}
+
+	function closeLoadingDialog() {
+		$('#loadingDialog').modal('hide');
+
+		if(enableSimulation){
+			getUpdates();
+		}
+		//$('#loadingDialog .progress-label').text("");
+		//$('#loadingDialog').dialog('destroy');
+	}
+
+	function openMessageDialog(text) {
+		$('#messageDialogText').html(text);
+		$('#messageDialog').modal('show');
+	}
+
+	function closeMessageDialog() {
+		$('#messageDialog').modal('hide');
+	}
+
+
+
+
+	function setProgressText(text) {
+		console.log("notified " + text);
+		$('#loadingMessage').html(text);
+	}
+
+	function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    console.log(evt.target);
+    console.log(files);
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    var data = files[0];
+    var reader = new FileReader();
+
+    // Closure to capture the file information.
+    reader.onload = (function(theFile) {
+      return function(e) {
+        JsonObj = JSON.parse(e.target.result);
+         console.log(JsonObj);
+		
+		setTimeout(function(){openLoadingDialog(); loadMap(JsonObj)}, 30);
+      };
+    })(data);
+
+    // Read in the image file as a data URL.
+    reader.readAsText(data);
+  }
+
+  function loadMap(data)
+  {
+
+  	project.clear();
+  	myMap.resetData();
+  	myMap.load(data);
+		myMap.draw();
+		
+		entities.draw();
+		entities.hide();
+		myMap.bringTrafficLightsToFront();
+		mapLayer = project.activeLayer;
+		secondLayer = new Layer();
+		view.draw();
+  }
+
+	onload = function(e) {
+
+		entStyle.carShape.args.size = [ 3.5, 5 ];
+
+		if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  	
+	  	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+		} else {
+		  alert('The File APIs are not fully supported in this browser.');
+		}
+
+		$('#loadingDialog').modal({
+			backdrop : 'static',
+			keyboard : false,
+			show : false,
+		});
+
+		$('#dataDialog').modal({
+			show : false,
+		});
+
+		paper.setup(document.getElementById("canvas"));
+		//loadingDialog.dialog('open');
+		$('#outputData').text("Started loading and drawing");
+		$('#loadingDialog').modal('show');
+
+		myMap.setStyle(style);
+
+
+		var myTool = new Tool();
+		myTool.onMouseDown = function(event) {
+			path = new Point();
+			path.add(event.point);
+			$("#canvas").css('cursor', '-webkit-grabbing');
+
+		};
+
+		myTool.onMouseDrag = function(event) {
+			path.add(event.point);
+
+			var des = traslladar(event.downPoint, event.point);
+			paper.project.view.center = des;
+
+		}
+
+		myTool.onMouseUp = function(event) {
+			$("#canvas").css('cursor', '-webkit-grab');
+			$("#canvas").css('cursor', '-moz-grab');
+		}
+
+		$('#canvas').mousewheel(function(event) {
+			event.deltaY > 0 ? zoomIn() : zoomOut();
+		});
+
+		$('#getData').on(
+				'click',
+				function() {
+					//console.log(JSON.stringify(myMap.getUpdatedData(), null, 2));
+					$('#jsonDataArea').text(
+							JSON.stringify(myMap.getUpdatedData(), null, 2));
+					$('#dataDialog').modal("show");
+				});
+
+		$('#action1').on('click', function() {
+			craftStatesForCar(state, 1, route2, myMap, 10, 1000);
+			console.log(state);
+		});
+	}
+</script>
+
+</head>
+<body>
+
+	<!--
+	<p>
+		<a id="openws" href="#" onClick="openSocket()">Open</a>
+		<a id="closews" href="#" onClick="closeSocket()">Close</a>
+	</p>-->
+
+	<div id="canvas-wrap">
+
+
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myDataDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myDataDialogLabel">Json Data</h4>
+					</div>
+					<div class="modal-body">
+						<pre id="jsonDataArea" style="overflow: auto; max-height: 500px;"></pre>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary"
+							onClick="selectText('jsonDataArea')">Select all</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myLoadingDialogLabel">Loading...</h4>
+					</div>
+					<div class="modal-body">
+						<p id="loadingMessage"></p>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active"
+								role="progressbar" aria-valuenow="100" aria-valuemin="0"
+								aria-valuemax="100" style="width: 100%">
+								<span class="sr-only">Loading</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
+					</div>
+					<div class="modal-body">
+						<p id="messageDialogText"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--
+		<div id="dialog" style="overflow:auto;">
+			<p style="font-size:10pt;"></p>
+		</div>
+		<div id="loadingDialog" title="Loading map">
+			<div class="progress-label">Starting loading...</div>
+			<div id="progressbar"></div>
+		</div>
+		-->
+		<form >
+			<span id="debug"><a id="getData" href="#">Get data</a> - </span> <span
+				id="debugq"><a id="action1" href="#">Generate states</a> - </span> <span><a
+				id="action2" href="#">Create states</a> - </span> <span><a
+				id="action3" href="#" onClick="resetSimulation()">Reset
+					simulation</a> - </span> <span id="debugOutput"></span>
+			<input type="file" id="files" name="files" />
+			<span style="float:right;">Cached states: <span id="statesCount"></span> </span>
+		</div>
+		</form>
+		<canvas id="canvas" resize hidpi="off"
+			style="background-color: #F0EDE5;"></canvas>
+		<div id="controls-div">
+			<p>
+				<a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a
+					id="zoomOutBtn" href="#" onClick="zoomOut()">-</a>
+			</p>
+			<p>
+				<a onClick="switchTrafficLights()">Switch</a>
+			</p>
+			<p>
+				<a id="terminateBtn" onClick="requestTermination()">T</a>
+			</p>
+		</div>
+		<div id="info-box">
+			
+		</div>
+	</div>
+</body>
+</html>

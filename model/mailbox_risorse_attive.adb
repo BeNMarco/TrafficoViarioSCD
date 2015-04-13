@@ -1281,6 +1281,7 @@ package body mailbox_risorse_attive is
                         end if;
                         if new_abitante.next/=null then
                            if new_abitante.posizione_abitante.get_where_now_posizione_abitanti>=new_abitante.next.posizione_abitante.get_where_now_posizione_abitanti then
+                              Put_Line("ERRORE id ab: " & Positive'Image(new_abitante.posizione_abitante.get_id_abitante_posizione_abitanti) & new_float'Image(new_abitante.posizione_abitante.get_where_now_posizione_abitanti) & " next is " & Positive'Image(new_abitante.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " posizione: " & new_float'Image(new_abitante.next.posizione_abitante.get_where_now_posizione_abitanti));
                               raise lista_abitanti_rotta;
                            end if;
                         end if;

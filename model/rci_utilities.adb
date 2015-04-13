@@ -125,7 +125,7 @@ begin
             end if;
       end;
       exit when web_server_is_closed or
-        (signal_quit_arrived and get_webServer=null));
+        (signal_quit_arrived and get_webServer=null);
    end loop;
    Put_Line("Il web server è stato chiuso.");
 

@@ -1,3 +1,40 @@
 \section{Chiusura del sistema}
 La chiusura del sistema deve avvenire per input dell'utente;\\
-ogni quartiere è configurato in modo da disporre di almeno una strada principale, il task che gestisce tale strada dovrà svolgere una procedura che permette la chiusura del quartiere a cui appartiene il task. In particolare un task prima dell'operazione di sincronizzazione al nuovo quanto di sistema dovrà controllare se è stato notificato del fatto che il sistema deve essere chiuso; la notifica di chiusura dovrà essere inviata dal name server dato che dispone della conoscenza di tutti i quartieri che si sono registrati e quindi configurati, infatti un quartiere quando istanziato deve notificare subito il name server della sua presenza in modo tale che tutti gli altri quartieri possano accorgersi della sua presenza. Se il name server ha ricevuto la notifica di chiusura, dapprima rifiuterà l'istanziazione di ogni altro nuovo quartiere, poi dovrà inviare a tutti i quartieri la notifica di chiusura. Il task del quartiere arbitro della chiusura, controllerà prima della risincronizzazione se è stato notificato della chiusura, controllerà inoltre se tra i quartieri che ha nel suo registro (configurato a inizio sincronizzazione, vedi \ref{protosynch}) non vi siano dei quartieri in attesa di sincronizzazione (caso possibile nel caso in cui il quartiere sia una nuova partizione in attesa di essere sincronizzata per la prima volta); se non vi sono dei quartieri in attesa allora il quartiere è pronto per la chiusura e invierà al name server la notifica del fatto che il quartiere è pronto per chiudersi; altrimenti, se il quartiere nel suo registro presenta dei quartieri in attesa allora non potrà inviare la notifica al name server del fatto che è pronto per la chiusura. Solo  quando il nameserver riceve la notifica che tutti i quartieri sono pronti per la chiusura, allora invierà a tutti i quartieri la notifica del fatto che tutto il sistema è pronto per la chiusura; tali operazioni sono consistenti dato che un quartiere invierà la notifica del fatto che è pronto per la chiusura prima dell'operazione di sincronizzazione, e il name server invierà quindi prima della sincronizzazione di tutto il sistema la notifica di chiusura globale del sistema; cosi facendo i quartieri, o meglio i task dei quartieri, rieffettuano la sincronizzazione e poi controllano se hanno ricevuto la notifica da parte del name server del fatto che tutto il sistema è pronto per la chiusura. Se il controllo va a buon fine allora ogni task rappresentante strade e incroci potrà terminare la sua esecuzione, quindi l'utimo task attivo del sistema comunicherà a sua volta al name server che tutti i task del quartiere sono stati chiusi e quando tutti i quartieri hanno comunicato la loro chiusura il name server notificherà al server gps che dovrà chiudersi, analogamente dovrà comunicare l'avvenuta chiusura per procedere infine con la chiusura del web server, del name server stesso e quindi dell'intero sistema.
+ogni quartiere è configurato in modo da disporre di almeno una strada
+principale, il task che gestisce tale strada dovrà svolgere una procedura che
+permette la chiusura del quartiere a cui appartiene il task. In particolare un
+task prima dell'operazione di sincronizzazione al nuovo quanto di sistema dovrà
+controllare se è stato notificato del fatto che il sistema deve essere chiuso;
+la notifica di chiusura dovrà essere inviata dal name server dato che dispone
+della conoscenza di tutti i quartieri che si sono registrati e quindi
+configurati, infatti un quartiere quando istanziato deve notificare subito il
+name server della sua presenza in modo tale che tutti gli altri quartieri
+possano accorgersi della sua presenza. Se il name server ha ricevuto la
+notifica di chiusura, dapprima rifiuterà l'istanziazione di ogni altro nuovo
+quartiere, poi dovrà inviare a tutti i quartieri la notifica di chiusura. Il
+task del quartiere arbitro della chiusura, controllerà prima della
+risincronizzazione se è stato notificato della chiusura, controllerà inoltre se
+tra i quartieri che ha nel suo registro (configurato a inizio sincronizzazione,
+vedi \ref{protosynch}) non vi siano dei quartieri in attesa di sincronizzazione
+(caso possibile nel caso in cui il quartiere sia una nuova partizione in attesa
+di essere sincronizzata per la prima volta); se non vi sono dei quartieri in
+attesa allora il quartiere è pronto per la chiusura e invierà al name server la
+notifica del fatto che il quartiere è pronto per chiudersi; altrimenti, se il
+quartiere nel suo registro presenta dei quartieri in attesa allora non potrà
+inviare la notifica al name server del fatto che è pronto per la chiusura. Solo
+quando il nameserver riceve la notifica che tutti i quartieri sono pronti per
+la chiusura, allora invierà a tutti i quartieri la notifica del fatto che tutto
+il sistema è pronto per la chiusura; tali operazioni sono consistenti dato che
+un quartiere invierà la notifica del fatto che è pronto per la chiusura prima
+dell'operazione di sincronizzazione, e il name server invierà quindi prima
+della sincronizzazione di tutto il sistema la notifica di chiusura globale del
+sistema; cosi facendo i quartieri, o meglio i task dei quartieri, rieffettuano
+la sincronizzazione e poi controllano se hanno ricevuto la notifica da parte
+del name server del fatto che tutto il sistema è pronto per la chiusura. Se il
+controllo va a buon fine allora ogni task rappresentante strade e incroci potrà
+terminare la sua esecuzione, quindi l'ultimo task attivo del sistema comunicherà
+a sua volta al name server che tutti i task del quartiere sono stati chiusi e
+quando tutti i quartieri hanno comunicato la loro chiusura il name server
+notificherà al server gps che dovrà chiudersi, analogamente dovrà comunicare
+l'avvenuta chiusura per procedere infine con la chiusura del web server, del
+name server stesso e quindi dell'intero sistema.

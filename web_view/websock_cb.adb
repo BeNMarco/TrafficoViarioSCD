@@ -27,6 +27,9 @@ with AWS.Templates;
 with AWS.Translator;
 with GNATCOLL.JSON; use GNATCOLL.JSON;
 
+with Ada.Calendar; use Ada.Calendar;
+with the_name_server; use the_name_server;
+
 with WebServer; use WebServer;
 
 package body WebSock_CB is
@@ -77,7 +80,9 @@ package body WebSock_CB is
       if Has_Field(JMessage, "type") and eqic(Get(JMessage, "type"), "command") then
          -- received a command message from the client
          if eqic(Get(JMessage, "command"), "terminate") then
-            WebServer.get_webserver.notifica_terminazione;
+            WebServer.get_webserver.notifica_richiesta_terminazione;
+            delay until (Clock + 1.0);
+            the_name_server.quit_signal;
          end if;
       end if;
       

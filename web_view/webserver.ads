@@ -48,6 +48,7 @@ package WebServer is
 	procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: string; quartiere : Natural);
 	procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural);
 	procedure notifica_terminazione(This : in out WebServer_Wrapper_Type);
+	procedure notifica_richiesta_terminazione(This : in out WebServer_Wrapper_Type);
 
 	procedure Init(This : in out WebServer_Wrapper_Type);
 	procedure Shutdown(This : in out WebServer_Wrapper_Type);

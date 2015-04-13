@@ -1,2 +1,34 @@
 \section{Tecnologie utilizzate}
-Le tecnologie utilizzate per lo sviluppo del prototipo sono state scelte valutando principalmente il modello di concorrenza offerto dal linguaggio. Quindi è stato scelto ADA dato che il modello di concorrenza che il linguaggio offre si presta in modo tale da distinguere in modo chiaro le entità protagoniste in una realtà concorrente: task, risorse, code di attesa, ecc. Per quanto riguarda la distribuzione è stato sfruttato sempre il modello di distribuzione di ADA, ovvero ADA DSA, e quindi il middleware di PolyORB; la scelta di utilizzare DSA limita la portabilità dell'applicazione, ma è stato scelto comunque a discapito della portabilità, valutando principalmente la trasparenza con cui DSA permette di realizzare un sistema distribuito, e quindi la quantità di lavoro richiesto per implementare il prototipo.
+Le tecnologie utilizzate per lo sviluppo del prototipo sono state scelte
+valutando principalmente il modello di concorrenza offerto dal linguaggio.
+Quindi è stato scelto Ada dato che il modello di concorrenza che il linguaggio
+offre si presta in modo tale da distinguere in modo chiaro le entità
+protagoniste in una realtà concorrente: task, risorse, code di attesa, ecc. Per
+quanto riguarda la distribuzione è stato sfruttato sempre il modello di
+distribuzione di Ada, ovvero Ada \ac{DSA}, e quindi il middleware di
+PolyORB~\cite{polyorb}; la scelta di utilizzare DSA limita la portabilità
+dell'applicazione, ma è stato scelto comunque a discapito della portabilità,
+valutando principalmente la trasparenza con cui DSA permette di realizzare un
+sistema distribuito, e quindi la quantità di lavoro richiesto per implementare
+il prototipo.
+
+Per l'implementazione del web server è stato utilizzato il framework
+\ac{AWS}~\cite{aws}. \ac{AWS} permette di realizzare web application complete e
+ricche, utilizzando il linguaggio di programmazione Ada. La scelta di questo
+framework è stata dettata dalla facilità di utilizzo e di integrazione con il
+resto del sistema. La possibilità di utilizzare Ada \ac{DSA} ha semplificato
+notevolmente l'implementazione della comunicazione tra il web server e il resto
+del sistema. 
+
+La visualizzazione dello stato è stata realizzata utilizzando tecnologie di
+sviluppo web. In particolare, è stata utilizzata la libreria JavaScript
+Paper.js. Questo software ha permesso di disegnare la mappa e le entità che si
+muovono su di essa in modo semplice e intuitivo, adattandosi pienamente al
+modello di simulazione a traiettorie utilizzato dal sistema. La continua
+ricezione di aggiornamenti di stato da parte dei client è stata resa possibile
+grazie all'utilizzo di WebSocket. La scelta di utilizzare queste tecnologie è
+stata motivata dalla facilità di sviluppo delle applicazione e dalla semplicità
+con cui vengono distribuite. L'utente che vuole visualizzare la simulazione del
+sistema deve solamente essere dotato dell'ultima versione del proprio browser
+web\footnote{Le prestazioni migliori con il nostro sistema sono state osservate
+utilizzando il web browser Chrome}. 

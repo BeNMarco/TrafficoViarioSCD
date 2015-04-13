@@ -1,4 +1,47 @@
 \section{Gestione dei veicoli di tipo autobus}
-Una certa entità può essere configurata in modo tale da voler spostarsi per mezzo autobus. Per convenzione ogni strada principale dispone di un luogo adibito a fermata per l'autobus; un luogo di questo tipo verrà gestito per mezzo di un task di tipo strada ingresso. Quello che occorre garantire è che un'entità non aspetti ad una fermata per cui un autobus non passi mai, bloccando quindi l'entità su una fermata per un tempo indefinito. La configurazione della mappa dovrà aiutare a garantire che questa situazione sia impossibile. Dato che ogni strada dispone della sua fermata occorre configurare una certa linea di percorrenza per gli autobus, tale linea è una lista di fermate che l'autobus dovrà fare. Occorre tener presente inoltre che un'entità può voler spostarsi da una fermata appartenente ad un quartiere ad una fermata appartenente ad un quartiere diverso. Pertanto la configurazione delle linee degli autobus dovrà essere fatta in modo che una linea copra tutte le fermate di un certo quartiere, nell'ordine stabilito quindi dall'utente, l'autobus quindi percorrerà tutte le fermate e una volta arrivato al capolinea ricomincerà a percorrera la linea al contrario. Supponendo dapprima che l'entità voglia muoversi tra fermate di uno stesso quartiere, configurando la linea come detto si avrà che un'entità potrà sempre raggiungere la destinazione; dato che alcune entità devono muoversi da una fermata appartenente ad un quartiere e una appartenente ad uno diverso, si devono integrare degli autobus ("autobus jolly") che percorrono interamente le fermate di un quartiere e terminino il loro tragitto in una fermata di un altro quartiere (questo va fatto per ogni quartiere, ovvero è necessario inserire un autobus jolly che effettua come ultima fermata, una fermata appartenente ad un quartiere diverso da quello a cui la linea delle fermate dell'autobus copre); in questo modo, spostando l'entità su un altro quartiere di certo, prima o poi passerà un autobus che coprirà tutte le fermate di quel quartiere potendo portare cosi a destinazione l'entità.\\
-Un autobus svolge un percorso che muove da una fermata all'altra; se l'autobus arriva ad una certa fermata, allora il task che gestisce la fermata, dovrà controllare se esiste una qualche entità in attesa di essere spostata e se tra le prossime fermate dell'autobus in arrivo si ha anche la fermata delle entità in attesa; se l'entità in attesa presenta una fermata che l'autobus dovrà fare allora l'entità potrà essere presa in gestione per quell'autobus, infine l'autobus dovrà far scendere tutte quelle entità che sono giunte alla fermata di destinazione che verranno prese poi in gestione dalla fermata per farle muovere verso il luogo di destinazione effettivo dell'entità, che sarà per forza un luogo appartenente alla strada principale su cui si riferisce la fermata in cui l'entità è giunta. \\
-Dal punto di vista implementativo per rappresentare lo spostamento delle entità che muovono nell'autobus, si dovrà riferire una risorsa remota reperibile per ogni quartiere che si occuperà della memorizzazione dello stato degli autobus che sono stati instanziati nel medesimo quartiere e quindi del loro stato di avanzamento e delle entità che hanno in gestione, evitando cosi che un certo autobus trasferisca tutto il suo stato tra risorse distinte nel momento in cui esso percorre il suo tragitto.
+ Una certa entità può essere configurata in modo tale da voler spostarsi per
+mezzo autobus. Per convenzione ogni strada principale dispone di un luogo
+adibito a fermata per l'autobus; un luogo di questo tipo verrà gestito per
+mezzo di un task di tipo strada ingresso. Quello che occorre garantire è che
+un'entità non aspetti ad una fermata per cui un autobus non passi mai,
+bloccando quindi l'entità su una fermata per un tempo indefinito. La
+configurazione della mappa dovrà aiutare a garantire che questa situazione sia
+impossibile. Dato che ogni strada dispone della sua fermata occorre configurare
+una certa linea di percorrenza per gli autobus, tale linea è una lista di
+fermate che l'autobus dovrà fare. Occorre tener presente inoltre che un'entità
+può voler spostarsi da una fermata appartenente ad un quartiere ad una fermata
+appartenente ad un quartiere diverso. Pertanto la configurazione delle linee
+degli autobus dovrà essere fatta in modo che una linea copra tutte le fermate
+di un certo quartiere, nell'ordine stabilito quindi dall'utente, l'autobus
+quindi percorrerà tutte le fermate e una volta arrivato al capolinea
+ricomincerà a percorrerà la linea al contrario. Supponendo dapprima che
+l'entità voglia muoversi tra fermate di uno stesso quartiere, configurando la
+linea come detto si avrà che un'entità potrà sempre raggiungere la
+destinazione; dato che alcune entità devono muoversi da una fermata
+appartenente ad un quartiere e una appartenente ad uno diverso, si devono
+integrare degli autobus ("autobus jolly") che percorrono interamente le fermate
+di un quartiere e terminino il loro tragitto in una fermata di un altro
+quartiere (questo va fatto per ogni quartiere, ovvero è necessario inserire un
+autobus jolly che effettua come ultima fermata, una fermata appartenente ad un
+quartiere diverso da quello a cui la linea delle fermate dell'autobus copre);
+in questo modo, spostando l'entità su un altro quartiere di certo, prima o poi
+passerà un autobus che coprirà tutte le fermate di quel quartiere potendo
+portare cosi a destinazione l'entità.\\
+Un autobus svolge un percorso che muove da una fermata all'altra; se l'autobus
+arriva ad una certa fermata, allora il task che gestisce la fermata, dovrà
+controllare se esiste una qualche entità in attesa di essere spostata e se tra
+le prossime fermate dell'autobus in arrivo si ha anche la fermata delle entità
+in attesa; se l'entità in attesa presenta una fermata che l'autobus dovrà fare
+allora l'entità potrà essere presa in gestione per quell'autobus, infine
+l'autobus dovrà far scendere tutte quelle entità che sono giunte alla fermata
+di destinazione che verranno prese poi in gestione dalla fermata per farle
+muovere verso il luogo di destinazione effettivo dell'entità, che sarà per
+forza un luogo appartenente alla strada principale su cui si riferisce la
+fermata in cui l'entità è giunta. \\
+Dal punto di vista implementativo per rappresentare lo spostamento delle entità
+che muovono nell'autobus, si dovrà riferire una risorsa remota reperibile per
+ogni quartiere che si occuperà della memorizzazione dello stato degli autobus
+che sono stati istanziati nel medesimo quartiere e quindi del loro stato di
+avanzamento e delle entità che hanno in gestione, evitando cosi che un certo
+autobus trasferisca tutto il suo stato tra risorse distinte nel momento in cui
+esso percorre il suo tragitto.

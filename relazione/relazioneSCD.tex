@@ -21,6 +21,16 @@
 \usepackage{mathtools}
 \hypersetup{colorlinks,breaklinks,linkcolor=blue,urlcolor=black}
 
+\usepackage[nolist]{acronym}
+
+%%%%%%%%%%%%%%%%%%%%%% ACRONIMI %%%%%%%%%%%%%%%%%%%%%%
+\begin{acronym}
+    \acro{DSA}{Distributed Systems Annex}
+    \acro{AWS}{Ada Web Server}
+    \acro{FIFO}{first in first out}
+    \acro{IDM}{Intelligent-Driver Model}
+\end{acronym}
+
 \usepackage[numbers,square,sort&compress]{natbib}
 \usepackage{fancyhdr}
 
@@ -48,7 +58,7 @@ stepnumber=1, numbersep=5pt, frame=single, #1}}{\endminipage}
 
 %% per commenti vari
 
-\usepackage[draft]{fixme} % remove draft option for final paper
+\usepackage{fixme} % remove draft option for final paper
 \fxsetup{layout=inline,theme=color}
 \FXRegisterAuthor{mn}{amn}{\color{green}mn} % marco negro
 \FXRegisterAuthor{mb}{amb}{\color{blue}mb} % marco baesso
@@ -69,7 +79,7 @@ stepnumber=1, numbersep=5pt, frame=single, #1}}{\endminipage}
 % Titolo documento + titolo a pie' pagina e data (tokens)
 \titolo={Relazione sull'esercitazione finale di Sistemi Concorrenti e Distribuiti} 
 %\sottotitolo={Progetto di Sistemi concorrenti e distribuiti} 
-\data={d}
+\data={14/04/2015}
 
 % Informazioni documento (tokens)
 \filename={relazioneSCD.pdf}
@@ -135,8 +145,8 @@ Analisi del progetto didattico di Sistemi Concorrenti e Distribuiti. Considerazi
 \input{autobus}
 \input{snapshot}
 \input{chiusura}
-\input{tecnologie}
 \input{view}
+\input{tecnologie}
 %\newpage
 \pagebreak
 \listoffixmes

@@ -98,12 +98,23 @@ package body WebServer is
       JData : JSON_Value := Create_Object;
    begin
       Set_Field(Val => JData, Field_Name => "type", Field => "command");
-      Set_Field(Val => JData, Field_Name => "command", Field => "terminate");
+      Set_Field(Val => JData, Field_Name => "command", Field => "terminated");
 
       for recipient of This.Rcp_Registry loop
          Net.WebSocket.Registry.Send (recipient , Write(JData));
       end loop;
    end notifica_terminazione;
+
+   procedure notifica_richiesta_terminazione(This : in out WebServer_Wrapper_Type) is
+      JData : JSON_Value := Create_Object;
+   begin
+      Set_Field(Val => JData, Field_Name => "type", Field => "command");
+      Set_Field(Val => JData, Field_Name => "command", Field => "termination_requested");
+
+      for recipient of This.Rcp_Registry loop
+         Net.WebSocket.Registry.Send (recipient , Write(JData));
+      end loop;
+   end notifica_richiesta_terminazione;
 
    -- function get_richiesta_terminazione return Boolean is
    -- begin

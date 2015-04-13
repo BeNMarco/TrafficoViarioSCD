@@ -204,9 +204,20 @@
 				{
 					sim.addState(msg);
 				} 
-				else if (msg.type == "command" && msg.command == "terminate")
+				else if (msg.type == "command")
 				{
-					openMessageDialog("Simulation terminated.<br />Now you can close your browser.");
+					console.log(msg);
+					if(msg.command == "terminated")
+					{
+						closeLoadingDialog();
+						openMessageDialog("Simulation terminated.<br />Now you can close your browser.");
+					}
+					if(msg.command == "termination_requested")
+					{
+						openLoadingDialog();
+						$('#loadingMessage').html(
+								"Termination requested</ br>Awaiting termination signal from the system");
+					}	
 				}
 			}
 		}
@@ -223,8 +234,6 @@
 		{
 			var data = {type:"command", command:"terminate"};
 			var text = JSON.stringify(data);
-			console.log(data);
-			console.log(text);
 			ws1.send(text);
 		}
 	}
@@ -279,7 +288,7 @@
 
 	onload = function(e) {
 
-		entStyle.carShape.args.size = [ 3.5, 5 ];
+		//entStyle.carShape.args.size = [ 3.5, 5 ];
 
 		$('#loadingDialog').modal({
 			backdrop : 'static',

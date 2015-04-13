@@ -1,9 +1,8 @@
 \section{Rappresentazione grafica della simulazione}
-%La visualizzazione della simulazione è stata realizzata utilizzando un Web
-%Server, appositamente realizzato per lo scopo, e tecnologie web per la
-%realizzazione di contenuti web quali HTML5, JavaScript e WebSocket.
-La visualizzazione della simulazione è stata implementata sottoforma di web
-server. Gli utenti del sistema possono assistere alla simulazione semplicemente
+La visualizzazione della simulazione è stata realizzata utilizzando un Web
+Server, appositamente realizzato per lo scopo, e tecnologie web per la
+realizzazione di contenuti web quali HTML5, JavaScript e WebSocket.
+Gli utenti del sistema possono assistere alla simulazione semplicemente
 visualizzando un'apposita pagina web nel loro browser.
 
 Nel sistema di visualizzazione si possono identificare due componenti
@@ -19,8 +18,6 @@ gli stati della simulazione e di rappresentarli graficamente all'utente.
 L'interfaccia grafica è stata progettata e realizzata in modo tale da
 soddisfare una serie di requisiti che derivano dalla natura distribuita del
 sistema. 
-
-I requisiti identificati per questo modulo sono riportati di seguito.
 
 \begin{description}
 	\item[Scalabilità:] la rappresentazione grafica della simulazione deve 
@@ -139,14 +136,26 @@ descritte di seguito.
 	attivare un WebSocket per ricevere gli aggiornamenti di stato.
 	Durante questa fase un client può inoltrare, attraverso lo stesso WebSocket, la
 	richiesta di terminazione della simulazione.
-	\item[Terminazione:] in seguito alla richiesta di un client o alla terminazione
-	da parte del sistema, il name server notifica il web server della fine della
+	\item[Terminazione:] la simulazione, e quindi anche la sua visualizzazione,
+	viene terminata in seguito alla richiesta da parte di un client. Il web server
+	ha il compito di attendere la richiesta di terminazione da parte di un client e
+	inoltrarla al name server. Prima di notificare il name server, il web server
+	avverte tutti i client dell'imminente terminazione della simulazione.
+	A terminazione avvenuta, il name server notifica il web server della fine della
 	simulazione usando il metodo \texttt{close\_webserver}. Questa procedura causa
-	la notifica a tutti i client della fine della simulazione. Successivamente il
-	web server viene spento, liberando tutte le risorse utilizzate ed eliminando
-	eventuali file temporanei. L'ultimo azione consiste nel notificare il name
-	server dell'avvenuto spegnimento.
+	la notifica a tutti i client dell'avvenuta fine della simulazione.
+	Successivamente il web server viene spento, liberando tutte le risorse utilizzate ed eliminando
+	eventuali file temporanei. L'ultima azione consiste nel notificare il name
+	server dell'avvenuto spegnimento. La Figura \ref{fig:stopwebserver} descrive
+	questa procedura.
 \end{description}
+
+\begin{figure}[H] % Example image
+\center{\includegraphics[width=\linewidth]{ChiusuraWebServer}}
+\caption{Diagramma di sequenza che descrive la procedura di terminazione della
+visualizzazione della simulazione}
+\label{fig:stopwebserver}
+\end{figure}
 
 \subsection{Client}
 Il client ha la possibilità di eseguire tre funzionalità differenti,
@@ -223,10 +232,10 @@ Per la realizzazione di questo sistema è stato scelto di fissare questo valore 
 
 \paragraph*{Strade di ingresso}
 Le strade di ingresso sono le rappresentazioni dei viali o strade di accesso a
-case o edifici. Come le strade urbane possiedono un identificativo ma sono
-prime di estremi \texttt{from} e \texttt{to}.
+case o edifici. Come le strade urbane, possiedono un identificativo ma sono
+prive di estremi \texttt{from} e \texttt{to}.
 Per convenzione sono sempre strade prive di curve e sono posizionate in
-riferimento ad una strada principale. Per questo motivo la posizione di queste
+riferimento ad una strada principale. Per questo motivo, la posizione di queste
 strade è definita utilizzando l'id della strada urbana a cui si riferiscono, il
 lato della strada dove si immettono e la distanza in metri dall'estremo
 \texttt{from}.
@@ -263,17 +272,17 @@ luogo. Ulteriori dettagli specificano la capienza del luogo in termine di
 persone, auto e bici.
 
 \subsubsection{Rappresentazione della mappa}
-La rappresentazione grafica della mappa a partire dalla descrizione di un
-quartiere procede prima caricando tutti gli elementi da visualizzare e poi
+La rappresentazione grafica della mappa, a partire dalla descrizione di un
+quartiere, procede prima caricando tutti gli elementi da visualizzare e poi
 disegnandoli effettivamente sullo schermo.
 
-La rappresentazione grafica è realizzata mediante la libreria Paper.js~\cite{paperjs}
-che permette di semplificare notevolmente le operazioni di disegno su di un
-oggetto Canvas.
+La rappresentazione grafica è realizzata mediante la libreria
+Paper.js~\cite{paperjs}, la quale permette di semplificare notevolmente le
+operazioni di disegno su di un oggetto Canvas.
 
 Tutte le fasi di caricamento e disegno della mappa vengono eseguite attraverso
-uno specifico oggetto JavaScript che funge anche da registro per le strade,
-incroci e altre entità statiche della mappa.
+uno specifico oggetto JavaScript. Quest'ultimo funge anche da registro per
+le strade, incroci e altre entità statiche della mappa.
 
 La prima fase consiste nel creare le istanze degli oggetti strada, incrocio e
 lugo, caricarle nei registri e poi collegarle tra loro. La fase di collegamento
@@ -313,29 +322,33 @@ l'entità si sta muovendo e la nuova posizione sulla suddetta traiettoria.
 \paragraph*{Rendering degli spostamenti per interpolazione}
 Lo spostamento effettivo degli oggetti visualizzati dal client procede con una
 frequenza di aggiornamento differente rispetto a quella di invio degli stati.
-Questa caratteristica richiede l'introduzione di una tecnica di interpolaizone.
+Questa caratteristica richiede l'introduzione di una tecnica di interpolazione.
 
 Utilizzando una tecnica di interpolazione è possibile rappresentare lo
 spostamento di un oggetto in maniera fluida, anche quando la frequenza di
 aggiornamento dello stato è molto bassa.
 
-Nel caso della nostra simulazione, gli aggiornamenti di stato arrivano ai client
-con la freuqenza media di uno al secondo. Questa frequenza è troppo bassa per
-permettere una visualizzazione fluida. 
+Nel caso della nostra simulazione, il tempo che intercorre tra il calcolo di
+uno stato e il successivo è pari ad un secondo. Di conseguenza, i client
+riceveranno gli aggiornamenti con un intervallo minimo di arrivo pari a un
+secondo. Questa frequenza è troppo bassa per permettere una visualizzazione
+fluida.
 
-L'interpolazione viene eseguita utilizzando usando due stati consecutivi.
-Indichiamo con $t_{i}^{s}$ e $d_{i}^{s}$ rispettivamente il tempo di arrivo di
-uno stato e la posizione dell'entità e con $t_{i-1}^{s}$ e $d_{i-1}^{s}$ tempo
-di arrivo e posizione relativi allo dello stato precedente. La durata effettiva
+L'interpolazione viene eseguita utilizzando due stati consecutivi.
+Indichiamo con $t_{i}^{s}$ e $d_{i}^{s}$ rispettivamente l'istante a cui si
+riferisce uno stato e la posizione dell'entità e con $t_{i-1}^{s}$ e
+$d_{i-1}^{s}$ istante e posizione dello stato precedente. La durata effettiva
 di uno stato ricevuto dal sistema di simulazione sarà quindi:
-$$\Delta_{i}^{s}=t_{i}^{s}-t_{i-1}^{s}$$ mentre lo spostamento effettuato tra i
-due stati sarà $$\Delta_{i}^{d}=d_{i}^{s}-d_{i-1}^{s}$$
-Il sistema di rendering impiega, per ridisegnare la posizione di
-tutte le entità, un tempo $$\Delta^{r}<\Delta_{i}^{s}$$
-Indichiamo con $j$ il numero di rendering che possiamo effettuare nel tempo che
-intercorre tra l'arrivo di uno stato e il successivo. Per semplificare
-ipotizziamo che questo valore sia intero e che il tempo di rendering sia
-costante.
+$$\Delta_{i}^{s}=t_{i}^{s}-t_{i-1}^{s}$$ e sarà pari all'intervallo di
+aggiornamento dettato dal sistema di simulazione (pari a un secondo).
+Analogamente, lo spostamento effettuato tra i due stati sarà
+$$\Delta_{i}^{d}=d_{i}^{s}-d_{i-1}^{s}$$ 
+Il sistema di rendering impiega, per ridisegnare la posizione di tutte le
+entità, un tempo $$\Delta^{r}<\Delta_{i}^{s}$$ 
+Indichiamo con $j$ il numero di operazioni di rendering che possiamo effettuare
+nel tempo che intercorre tra l'arrivo di uno stato e il successivo. 
+Per semplificare ipotizziamo che questo valore sia intero e che il tempo di
+rendering sia costante.
 Avremo quindi che $$j=\frac{\Delta_{i}^{s}}{\Delta^{r}}$$
 Possiamo ora aumentare la frequenza di aggiornamento interpolando ogni
 $\Delta^{r}$ la posizione effettiva dell'entità.
@@ -352,17 +365,17 @@ adottate nell'implementazione, la quale gestisce tempi di rendering non
 costanti.
 
 Utilizzando questa tecnica si nota subito che la simulazione sarà visualizzata
-dall'utente con un ritardo pari alla durata di uno stato.
+dall'utente con un ritardo minimo pari alla durata di uno stato.
 
 \paragraph*{Gestione degli stati}
 Per garantire una visualizzazione fluida e continua è stata adottata una tecnica
-di buffering degli stati. Il tempo che intercorre tra la ricezione di uno stato
-e il successivo non è costante. Nel caso in cui questo tempo superi quello
-prestabilito dal sistema la visualizzazione della simulazione subisce un
-arresto.
+di buffering degli stati. A causa delle caratteristiche di rete, il tempo che
+intercorre tra la ricezione di uno stato e il successivo può non è costante. Nel
+caso in cui questo tempo superi quello prestabilito dal sistema la
+visualizzazione della simulazione subisce un arresto.
 
 Per evitare questo fenomeno è stato introdotto un buffer che salva un numero di
-stati prima di cominciare la visualizzazione. In questo modo è possible fare
+stati prima di cominciare la visualizzazione. In questo modo è possibile fare
 affidamento ad una scorta di stati qualora la ricezione subisca un
 rallentamento.
 

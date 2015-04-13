@@ -1,10 +1,47 @@
 \section{Gestione semafori}
-I semafori vengono utilizzati per regolamentare l'attraversamento delle entità negli incroci; dato che il tempo è discretizzato quello che conviene fare è cambiare il colore del semaforo sulla base di un contatore del numero di quanti trascorsi con il semaforo configurato con un determinato colore. La cosa evidente è quella di far in modo che se in un certo quanto di tempo il semaforo presenta un certo colore, tale colore sarà lo stesso per tutto il quanto e potrà cambiare al più dal quanto di sistema successivo. Un incrocio può avere delle strade che appartengono a quartieri diversi dal quartiere a cui l'incrocio appartiene; un requisito di sistema deve essere che se una strada principale richieda in un certo quanto il colore del semaforo, tale colore rimarrà tale per ogni altra richiesta avvenuta nel quanto di sistema stesso. Sfruttando il protocollo di sincronizzazione è possibile trovare il momento giusto in cui è possibile cambiare il colore dei semafori. Infatti quando il sistema è sincronizzato allora tutte le entità attive hanno svolto il loro lavoro in relazione al quanto di tempo precedente; quindi quando un quartiere riceverà la notifica che tutti gli altri quartieri sono pronti per una nuova sincronizzazione allora in quel momento può avvenire la gestione dei semafori permettendo cosi che per un task di un certo quartiere, ad operazione di sincronizzazione eseguita tutti i semafori degli incroci sono stati gestiti e se necessario avranno quindi cambiato il loro colore.\\
-La politica scelta per aggiornare lo stato dei semafori, si basa sulla considerazione che se un semaforo di una certa strada è verde, allora sarà verde anche quello della strada opposta, ovvero nella stessa direzione; mentre le strade perpendicolari avranno colore del semaforo rosso. Infine gli attraversamenti pedonali degli incroci sono gestiti in modo tale che a semaforo verde per le entità di tipo bici/pedoni tutti gli attraversamenti pedonali dell'incrocio avranno semaforo verde. \\
-Un semaforo resterà verde per un certo numero di quanti fissato a priori (variabile a seconda della tipologia dell'entità passiva), e la gestione degli attraversamenti deve avvenire secondo la seguente strategia:
+I semafori vengono utilizzati per regolamentare l'attraversamento delle entità
+negli incroci; dato che il tempo è discretizzato quello che conviene fare è
+cambiare il colore del semaforo sulla base di un contatore del numero di quanti
+trascorsi con il semaforo configurato con un determinato colore. La cosa
+evidente è quella di far in modo che se in un certo quanto di tempo il semaforo
+presenta un certo colore, tale colore sarà lo stesso per tutto il quanto e
+potrà cambiare al più dal quanto di sistema successivo. Un incrocio può avere
+delle strade che appartengono a quartieri diversi dal quartiere a cui
+l'incrocio appartiene; un requisito di sistema deve essere che se una strada
+principale richieda in un certo quanto il colore del semaforo, tale colore
+rimarrà tale per ogni altra richiesta avvenuta nel quanto di sistema stesso.
+Sfruttando il protocollo di sincronizzazione è possibile trovare il momento
+giusto in cui è possibile cambiare il colore dei semafori. Infatti quando il
+sistema è sincronizzato allora tutte le entità attive hanno svolto il loro
+lavoro in relazione al quanto di tempo precedente; quindi quando un quartiere
+riceverà la notifica che tutti gli altri quartieri sono pronti per una nuova
+sincronizzazione allora in quel momento può avvenire la gestione dei semafori
+permettendo cosi che per un task di un certo quartiere, ad operazione di
+sincronizzazione eseguita tutti i semafori degli incroci sono stati gestiti e
+se necessario avranno quindi cambiato il loro colore.\\
+La politica scelta per aggiornare lo stato dei semafori, si basa sulla
+considerazione che se un semaforo di una certa strada è verde, allora sarà
+verde anche quello della strada opposta, ovvero nella stessa direzione; mentre
+le strade perpendicolari avranno colore del semaforo rosso. Infine gli
+attraversamenti pedonali degli incroci sono gestiti in modo tale che a semaforo
+verde per le entità di tipo bici/pedoni tutti gli attraversamenti pedonali
+dell'incrocio avranno semaforo verde. \\
+Un semaforo resterà verde per un certo numero di quanti fissato a priori
+(variabile a seconda della tipologia dell'entità passiva), e la gestione degli
+attraversamenti deve avvenire secondo la seguente strategia:
 \begin{enumerate}
-\item si scelgano quali strade devono avere per prime il semaforo verde, si  abilitano tali semafori (favorendo quindi l'avanzamento dei veicoli) e si disabilitano i semafori di bici/pedoni;
-\item si controlla il numero di quanti trascorsi, per i quali il semaforo è rimasto verde;
-\item se il numero di quanti entro i quali il semaforo doveva essere verde ha raggiunto il numero massimo, allora se il semaforo abilitato è il semaforo dei veicoli, lo si deve disabilitare e abilitare quello di bici/pedoni; se il semaforo abilitato era quello per le bici e pedoni allora lo si deve disabilitare e abilitare quello dei veicoli con colore di semaforo rosso per quelle strade che per ultime avevano il semaforo verde, dando il colore verde ai semafori di quelle strade quindi che per ultime avevano il colore rosso.\\ Ritorna in \textit{2)}.
+\item si scelgano quali strade devono avere per prime il semaforo verde, si 
+abilitano tali semafori (favorendo quindi l'avanzamento dei veicoli) e si
+disabilitano i semafori di bici/pedoni;
+\item si controlla il numero di quanti trascorsi, per i quali il semaforo è
+rimasto verde;
+\item se il numero di quanti entro i quali il semaforo doveva essere verde ha
+raggiunto il numero massimo, allora se il semaforo abilitato è il semaforo dei
+veicoli, lo si deve disabilitare e abilitare quello di bici/pedoni; se il
+semaforo abilitato era quello per le bici e pedoni allora lo si deve
+disabilitare e abilitare quello dei veicoli con colore di semaforo rosso per
+quelle strade che per ultime avevano il semaforo verde, dando il colore verde
+ai semafori di quelle strade quindi che per ultime avevano il colore rosso.\\
+Ritorna in \textit{2)}.
 \end{enumerate}
  

@@ -7,11 +7,11 @@ var idCurCarDbg;
 
 function doesExists(thing)
 {
-	return typeof thing !== 'undefined' && thing != null;
+	return typeof thing !== 'undefined' && thing !== null;
 }
 
 function EntitiesStyle(){
-	this.carShape = {type:'Rectangle', args: {point:[0,0],size:[7,11]}}; //[new Point(0,0), new Size(11,7)]
+	this.carShape = {type:'Rectangle', args: {point:[0,0],size:[3.5,5]}}; //[new Point(0,0), new Size(11,7)]
 	this.carColor = 'red';
 	this.busShape = {type:'Rectangle', args: {point:[0,0],size:[8,15]}};
 	this.busColor = 'blue';
@@ -19,49 +19,95 @@ function EntitiesStyle(){
 	this.bikeColor = 'green';
 	this.pedestrianShape = {type:'Circle', args: {center:[0,0], radius:0.5}};
 	this.pedestrianColor = 'pink';
+
+	this.car = {
+		shape: {type:'Rectangle', args: {point:[0,0],size:[3.5,5]}},
+		color: 'red'
+	};
+	this.bus = {
+		shape: {type:'Rectangle', args: {point:[0,0],size:[8,15]}},
+		color: 'blue'
+	};
+	this.bike = {
+		shape: {type:'Circle', args: {center:[0,0], radius:0.5}},
+		color: 'green'
+	};
+	this.pedestrian = {
+		shape: {type:'Circle', args: {center:[0,0], radius:0.5}},
+		color: 'pink'
+	};
 }
 
-function Car(id, id_quartiere){
-	this.id = id;
-	this.id_quartiere = id_quartiere;
-	this.driver = null;
-	this.path = new Path();
+function Entity()
+{
 
-	this.currentPosition = null;
-	this.angle = 90;
-	this.length = 11;
 }
 
-Car.prototype.show = function(){
+Entity.prototype.show = function(){
 	this.path.visible = true;
 	//this.path.bringToFront();
 }
 
-Car.prototype.hide = function(){
+Entity.prototype.hide = function(){
 	this.path.visible = false;
 }
 
-Car.prototype.onMouseEnter = function(event) {
+Entity.prototype.draw = function(style){
+	this.path = new Path[style.shape.type](style.shape.args); //style.carShape.args[0], style.carShape.args[1]
+	console.log(this.path);
+	this.path.fillColor = style.color;
+	this.path.myData = this;
+
+	this.path.onMouseEnter = this.myOnMouseEnter;
+	/*function(event) {
 	  // Layout the tooltip above the dot
-	  var tooltipRect = new Rectangle(event.position + new Point(-20, -40), new Size(40, 28));
+	  //var tooltipRect = new Rectangle(this.position + new Point(40, 40), new Size(100, 100));
 	  // Create tooltip from rectangle
-	  tooltip = new Path.Rectangle(tooltipRect);
-	  tooltip.fillColor = 'white';
-	  tooltip.strokeColor = 'black';
+	  this.tooltipLabel = new PointText(this.position.subtract(new Point(-5,-5)));
+	  this.tooltipLabel.fillColor = 'white';
+	  this.tooltipLabel.textColor = 'blue';
+	  this.tooltipLabel.strokeColor = 'black';
 	  // Name the tooltip so we can retrieve it later
-	  tooltip.name = 'tooltip';
+	  this.tooltipLabel.content = this.myData.id;
+	  this.tooltipLabel.bringToFront();
 	  // Add the tooltip to the parent (group)
 	  this.fillColor = 'green';
-	  this.parent.addChild(tooltip);
-	}
+	}*/
 
-Car.prototype.onMouseLeave = function(event) {
+
+	// Create onMouseLeave event for dot
+	this.path.onMouseLeave = this.myOnMouseLeave;
+	/*function(event) {
 	  // We retrieve the tooltip from its name in the parent node (group) then remove it
-	  this.parent.children['tooltip'].remove();
+	  this.tooltipLabel.remove();
 	  this.fillColor = 'red';
 	  console.log("out");
-	}
+	}*/
+}
 
+Entity.prototype.myOnMouseEnter = function(event) {
+  // Layout the tooltip above the dot
+  //var tooltipRect = new Rectangle(this.position + new Point(40, 40), new Size(100, 100));
+  // Create tooltip from rectangle
+  this.tooltipLabel = new PointText(this.position.subtract(new Point(-5,-5)));
+  this.tooltipLabel.fillColor = 'white';
+  this.tooltipLabel.textColor = 'blue';
+  this.tooltipLabel.strokeColor = 'black';
+  // Name the tooltip so we can retrieve it later
+  this.tooltipLabel.content = this.myData.id;
+  this.tooltipLabel.bringToFront();
+  // Add the tooltip to the parent (group)
+  this.fillColor = 'green';
+}
+
+Entity.prototype.myOnMouseLeave = function(event) {
+  // We retrieve the tooltip from its name in the parent node (group) then remove it
+  this.tooltipLabel.remove();
+  this.fillColor = 'red';
+  console.log("out");
+}
+
+/*
 Car.prototype.draw = function(style){
 	this.path = new Path[style.carShape.type](style.carShape.args); //style.carShape.args[0], style.carShape.args[1]
 	this.path.fillColor = style.carColor;
@@ -92,20 +138,23 @@ Car.prototype.draw = function(style){
 	  console.log("out");
 	}
 	//this.path.bringToFront();
+}*/
+
+Car.prototype = new Entity();
+Car.prototype.constructor = Car;
+
+function Car(id, id_quartiere){
+	this.id = id;
+	this.id_quartiere = id_quartiere;
+	this.driver = null;
+	this.path = new Path();
+
+	this.currentPosition = null;
+	this.angle = 90;
+	this.length = 11;
 }
 
 Car.prototype.move = function(pos, angle){
-	//this.path.position = new Point(pos.x, pos.y+this.length/2);
-	/*
-	if(doesExists(idCurCarDbg) && this.id == idCurCarDbg)
-	{
-		console.log(this.id+": " +angle);
-	}
-	else 
-	{
-		idCurCarDbg = this.id;
-	}
-*/
 	var p = new Point();
 	p.length = this.length/2;
 	p.angle = this.angle;
@@ -114,7 +163,46 @@ Car.prototype.move = function(pos, angle){
 	this.angle=angle;
 }
 
-//function Bike(id)
+Car.prototype.draw = function(style)
+{
+	// calling the "super" method
+	Entity.prototype.draw.call(this, style);
+	this.length = style.shape.args.size[1];
+}
+
+Bipede.prototype = new Entity();
+Bipede.prototype.constructor = Bipede;
+
+function Bipede(id, id_quartiere)
+{
+	this.id = id;
+	this.id_quartiere = id_quartiere;
+	this.path = new Path();
+
+	this.currentPosition = null;
+}
+
+Bipede.prototype.move = function(pos){
+	console.log(this.path);
+	var p = new Point();
+
+	p.length = this.length/2;
+	console.log(p.length);
+	console.log(this.length);
+	p.angle = 0;
+	this.path.position = pos.subtract(p);
+	console.log(pos);
+	console.log(p);
+	console.log(this.path);
+}
+
+Bipede.prototype.draw = function(style)
+{
+	// calling the "super" method
+	Entity.prototype.draw.call(this, style);
+	this.length = style.shape.args.radius;
+}
+
 
 function EntitiesRegistry(){
 	this.cars = [];

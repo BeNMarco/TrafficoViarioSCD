@@ -39,3 +39,5 @@ web_view/www_data/quartiere*
 *.gz
 *.toc
 *.lox
+*.bbl
+*.blg

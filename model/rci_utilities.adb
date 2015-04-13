@@ -19,8 +19,6 @@ procedure rci_utilities is
    task wait_quit_signal;
 
    task body wait_quit_signal is
-      --line: String(1..4);
-      --last: Natural;
       c: Character;
       closing: Boolean:= False;
       available: Boolean:= False;
@@ -34,8 +32,6 @@ procedure rci_utilities is
             closing:= True;
             New_Line(1);
             Put_Line("Il sistema si sta chiudendo... ... ...");
-         --elsif errore=False and then available then
-         --   New_Line(1);
          end if;
          exit when (closing or errore) or signal_quit_arrived;
       end loop;
@@ -111,31 +107,30 @@ begin
    Put_Line("Server chiuso.");
 
    -- chiudi webserver
-   --if get_webServer/=null then
-      --get_webServer.close_webserver;
-   --end if;
-   --loop
-   --   delay 1.0;
-   --   begin
-   --      if get_webServer/=null and then get_webServer.is_alive then
-   --         null;
-   --      end if;
-   --   exception
-   --      when others =>
-   --         if web_server_is_closed then
-   --            null;
-   --         else
-   --            raise;
-   --         end if;
-   --   end;
-   --   exit when web_server_is_closed or
-   --     (signal_quit_arrived and get_webServer=null));
-   --end loop;
-   --Put_Line("Il web server è stato chiuso.");
+   if get_webServer/=null then
+      get_webServer.close_webserver;
+   end if;
+   loop
+      delay 1.0;
+      begin
+         if get_webServer/=null and then get_webServer.is_alive then
+            null;
+         end if;
+      exception
+         when others =>
+            if web_server_is_closed then
+               null;
+            else
+               raise;
+            end if;
+      end;
+      exit when web_server_is_closed or
+        (signal_quit_arrived and get_webServer=null));
+   end loop;
+   Put_Line("Il web server è stato chiuso.");
 
 exception
    when others =>
       errore:= True;
       Put_Line("Partizione remota non raggiungibile.");
-      --Put_Line("premevere invio per chiudere.");
 end;

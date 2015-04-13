@@ -37,7 +37,7 @@ procedure rci_utilities is
          --elsif errore=False and then available then
          --   New_Line(1);
          end if;
-         exit when closing or errore;
+         exit when (closing or errore) or signal_quit_arrived;
       end loop;
    end wait_quit_signal;
 

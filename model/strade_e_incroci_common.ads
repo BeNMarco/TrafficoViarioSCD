@@ -46,6 +46,8 @@ package strade_e_incroci_common is
 
    type means_of_carrying is (walking, bike, car);
 
+   function convert_means_to_string(mezzo: means_of_carrying) return String;
+
    type abitante is tagged private;
 
    function get_id_abitante_from_abitante(residente: abitante) return Natural;

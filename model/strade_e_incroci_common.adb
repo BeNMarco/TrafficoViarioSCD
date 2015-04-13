@@ -105,6 +105,18 @@ package body strade_e_incroci_common is
       end if;
    end convert_string_to_type_ingresso;
 
+   function convert_means_to_string(mezzo: means_of_carrying) return String is
+   begin
+      case mezzo is
+         when walking =>
+            return "walking";
+         when bike =>
+            return "bike";
+         when car =>
+            return "car";
+      end case;
+   end convert_means_to_string;
+
    function get_lunghezza_road(road: rt_strada_features) return new_float is
    begin
       return road.lunghezza;

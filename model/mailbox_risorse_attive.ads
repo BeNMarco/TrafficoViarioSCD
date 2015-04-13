@@ -198,8 +198,8 @@ package mailbox_risorse_attive is
       temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
       temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
 
-      backup_temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
-      backup_temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
+      --backup_temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
+      --backup_temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
 
 
       abilita_attraversamento_bipedi_from_begin: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));
@@ -283,9 +283,9 @@ package mailbox_risorse_attive is
       temp_bici_finish_route: posizione_abitanti_on_road;
       temp_pedone_finish_route: posizione_abitanti_on_road;
 
-      backup_temp_car_finish_route: posizione_abitanti_on_road;
-      backup_temp_bici_finish_route: posizione_abitanti_on_road;
-      backup_temp_pedone_finish_route: posizione_abitanti_on_road;
+      --backup_temp_car_finish_route: posizione_abitanti_on_road;
+      --backup_temp_bici_finish_route: posizione_abitanti_on_road;
+      --backup_temp_pedone_finish_route: posizione_abitanti_on_road;
 
       main_strada: road_state(False..True,1..1); -- RANGE1=1 da polo true a polo false; RANGE1=2 da polo false a polo true
       marciapiedi: road_state(False..True,1..2); -- RANGE2=1 sono le bici; RANGE2=1 sono i pedoni

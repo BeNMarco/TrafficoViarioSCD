@@ -9,8 +9,8 @@ spostamento deve essere dotato.
 \subsection{Entità rappresentate nella mappa della città}
 \label{firstmappa}
 La mappa della città è caratterizzata da strade dotate di doppia corsia per
-senso di marcia, d'ora in poi \textit{\textbf{strade principali}}, (possono
-essere sostitute nel corso della relazione con il sinonimo di strade urbane),
+senso di marcia, d'ora in poi riferite con il nome di \textit{\textbf{strade
+principali}}, (possono essere sostitute nel corso della relazione con il sinonimo di strade urbane),
 marciapiedi, piste ciclabili, \textit{\textbf{strade di ingresso}} al traffico,
 incroci, dotati di semaforo, con 3 o 4 strade e attraversamenti pedonali.\\
 Sono stati identificati come attori del traffico della città simulata: veicoli
@@ -24,24 +24,24 @@ che verrà adottato poi per tutta la durata della simulazione;
 \item {\textit{requisito relativo ai luoghi di destinazione degli attori}}: un
 attore deve poter essere configurato in modo tale da muoversi nella città al
 fine di spostarsi verso un certo luogo di destinazione.
-Un attore quindi una volta raggiunta la destinazione dovrà reimmettersi nel
-traffico per raggiungere il luogo da cui era partito, iterando quindi
-l'avanzamento da luogo di partenza a luogo di destinazione e viceversa.
-L'obiettivo di questo requisito è quello di avere una situazione in cui nella
-città vi sia sempre del traffico nel caso in cui almeno un'entità sia presente.
+Un attore, una volta raggiunta la destinazione, dovrà quindi reimmettersi nel
+traffico per raggiungere il luogo da cui era partito, iterando 
+l'avanzamento da luogo di partenza a luogo di destinazione, e viceversa.
+L'obiettivo di questo requisito è quello di avere una situazione tale per cui
+nella città vi sia sempre del traffico, nel caso almeno un'entità sia presente.
 \end{enumerate}
 
 \subsection{Convenzioni sulla mappa}
 A seguito dell'analisi è stato convenuto riportare delle regole sulla
-realizzazione della mappa avendo fissato a priori le entità sulle quali gli
-attori dovevano eseguire lo spostamento, vedi \ref{firstmappa}.
+realizzazione della mappa, avendo fissato a priori le entità sulle quali gli
+attori dovevano eseguire lo spostamento (vedi \ref{firstmappa}):
 \begin{enumerate}
 \item una strada principale deve essere delimitata almeno da un incrocio e al
 più da due incroci;
 \item una strada di ingresso è una strada adibita all'entrata o all'uscita da o
 verso un certo luogo;
 \item una strada principale presenta due lati ai quali possono essere inserite
-delle strade di ingresso; quindi se su una stessa strada principale vengono
+delle strade di ingresso; se su una stessa strada principale vengono
 inserite più strade di ingresso è convenuto imporre che queste strade tengano
 una distanza minima l'una dall'altra, indipendentemente dal lato della strada
 principale in cui vengono inserire; l'obiettivo è quello di evitare che si
@@ -52,14 +52,14 @@ strada principale stessa.
 \end{enumerate}
 
 \subsection{Altri requisiti rilevati dall'analisi del dominio}
-Nell'analisi del dominio del problema sono state identificate quindi le entità
-che sono rilevanti per la realizzazione del simulatore e sono state definite
-delle regole e quindi delle limitazioni funzionali per la realizzazione della
+Nell'analisi del dominio del problema sono state identificate le entità
+che sono rilevanti per la realizzazione del simulatore. Sono state quindi
+definite delle regole e delle limitazioni funzionali per la realizzazione della
 mappa. \\
-Sono emerse inoltre le seguenti funzionalità e requisiti a seguito di
+Sono inoltre emerse le seguenti funzionalità e requisiti, a seguito di
 un'analisi a livello anche progettuale:
 \begin{enumerate}
-\item un entità del tipo veicolo che deve svoltare a sinistra al prossimo
+\item un'entità del tipo veicolo che deve svoltare a sinistra al prossimo
 incrocio dovrà immettersi ad un certo punto nella corsia più a sinistra della
 strada che sta percorrendo; se il veicolo dovrà andare a destra dovrà
 immettersi nella corsia più a destra della strada che sta percorrendo e

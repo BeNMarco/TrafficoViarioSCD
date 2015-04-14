@@ -216,8 +216,8 @@ package body mailbox_risorse_attive is
       procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; corsia: id_corsie) is
          json: JSON_Value:= Create_Object;
       begin
-         json.Set_Field("id_quartiere_entità",id_quartiere_entità);
-         json.Set_Field("id_entità",id_entità);
+         json.Set_Field("id_quartiere_abitante",id_quartiere_entità);
+         json.Set_Field("id_abitante",id_entità);
          json.Set_Field("mezzo",convert_means_to_string(mezzo));
          json.Set_Field("from_incrocio",False);
          json.Set_Field("from_id_quartiere_road",from_id_quartiere_road);
@@ -4536,8 +4536,8 @@ package body mailbox_risorse_attive is
       procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; direzione: traiettoria_incroci_type) is
          json: JSON_Value:= Create_Object;
       begin
-         json.Set_Field("id_quartiere_entità",id_quartiere_entità);
-         json.Set_Field("id_entità",id_entità);
+         json.Set_Field("id_quartiere_abitante",id_quartiere_entità);
+         json.Set_Field("id_abitante",id_entità);
          json.Set_Field("mezzo",convert_means_to_string(mezzo));
          json.Set_Field("from_incrocio",True);
          json.Set_Field("from_id_quartiere_road",from_id_quartiere_road);

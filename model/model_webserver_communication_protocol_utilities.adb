@@ -159,7 +159,7 @@ package body model_webserver_communication_protocol_utilities is
             if num_task_updated=get_num_task then
                num_task_updated:= 0;
                json:= Create_Object;
-               json.Set_Field("entità",global_state_abitanti_quartiere);
+               json.Set_Field("abitanti",global_state_abitanti_quartiere);
                json.Set_Field("semafori",global_state_semafori_quartiere);
                json.Set_Field("abitanti_uscenti",global_state_abitanti_quartiere_uscenti);
                get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);

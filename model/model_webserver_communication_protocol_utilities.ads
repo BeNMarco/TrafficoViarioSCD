@@ -21,11 +21,15 @@ package model_webserver_communication_protocol_utilities is
 
    function create_entità_incrocio_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_incrocio: Positive; id_incrocio: Positive; where: Float; id_quartiere_urbana_ingresso: Natural; id_urbana_ingresso: Natural; direzione: traiettoria_incroci_type; mezzo: means_of_carrying) return JSON_Value;
 
+   function create_semafori_colori_state(id_quartiere_incrocio: Positive; id_incrocio: Positive; verso_semafori_verdi: Boolean; bipedi_can_cross: Boolean) return JSON_Value;
+
    protected state_view_quartiere is
-      procedure registra_aggiornamento_stato_risorsa(id_risorsa: Positive; stato: JSON_Array);
+      procedure registra_aggiornamento_stato_risorsa(id_risorsa: Positive; stato_abitanti: JSON_Array; stato_semafori: JSON_Value; stato_abitanti_uscenti: JSON_Array);
    private
       num_task_updated: Natural:= 0;
-      global_state_quartiere: JSON_Array:= Empty_Array;
+      global_state_abitanti_quartiere: JSON_Array:= Empty_Array;
+      global_state_semafori_quartiere: JSON_Array:= Empty_Array;
+      global_state_abitanti_quartiere_uscenti: JSON_Array:= Empty_Array;
    end state_view_quartiere;
 
 

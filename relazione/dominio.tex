@@ -36,17 +36,17 @@ A seguito dell'analisi è stato convenuto riportare delle regole sulla
 realizzazione della mappa, avendo fissato a priori le entità sulle quali gli
 attori dovevano eseguire lo spostamento (vedi \ref{firstmappa}):
 \begin{enumerate}
-\item una strada principale deve essere delimitata almeno da un incrocio e al
-più da due incroci;
-\item una strada di ingresso è una strada adibita all'entrata o all'uscita da o
-verso un certo luogo;
-\item una strada principale presenta due lati ai quali possono essere inserite
-delle strade di ingresso; se su una stessa strada principale vengono
+\item Una strada principale deve essere delimitata almeno da un incrocio e al
+più da due incroci.
+\item Una strada di ingresso è una strada adibita all'entrata o all'uscita da o
+verso un certo luogo.
+\item Una strada principale presenta due lati ai quali possono essere inserite
+delle strade di ingresso. Se su una stessa strada principale vengono
 inserite più strade di ingresso è convenuto imporre che queste strade tengano
 una distanza minima l'una dall'altra, indipendentemente dal lato della strada
-principale in cui vengono inserire; l'obiettivo è quello di evitare che si
-formi un incrocio tra strade di ingresso non regolamentate da semaforo;
-\item ogni strada principale contiene esattamente una fermata per l'autobus
+principale in cui vengono inserire. L'obiettivo è quello di evitare che si
+formi un incrocio tra strade di ingresso non regolamentate da semaforo.
+\item Ogni strada principale contiene esattamente una fermata per l'autobus
 posta a seconda della configurazione della mappa su uno dei due lati della
 strada principale stessa.
 \end{enumerate}
@@ -59,20 +59,20 @@ mappa. \\
 Sono inoltre emerse le seguenti funzionalità e requisiti, a seguito di
 un'analisi a livello anche progettuale:
 \begin{enumerate}
-\item un'entità del tipo veicolo che deve svoltare a sinistra al prossimo
+\item Un'entità del tipo veicolo che deve svoltare a sinistra al prossimo
 incrocio dovrà immettersi ad un certo punto nella corsia più a sinistra della
-strada che sta percorrendo; se il veicolo dovrà andare a destra dovrà
+strada che sta percorrendo. Se il veicolo dovrà andare a destra dovrà
 immettersi nella corsia più a destra della strada che sta percorrendo e
-indifferentemente su entrambe le corsie se vuole procedere in direzione dritto;
-\item un entità del tipo veicolo deve poter agevolmente cambiare corsia su una
+indifferentemente su entrambe le corsie se vuole procedere in direzione dritto.
+\item Un entità del tipo veicolo deve poter agevolmente cambiare corsia su una
 strada principale in modo tale da poter raggiungere la corsia interessata in
-relazione alla destinazione da perseguire;
-\item il percorso che l'entità di tipo veicolo, bipede, o bici deve percorrere
+relazione alla destinazione da perseguire.
+\item Il percorso che l'entità di tipo veicolo, bipede, o bici deve percorrere
 deve essere fissato a priori. \\
 Questa è una limitazione per la simulazione, ma per semplicità anche di
 implementazione è stato convenuto definire un percorso statico piuttosto che
-dinamico;
-\item un pedone o una bici non eseguono dei sorpassi, ma procedono secondo una
+dinamico.
+\item Un pedone o una bici non eseguono dei sorpassi, ma procedono secondo una
 politica \ac{FIFO} nell'avanzamento rispettivamente nel marciapiede e nella
 pista ciclabile.
 \end{enumerate}

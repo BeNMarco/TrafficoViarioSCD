@@ -1495,7 +1495,7 @@ Crossroad.prototype.draw = function(style){
 			console.log("lunghezza bici dritto: "+bikeP.length);
 		}
 
-		var idx = l == 0 ? 0 : i;
+		var idx = l == 0 ? -1 : i;
 		this.pedestrianPaths[idx] = {
 			'dritto_pedoni': pedP,
 			'dritto_bici' : bikeP
@@ -1628,8 +1628,8 @@ Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDis
 
 Crossroad.prototype.getPositionOnPedestrianPath = function(distance, enteringStreet, streetDistrict, direction)
 {
-	var num = 0;
-	if(enteringStreet != 0)
+	var num = -1;
+	if(enteringStreet != 0 && streetDistrict != 0)
 	{
 		num = this.getEntranceStreetNumber(enteringStreet, streetDistrict);
 	}
@@ -1859,6 +1859,90 @@ Map.prototype.resetData = function(){
 	this.entranceStreets = {};
 }
 
+Map.prototype.load2 = function(obj){
+	//console.log(obj);
+	//for (var i = 0; i < obj.strade.length; i++) {
+	chain(
+		function()
+		{
+			if(typeof this.startLoadingCallback === 'function'){
+				this.startLoadingCallback();
+			}
+			this.resetData();
+			this.objData = obj;
+			this.id = obj.info.id;
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Loading streets");
+			}
+			setTimeout(Chain.next(), 10);
+		},
+		function()
+		{
+			for(var i in obj.strade_urbane){
+				this.streets[obj.strade_urbane[i].id] = new Street(obj.strade_urbane[i]);
+			}
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Loading crossroads");
+			}
+			setTimeout(Chain.next(), 10);
+		},
+		function()
+		{
+			for (var i = 0; i < obj.incroci_a_4.length; i++) {
+				var cur_inc = obj.incroci_a_4[i];
+				var c = new Crossroad(cur_inc);
+				c.linkStreets(this.streets, this.id);
+				this.crossroads[cur_inc.id] = c;
+			}
+			for (var i in obj.incroci_a_3){
+				//obj.incroci_a_3[i].strade.splice(obj.incroci_a_3[i].strada_mancante,0,null);
+				var cur_inc = obj.incroci_a_3[i];
+				var c = new Crossroad(cur_inc);
+				c.linkStreets(this.streets, this.id);
+				this.crossroads[cur_inc.id] = c;
+			}
+			//for(var i = 0; i < obj.strade_ingresso.length; i++){
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Loading sidestreets");
+			}
+			setTimeout(Chain.next(), 10);
+		},
+		function()
+		{
+			for(var i in obj.strade_ingresso){
+				obj.strade_ingresso[i]['from'] = 0;
+				obj.strade_ingresso[i]['to'] = 0;
+				var str = new Street(obj.strade_ingresso[i]);
+				str.mainStreet = obj.strade_ingresso[i].strada_confinante;
+				str.mainStreetObj = this.streets[str.mainStreet];
+				str.entranceSide = obj.strade_ingresso[i].polo;
+				str.entranceDistance = obj.strade_ingresso[i].distanza_da_from;
+				str.setType('entrance');
+				this.entranceStreets[str.id] = str;
+				this.streets[str.mainStreet].addSideStreet(str);
+			}
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Loading places");
+			}
+
+			setTimeout(Chain.next(), 10);
+		},
+		function()
+		{
+			for(var i = 0; i < obj.luoghi.length; i++){
+				var p = new Place(obj.luoghi[i]);
+				this.places[p.id] = p;
+			}
+			if(typeof this.finishLoadingCallback === 'function'){
+				this.finishLoadingCallback();
+			}
+		}
+	);	
+}
+
 Map.prototype.load = function(obj){
 	//console.log(obj);
 	if(typeof this.startLoadingCallback === 'function'){
@@ -1873,9 +1957,9 @@ Map.prototype.load = function(obj){
 		this.loadingProgressNotifier("Loading streets");
 	}
 
-		for(var i in obj.strade_urbane){
-			this.streets[obj.strade_urbane[i].id] = new Street(obj.strade_urbane[i]);
-		}
+	for(var i in obj.strade_urbane){
+		this.streets[obj.strade_urbane[i].id] = new Street(obj.strade_urbane[i]);
+	}
 	
 
 	if(typeof this.loadingProgressNotifier === 'function'){
@@ -2003,6 +2087,91 @@ Map.prototype.draw = function(){
 	}
 
 	liftPaths();
+}
+
+Map.prototype.draw2 = function(){
+
+	chain(
+		function()
+		{
+			if(typeof this.startDrawingCallback === 'function'){
+				this.startDrawingCallback();
+			}
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Drawing crossroads");
+			}
+			setTimeout(Chain.next(),10);
+		},
+		function()
+		{
+			for (var i in this.crossroads) {
+				this.crossroads[i].draw(this.mapStyle);
+			}
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Drawing streets");
+			}
+			setTimeout(Chain.next(),10);
+		},
+		function()
+		{
+			for (var i in this.streets) {
+				this.streets[i].draw(this.mapStyle);
+			}
+
+			for (var i in this.entranceStreets){
+
+				var curStr = this.entranceStreets[i];
+
+				var mainStreet = this.streets[curStr.mainStreet];
+				var side = curStr.entranceSide ? 1 : -1;
+
+				var entrDist = /*(side == 1) ? mainStreet.guidingPath.length - curStr.entranceDistance :*/curStr.entranceDistance;
+				var refPoint = mainStreet.guidingPath.getPointAt(entrDist);
+				var normalFrom = mainStreet.guidingPath.getNormalAt(entrDist);
+				normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
+
+				var normalTo = mainStreet.guidingPath.getNormalAt(entrDist);
+				normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + curStr.len);	
+
+				curStr.from = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
+				curStr.to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
+				curStr.reposition();
+				curStr.draw(this.mapStyle);
+				curStr.drawHorizontalLines(this.mapStyle);
+			}
+
+			for (var i in this.streets) {
+				this.streets[i].drawHorizontalLines(this.mapStyle);
+			}
+
+			if(typeof this.loadingProgressNotifier === 'function'){
+				this.loadingProgressNotifier("Drawing places");
+			}
+			setTimeout(Chain.next(),10);
+		},
+		function()
+		{
+			for (var i in this.places){
+				this.places[i].setEnteringStreet(this.entranceStreets[this.places[i].entranceStreetId]);
+				if(this.entranceStreets[this.places[i].entranceStreetId] != null)
+					this.places[i].draw(this.mapStyle);
+			}
+
+			liftPaths();
+
+			if(typeof this.finishDrawingCallback === 'function'){
+				this.finishDrawingCallback();
+			}
+
+			if(typeof this.mapReadyCallback === 'function'){
+				this.mapReadyCallback();
+			}
+		}
+		);
+
+
 }
 
 Map.prototype.bringTrafficLightsToFront = function()

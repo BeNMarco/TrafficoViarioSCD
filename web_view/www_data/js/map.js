@@ -7,15 +7,15 @@
 controllo = false;
 controlloIngressoPedoni = true;
 controlloIncrociAuto = true;
-controlloIncrociAuto1 = true;
-controlloIncrociAuto2 = true;
+controlloIncrociAutoSinistra = true;
+controlloIncrociAutoDestra = true;
 showTraiettorieAuto = false;
 showTraiettoriePedoni = true;
 pathWidth = 0.3;
 bikeDash = [pathWidth, pathWidth];
 
 lunghezza_traiettorie_ingressi = {};
-lunghezza_traiettorie_incroci = {'pedoni': {}};
+lunghezza_traiettorie_incroci = {'pedoni': {}, 'auto':{}};
 
 pathsToLift = new Array();
 
@@ -1196,8 +1196,6 @@ Crossroad.prototype.draw = function(style){
 		var pedP = new Path();
 		var bikeP = new Path();
 
-	
-
 
 
 		this.crossingPaths[i] = {};	
@@ -1225,71 +1223,9 @@ Crossroad.prototype.draw = function(style){
 
 			g.addChild(pav);
 
-			if(this.streetsRef[(i+2)%4] != null)
-			{
-/*
-				pedP.visible = false;
-				bikeP.visible = false;
-				//setPathHandles(bikeP,1);
-
-				if(showTraiettoriePedoni){
-					drawPath(pedP, 'green', pathWidth);
-					drawPath(bikeP, 'green', pathWidth, [pathWidth, pathWidth]);
-					console.log("lunghezza pedoni dritto: "+pedP.length);
-					console.log("lunghezza bici dritto: "+bikeP.length);
-				}
-
-				this.pedestrianPaths[i] = {
-					'dritto_pedoni': pedP,
-					'dritto_bici' : bikeP
-				};
-
-				g.addChild(pedP);
-				g.addChild(bikeP);*/
-			}
-
-			/*
-			pedP.visible = false;
-			bikeP.visible = false;
-			//setPathHandles(bikeP,1);
-
-			if(showTraiettoriePedoni){
-				drawPath(pedP, 'green', pathWidth);
-				drawPath(bikeP, 'green', pathWidth, [pathWidth, pathWidth]);
-				console.log("lunghezza pedoni dritto: "+pedP.length);
-				console.log("lunghezza bici dritto: "+bikeP.length);
-			}
-
-			this.pedestrianPaths[i] = {
-				'dritto_pedoni': pedP,
-				'dritto_bici' : bikeP
-			};
-
-			g.addChild(pedP);
-			g.addChild(bikeP);
-			*/
-
 		} else {
 			// otherwise we draw the zebra crossing (it is the defaul so no need to customize the style)
 			// but we draw the traffic lights and the cross trajectors
-/*
-			pedP.add(new Point(
-				(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
-				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.75*style.pavementWidth)
-				));
-			pedP.add(new Point(
-				(path.position.x+this.lanesNumber[i%2]*style.laneWidth+style.pavementWidth),
-				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.75*style.pavementWidth)
-				));
-
-			bikeP.add(new Point(
-				(path.position.x-this.lanesNumber[i%2]*style.laneWidth),
-				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.25*style.pavementWidth)
-				));
-			bikeP.add(new Point(
-				(path.position.x+this.lanesNumber[i%2]*style.laneWidth+style.pavementWidth),
-				(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-0.25*style.pavementWidth)
-				));*/
 
 			// paths that leads to the other side of the crossroad
 			var debgArr = []
@@ -1318,7 +1254,7 @@ Crossroad.prototype.draw = function(style){
 				//this.crossingPaths[this.id+"_s"+this.streetsRef[i].id_strada+".l"+2+"-"+"s"+this.streetsRef[(i+1)%4].id_strada+".l"+2] = crossPath;
 				g.addChild(crossPath);
 
-				if(i == 2 && controlloIncrociAuto1){
+				if(controlloIncrociAutoSinistra){
 					controllo_sinistra = crossPath;
 					var ii = i+1;
 					var cc = new Path();
@@ -1334,10 +1270,10 @@ Crossroad.prototype.draw = function(style){
 					var intr = crossPath.getIntersections(cc)[0];
 					if(intr != null)
 					{
-						//console.log("intersezione incrocio sinistra: "+crossPath.getOffsetOf(intr.point));
+						lunghezza_traiettorie_incroci['auto']['sinistra'] = {"intersezione_bipedi": controllo_sinistra.getOffsetOf(intr.point)};
 					}
 					g.addChild(cc);
-						controlloIncrociAuto1 = false;
+					controlloIncrociAutoSinistra = false;
 				}
 				debgArr.push(crossPath);
 			}
@@ -1410,7 +1346,7 @@ Crossroad.prototype.draw = function(style){
 					drawPath(crossPath, 'green');
 				}
 
-				if(i == 2 && controlloIncrociAuto2){
+				if(controlloIncrociAutoDestra){
 					controllo_destra = crossPath;
 					var ii = i-1;
 					var cc = new Path();
@@ -1427,10 +1363,10 @@ Crossroad.prototype.draw = function(style){
 					var intr = crossPath.getIntersections(cc)[0];
 					if(intr != null)
 					{
-						//console.log("intersezione incrocio destra: "+crossPath.getOffsetOf(intr.point));
+						lunghezza_traiettorie_incroci['auto']['destra'] = {"intersezione_bipedi": controllo_destra.getOffsetOf(intr.point)};
 					}
 					g.addChild(cc);
-					controlloIncrociAuto2 = false;
+					controlloIncrociAutoDestra = false;
 				}
 
 				// creating the pedestrian paths that goes right
@@ -1586,6 +1522,7 @@ Crossroad.prototype.draw = function(style){
 
 	this.group.rotate(this.angle%90); 
 
+	/*
 	if(controlloIncrociAuto || !lunghezza_traiettorie_incroci['auto'])
 	{
 		lunghezza_traiettorie_incroci['auto'] = {};
@@ -1629,7 +1566,7 @@ Crossroad.prototype.draw = function(style){
 			lunghezza_traiettorie_incroci['auto']['sinistra'] = {"intersezione_bipedi": controllo_sinistra.getOffsetOf(intr2.point)};
 		}
 		controlloIncrociAuto = false;
-	}
+	}*/
 
 	// adjusting the streets
 	for (var i = 0; i < this.streets.length; i++) {

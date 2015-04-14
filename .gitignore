@@ -11,6 +11,7 @@ quartiere2
 quartiere3
 default.cfg
 default.gpr
+model/absolute_path.ads
 ior.txt
 quartiere_1
 quartiere_2

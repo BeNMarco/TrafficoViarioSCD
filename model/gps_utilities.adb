@@ -242,12 +242,30 @@ package body gps_utilities is
          pulisci_grafo;
 
          -- La numerazione \E8 progressiva seguendo l'ordine: incroci_a_4,incroci_a_3,rotonde_a_4,rotonde_a_3
-         if incroci_a_4'First<incroci_a_4'Last and incroci_a_4'First<min_first_incroci then
-            min_first_incroci:= incroci_a_4'First;
+         if incroci_a_4'First<=incroci_a_4'Last then
+            if incroci_a_4'First<min_first_incroci then
+               min_first_incroci:= incroci_a_4'First;
+            end if;
+         else
+            if incroci_a_3'First<=incroci_a_3'Last then
+               if incroci_a_3'First<min_first_incroci then
+                  min_first_incroci:= incroci_a_3'First;
+               end if;
+            end if;
          end if;
-         if incroci_a_3'First<incroci_a_3'Last and incroci_a_3'Last>max_last_incroci then
-            max_last_incroci:= incroci_a_3'Last;
+
+         if incroci_a_3'First<=incroci_a_3'Last then
+            if incroci_a_3'Last>max_last_incroci then
+               max_last_incroci:= incroci_a_3'Last;
+            end if;
+         else
+            if incroci_a_4'First<=incroci_a_4'Last then
+               if incroci_a_4'Last>max_last_incroci then
+                  max_last_incroci:= incroci_a_4'Last;
+               end if;
+            end if;
          end if;
+
 
          -- elaborazione incroci a 4
          --Put_Line("costruzione" & Positive'Image(id_quartiere));
@@ -488,6 +506,7 @@ package body gps_utilities is
                -- setto il nodo sorgente; gli altri nodi sono tutti a distanza infinita
                to_consider(1).id_quartiere:= id_quartiere_partenza;
                to_consider(1).id_incrocio:= id_incrocio_partenza;
+               Put_Line(Positive'Image(id_quartiere_partenza) & " " & Positive'Image(id_incrocio_partenza) & Positive'Image(min_first_incroci) & " " & Positive'Image(max_last_incroci));
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_quartiere:= 0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_incrocio:= 0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).distanza:= 0.0;
@@ -516,6 +535,7 @@ package body gps_utilities is
                   adiacenti:= grafo(id_quartiere_minimo)(id_incrocio_minimo);
                   for i in 1..4 loop
                      if adiacenti(i).id_quartiere_adiacente/=0 then -- se c'è un incrocio adiacente
+                        Put_Line(Positive'Image(adiacenti(i).id_quartiere_adiacente) & " " & Positive'Image(adiacenti(i).id_adiacente));
                         if coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).in_coda = False then
                            coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).in_coda:= True;
                            num_elementi_lista:= num_elementi_lista + 1;

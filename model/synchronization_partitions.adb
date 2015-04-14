@@ -19,6 +19,11 @@ package body synchronization_partitions is
       semafori_quartiere_obj:= new handler_semafori_quartiere;
    end create_semafori;
 
+   function get_obj_gestore_semafori return ptr_handler_semafori_quartiere is
+   begin
+      return semafori_quartiere_obj;
+   end get_obj_gestore_semafori;
+
    protected body synchronization_partitions_type is
 
       procedure clean_new_partition(clean_registry: registro_quartieri) is

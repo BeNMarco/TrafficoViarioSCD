@@ -106,21 +106,66 @@ package body model_webserver_communication_protocol_utilities is
       return json;
    end create_entità_incrocio_state;
 
+   function create_semafori_colori_state(id_quartiere_incrocio: Positive; id_incrocio: Positive; verso_semafori_verdi: Boolean; bipedi_can_cross: Boolean) return JSON_Value is
+      json: JSON_Value:= Create_Object;
+      json_arr_1: JSON_Array:= Empty_Array;
+      json_arr_2: JSON_Array:= Empty_Array;
+   begin
+      json.Set_Field("id_quartiere_incrocio",id_quartiere_incrocio);
+      json.Set_Field("id_incrocio",id_incrocio);
+      json.Set_Field("abilitato_pedoni_bici",bipedi_can_cross);
+      if bipedi_can_cross then
+         Append(json_arr_1,Create(1));
+         Append(json_arr_1,Create(2));
+         Append(json_arr_1,Create(3));
+         Append(json_arr_1,Create(4));
+         json.Set_Field("index_road_rossi",json_arr_1);
+         json.Set_Field("index_road_verdi",json_arr_2);
+      else
+         if verso_semafori_verdi then
+            -- True => 1 e 3 verdi
+            -- False => 2 e 4 verdi
+            Append(json_arr_1,Create(1)); -- 2
+            Append(json_arr_1,Create(3)); -- 4
+            json.Set_Field("index_road_rossi",json_arr_1);
+            Append(json_arr_2,Create(0)); -- 1
+            Append(json_arr_2,Create(2)); -- 3
+            json.Set_Field("index_road_verdi",json_arr_2);
+         else
+            Append(json_arr_1,Create(0)); -- 1
+            Append(json_arr_1,Create(2)); -- 3
+            json.Set_Field("index_road_rossi",json_arr_1);
+            Append(json_arr_2,Create(1)); -- 2
+            Append(json_arr_2,Create(3)); -- 4
+            json.Set_Field("index_road_verdi",json_arr_2);
+         end if;
+      end if;
+      return json;
+   end create_semafori_colori_state;
+
    protected body state_view_quartiere is
-      procedure registra_aggiornamento_stato_risorsa(id_risorsa: Positive; stato: JSON_Array) is
+      procedure registra_aggiornamento_stato_risorsa(id_risorsa: Positive; stato_abitanti: JSON_Array; stato_semafori: JSON_Value; stato_abitanti_uscenti: JSON_Array) is
          json: JSON_Value;
       begin
          if get_abilita_aggiornamenti_view then
             num_task_updated:= num_task_updated+1;
-            for i in 1..Length(stato) loop
-               Append(global_state_quartiere,Get(stato,i));
+            for i in 1..Length(stato_abitanti) loop
+               Append(global_state_abitanti_quartiere,Get(stato_abitanti,i));
+            end loop;
+            Append(global_state_semafori_quartiere,stato_semafori);
+            for i in 1..Length(stato_abitanti_uscenti) loop
+               Append(global_state_abitanti_quartiere_uscenti,Get(stato_abitanti_uscenti,i));
             end loop;
             if num_task_updated=get_num_task then
                num_task_updated:= 0;
                json:= Create_Object;
-               json.Set_Field("entità",global_state_quartiere);
+               json.Set_Field("entità",global_state_abitanti_quartiere);
+               json.Set_Field("semafori",global_state_semafori_quartiere);
+               json.Set_Field("abitanti_uscenti",global_state_abitanti_quartiere_uscenti);
                get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);
-               global_state_quartiere:= Empty_Array;
+               global_state_abitanti_quartiere:= Empty_Array;
+               global_state_semafori_quartiere:= Empty_Array;
+               global_state_abitanti_quartiere_uscenti:= Empty_Array;
             end if;
          end if;
       end registra_aggiornamento_stato_risorsa;

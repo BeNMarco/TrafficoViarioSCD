@@ -213,6 +213,33 @@ package body mailbox_risorse_attive is
 
    protected body resource_segmento_urbana is
 
+      procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; corsia: id_corsie) is
+         json: JSON_Value:= Create_Object;
+      begin
+         json.Set_Field("id_quartiere_entità",id_quartiere_entità);
+         json.Set_Field("id_entità",id_entità);
+         json.Set_Field("mezzo",convert_means_to_string(mezzo));
+         json.Set_Field("from_incrocio",False);
+         json.Set_Field("from_id_quartiere_road",from_id_quartiere_road);
+         json.Set_Field("from_id_road",from_id_road);
+         json.Set_Field("corsia",corsia);
+         Append(entità_outing_quartiere,json);
+      end add_entità_in_out_quartiere;
+
+      procedure reset_entità_in_out_quartiere is
+      begin
+         entità_outing_quartiere:= Empty_Array;
+      end reset_entità_in_out_quartiere;
+
+      function get_entità_in_out_quartiere return JSON_Array is
+      begin
+         return entità_outing_quartiere;
+      end get_entità_in_out_quartiere;
+
+
+
+
+
       function get_id_risorsa return Positive is
       begin
          return id_risorsa;
@@ -4469,6 +4496,11 @@ package body mailbox_risorse_attive is
          end loop;
       end update_avanzamento_bipedi;
 
+      procedure update_colore_semafori(state_view_semafori: in out JSON_Value) is
+      begin
+         state_view_semafori:= create_semafori_colori_state(get_id_quartiere,id_risorsa,verso_semafori_verdi,bipedi_can_cross);
+      end update_colore_semafori;
+
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road) is
       begin
          abitante.posizione_abitante.set_flag_overtake_next_corsia(True);
@@ -4500,6 +4532,29 @@ package body mailbox_risorse_attive is
             raise lista_abitanti_rotta;
          end if;
       end sposta_bipede_da_sinistra_a_dritto;
+
+      procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; direzione: traiettoria_incroci_type) is
+         json: JSON_Value:= Create_Object;
+      begin
+         json.Set_Field("id_quartiere_entità",id_quartiere_entità);
+         json.Set_Field("id_entità",id_entità);
+         json.Set_Field("mezzo",convert_means_to_string(mezzo));
+         json.Set_Field("from_incrocio",True);
+         json.Set_Field("from_id_quartiere_road",from_id_quartiere_road);
+         json.Set_Field("from_id_road",from_id_road);
+         json.Set_Field("direzione",to_string_incroci_type(direzione));
+         Append(entità_outing_quartiere,json);
+      end add_entità_in_out_quartiere;
+
+      procedure reset_entità_in_out_quartiere is
+      begin
+         entità_outing_quartiere:= Empty_Array;
+      end reset_entità_in_out_quartiere;
+
+      function get_entità_in_out_quartiere return JSON_Array is
+      begin
+         return entità_outing_quartiere;
+      end get_entità_in_out_quartiere;
 
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow) is
       begin

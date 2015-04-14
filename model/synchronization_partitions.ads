@@ -18,6 +18,8 @@ package synchronization_partitions is
 
    procedure create_semafori;
 
+   function get_obj_gestore_semafori return ptr_handler_semafori_quartiere;
+
    protected type synchronization_partitions_type(num_quartieri: Positive) is new rt_synchronization_partitions_type with
 
       entry configure_remote_obj(registro: registro_quartieri);

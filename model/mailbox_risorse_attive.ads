@@ -175,6 +175,12 @@ package mailbox_risorse_attive is
 
       procedure exit_system;
 
+
+
+      procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; corsia: id_corsie);
+      procedure reset_entità_in_out_quartiere;
+      function get_entità_in_out_quartiere return JSON_Array;
+
    private
       function get_num_estremi_urbana return Natural;
       function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
@@ -211,6 +217,8 @@ package mailbox_risorse_attive is
 
       abilita_sinistra_pedoni_in_incroci: Boolean:= True;
       abilita_sinistra_bici_in_incroci: Boolean:= True;
+
+      entità_outing_quartiere: JSON_Array:= Empty_Array;
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
@@ -325,6 +333,7 @@ package mailbox_risorse_attive is
       procedure update_avanzamento_abitante(abitante: in out ptr_list_posizione_abitanti_on_road; new_step: new_float; new_speed: new_float; step_is_just_calculated: Boolean:= False);
       procedure update_avanzamento_cars(state_view_abitanti: in out JSON_Array);
       procedure update_avanzamento_bipedi(state_view_abitanti: in out JSON_Array);
+      procedure update_colore_semafori(state_view_semafori: in out JSON_Value);
       procedure set_car_have_passed_urbana(abitante: in out ptr_list_posizione_abitanti_on_road);
       procedure update_avanzamento_in_urbana(abitante: in out ptr_list_posizione_abitanti_on_road; avanzamento: new_float);
 
@@ -334,6 +343,10 @@ package mailbox_risorse_attive is
       procedure sposta_bipede_da_sinistra_a_dritto(index_road: Positive; mezzo: means_of_carrying; id_quartiere: Positive; id_abitante: Positive);
 
       procedure remove_first_bipede_to_go_destra_from_dritto(index_road: Positive; corsia: id_corsie; list: in out ptr_list_posizione_abitanti_on_road);
+
+      procedure add_entità_in_out_quartiere(id_quartiere_entità: Positive; id_entità: Positive; mezzo: means_of_carrying; from_id_quartiere_road: Natural; from_id_road: Natural; direzione: traiettoria_incroci_type);
+      procedure reset_entità_in_out_quartiere;
+      function get_entità_in_out_quartiere return JSON_Array;
 
       function get_verso_semafori_verdi return Boolean;
       function get_semaforo_bipedi return Boolean;
@@ -361,6 +374,9 @@ package mailbox_risorse_attive is
       temp_car_to_move: tmp_car_to_move_in_incroci(1..size_incrocio,1..2);
       bipedi_to_move: bipedi_to_move_in_incroci(1..4,destra_pedoni..sinistra_bici);
       temp_bipedi_destra_to_go: temp_bipedi_to_move_in_incroci(1..4,1..2);
+
+      entità_outing_quartiere: JSON_Array:= Empty_Array;
+
    end resource_segmento_incrocio;
    type ptr_resource_segmento_incrocio is access all resource_segmento_incrocio;
    type resource_segmenti_incroci is array(Positive range <>) of ptr_resource_segmento_incrocio;

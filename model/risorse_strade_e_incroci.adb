@@ -1725,7 +1725,8 @@ package body risorse_strade_e_incroci is
             raise regular_exit_system;
          end if;
 
-         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,JSON_Null,mailbox.get_entità_in_out_quartiere);
+         mailbox.reset_entità_in_out_quartiere;
 
          mailbox.wait_incroci;
          if log_system_error.is_in_error then
@@ -2292,6 +2293,15 @@ package body risorse_strade_e_incroci is
                      end if;
                      tratto_incrocio:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_next(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                      ptr_rt_incrocio(get_id_incrocio_quartiere(tratto_incrocio.get_id_quartiere_tratto,tratto_incrocio.get_id_tratto)).insert_new_bipede(get_id_quartiere,id_task,posizione_abitanti_on_road(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti),mezzo,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow);
+
+                     if tratto_incrocio.get_id_quartiere_tratto/=get_id_quartiere then
+                        if mezzo=bike then
+                           mailbox.add_entità_in_out_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,mezzo,get_id_quartiere,id_task,1);
+                        else
+                           mailbox.add_entità_in_out_quartiere(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,mezzo,get_id_quartiere,id_task,2);
+                        end if;
+                     end if;
+
                   end if;
 
                else
@@ -3214,6 +3224,11 @@ package body risorse_strade_e_incroci is
                            Put_Line("quartiere:" & Positive'Image(tratto_incrocio.get_id_quartiere_tratto) & " tratto " & Positive'Image(tratto_incrocio.get_id_tratto) & " quartiere ab " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti) & " id ab " & Positive'Image(current_car_in_corsia.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti));
 
                            ptr_rt_incrocio(get_id_incrocio_quartiere(tratto_incrocio.get_id_quartiere_tratto,tratto_incrocio.get_id_tratto)).insert_new_car(get_id_quartiere,id_task,posizione_abitanti_on_road(abitante_to_transfer));
+
+                           if tratto_incrocio.get_id_quartiere_tratto/=get_id_quartiere then
+                              mailbox.add_entità_in_out_quartiere(abitante_to_transfer.get_id_quartiere_posizione_abitanti,abitante_to_transfer.get_id_abitante_posizione_abitanti,car,get_id_quartiere,id_task,first_corsia);
+                           end if;
+
                         end if;
                      else
                         null;
@@ -4759,7 +4774,7 @@ package body risorse_strade_e_incroci is
          end if;
 
 
-         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,JSON_Null,Empty_Array);
 
          resource_main_strada.ingresso_wait_turno;
          if log_system_error.is_in_error then
@@ -5156,6 +5171,9 @@ package body risorse_strade_e_incroci is
       stop_entity: Boolean;
       id_main_road: Positive;
       state_view_abitanti: JSON_Array;
+      pragma Warnings(off);
+      state_view_semafori: JSON_Value;
+      pragma Warnings(on);
       num_delta: Natural:= 0;
       acceleration_car: new_float;
       speed_abitante: new_float;
@@ -5203,12 +5221,14 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
          mailbox.update_avanzamento_cars(state_view_abitanti);
          mailbox.update_avanzamento_bipedi(state_view_abitanti);
+         mailbox.update_colore_semafori(state_view_semafori);
 
          if get_quartiere_utilities_obj.is_system_closing then
             raise regular_exit_system;
          end if;
 
-         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti);
+         state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,state_view_semafori,mailbox.get_entità_in_out_quartiere);
+         mailbox.reset_entità_in_out_quartiere;
 
          for i in 1..mailbox.get_size_incrocio loop
             for j in id_corsie'Range loop
@@ -5445,6 +5465,11 @@ package body risorse_strade_e_incroci is
                            tratto_road:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_current_tratto(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                            Put_Line("abitante " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " tratto " & Positive'Image(tratto_road.get_id_quartiere_tratto) & " " & Positive'Image(tratto_road.get_id_tratto));
                            --ASSOLUTAMENTE NO: mailbox.update_position_abitante(list_car,Float'Last);
+
+                           if get_id_quartiere/=road.get_id_quartiere_road_incrocio then
+                              mailbox.add_entità_in_out_quartiere(new_abitante.get_id_quartiere_posizione_abitanti,new_abitante.get_id_abitante_posizione_abitanti,car,tratto_road.get_id_quartiere_tratto,tratto_road.get_id_tratto,traiettoria_car);
+                           end if;
+
                         end if;
                      else
                         Put_Line("STOP_ENTITY: " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti));
@@ -5577,6 +5602,14 @@ package body risorse_strade_e_incroci is
                               get_log_stallo_quartiere.write_state_stallo(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti,False);
                            end if;
                            if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio then
+
+                              tratto_road:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_current_tratto(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
+                              if get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).get_current_position(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti)=1 then
+                                 id_main_road:= get_ref_quartiere(tratto_road.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(tratto_road.get_id_tratto);
+                              else
+                                 id_main_road:= tratto_road.get_id_tratto;
+                              end if;
+
                               get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).set_position_abitante_to_next(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                               destination_trajectory:= calculate_trajectory_to_follow_from_incrocio(mezzo,posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti),road.get_polo_road_incrocio,corsia);
                               new_abitante:= posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti);
@@ -5585,6 +5618,11 @@ package body risorse_strade_e_incroci is
                               new_abitante.set_where_next_abitante(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti-get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio);
                               new_abitante.set_where_now_abitante(new_abitante.get_where_next_posizione_abitanti);
                               ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).insert_abitante_from_incrocio(mezzo,new_abitante,not road.get_polo_road_incrocio,corsia);
+
+                              if get_id_quartiere/=road.get_id_quartiere_road_incrocio then
+                                 mailbox.add_entità_in_out_quartiere(new_abitante.get_id_quartiere_posizione_abitanti,new_abitante.get_id_abitante_posizione_abitanti,mezzo,tratto_road.get_id_quartiere_tratto,tratto_road.get_id_tratto,traiettoria_bipede);
+                              end if;
+
                            end if;
                         end if;
 
@@ -5833,6 +5871,14 @@ package body risorse_strade_e_incroci is
                            end if;
                            if id_mancante=index_other_road and then (list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=sinistra_bici and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_traiettoria_incrocio_to_follow/=sinistra_pedoni) then
                               if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>=get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio then
+
+                                 if i/=-1 then
+                                    road:= get_road_from_incrocio(id_task,i);
+                                    tratto_road:= create_tratto(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio);
+                                 else
+                                    tratto_road:= create_tratto(0,0);
+                                 end if;
+
                                  road:= get_road_from_incrocio(id_task,calulate_index_road_to_go_incrocio_completo_from_incrocio_a_3(id_task,index_road,dritto_1));
                                  get_quartiere_utilities_obj.get_classe_locate_abitanti(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti).set_position_abitante_to_next(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                                  destination_trajectory:= calculate_trajectory_to_follow_from_incrocio(mezzo,posizione_abitanti_on_road(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti),road.get_polo_road_incrocio,corsia);
@@ -5842,6 +5888,11 @@ package body risorse_strade_e_incroci is
                                  new_abitante.set_where_next_abitante(list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti-get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio);
                                  new_abitante.set_where_now_abitante(new_abitante.get_where_next_posizione_abitanti);
                                  ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).insert_abitante_from_incrocio(mezzo,new_abitante,not road.get_polo_road_incrocio,corsia);
+
+                                 if get_id_quartiere/=road.get_id_quartiere_road_incrocio then
+                                    mailbox.add_entità_in_out_quartiere(new_abitante.get_id_quartiere_posizione_abitanti,new_abitante.get_id_abitante_posizione_abitanti,mezzo,tratto_road.get_id_quartiere_tratto,tratto_road.get_id_tratto,traiettoria_bipede);
+                                 end if;
+
                               end if;
                            end if;
                         end if;

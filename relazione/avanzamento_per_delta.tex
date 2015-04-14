@@ -1,11 +1,25 @@
 \section{Strategia di avanzamento delle entità di tipo veicolo, bici o pedone}
-Un primo approccio per l'avanzamento delle entità passive (veicoli, bici, pedoni) era quello di suddividere la strada in segmenti di breve lunghezza e permettere l'attraversamento di un segmento una sola entità per volta; questa strategia porta ad un avanzamento per distanze di sicurezza, ma l'aggiornamento della nuova posizione avrebbe portato ad un avanzamento "a scatti" del sistema al di la di eventuali ottimizzazioni. \\
+Un primo approccio per l'avanzamento delle entità passive (veicoli, bici,
+pedoni) era quello di suddividere la strada in segmenti di breve lunghezza e
+permettere l'attraversamento di uno speyyone di strada ad una sola entità per
+volta.
+Questa strategia porta ad un avanzamento per distanze di sicurezza, ma
+l'aggiornamento della nuova posizione avrebbe portato ad un avanzamento ``a
+scatti'' del sistema, al di la di eventuali ottimizzazioni.
+
 Quello che in realtà occorre considerare nell'avanzamento delle entità sono le
 proprietà intrinseche del moto di avanzamento, ovvero il tempo, lo spazio,
-l'accelerazione  e la decelerazione. La strategia scelta segue una logica di
+l'accelerazione e la decelerazione. La strategia scelta segue una logica di
 avanzamento secondo il modello \ac{IDM}~\cite{treiber2000microscopic}.
 Seguendo il modello \ac{IDM}, l'avanzamento avviene considerando il
-\textbf{\textit{delta}} di tempo nel quale il mezzo deve avanzare e le proprietà del mezzo interessato. In relazione a questi parametri viene calcolata una percentuale sull'accelerazione massima con cui il mezzo è stato configurato. Infine utilizzando il valore dell'accelerazione ottenuto viene aggiornata la velocità corrente e la posizione finale del mezzo; questi nuovi valori saranno validi alla fine del delta di tempo relativo al periodo in cui sono stati calcolati. Di seguito vengono riportate le funzioni matematiche utilizzate per il calcolo dello spostamento delle entità:
+\textbf{\textit{delta}} di tempo nel quale il mezzo deve avanzare e le proprietà
+del veicolo stesso. In relazione a questi parametri viene calcolata una
+percentuale sull'accelerazione massima con cui il mezzo è stato configurato.
+Infine, utilizzando il valore dell'accelerazione ottenuto, viene aggiornata la
+velocità corrente e la posizione finale del mezzo.
+Questi nuovi valori saranno validi alla fine del delta di tempo relativo al
+periodo in cui sono stati calcolati. Di seguito vengono riportate le funzioni
+matematiche utilizzate per il calcolo dello spostamento delle entità:
 
 \begin{equation}
 s^{*}(t)=s(0)+Tv(t)+\frac{v(t)\Delta{v(t)}}{2\sqrt{ab}}
@@ -13,9 +27,28 @@ s^{*}(t)=s(0)+Tv(t)+\frac{v(t)\Delta{v(t)}}{2\sqrt{ab}}
 \begin{equation}
 a(t)=a[1-(\frac{v(t)}{v_{0}})^4-(\frac{s^{*}(t)}{s(t)})^2]
 \end{equation}
+dove
+\begin{align*}
+~a =&~\text{massima accelerazione possibile}\\
+v_{0} =&~ \text{elocità desiderata} \\
+v(t) =&~ \text{velocità corrente} \\
+s(t) =&~ \text{distanza corrente dal mezzo che sta davanti} \\
+s_{0} =&~ \text{quantità minima di avanzamento} \\
+s^*(t) =&~ \text{distanza calcolata in funzione dei parametri di configurazione}
+\\ &~ \text{dei mezzi interessati} \\
+T =&~ \text{parametro di controllo per regolamentare la velocità} \\
+b =&~ \text{decelerazione massima}
+\end{align*}
 
-$a$ è la massima accelerazione possibile; $v_{0}$ è la velocità desiderata; $v(t)$ è la velocità corrente; $s(t)$ è la distanza corrente dal mezzo che sta davanti; $s_{0}$ è la quantità minima di avanzamento; $s^*(t)$ è la distanza calcolata in funzione dei parametri di configurazione dei mezzi interessati; $T$ è un altro parametro di controllo per regolamentare la velocità; $b$ è la decelerazione massima.\\
-Infine è possibile aggiornare la velocità corrente della macchina e lo step di avanzamento($ns(t)$): \\
+% $a$ è la massima accelerazione possibile; $v_{0}$ è la velocità desiderata;
+% $v(t)$ è la velocità corrente; $s(t)$ è la distanza corrente dal mezzo che sta
+% davanti; $s_{0}$ è la quantità minima di avanzamento; $s^*(t)$ è la distanza
+% calcolata in funzione dei parametri di configurazione dei mezzi interessati; $T$
+% è un altro parametro di controllo per regolamentare la velocità; $b$ è la
+% decelerazione massima.
+
+Infine è possibile aggiornare la velocità corrente della macchina e lo step di
+avanzamento($ns(t)$): 
 
 \begin{equation}
 v(t)= v(t)+a\Delta
@@ -24,6 +57,36 @@ v(t)= v(t)+a\Delta
 ns(t)= v(t)\Delta+0.5a\Delta^2
 \end{equation}
 
-con $\Delta$ uguale al tempo desiderato per calcolare la posizione del mezzo alla fine del $\Delta$ stesso. \\
-Il modello presentato permette quindi di rappresentare una realtà continua relativa all'avanzamento delle entità, discretizzando il tempo per una quantità $\Delta$; in pratica viene dato in input al modello \ac{IDM} lo stato del mezzo contenente la posizione corrente e i parametri di avanzamento; il modello ritornerà dei valori relativi all'aggiornamento della posizione delle entità che saranno validi per il modello a realtà continua alla fine del $\Delta$ di tempo relativo al periodo in cui sono stati calcolati.\\
-Il modello presentato richiede quindi una configurazione di alcuni parametri, tra i quali le proprietà di moto delle entità e un parametro di sistema, ovvero il $\Delta$. La configurazione dei parametri delle entità può essere lasciata all'utente, predisponendo dei valori di default al fine di accelerare il processo di configurazione delle entità; mentre per la scelta del valore del $\Delta$ è stato convenuto fissare un valore, quindi non configurabile dall'utente. La scelta del valore da attribuire al $\Delta$, ovvero del quanto di discretizzazione deve seguire la seguente logica: se il $\Delta$ viene tarato con valori grandi (nell'ordine dei secondi) allora il sistema per completare gli spostamenti delle entità eseguirebbe meno calcoli; d'altro canto al crescere del $\Delta$ la simulazione risulterebbe rallentata dal punto di vista dell'avvenimento di alcuni eventi dovuti per conseguenza di altri, ovvero le entità sarebbero poco reattive e ritarderebbero le loro azioni in funzione della grandezza del $\Delta$. Se il $\Delta$ è troppo piccolo (nell'ordine dei millisecondi) il sistema si troverebbe nella situazione di eseguire molti calcoli per completare lo spostamento, le entità sarebbero reattive, ma la quantità di avanzamento effettiva di una entità sarebbe minuta e inutile al fine della reattività instantanea delle altre entità presenti nel sistema. Il valore del $\Delta$ da noi scelto è \textbf{\textit{0.5 secondi}}, cosi da permettere il giusto compresso tra step di avanzamento delle entità e reattività delle entità. 
+con $\Delta$ uguale al tempo desiderato per calcolare la posizione del mezzo
+alla fine del $\Delta$ stesso. 
+
+Il modello permette quindi di rappresentare una realtà continua relativa
+all'avanzamento delle entità, discretizzando il tempo per una quantità $\Delta$.
+In pratica, viene dato in input al modello \ac{IDM} lo stato del mezzo,
+contenente la posizione corrente e i parametri di avanzamento.
+Il modello ritornerà dei valori relativi all'aggiornamento della posizione delle
+entità, i quali saranno validi per il modello a realtà continua alla fine
+del $\Delta$ di tempo relativo al periodo in cui sono stati calcolati.
+
+Il modello presentato richiede quindi una configurazione di alcuni parametri,
+tra i quali le proprietà di moto delle entità e un parametro di sistema, ovvero
+il $\Delta$. La configurazione dei parametri delle entità può essere lasciata
+all'utente, predisponendo dei valori di default al fine di accelerare il
+processo di configurazione delle entità.
+
+Si è convenutio di assegnare a $\Delta$ un valore costante, quindi non
+configurabile dall'utente. La scelta di tale quantità, ovvero la durata
+del quanto di discretizzazione deve seguire la seguente logica:
+se il $\Delta$ viene tarato con valori grandi (nell'ordine dei secondi) allora
+il sistema eseguirebbe meno calcoli per completare gli spostamenti delle entità.
+D'altro canto, al crescere del $\Delta$ la simulazione risulterebbe rallentata
+dal punto di vista dell'avvenimento di alcuni eventi dovuti per conseguenza di
+altri, ovvero le entità sarebbero poco reattive e ritarderebbero le loro azioni
+in funzione della grandezza del $\Delta$. Se il $\Delta$ è troppo piccolo
+(nell'ordine dei millisecondi) il sistema si troverebbe nella situazione di
+eseguire molti calcoli per completare lo spostamento, le entità sarebbero
+reattive, ma la quantità di avanzamento effettiva di una entità sarebbe minuta e
+inutile al fine della reattività instantanea delle altre entità presenti nel
+sistema. Il valore del $\Delta$ da noi scelto è \textbf{\textit{0.5 secondi}},
+cosi da permettere il giusto compresso tra step di avanzamento delle entità e
+reattività delle entità.

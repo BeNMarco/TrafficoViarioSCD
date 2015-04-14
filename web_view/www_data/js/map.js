@@ -2089,9 +2089,30 @@ Map.prototype.draw = function(){
 	liftPaths();
 }
 
+function chainer(funcs)
+{
+	if(!funcs || funcs.length < 1)
+		throw "you kidding me?";
+	if(funcs.length == 1)
+	{
+		console.log("got to the bottom");
+		console.log(funcs);
+		return funcs.shift();
+	}
+	else
+	{
+		console.log("going to recurse");
+		console.log(funcs);
+		var f = funcs.shift();
+		var nextF = chainer(funcs);
+		var toRet = function(){console.log("called");f.apply(); setTimeout(nextF, 10);};
+		return toRet;
+	}
+}
+
 Map.prototype.draw2 = function(){
 
-	chain(
+	var chain =[
 		function()
 		{
 			if(typeof this.startDrawingCallback === 'function'){
@@ -2100,8 +2121,9 @@ Map.prototype.draw2 = function(){
 
 			if(typeof this.loadingProgressNotifier === 'function'){
 				this.loadingProgressNotifier("Drawing crossroads");
+				console.log("iniyio");
 			}
-			setTimeout(Chain.next(),10);
+			//setTimeout(Chain.next(),10);
 		},
 		function()
 		{
@@ -2111,8 +2133,9 @@ Map.prototype.draw2 = function(){
 
 			if(typeof this.loadingProgressNotifier === 'function'){
 				this.loadingProgressNotifier("Drawing streets");
+				console.log("finito crossroads");
 			}
-			setTimeout(Chain.next(),10);
+			//setTimeout(Chain.next(),10);
 		},
 		function()
 		{
@@ -2148,8 +2171,9 @@ Map.prototype.draw2 = function(){
 
 			if(typeof this.loadingProgressNotifier === 'function'){
 				this.loadingProgressNotifier("Drawing places");
+				console.log("finito streets");
 			}
-			setTimeout(Chain.next(),10);
+			//setTimeout(Chain.next(),10);
 		},
 		function()
 		{
@@ -2168,10 +2192,12 @@ Map.prototype.draw2 = function(){
 			if(typeof this.mapReadyCallback === 'function'){
 				this.mapReadyCallback();
 			}
+			console.log("finito alll");
 		}
-		);
-
-
+		];
+		var f = chainer(chain);
+		console.log(f);
+		f.apply();
 }
 
 Map.prototype.bringTrafficLightsToFront = function()

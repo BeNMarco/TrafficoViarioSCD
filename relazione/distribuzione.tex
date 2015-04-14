@@ -61,9 +61,8 @@ o incrocio.
 Dato che la mappa presenta, una volta configurata e istanziata, una un numero
 costante di elementi, si avrà che il sistema non necessiterà di istenziare
 dinamicamente dei processi.
-Inoltre, ogni partizione per soddisfare le richieste di altre partizioni se
-dotata di un thread-pool risolve anche il problema dell'allocazione di thread
-per richieste remote da soddisfare.
+Inoltre, avendo a disposizione un thread-pool, ogni partizione non necessita di
+creare nuovi thread per soddisfare richieste di altri nodi.
 
 Seguendo questa strategia il sistema diviene scalabile sia in termini di
 distribuzione che di concorrenza.

@@ -65,21 +65,6 @@
 
 	var dDialog = null;
 
-	function startSimulation() {
-		console.log("start simulation");
-		sim.init();
-		entities.show();
-		myMap.bringTrafficLightsToFront();
-		if(enableSimulation){
-			view.onFrame = function(event) {
-				sim.updateState(event.delta * 1000);
-			}
-		}
-	}
-
-
-
-
 	function traslladar(a, b) {
 		var center = paper.project.view.center;
 		var desX = (a.x - b.x);
@@ -124,10 +109,6 @@
 
 	function closeLoadingDialog() {
 		$('#loadingDialog').modal('hide');
-
-		if(enableSimulation){
-			getUpdates();
-		}
 		//$('#loadingDialog .progress-label').text("");
 		//$('#loadingDialog').dialog('destroy');
 	}
@@ -163,14 +144,15 @@
     reader.onload = (function(theFile) {
       return function(e) {
         JsonObj = JSON.parse(e.target.result);
-         console.log(JsonObj);
-		
-		setTimeout(function(){openLoadingDialog(); loadMap(JsonObj)}, 30);
+        console.log(JsonObj);
+        loadMap(JsonObj);
       };
     })(data);
 
+		openLoadingDialog();
     // Read in the image file as a data URL.
-    reader.readAsText(data);
+
+    setTimeout(function(){reader.readAsText(data);}, 10);
   }
 
   function loadMap(data)
@@ -181,8 +163,8 @@
   	myMap.load(data);
 		myMap.draw();
 		
-		entities.draw();
-		entities.hide();
+		// entities.draw();
+		// entities.hide();
 		myMap.bringTrafficLightsToFront();
 		mapLayer = project.activeLayer;
 		secondLayer = new Layer();
@@ -191,7 +173,7 @@
 
 	onload = function(e) {
 
-		entStyle.carShape.args.size = [ 3.5, 5 ];
+		// entStyle.carShape.args.size = [ 3.5, 5 ];
 
 		if (window.File && window.FileReader && window.FileList && window.Blob) {
 	  	
@@ -212,8 +194,8 @@
 
 		paper.setup(document.getElementById("canvas"));
 		//loadingDialog.dialog('open');
-		$('#outputData').text("Started loading and drawing");
-		$('#loadingDialog').modal('show');
+		//$('#outputData').text("Started loading and drawing");
+		//$('#loadingDialog').modal('show');
 
 		myMap.setStyle(style);
 
@@ -337,29 +319,13 @@
 		</div>
 		-->
 		<form >
-			<span id="debug"><a id="getData" href="#">Get data</a> - </span> <span
-				id="debugq"><a id="action1" href="#">Generate states</a> - </span> <span><a
-				id="action2" href="#">Create states</a> - </span> <span><a
-				id="action3" href="#" onClick="resetSimulation()">Reset
-					simulation</a> - </span> <span id="debugOutput"></span>
+			<span id="debug"><a id="getData" href="#">Get data</a> - </span>
 			<input type="file" id="files" name="files" />
-			<span style="float:right;">Cached states: <span id="statesCount"></span> </span>
 		</div>
 		</form>
 		<canvas id="canvas" resize hidpi="off"
 			style="background-color: #F0EDE5;"></canvas>
-		<div id="controls-div">
-			<p>
-				<a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a
-					id="zoomOutBtn" href="#" onClick="zoomOut()">-</a>
-			</p>
-			<p>
-				<a onClick="switchTrafficLights()">Switch</a>
-			</p>
-			<p>
-				<a id="terminateBtn" onClick="requestTermination()">T</a>
-			</p>
-		</div>
+		
 		<div id="info-box">
 			
 		</div>

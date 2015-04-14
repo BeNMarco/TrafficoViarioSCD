@@ -506,7 +506,7 @@ package body gps_utilities is
                -- setto il nodo sorgente; gli altri nodi sono tutti a distanza infinita
                to_consider(1).id_quartiere:= id_quartiere_partenza;
                to_consider(1).id_incrocio:= id_incrocio_partenza;
-               Put_Line(Positive'Image(id_quartiere_partenza) & " " & Positive'Image(id_incrocio_partenza) & Positive'Image(min_first_incroci) & " " & Positive'Image(max_last_incroci));
+               --Put_Line(Positive'Image(id_quartiere_partenza) & " " & Positive'Image(id_incrocio_partenza) & Positive'Image(min_first_incroci) & " " & Positive'Image(max_last_incroci));
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_quartiere:= 0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).precedente.id_incrocio:= 0;
                coda_nodi(id_quartiere_partenza,id_incrocio_partenza).distanza:= 0.0;
@@ -535,7 +535,7 @@ package body gps_utilities is
                   adiacenti:= grafo(id_quartiere_minimo)(id_incrocio_minimo);
                   for i in 1..4 loop
                      if adiacenti(i).id_quartiere_adiacente/=0 then -- se c'è un incrocio adiacente
-                        Put_Line(Positive'Image(adiacenti(i).id_quartiere_adiacente) & " " & Positive'Image(adiacenti(i).id_adiacente));
+                        --Put_Line(Positive'Image(adiacenti(i).id_quartiere_adiacente) & " " & Positive'Image(adiacenti(i).id_adiacente));
                         if coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).in_coda = False then
                            coda_nodi(adiacenti(i).id_quartiere_adiacente,adiacenti(i).id_adiacente).in_coda:= True;
                            num_elementi_lista:= num_elementi_lista + 1;
@@ -548,8 +548,8 @@ package body gps_utilities is
                            spigolo:= cache_urbane(adiacenti(i).id_quartiere_strada)(adiacenti(i).id_strada);
                         exception
                            when others =>
-                              PUT_LINE("johnny request " & Positive'Image(id_abitante));
-                              Put_Line("ab " & Positive'Image(id_abitante) & " quart adiacente " & Positive'Image(adiacenti(i).id_quartiere_adiacente) & " ref " & Positive'Image(adiacenti(i).id_quartiere_strada) & " " & Positive'Image(adiacenti(i).id_strada));
+                              --PUT_LINE("johnny request " & Positive'Image(id_abitante));
+                              --Put_Line("ab " & Positive'Image(id_abitante) & " quart adiacente " & Positive'Image(adiacenti(i).id_quartiere_adiacente) & " ref " & Positive'Image(adiacenti(i).id_quartiere_strada) & " " & Positive'Image(adiacenti(i).id_strada));
 
                               raise;
                         end;

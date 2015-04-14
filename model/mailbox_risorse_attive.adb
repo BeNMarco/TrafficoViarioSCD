@@ -1110,6 +1110,7 @@ package body mailbox_risorse_attive is
          ingressi_structure_type_to_not_consider: ingressi_type;
          index: Positive;
          state_view_abitante: JSON_Value;
+         first_elemento_traiettoria: Boolean;
       begin
          for range_1 in False..True loop
             index_ordered_ingressi_same_direction:= 1;
@@ -1215,6 +1216,7 @@ package body mailbox_risorse_attive is
                      end if;
                   end if;
                   prec_list_abitanti:= null;
+                  first_elemento_traiettoria:= True;
                   while list_abitanti/=null loop
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti=list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti then
                         Put_Line("SAME POSITION ABITANTE id quartiere: " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " on traiettoria " & to_string_ingressi_type(traiettoria));
@@ -1225,7 +1227,7 @@ package body mailbox_risorse_attive is
                      list_abitanti.posizione_abitante.set_where_now_abitante(list_abitanti.posizione_abitante.get_where_next_posizione_abitanti);
                      Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " traiettoria " & to_string_ingressi_type(traiettoria) & " mezzo " & means_of_carrying'Image(mezzo) & " index " & Positive'Image(index));
                      new_abitante:= null;
-                     if first_ingresso_is_same_direction then
+                     if first_ingresso_is_same_direction and first_elemento_traiettoria then
                         -- caso uscita_destra_(bici/pedoni)
                         --costante_additiva:= 0.0;
                         if j=1 then
@@ -1320,6 +1322,7 @@ package body mailbox_risorse_attive is
                      if list_abitanti/=null then
                         list_abitanti:= list_abitanti.next;
                      end if;
+                     first_elemento_traiettoria:= False;
                   end loop;
                end loop;
 
@@ -1335,6 +1338,7 @@ package body mailbox_risorse_attive is
                         mezzo:= walking;
                      end if;
                      prec_list_abitanti:= null;
+                     first_elemento_traiettoria:= True;
                      while list_abitanti/=null loop
                         if list_abitanti.posizione_abitante.get_where_now_posizione_abitanti<=get_larghezza_corsia+get_larghezza_marciapiede and
                           list_abitanti.posizione_abitante.get_where_next_posizione_abitanti>get_larghezza_corsia+get_larghezza_marciapiede then
@@ -1356,17 +1360,19 @@ package body mailbox_risorse_attive is
                         end if;
                         list_abitanti.posizione_abitante.set_where_now_abitante(list_abitanti.posizione_abitante.get_where_next_posizione_abitanti);
                         Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " traiettoria " & to_string_ingressi_type(traiettoria) & " mezzo " & means_of_carrying'Image(mezzo));
-                        if h=1 then
-                           entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.posizione_abitante.get_id_quartiere_posizione_abitanti,list_abitanti.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                           mezzo:= bike;
-                        else
-                           entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.posizione_abitante.get_id_quartiere_posizione_abitanti,list_abitanti.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
-                           mezzo:= walking;
-                        end if;
-                        if entity_length-list_abitanti.posizione_abitante.get_where_now_posizione_abitanti>0.0 then
-                           get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).update_avanzamento_abitante_in_urbana(mezzo,entity_length-list_abitanti.posizione_abitante.get_where_now_posizione_abitanti);
-                        else
-                           get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).update_avanzamento_abitante_in_urbana(mezzo,0.0);
+                        if first_elemento_traiettoria then
+                           if h=1 then
+                              entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(list_abitanti.posizione_abitante.get_id_quartiere_posizione_abitanti,list_abitanti.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                              mezzo:= bike;
+                           else
+                              entity_length:= get_quartiere_utilities_obj.get_pedone_quartiere(list_abitanti.posizione_abitante.get_id_quartiere_posizione_abitanti,list_abitanti.posizione_abitante.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
+                              mezzo:= walking;
+                           end if;
+                           if entity_length-list_abitanti.posizione_abitante.get_where_now_posizione_abitanti>0.0 then
+                              get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).update_avanzamento_abitante_in_urbana(mezzo,entity_length-list_abitanti.posizione_abitante.get_where_now_posizione_abitanti);
+                           else
+                              get_ingressi_segmento_resources(get_index_ingresso_from_key(index_ordered_ingressi_same_direction,ingressi_structure_type_to_consider)).update_avanzamento_abitante_in_urbana(mezzo,0.0);
+                           end if;
                         end if;
 
                         if list_abitanti.posizione_abitante.get_where_now_posizione_abitanti=get_traiettoria_ingresso(traiettoria).get_lunghezza then
@@ -1405,6 +1411,7 @@ package body mailbox_risorse_attive is
                         if list_abitanti/=null then
                            list_abitanti:= list_abitanti.next;
                         end if;
+                        first_elemento_traiettoria:= False;
                      end loop;
                   end loop;
 

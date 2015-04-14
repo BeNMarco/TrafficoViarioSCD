@@ -12,7 +12,7 @@ package global_data is
    min_length_auto: constant new_float:= 3.0;
    max_length_pedoni: constant new_float:= 0.5;
    max_length_bici: constant new_float:= 1.0;
-   max_length_veicolo: constant new_float:= 7.0;
+   max_length_veicolo: constant new_float:= 4.3;
    num_delta_semafori: constant Positive:= 28;
    num_delta_semafori_bipedi: constant Positive:= 16;
    delta_value: constant new_float:= 0.5;

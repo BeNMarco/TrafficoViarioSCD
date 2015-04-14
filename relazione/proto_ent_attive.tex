@@ -116,20 +116,21 @@ Dove:
 \begin{itemize}
 \item \textit{mailbox.wait\_incroci} è la procedura utilizzata dalla strada
 principale per aspettare la terminazione dell'aggiornamento delle entità degli
-incroci interessati relativamente al quanto di tempo del sistema.
+incroci interessati relativamente al quanto di tempo del sistema;
+\item \textit{mailbox.finish\_delta\_updated} è la procedura utilizzata per avvisare eventuali entità di tipo ingresso che è stato eseguito l'aggiornamento delle posizioni delle entità passive per il quanto di tempo corrente.
 \end{itemize}
 \item per le strade d'ingresso:\\
 \begin{codiceada}[caption={Template-Code strade ingresso}, label=template-code-ingresso]
 loop
 	-- same code rows: [2-4]
-	mailbox_urbana.wait_urbana_finish_delta;	
+	mailbox_strada_principale.wait_finish_delta;	
 	move_entity;
 end loop;
 \end{codiceada}
 \\
 Dove:
 \begin{itemize}
-\item \textit{mailbox\_urbana.wait\_urbana\_finish\_delta}  
+\item \textit{mailbox\_strada\_principale.wait\_finish\_delta}  
 è la procedura utilizzata dalla strada d'ingresso per aspettare la terminazione
 dell'aggiornamento delle entità della strada principale alla quale l'ingresso
 si riferisce relativamente al quanto di tempo del sistema. Vale la pena qui

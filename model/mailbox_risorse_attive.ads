@@ -56,7 +56,9 @@ package mailbox_risorse_attive is
    type ingressi_in_svolta is array(Positive range <>) of traiettoria_ingressi_type;
    type ptr_ingressi_in_svolta is access ingressi_in_svolta;
    type ordered_ingressi_in_svolta is array(Boolean range <>) of ptr_ingressi_in_svolta;
+   type abitanti_in_transizione_da_ingressi is array(Positive range <>,id_corsie range <>) of posizione_abitanti_on_road;
    type abitanti_in_transizione_incroci_urbane is array(Boolean range False..True,id_corsie range 1..2) of posizione_abitanti_on_road;
+
 
    --function create_img_abitante(abitante: posizione_abitanti_on_road; new_position_abitante: Float) return JSON_Value;
    --function create_img_strada(road: road_state; id_risorsa: Positive) return JSON_Value;
@@ -205,7 +207,7 @@ package mailbox_risorse_attive is
       temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
 
       --backup_temp_cars_in_transizione: abitanti_in_transizione_incroci_urbane;
-      --backup_temp_bipedi_in_transizione: abitanti_in_transizione_incroci_urbane;
+      backup_temp_bipedi_in_transizione_da_ingressi: abitanti_in_transizione_da_ingressi(1..num_ingressi,1..2);
 
 
       abilita_attraversamento_bipedi_from_begin: attraversamenti_bipedi(False..True,False..True):= (False => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)), True => (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false), True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true)));

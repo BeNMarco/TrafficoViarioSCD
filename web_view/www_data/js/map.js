@@ -1438,7 +1438,8 @@ Crossroad.prototype.draw = function(style){
 					//debgArr[dI].strokeWidth = 0.2;
 				}
 			}
-
+			
+			this.trafficLights[i] = [];
 			for(var a = 0; a < this.lanesNumber[i%2]; a++){
 				var tc = new Point(
 						(path.position.x+(-this.lanesNumber[i%2]+0.5+(a%4))*style.laneWidth),
@@ -1450,7 +1451,7 @@ Crossroad.prototype.draw = function(style){
 					style,
 					2000
 				);
-				this.trafficLights[this.streetsRef[i].id+"s"+i+"l"+(a)] = t;
+				this.trafficLights[i][a] = t;
 				g.addChild(t.path);
 			}
 		}
@@ -1661,7 +1662,9 @@ Crossroad.prototype.switchTrafficLights = function(){
 
 Crossroad.prototype.bringTrafficLightsToFront = function(){
 	for(var i in this.trafficLights){
-		this.trafficLights[i].path.bringToFront();
+		for(var j in this.trafficLights[i]){
+			this.trafficLights[i][j].path.bringToFront();
+		}
 	}
 }
 
@@ -1682,6 +1685,21 @@ TrafficLight.prototype.switchState = function(){
 	} else {
 		setTimeout(setTrafficLight, this.yellowDelay, this, 'green');
 	}
+}
+
+TrafficLight.prototype.setGreen = function()
+{
+	setTrafficLight(this, 'green');
+}
+
+TrafficLight.prototype.setRed = function()
+{
+	setTrafficLight(this, 'red');
+}
+
+TrafficLight.prototype.setColor = function(color)
+{
+	setTrafficLight(this, color);
 }
 
 function setTrafficLight(tl, state){

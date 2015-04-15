@@ -399,6 +399,32 @@ Simulation.prototype.removeOnesWhoLeft = function()
 	}
 }
 
+Simulation.prototype.setTrafficLights = function(trafficLights, idxArray, state)
+{
+	for(var r in idxArray)
+	{
+		var trl = trafficLights[idxArray[r]];
+		for(tri in trl)
+		{
+			trl[tri].setColor(state);
+		}
+	}
+}
+
+Simulation.prototype.updateTrafficLightsState = function()
+{
+	for(var i in this.currentState.semafori)
+	{
+		var s = this.currentState.semafori[i];
+		if(s)
+		{
+			var tArr = this.map.crossroads[s.id_incrocio].trafficLights;
+			this.setTrafficLights(tArr, s.index_road_rossi, 'red');
+			this.setTrafficLights(tArr, s.index_road_verdi ,'green');
+		}
+	}
+}
+
 Simulation.prototype.updateState = function(deltaTime) {
 	if (deltaTime != 0 && this.currentState != null) {
 		this.simulationTime += deltaTime;
@@ -429,7 +455,9 @@ Simulation.prototype.updateState = function(deltaTime) {
 				this.receivedStates = 0;
 			} else {
 				this.currentState.stateTime = 0;
+
 				this.removeOnesWhoLeft();
+				this.updateTrafficLightsState();
 			}
 		}
 

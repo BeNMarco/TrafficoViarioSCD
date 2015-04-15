@@ -1677,6 +1677,7 @@ package body risorse_strade_e_incroci is
       validity_ingresso_opposite_direction: Boolean;
       temp_next_entity_distance_1: new_float;
       temp_next_entity_distance_2: new_float;
+      best_temp_next_entity_distance: new_float;
 
       precedenze_bici_bipedi_su_tratto: Boolean;
       precedenze_bici_bipedi_su_tratto_uscita: array (1..2) of Boolean;
@@ -2026,10 +2027,8 @@ package body risorse_strade_e_incroci is
                   -- trovare a che distanza si trova il prossimo abitante
                   if validity_ingresso_same_direction then
                      temp_next_entity_distance_1:= 0.0;
-                     if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=133 and (list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=695.0 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=730.0) then
-                        temp_next_entity_distance_1:= 0.0;
-                     end if;
-
+                     best_temp_next_entity_distance:= new_float'Last;
+                     signal:= False;
                      for h in reverse index_ingresso_same_direction..mailbox.get_ordered_ingressi_from_polo(range_1).all'Last loop
                         entity_length:= 0.0;
                         if temp_next_entity_distance_1=0.0 then
@@ -2045,19 +2044,19 @@ package body risorse_strade_e_incroci is
                                     entity_length:= get_quartiere_utilities_obj.get_bici_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                                  end if;
                               end if;
-                           end if;
 
-                           if other_list_abitanti/=null then
-                              if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<0.0 then
-                                 temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede-entity_length;
-                              else
-                                 temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_marciapiede-get_larghezza_corsia;
-                              end if;
-                           elsif mezzo=walking then
-                              -- other_list_abitanti=null
-                              other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),entrata_destra_bici);
                               if other_list_abitanti/=null then
-                                 temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_marciapiede-get_larghezza_corsia;
+                                 if other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-entity_length<0.0 then
+                                    temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede-entity_length;
+                                 else
+                                    temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_marciapiede-get_larghezza_corsia;
+                                 end if;
+                              elsif mezzo=walking then
+                                 -- other_list_abitanti=null
+                                 other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),entrata_destra_bici);
+                                 if other_list_abitanti/=null then
+                                    temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)-get_larghezza_marciapiede-get_larghezza_corsia;
+                                 end if;
                               end if;
                            end if;
 
@@ -2099,11 +2098,11 @@ package body risorse_strade_e_incroci is
                               -- GUARDA USCITA DESTRA
                               if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)+get_larghezza_corsia then
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),uscita_destra_bici);
-                                 if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
+                                 if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
                                     temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)+get_larghezza_corsia;
                                  else
                                     other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),uscita_destra_pedoni);
-                                    if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
+                                    if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
                                        temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)+get_larghezza_corsia;
                                     end if;
                                  end if;
@@ -2111,7 +2110,10 @@ package body risorse_strade_e_incroci is
                               -- GUARDA USCITA DRITTO
                               if temp_next_entity_distance_1=0.0 and then list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)+get_larghezza_corsia then
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),uscita_dritto_pedoni);
-                                 if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
+                                 if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
+                                    if other_list_abitanti.get_next_from_list_posizione_abitanti/=null then
+                                       other_list_abitanti:= other_list_abitanti.get_next_from_list_posizione_abitanti;
+                                    end if;
                                     if mezzo=walking then
                                        costante_additiva:= get_quartiere_utilities_obj.get_pedone_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                                     else
@@ -2122,7 +2124,10 @@ package body risorse_strade_e_incroci is
                                        temp_next_entity_distance_1:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider)),range_1)+get_larghezza_corsia;
                                     else
                                        other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_consider),uscita_dritto_bici);
-                                       if other_list_abitanti/=null and then other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 then
+                                       if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
+                                          if other_list_abitanti.get_next_from_list_posizione_abitanti/=null then
+                                             other_list_abitanti:= other_list_abitanti.get_next_from_list_posizione_abitanti;
+                                          end if;
                                           if mezzo=walking then
                                              costante_additiva:= get_quartiere_utilities_obj.get_pedone_quartiere(other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti).get_length_entità_passiva;
                                           else
@@ -2139,7 +2144,17 @@ package body risorse_strade_e_incroci is
                            end if;
 
                         end if;
+                        if temp_next_entity_distance_1>0.0 and then temp_next_entity_distance_1<best_temp_next_entity_distance then
+                           best_temp_next_entity_distance:= temp_next_entity_distance_1;
+                           signal:= True;
+                        end if;
+                        temp_next_entity_distance_1:= 0.0;
                      end loop;
+                     if signal then
+                        temp_next_entity_distance_1:= best_temp_next_entity_distance;
+                     else
+                        temp_next_entity_distance_1:= 0.0;
+                     end if;
                      if temp_next_entity_distance_1/=0.0 then
                         temp_next_entity_distance_1:= temp_next_entity_distance_1-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                      end if;
@@ -2148,23 +2163,25 @@ package body risorse_strade_e_incroci is
 
                   if validity_ingresso_opposite_direction then
                      temp_next_entity_distance_2:= 0.0;
+                     best_temp_next_entity_distance:= new_float'Last;
+                     signal:= False;
                      for h in 1..index_ingresso_opposite_direction loop
                         entity_length:= 0.0;
                         if temp_next_entity_distance_2=0.0 then
                            if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti<=get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede then
                               if mezzo=walking then
-                                 other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider),uscita_ritorno_bici);
+                                 other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider),uscita_ritorno_pedoni);
                               else
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider),uscita_ritorno_pedoni);
-                                 if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else
-                                                                        other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia) then
+                                 if other_list_abitanti/=null and then ((other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else
+                                                                        other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia) or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
                                     temp_next_entity_distance_2:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
                                  end if;
                                  other_list_abitanti:= mailbox.get_abitante_from_ingresso(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider),uscita_ritorno_bici);
                               end if;
 
-                              if other_list_abitanti/=null and then (other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else
-                                                                     other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia) then
+                              if other_list_abitanti/=null and then ((other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>0.0 or else
+                                                                     other_list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_flag_overtake_next_corsia) or else other_list_abitanti.get_next_from_list_posizione_abitanti/=null) then
                                  temp_next_entity_distance_2:= get_distance_from_polo_percorrenza(get_ingresso_from_id(mailbox.get_index_ingresso_from_key(h,current_ingressi_structure_type_to_not_consider)),range_1)-get_larghezza_corsia-get_larghezza_marciapiede;
                               end if;
                            end if;
@@ -2201,8 +2218,17 @@ package body risorse_strade_e_incroci is
                               end if;
                            end if;
                         end if;
-
+                        if temp_next_entity_distance_2>0.0 and then temp_next_entity_distance_2<best_temp_next_entity_distance then
+                           best_temp_next_entity_distance:= temp_next_entity_distance_2;
+                           signal:= True;
+                        end if;
+                        temp_next_entity_distance_2:= 0.0;
                      end loop;
+                     if signal then
+                        temp_next_entity_distance_2:= best_temp_next_entity_distance;
+                     else
+                        temp_next_entity_distance_2:= 0.0;
+                     end if;
                      if temp_next_entity_distance_2/=0.0 then
                         temp_next_entity_distance_2:= temp_next_entity_distance_2-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                      end if;

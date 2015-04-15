@@ -75,6 +75,20 @@
 	var ws2;
 	var server = window.location.host;
 
+	// callbacks for the counters
+
+	entities.onCarsChange = function(cars){
+		$('#car-num').text(Object.keys(cars).length);
+	}
+
+	entities.onBikesChange = function(bikes){
+		$('#bike-num').text(Object.keys(bikes).length);
+	}
+
+	entities.onPedestriansChange = function(ped){
+		$('#ped-num').text(Object.keys(ped).length);
+	}
+
 	function setupSimulation() {
 		sim = new Simulation(myMap, entities, 4, 1000);
 		sim.onReady(startSimulation);
@@ -549,23 +563,47 @@
 			<span style="float:right;">Cached states: <span id="statesCount"></span> </span>
 		</div>
 		</form>
+
+
 		<canvas id="canvas" resize hidpi="off"
 			style="background-color: #F0EDE5;"></canvas>
+
+
+		<div id="title-div">
+			<h1>Simulazione quartiere @_ID_QUARTIERE_@</h1>
+		</div>
+
 		<div id="controls-div">
-			<p>
-				<a id="zoomInBtn" href="#" onClick="zoomIn()">+</a> <a
-					id="zoomOutBtn" href="#" onClick="zoomOut()">-</a>
-			</p>
-			<p>
-				<a onClick="switchTrafficLights()">Switch</a>
-			</p>
-			<p>
-				<a id="terminateBtn" onClick="requestTermination()">T</a>
-			</p>
+		<div class="btn-group-vertical" role="group" aria-label="...">
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"></button>
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"></button>
 		</div>
+		<div class="divisor"></div>
+		<div>
+			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"></button>
+		</div>
+		</div>
+
+
 		<div id="info-box">
-			
+			<p id="info-title"><strong>Infos</strong></p>
+			<div class="propsBlock">
+				<div class="labels">
+					<p>Macchine:</p>
+					<p>Bici:</p>
+					<p>Pedoni:</p>
+					<p>Cache:</p>
+				</div>
+				<div class="values">
+					<p id="car-num">0</p>
+					<p id="bike-num">0</p>
+					<p id="ped-num">0</p>
+					<p class="statesCount">0</p>
+				</div>
+			</div>
 		</div>
+
+		
 	</div>
 </body>
 </html>

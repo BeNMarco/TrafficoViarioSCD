@@ -26,7 +26,7 @@
 myMap = new Map();
 
 
-myMap.onFinishDrawing(closeLoadingDialog);
+myMap.onFinishDrawing(function(){closeLoadingDialog(); console.log("done with the drawing");});
 myMap.setProgressNotifier(setProgressText);
 
 mapLayer = null;

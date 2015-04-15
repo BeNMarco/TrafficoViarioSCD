@@ -40,7 +40,6 @@ function EntitiesStyle(){
 
 function Entity()
 {
-
 }
 
 Entity.prototype.show = function(){
@@ -54,7 +53,6 @@ Entity.prototype.hide = function(){
 
 Entity.prototype.draw = function(style){
 	this.path = new Path[style.shape.type](style.shape.args); //style.carShape.args[0], style.carShape.args[1]
-	console.log(this.path);
 	this.path.fillColor = style.color;
 	this.path.myData = this;
 
@@ -104,7 +102,12 @@ Entity.prototype.myOnMouseLeave = function(event) {
   // We retrieve the tooltip from its name in the parent node (group) then remove it
   this.tooltipLabel.remove();
   this.fillColor = 'red';
-  console.log("out");
+}
+
+Entity.prototype.remove = function()
+{
+	if(this.path)
+		this.path.remove();
 }
 
 /*
@@ -183,17 +186,11 @@ function Bipede(id, id_quartiere)
 }
 
 Bipede.prototype.move = function(pos){
-	console.log(this.path);
 	var p = new Point();
 
 	p.length = this.length/2;
-	console.log(p.length);
-	console.log(this.length);
 	p.angle = 0;
 	this.path.position = pos.subtract(p);
-	console.log(pos);
-	console.log(p);
-	console.log(this.path);
 }
 
 Bipede.prototype.draw = function(style)
@@ -206,20 +203,93 @@ Bipede.prototype.draw = function(style)
 
 function EntitiesRegistry(){
 	this.cars = [];
+	this.bikes = [];
+	this.pedestrians = [];
 	this.style = new EntitiesStyle();
+
+	this.onCarsChange = null;
+	this.onBikesChange = null;
+	this.onPedestriansChange = null;
 }
 
 EntitiesRegistry.prototype.addCar = function(id, id_quartiere_abitante)
 {
-	curCar = new Car(id, id_quartiere_abitante);
-	curCar.draw(this.style);
+	var curCar = new Car(id, id_quartiere_abitante);
+	curCar.draw(this.style.car);
 	curCar.show();
 	this.cars[id_quartiere_abitante+"_"+id] = curCar;
+	if(typeof this.onCarsChange === 'function')
+	{
+		this.onCarsChange(this.cars);
+	}
+	return curCar;
 }
 
 EntitiesRegistry.prototype.removeCar = function(id, id_quartiere_abitante)
 {
-	delete this.cars[id_quartiere_abitante+"_"+id];
+	var toDel = this.cars[id_quartiere_abitante+"_"+id];
+	if(toDel){
+		toDel.remove();
+		delete this.cars[id_quartiere_abitante+"_"+id];
+		if(typeof this.onCarsChange === 'function')
+		{
+			this.onCarsChange(this.cars);
+		}
+	}
+}
+
+EntitiesRegistry.prototype.addBike = function(id, id_quartiere_abitante)
+{
+	var cur = new Bipede(id, id_quartiere_abitante);
+	cur.draw(this.style.bike);
+	cur.show();
+	this.bikes[id_quartiere_abitante+"_"+id] = cur;
+	if(typeof this.onCarsChange === 'function')
+	{
+		this.onBikesChange(this.bikes);
+	}
+	return cur;
+}
+
+EntitiesRegistry.prototype.removeBike = function(id, id_quartiere_abitante)
+{
+	var toDel = this.bikes[id_quartiere_abitante+"_"+id];
+	if(toDel)
+	{
+		toDel.remove();
+		delete this.bikes[id_quartiere_abitante+"_"+id];
+		if(typeof this.onCarsChange === 'function')
+		{
+			this.onCarsChange(this.bikes);
+		}
+	}
+}
+
+EntitiesRegistry.prototype.addPedestrian = function(id, id_quartiere_abitante)
+{
+	var cur = new Bipede(id, id_quartiere_abitante);
+	cur.draw(this.style.pedestrian);
+	cur.show();
+	this.pedestrians[id_quartiere_abitante+"_"+id] = cur;
+	if(typeof this.onCarsChange === 'function')
+	{
+		this.onPedestriansChange(this.pedestrians);
+	}
+	return cur;
+}
+
+EntitiesRegistry.prototype.removePedestrian = function(id, id_quartiere_abitante)
+{
+	var toDel = this.pedestrians[id_quartiere_abitante+"_"+id];
+	if(toDel)
+	{
+		toDel.remove();
+		delete this.pedestrians[id_quartiere_abitante+"_"+id];
+		if(typeof this.onCarsChange === 'function')
+		{
+			this.onPedestriansChange(this.pedestrians);
+		}
+	}
 }
 
 EntitiesRegistry.prototype.setStyle = function(style){
@@ -258,5 +328,30 @@ EntitiesRegistry.prototype.clear = function(){
 	for(var i in this.cars){
 		this.cars[i].remove();
 		delete this.cars[i];
+	}
+
+	if(typeof this.onCarsChange === 'function')
+	{
+		this.onCarsChange(this.cars);
+	}
+
+	for(var i in this.bikes){
+		this.bikes[i].remove();
+		delete this.bikes[i];
+	}
+
+	if(typeof this.onBikesChange === 'function')
+	{
+		this.onBikesChange(this.cars);
+	}
+
+	for(var i in this.pedestrians){
+		this.pedestrians[i].remove();
+		delete this.pedestrians[i];
+	}
+
+	if(typeof this.onPedestriansChange === 'function')
+	{
+		this.onPedestriansChange(this.cars);
 	}
 }

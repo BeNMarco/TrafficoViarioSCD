@@ -10,7 +10,7 @@ controlloIncrociAuto = true;
 controlloIncrociAutoSinistra = true;
 controlloIncrociAutoDestra = true;
 showTraiettorieAuto = false;
-showTraiettoriePedoni = true;
+showTraiettoriePedoni = false;
 pathWidth = 0.3;
 bikeDash = [pathWidth, pathWidth];
 
@@ -459,7 +459,7 @@ Street.prototype.prepareSidestreetsAccessPaths = function(style, curStr, crossSt
 		strada_check_ingressi_auto = this;
 		ingresso_check_ingressi_auto = curStr;
 		var p1 = new Path(this.getPositionAtOffset(crossStart, true, 50).position, this.getPositionAtOffset(crossStart, false, 50).position);
-		console.log(p1);
+		
 		var p2 = new Path(this.getPositionAtOffset(crossEnd, true, 50).position, this.getPositionAtOffset(crossEnd, false, 50).position);
 		//p1.selected = true;
 		//p2.selected = true;
@@ -763,7 +763,7 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 				var uscita_dritto = new Path(sideS_out_point, uscita.firstSegment.point);
 				uscita_dritto.visible = false;
 
-				var usicta_dritto_bici = new Path(
+				var uscita_dritto_bici = new Path(
 					sideS_out_bike,
 					getPositionAtOffset(
 						uscita, 
@@ -772,7 +772,7 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 						0.25*style.pavementWidth
 					).position
 				);
-				var usicta_dritto_pedoni = new Path(
+				var uscita_dritto_pedoni = new Path(
 					sideS_out_ped,
 					getPositionAtOffset(
 						uscita, 
@@ -781,8 +781,8 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 						0.25*style.pavementWidth
 					).position
 				);
-				usicta_dritto_bici.visible = false;
-				usicta_dritto_pedoni.visible = false;
+				uscita_dritto_bici.visible = false;
+				uscita_dritto_pedoni.visible = false;
 
 				var uscita_destra = new Path(sideS_out_point, this.getPositionAtOffset(curSeg.start+(bside ? -1 : 1)*style.pavementWidth, bside, offset+0.5*style.pavementWidth).position);
 				setPathHandles(uscita_destra,-1);
@@ -860,8 +860,8 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 					drawPath(uscita_ritorno_bici, 'green', pathWidth, bikeDash);
 					drawPath(entrata_dritto_pedoni, 'red', pathWidth);
 					drawPath(entrata_dritto_bici, 'red', pathWidth, bikeDash);
-					drawPath(usicta_dritto_pedoni, 'violet', pathWidth);
-					drawPath(usicta_dritto_bici, 'violet', pathWidth, bikeDash);
+					drawPath(uscita_dritto_pedoni, 'violet', pathWidth);
+					drawPath(uscita_dritto_bici, 'violet', pathWidth, bikeDash);
 				}
 
 				this.pedestrianSidestreetPaths[side][curSeg.position] = 
@@ -879,8 +879,8 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 					"uscita_ritorno_bici": uscita_ritorno_bici,
 					"entrata_dritto_pedoni": entrata_dritto_pedoni,
 					"entrata_dritto_bici": entrata_dritto_bici,
-					"usicta_dritto_pedoni": usicta_dritto_pedoni,
-					"usicta_dritto_bici": usicta_dritto_bici
+					"uscita_dritto_pedoni": uscita_dritto_pedoni,
+					"uscita_dritto_bici": uscita_dritto_bici
 				};
 
 				if(!lunghezza_traiettorie_ingressi['pedoni'])
@@ -900,7 +900,7 @@ Street.prototype.drawPedestrianLines = function(pedPath, style, precision){
 						o[index] = this.pedestrianSidestreetPaths[side][curSeg.position][index].length;
 					}
 					traiettorie_ingresso_pedoni = this.pedestrianSidestreetPaths[side][curSeg.position];
-					console.log("traiettorie_ingresso_pedoni: "+JSON.stringify(o));
+					//console.log("traiettorie_ingresso_pedoni: "+JSON.stringify(o));
 					controllo = true;
 				}
 			}
@@ -977,7 +977,7 @@ Street.prototype.getOnPavementPositionAt = function(distance, side, bike, drive)
 	return this.getPositionAtOffset(distance, side, offset);
 }
 
-Street.prototype.getOnZebraPositionAt = function(distance, side, entranceDistance, way, bike)
+Street.prototype.getOnZebraPositionAt	 = function(distance, side, entranceDistance, way, bike)
 {
 	if (typeof side === 'string'){
 		side = (side === 'true');
@@ -985,6 +985,17 @@ Street.prototype.getOnZebraPositionAt = function(distance, side, entranceDistanc
 
 	var path = this.pedestrianSidestreetPaths[side][entranceDistance][way];
 	
+	if(!path)
+	{
+		console.log("==== WTF!!! ====");
+		console.log(this.pedestrianSidestreetPaths);
+		console.log(side);
+		console.log(this.pedestrianSidestreetPaths[side]);
+		console.log(entranceDistance);
+		console.log(this.pedestrianSidestreetPaths[side][entranceDistance]);
+		console.log(way);
+		console.log(this.pedestrianSidestreetPaths[side][entranceDistance][way]);
+	}
 	return getPositionAtOffset(path, distance, 1, 0);
 }
 
@@ -1968,22 +1979,16 @@ Map.prototype.load = function(obj){
 
 	for (var i = 0; i < obj.incroci_a_4.length; i++) {
 		var cur_inc = obj.incroci_a_4[i];
-		console.log(cur_inc);
 		var c = new Crossroad(cur_inc);
 		c.linkStreets(this.streets, this.id);
-		console.log(cur_inc.id);
 		this.crossroads[cur_inc.id] = c;
-		console.log(this.crossroads[cur_inc.id]);
 	}
 	for (var i in obj.incroci_a_3){
 		//obj.incroci_a_3[i].strade.splice(obj.incroci_a_3[i].strada_mancante,0,null);
 		var cur_inc = obj.incroci_a_3[i];
-		console.log(cur_inc);
 		var c = new Crossroad(cur_inc);
 		c.linkStreets(this.streets, this.id);
-		console.log(cur_inc.id);
 		this.crossroads[cur_inc.id] = c;
-		console.log(this.crossroads[cur_inc.id]);
 	}
 	//for(var i = 0; i < obj.strade_ingresso.length; i++){
 
@@ -2195,9 +2200,60 @@ Map.prototype.draw2 = function(){
 			console.log("finito alll");
 		}
 		];
-		var f = chainer(chain);
+		var interval = 20;
+		var fchain = new TimeoutChain();
+		for(i in chain)
+		{
+			fchain.add(chain[i], interval);
+		}
+		fchain.start();
+		/*var f = chainer(chain);
 		console.log(f);
-		f.apply();
+		f.apply();*/
+}
+
+TimeoutChain = function(){
+    var This = this;
+    this._timeoutHandler = null;    
+    this.chain = new Array();
+    this.currentStep = 0;
+    this.isRunning = false;
+    this.nextStep = function(){
+        This.currentStep = This.currentStep +1;
+        if (This.currentStep == This.chain.length)
+        {
+            This.stop();
+        }else
+        {
+            This.processCurrentStep();
+        }
+    },
+    this.processCurrentStep = function(){
+        This._timeoutHandler = window.setTimeout(function(){
+            This.chain[This.currentStep].func();
+            This.nextStep();
+        },This.chain[This.currentStep].time);
+    },
+    this.start =function(){
+        if (This.chain.length == 0)
+        {
+            return;
+        }
+        if (This.isRunning == true)
+        {
+            return;
+        }
+        This.isRunning = true;
+        This.currentStep = 0;
+        This.processCurrentStep();
+    },
+    this.stop = function(){
+        This.isRunning = false;
+        window.clearTimeout(This._timeoutHandler)
+    },
+    this.add = function(_function,_timeout){
+        This.chain[This.chain.length] = {func : _function, time : _timeout};
+    }
 }
 
 Map.prototype.bringTrafficLightsToFront = function()

@@ -202,7 +202,7 @@ package body WebServer is
 
       function is_alive return Boolean is
       begin
-         return True;
+         return Alive;
       end is_alive;
       
       procedure Init is

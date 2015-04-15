@@ -92,11 +92,25 @@ Simulation.prototype.init = function() {
 }
 
 Simulation.prototype.initPrevState = function(state) {
-	var len = state.cars.length;
+	var len = state.abitanti.length;
 	for (var i = 0; i < len; i++) {
-		var id = state.cars[i].id_quartiere_abitante + "_" + state.cars[i].id_abitante;
-		if (this.objects.cars[id]) {
-			this.objects.cars[id].prevState = state.cars[i];
+		var curState = state.abitanti[i];
+		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
+		var o = null;
+		switch(curState.mezzo)
+		{
+			case 'car':
+				o = this.objects.cars[id];
+				break;
+			case 'bike':
+				o = this.objects.bikes[id];
+				break;
+			case 'walking':
+				o = this.objects.pedestrians[id];
+				break;
+		}
+		if (o) {
+			o.prevState = curState;
 		}
 	}
 }
@@ -115,15 +129,14 @@ Simulation.prototype.addNewCar = function(carState)
 	this.objects.cars[carState.id_quartiere_abitante+"_"+carState.id_abitante] = curCar;
 }
 
-Simulation.prototype.moveCar = function(time, c)
+Simulation.prototype.moveCar = function(time, curCarState)
 {
-	var curCarState = this.currentState.cars[c];
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
 	var curCar = this.objects.cars[curCarID];
 	if(curCar == null)
 	{
 		console.log("New car!");
-		this.addNewCar(curCarState);
+		curCar = this.objects.addCar(curCarState.id_abitante, curCarState.id_quartiere_abitante);
 	}
 	try {
 		var newDistance = 0;
@@ -232,12 +245,147 @@ Simulation.prototype.moveCar = function(time, c)
 	}
 }
 
+Simulation.prototype.moveBipede = function(time, curBiState)
+{
+	var curBiID = curBiState.id_quartiere_abitante+"_"+curBiState.id_abitante;
+
+	var curBi = (curBiState.mezzo == 'bike') ? this.objects.bikes[curBiID] : this.objects.pedestrians[curBiID];
+	curBiState.bike = (curBiState.mezzo == "bike");
+	if(curBi == null)
+	{
+		if(curBiState.bike)
+		{
+			curBi = this.objects.addBike(curBiState.id_abitante, curBiState.id_quartiere_abitante);
+		} else {
+			curBi = this.objects.addPedestrian(curBiState.id_abitante, curBiState.id_quartiere_abitante);
+		}
+	}
+	try {
+		var newDistance = 0;
+		var prevPosition = 0;
+
+		// if the previous state is empty (simulation just initiated) we
+		// put
+		// the object at the position given by the state
+		if (!doesExists(this.prevState)) {
+			newDistance = curBiState.distanza;
+		}
+		// otherwise we compute the correct position
+		else {
+			var prevState = curBi.prevState;
+			// if the object switched from a place to another
+			try {
+				if (curBiState.where != prevState.where) {
+					// if the initial position in the current state is
+					// set we use it, otherwise we use 0
+					prevPosition = curBiState.inizio !== undefined ? curBiState.inizio: 0;
+					/*if (curBiState.where == 'strada'
+							&& prevState.where == 'traiettoria_ingresso') {
+						prevPosition = prevState.distanza_ingresso + 10;
+					/*
+						if(curBiState.id_where == 29){
+							console.log("("+curBiState.id_abitante+") now: " + curBiState.where + " before:"
+								+ prevState.where + " prevPosition:"
+								+ prevPosition);
+						}
+					
+					} */
+				}
+				// otherwise simply take the position from the previous
+				// state
+				else {
+					prevPosition = prevState.distanza;
+					if (curBiState.where == 'strada_ingresso'
+							&& (prevState.in_uscita != curBiState.in_uscita)) {
+						prevPosition = 0;
+					}
+				}
+			} catch (err) {
+				console.log("curBi:");
+				console.log(curBiState);
+				console.log("prevState:");
+				console.log(prevState);
+				console.log("this.prevSate:");
+				console.log(this.prevSate);
+				console.log(err);
+				throw err;
+			}
+			/*
+			var curDist = (curBiState.distanza < 0) ? 0 : curBiState.distanza;
+			newDistance = 1
+					* prevPosition
+					+ 1
+					* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+					*/
+			var curDist = this.getNewDistacnce(curBiState.distanza, prevPosition);
+		}
+
+		var newPos = null;
+		switch (curBiState.where) {
+		case 'strada':
+			newPos = this.map.streets[curBiState.id_where].getOnPavementPositionAt(
+					newDistance, curBiState.polo, curBiState.bike);
+			break;
+		case 'strada_ingresso':
+			newPos = this.map.entranceStreets[curBiState.id_where]
+					.getOnPavementPositionAt(newDistance, !curBiState.in_uscita,
+							curBiState.bike);
+			break;
+		case 'traiettoria_ingresso':
+			newPos = this.map.streets[curBiState.id_where]
+					.getOnZebraPositionAt(newDistance, curBiState.polo,
+							curBiState.distanza_ingresso,
+							curBiState.traiettoria, curBiState.bike);
+			break;
+		case 'incrocio':
+			newPos = this.map.crossroads[curBiState.id_where]
+					.getPositionOnPedestrianPath(newDistance, curBiState.strada_ingresso,
+							curBiState.quartiere_strada_ingresso,
+							curBiState.direzione);
+			
+			break;
+		}
+		curBi.move(newPos.position);
+	} catch (e) {
+		console.log("Got exception");
+		console.log(e);
+		console.log(curBiState);
+	}
+}
+
 Simulation.prototype.moveObjects = function(time) {
 	this.currentState.stateTime += time;
-	var len = this.currentState.cars.length
+	var len = this.currentState.abitanti.length;
 	for (var c = 0; c < len; c++) {
-		// for(var c in this.currentState.cars){
-		this.moveCar(time, c);
+		var s = this.currentState.abitanti[c];
+		switch(s.mezzo)
+		{
+			case 'car':
+				this.moveCar(time, s);
+				break;
+			case 'bike':
+			case 'walking':
+				this.moveBipede(time, s);
+				break;
+		}
+	}
+}
+
+Simulation.prototype.removeOnesWhoLeft = function()
+{
+	for (var i = this.currentState.abitanti_uscenti.length - 1; i >= 0; i--) {
+		var a = this.currentState.abitanti_uscenti[i];
+		switch(a.mezzo)
+		{
+			case "car":
+				this.objects.removeCar(a.id_abitante, a.id_quartiere_abitante);
+			case "bike":
+				this.objects.removeBike(a.id_abitante, a.id_quartiere_abitante);
+			case "pedestrian":
+				this.objects.removePedestrian(a.id_abitante, a.id_quartiere_abitante);
+			default:
+				break;
+		}
 	}
 }
 
@@ -271,6 +419,7 @@ Simulation.prototype.updateState = function(deltaTime) {
 				this.receivedStates = 0;
 			} else {
 				this.currentState.stateTime = 0;
+				this.removeOnesWhoLeft();
 			}
 		}
 
@@ -292,4 +441,8 @@ Simulation.prototype.fastForward = function() {
 		this.stateCache = tmpArr;
 		this.init();
 	}
+}
+
+Simulation.prototype.stop = function(){
+	this.running = false;
 }

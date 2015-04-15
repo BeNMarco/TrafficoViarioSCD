@@ -6,13 +6,79 @@ body {
 #canvas{cursor:-webkit-grab; cursor: -moz-grab;}
 
 #canvas-wrap{position:relative;}
+
+#title-div{
+	position:absolute;
+  top: 0;
+  left: 0;
+	border-bottom-right-radius: 10px;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	margin: 0;
+	padding: 10px;
+}
+
+#title-div h1{
+	margin: 0px;
+}
+
+#info-box{
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	border-top-left-radius: 5px;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	line-height: 8pt;
+	padding-bottom: 0;
+}
+
+#info-box #info-title{
+	padding: 10px;
+	border-bottom: 1px solid gray;
+}
+
+#info-box .propsBlock{
+	clear:both;
+	padding:10px;
+}
+
+#info-box .top-separator{
+	border-top: 1px solid gray;
+}
+
+#info-box h1{
+	border-right: 1px solid;
+}
+
+#info-box .labels{
+	float:left;
+	text-align: right;
+	padding-right: 2px;
+}
+
+#info-box .values{
+	float:left;
+	padding-left: 2px;
+	padding-right: 10px;
+	min-width: 20px;
+}
+
 #controls-div{
 	position: absolute; 
-	top: 40px; left:30px;
+	top: 25%; left:0;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 	padding: 5px;
-	background-color: rgba(0,0,0,0.4);
 	/*opacity: 0.5;*/
 }
+
+.divisor{
+	height: 10px;
+}
+
 #controls-div a{
 	display:block; 
 	background-color: white; 

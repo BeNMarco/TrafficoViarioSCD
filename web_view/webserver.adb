@@ -26,6 +26,8 @@ with JS_Page_Compiler;
 with Districts_Repository;
 
 with global_data;
+with absolute_path;
+with JSON_Helper;
 
 use Page_CB;
 use Websock_CB;
@@ -40,8 +42,6 @@ use type AWS.Net.Socket_Access;
 use GNATCOLL.JSON;
 
 use remote_types;
-
-with absolute_path;
 use absolute_path;
 
 package body WebServer is
@@ -49,6 +49,8 @@ package body WebServer is
    Admin_Dir : String := abs_path & "web_view/admin_data";
    WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
+   WebServer_Config_File : String := "data/webserver_config.json";
+   Standard_Port : Integer := 12345;
 
    function get_webserver return Access_WebServer_Wrapper_Type is
    begin
@@ -132,8 +134,16 @@ package body WebServer is
    -- end get_webserver;
 
    procedure Init(This : in out WebServer_Wrapper_Type) is
+      use JSON_Helper;
+
       JS_Compiler : JS_Page_Compiler_Handler;
+      JWebConfig : JSON_Value := Get_Json_Value(Json_File_Name => abs_path & WebServer_Config_File);
+      WS_Port : Integer := Get(JWebConfig, "port");
    begin
+      if WS_Port = 0 then
+        WS_Port := Standard_Port;
+      end if;
+      
       AWS.Config.Set.Reuse_Address(This.WsConfig, True);
       AWS.Config.Set.WWW_Root(This.WsConfig, abs_path & "web_view/www_data");
       AWS.Config.Set.Admin_URI(This.WsConfig, abs_path & "web_view/admin_aws");
@@ -142,7 +152,7 @@ package body WebServer is
       AWS.Config.Set.Up_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_up.png");
       AWS.Config.Set.Down_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_down.png");
       AWS.Config.Set.Logo_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_logo.png");
-      AWS.Config.Set.Server_Port(This.WsConfig,12345);
+      AWS.Config.Set.Server_Port(This.WsConfig, WS_Port);
 
       This.Home.Set_Districts_Repository(This'Unchecked_Access);
 
@@ -151,7 +161,7 @@ package body WebServer is
       Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
       begin
          Server.Start(This.WS, This.Root, This.WsConfig);
-         Text_IO.Put_Line("Call me on port 12345");
+         Text_IO.Put_Line("Call me on port " & Integer'Image(WS_Port));
       exception
          when Error: others =>
             Text_IO.Put_Line("Unexpected exception: ");

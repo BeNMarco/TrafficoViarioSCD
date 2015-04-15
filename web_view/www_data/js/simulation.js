@@ -33,6 +33,8 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.statesAvailableCallback = null;
 	this.gotStateCallback = null;
 
+	this.onObjectMoved = null;
+
 	this.lastStateTime = 0;
 }
 
@@ -238,6 +240,10 @@ Simulation.prototype.moveCar = function(time, curCarState)
 			break;
 		}
 		curCar.move(newPos.position, newPos.angle);
+		if(typeof this.onObjectMoved === 'function')
+		{
+			this.onObjectMoved(curCar, curCarState, newDistance, newPos);
+		}
 	} catch (e) {
 		console.log("Got exception");
 		console.log(e);
@@ -317,7 +323,7 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 					+ 1
 					* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 					*/
-			var curDist = this.getNewDistacnce(curBiState.distanza, prevPosition);
+			var newDistance = this.getNewDistacnce(curBiState.distanza, prevPosition);
 		}
 
 		var newPos = null;
@@ -346,6 +352,10 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 			break;
 		}
 		curBi.move(newPos.position);
+		if(typeof this.onObjectMoved === 'function')
+		{
+			this.onObjectMoved(curBi, curBiState, newDistance, newPos);
+		}
 	} catch (e) {
 		console.log("Got exception");
 		console.log(e);

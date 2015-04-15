@@ -93,6 +93,7 @@
 		sim.statesAvailableCallback = function() {
 			$('#loadingDialog').modal('hide');
 		}
+		sim.onObjectMoved = objectMovedCallback;
 	}
 
 	function startSimulation() {
@@ -107,10 +108,23 @@
 		}
 	}
 
+	function objectMovedCallback(object, state, distance, position)
+	{
+		var tipo = state.mezzo == "walking" ? "ped" : state.mezzo;
+		var id = state.id_quartiere_abitante+"_"+state.id_abitante;
+
+		var row = $('#'+tipo+'Table tr#'+id);
+		if (!row.length) {
+ 			row = $('#'+tipo+'Table tbody').append('<tr id="'+id+'"><td class="id">'+state.id_abitante+'</td><td class="quart">'+state.id_quartiere_abitante+'</td><td class="where"></td><td class="pos"></td></tr>');
+ 		}
+
+ 		row.find('td.where').text(state.where+ " ("+state.id_where+")");
+ 		row.find('td.pos').text(distance);
+	}
 
 	window.onfocus = function()
 	{
-		if(sim != null){
+		if(sim != null && sim.running){
 			console.log("adding renderer");
 			sim.fastForward();
 			view.onFrame = function(event) {
@@ -238,6 +252,8 @@
 	function requestTermination()
 	{
 		console.log("request Termination");
+		sim.stop();
+		view.onFrame = null;
 		if(ws1)
 		{
 			var data = {type:"command", command:"terminate"};
@@ -496,6 +512,76 @@
 		<div>
 			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"></button>
 		</div>
+		</div>
+
+				<div id="status-box">
+			<div id="statusPanel" class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading">Posizione oggetti</div>
+				<!--<div class="panel-body">-->
+				<div role="tabpanel">
+
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#carPane" aria-controls="carPane" role="tab" data-toggle="tab">Auto</a></li>
+						<li role="presentation"><a href="#bikePane" aria-controls="bikePane" role="tab" data-toggle="tab">Bici</a></li>
+						<li role="presentation"><a href="#pedPane" aria-controls="pedPane" role="tab" data-toggle="tab">Pedoni</a></li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="carPane">
+							<table class="table" id="carTable" style="width:100%;">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="bikePane">
+
+							<table class="table" id="bikeTable">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="pedPane">
+
+							<table class="table" id="pedTable">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</div>	
+
+			<div class="toggle" style="position:relative; left:0;">
+				<button type="button" class="btn btn-default" data-toggle="collapse" href="#statusPanel" aria-expanded="false" aria-controls="statusPanel">Status</button>
+			</div>
 		</div>
 
 

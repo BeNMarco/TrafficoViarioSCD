@@ -4302,6 +4302,7 @@ package body mailbox_risorse_attive is
          entity_length: new_float;
          --traiettoria: traiettoria_incroc_to_follow;
          traiettoria_incrocio: traiettoria_incroci_type;
+         original_traiettoria_incrocio: traiettoria_incroci_type;
          corsia: id_corsie;
          other_index: Natural;
          destination: trajectory_to_follow;
@@ -4366,9 +4367,6 @@ package body mailbox_risorse_attive is
                      elsif traiettoria_bipede/=destra_bici and traiettoria_bipede/=destra_pedoni then
                         --if ((list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=sinistra_pedoni or else list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=sinistra_bici) or else (traiettoria_bipede=dritto_pedoni or else traiettoria_bipede=dritto_bici)) and then list.posizione_abitante.get_where_now_posizione_abitanti-entity_length>=get_larghezza_corsia*4.0+get_larghezza_marciapiede then
                         if list.posizione_abitante.get_where_now_posizione_abitanti-entity_length>=get_larghezza_corsia*4.0+get_larghezza_marciapiede then
-                           if list.posizione_abitante.get_id_abitante_posizione_abitanti=121 then
-                              traiettoria_sinistra:= False;
-                           end if;
                            traiettoria_sinistra:= False;
                            new_abitante:= list;
                            new_abitante.posizione_abitante.set_where_now_abitante(0.0);
@@ -4385,6 +4383,7 @@ package body mailbox_risorse_attive is
                            end if;
                            if list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=sinistra_pedoni or else
                              list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=sinistra_bici then
+                              original_traiettoria_incrocio:= list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow;
                               other_list:= bipedi_to_move(other_index,list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow);
                               traiettoria_sinistra:= True;
                            else
@@ -4414,7 +4413,7 @@ package body mailbox_risorse_attive is
                               if traiettoria_sinistra then
                                  -- l'abitante viene inserito nella traiettoria a sinistra
                                  -- la nuova traiettoria per i nuovi bipedi si trova in i-1 ovverro in other_index
-                                 bipedi_to_move(other_index,list.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow):= new_abitante;
+                                 bipedi_to_move(other_index,original_traiettoria_incrocio):= new_abitante;
                               else
                                  temp_bipedi_destra_to_go(other_index,corsia):= new_abitante;
                               end if;
@@ -4658,8 +4657,8 @@ package body mailbox_risorse_attive is
          -- quando il metodo viene chiamato non hai nessun abitante nella traiettoria destra interessata
          if temp_bipedi_destra_to_go(index_road,corsia)/=null then
             list:= temp_bipedi_destra_to_go(index_road,corsia);
-            list.next:= null;
             temp_bipedi_destra_to_go(index_road,corsia):= temp_bipedi_destra_to_go(index_road,corsia).next;
+            list.next:= null;
             if corsia=1 then
                bipedi_to_move(index_road,destra_bici):= list;
             else

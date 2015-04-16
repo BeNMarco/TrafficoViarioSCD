@@ -145,28 +145,28 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("id_incrocio",id_incrocio);
       json.Set_Field("abilitato_pedoni_bici",bipedi_can_cross);
       if bipedi_can_cross then
+         Append(json_arr_1,Create(0));
          Append(json_arr_1,Create(1));
          Append(json_arr_1,Create(2));
          Append(json_arr_1,Create(3));
-         Append(json_arr_1,Create(4));
          json.Set_Field("index_road_rossi",json_arr_1);
          json.Set_Field("index_road_verdi",json_arr_2);
       else
          if verso_semafori_verdi then
             -- True => 1 e 3 verdi
             -- False => 2 e 4 verdi
-            Append(json_arr_1,Create(1)); -- 2
-            Append(json_arr_1,Create(3)); -- 4
+            Append(json_arr_1,Create(1));
+            Append(json_arr_1,Create(3));
             json.Set_Field("index_road_rossi",json_arr_1);
-            Append(json_arr_2,Create(0)); -- 1
-            Append(json_arr_2,Create(2)); -- 3
+            Append(json_arr_2,Create(0));
+            Append(json_arr_2,Create(2));
             json.Set_Field("index_road_verdi",json_arr_2);
          else
-            Append(json_arr_1,Create(0)); -- 1
-            Append(json_arr_1,Create(2)); -- 3
+            Append(json_arr_1,Create(0));
+            Append(json_arr_1,Create(2));
             json.Set_Field("index_road_rossi",json_arr_1);
-            Append(json_arr_2,Create(1)); -- 2
-            Append(json_arr_2,Create(3)); -- 4
+            Append(json_arr_2,Create(1));
+            Append(json_arr_2,Create(3));
             json.Set_Field("index_road_verdi",json_arr_2);
          end if;
       end if;

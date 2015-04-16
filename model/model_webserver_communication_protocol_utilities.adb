@@ -7,6 +7,7 @@ with data_quartiere;
 with the_name_server;
 with remote_types;
 with global_data;
+with risorse_passive_data;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -17,8 +18,22 @@ use data_quartiere;
 use the_name_server;
 use remote_types;
 use global_data;
+use risorse_passive_data;
 
 package body model_webserver_communication_protocol_utilities is
+
+   procedure set_length_parameters_abitante(json: in out JSON_Value; mezzo: means_of_carrying; id_quartiere_abitante: Positive; id_abitante: Positive) is
+   begin
+      json.Set_Field("is_a_bus",get_quartiere_utilities_obj.get_abitante_quartiere(id_quartiere_abitante,id_abitante).is_a_bus);
+      case mezzo is
+         when car =>
+            json.Set_Field("length_abitante",Float(get_quartiere_utilities_obj.get_auto_quartiere(id_quartiere_abitante,id_abitante).get_length_entità_passiva));
+         when bike =>
+            json.Set_Field("length_abitante",Float(get_quartiere_utilities_obj.get_bici_quartiere(id_quartiere_abitante,id_abitante).get_length_entità_passiva));
+         when walking =>
+            json.Set_Field("length_abitante",Float(get_quartiere_utilities_obj.get_pedone_quartiere(id_quartiere_abitante,id_abitante).get_length_entità_passiva));
+      end case;
+   end set_length_parameters_abitante;
 
    function create_entità_traiettoria_ingresso_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: Float; polo: Boolean; where_ingresso: Float; traiettoria: traiettoria_ingressi_type; mezzo: means_of_carrying) return JSON_Value is
       json: JSON_Value:= Create_Object;
@@ -33,6 +48,9 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("distanza_ingresso",where_ingresso);
       json.Set_Field("traiettoria",to_string_ingressi_type(traiettoria));
       json.Set_Field("mezzo",convert_means_to_string(mezzo));
+
+      set_length_parameters_abitante(json,mezzo,id_quartiere_abitante,id_abitante);
+
       return json;
    end create_entità_traiettoria_ingresso_state;
 
@@ -50,6 +68,9 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("corsia_inizio",from_corsia);
       json.Set_Field("corsia_fine",to_corsia);
       json.Set_Field("mezzo","car");
+
+      set_length_parameters_abitante(json,car,id_quartiere_abitante,id_abitante);
+
       return json;
    end create_car_traiettoria_cambio_corsia_state;
 
@@ -65,6 +86,9 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("polo",polo);
       json.Set_Field("corsia",corsia);
       json.Set_Field("mezzo",convert_means_to_string(mezzo));
+
+      set_length_parameters_abitante(json,mezzo,id_quartiere_abitante,id_abitante);
+
       return json;
    end create_entità_urbana_state;
 
@@ -87,6 +111,9 @@ package body model_webserver_communication_protocol_utilities is
             json.Set_Field("corsia",2);
       end case;
       json.Set_Field("mezzo",convert_means_to_string(mezzo));
+
+      set_length_parameters_abitante(json,mezzo,id_quartiere_abitante,id_abitante);
+
       return json;
    end create_entità_ingresso_state;
 
@@ -103,6 +130,9 @@ package body model_webserver_communication_protocol_utilities is
       json.Set_Field("strada_ingresso",id_urbana_ingresso);
       json.Set_Field("direzione",to_string_incroci_type(direzione));
       json.Set_Field("mezzo",convert_means_to_string(mezzo));
+
+      set_length_parameters_abitante(json,mezzo,id_quartiere_abitante,id_abitante);
+
       return json;
    end create_entità_incrocio_state;
 

@@ -155,13 +155,13 @@ function setPathHandles(path, side)
 function MapStyle(){
 	this.lineColor = 'white';
 	this.laneColor = 'grey';
-	this.lineWidth = 0.3;
+	this.lineWidth = 0.15;
 	this.laneWidth = 7;
 	this.pavementColor = 'grey';
 	this.pavementWidth = 3;
-	this.dashArray = [6,4];
-	this.zebraDash = [2,2];
-	this.pavementMiddleDash = [1,1];
+	this.dashArray = [3,4.5];
+	this.zebraDash = [0.5,0.5];
+	this.pavementMiddleDash = [1,1.5];
 	this.middlePathEntranceDashOffset = 5;
 }
 

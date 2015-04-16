@@ -21,7 +21,7 @@ function EntitiesStyle(){
 	this.pedestrianColor = 'pink';
 
 	this.car = {
-		shape: {type:'Rectangle', args: {point:[0,0],size:[3.5,5]}},
+		shape: {type:'Rectangle', args: {point:[0,0],size:[2,3]}},
 		color: 'red'
 	};
 	this.bus = {
@@ -33,7 +33,7 @@ function EntitiesStyle(){
 		color: 'green'
 	};
 	this.pedestrian = {
-		shape: {type:'Circle', args: {center:[0,0], radius:0.5}},
+		shape: {type:'Circle', args: {center:[0,0], radius:0.25}},
 		color: 'pink'
 	};
 }
@@ -146,7 +146,7 @@ Car.prototype.draw = function(style){
 Car.prototype = new Entity();
 Car.prototype.constructor = Car;
 
-function Car(id, id_quartiere){
+function Car(id, id_quartiere, length){
 	this.id = id;
 	this.id_quartiere = id_quartiere;
 	this.driver = null;
@@ -154,7 +154,7 @@ function Car(id, id_quartiere){
 
 	this.currentPosition = null;
 	this.angle = 90;
-	this.length = 11;
+	this.length = length;
 }
 
 Car.prototype.move = function(pos, angle){
@@ -169,8 +169,9 @@ Car.prototype.move = function(pos, angle){
 Car.prototype.draw = function(style)
 {
 	// calling the "super" method
-	Entity.prototype.draw.call(this, style);
-	this.length = style.shape.args.size[1];
+	var tmpSt = style;
+	tmpSt.shape.args.size[1] = this.length;
+	Entity.prototype.draw.call(this, tmpSt);
 }
 
 Bipede.prototype = new Entity();
@@ -212,9 +213,9 @@ function EntitiesRegistry(){
 	this.onPedestriansChange = null;
 }
 
-EntitiesRegistry.prototype.addCar = function(id, id_quartiere_abitante)
+EntitiesRegistry.prototype.addCar = function(id, id_quartiere_abitante, length)
 {
-	var curCar = new Car(id, id_quartiere_abitante);
+	var curCar = new Car(id, id_quartiere_abitante, length);
 	curCar.draw(this.style.car);
 	curCar.show();
 	this.cars[id_quartiere_abitante+"_"+id] = curCar;

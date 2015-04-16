@@ -70,6 +70,7 @@ package mailbox_risorse_attive is
    type ptr_abilita_attraversamenti_bipedi is access abilita_attraversamenti_bipedi;
    type attraversamenti_bipedi is array (Boolean range <>, Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
    type attraveramento_cars is array (Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
+   type set_boolean is array(False..True) of Boolean;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       function get_id_risorsa return Positive;
@@ -106,10 +107,6 @@ package mailbox_risorse_attive is
 
       procedure remove_abitante_in_incrocio(polo: Boolean; num_corsia: id_corsie; id_quartiere: Positive; id_abitante: Positive);
       procedure update_abitante_destination(abitante: in out ptr_list_posizione_abitanti_on_road; destination: trajectory_to_follow);
-
-      -- metodo usato per abilitare o meno l'inserimento di bipedi che da sinistra
-      -- devono essere messi nella traiettoria dritto
-      procedure abilitazione_sinistra_bipedi_in_incroci(mezzo: means_of_carrying; enable: Boolean);
 
       -- metodi usati per abilitare attraversamenti pedoni in uscita_dritto e entrata_dritto
       procedure abilita_attraversamento_all_ingressi(from_begin: Boolean);
@@ -173,7 +170,10 @@ package mailbox_risorse_attive is
 
       -- metodo richiamato per vedere se è possibile inserire gli abitanti
       -- nella traiettoria per muoversi a destra
-      function get_abilitazione_cambio_traiettoria_bipede(mezzo: means_of_carrying) return Boolean;
+      -- metodo usato per abilitare o meno l'inserimento di bipedi che da sinistra
+      -- devono essere messi nella traiettoria dritto
+      procedure abilitazione_sinistra_bipedi_in_incroci(verso: Boolean; mezzo: means_of_carrying; enable: Boolean);
+      function get_abilitazione_cambio_traiettoria_bipede(verso: Boolean; mezzo: means_of_carrying) return Boolean;
 
       procedure exit_system;
 
@@ -217,8 +217,8 @@ package mailbox_risorse_attive is
       abilita_attraversameno_cars_in_uscita_ingressi: attraveramento_cars(False..True):= (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false),True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true));
       abilita_attraversameno_cars_in_entrata_ingressi: attraveramento_cars(False..True):= (False => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_false),True => new abilita_attraversamenti_bipedi(1..num_ingressi_polo_true));
 
-      abilita_sinistra_pedoni_in_incroci: Boolean:= True;
-      abilita_sinistra_bici_in_incroci: Boolean:= True;
+      abilita_sinistra_pedoni_in_incroci: set_boolean:= (others => True);
+      abilita_sinistra_bici_in_incroci: set_boolean:= (others => True);
 
       entità_outing_quartiere: JSON_Array:= Empty_Array;
    end resource_segmento_urbana;

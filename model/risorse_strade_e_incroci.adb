@@ -1790,8 +1790,10 @@ package body risorse_strade_e_incroci is
          end if;
          -- fine wait; gli incroci hanno fatto l'avanzamento
 
-         mailbox.abilitazione_sinistra_bipedi_in_incroci(walking,True);
-         mailbox.abilitazione_sinistra_bipedi_in_incroci(bike,True);
+         mailbox.abilitazione_sinistra_bipedi_in_incroci(False,walking,True);
+         mailbox.abilitazione_sinistra_bipedi_in_incroci(True,walking,True);
+         mailbox.abilitazione_sinistra_bipedi_in_incroci(False,bike,True);
+         mailbox.abilitazione_sinistra_bipedi_in_incroci(True,bike,True);
 
          mailbox.abilita_attraversamento_cars_ingressi(False);
          mailbox.abilita_attraversamento_cars_ingressi(True);
@@ -2419,8 +2421,8 @@ package body risorse_strade_e_incroci is
 
                   -- controllo se abitanti in traiettoria sinistra da incroci
                   -- possono essere inseriti in traiettoria bipedi
-                  if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>get_urbana_from_id(id_task).get_lunghezza_road-entity_length*2.0 then
-                     mailbox.abilitazione_sinistra_bipedi_in_incroci(mezzo,False);
+                  if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti>get_urbana_from_id(id_task).get_lunghezza_road-entity_length*5.0 then
+                     mailbox.abilitazione_sinistra_bipedi_in_incroci(range_1,mezzo,False);
                   end if;
 
                   if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_next_posizione_abitanti=get_urbana_from_id(id_task).get_lunghezza_road then
@@ -5749,7 +5751,7 @@ package body risorse_strade_e_incroci is
 
                      if list_bipedi=null and then index_road/=id_mancante then
                         road:= get_road_from_incrocio(id_task,i);
-                        if ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio))/=null and then (ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_abilitazione_cambio_traiettoria_bipede(mezzo)) then
+                        if ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio))/=null and then (ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_abilitazione_cambio_traiettoria_bipede(road.get_polo_road_incrocio,mezzo)) then
                            mailbox.remove_first_bipede_to_go_destra_from_dritto(index_road,corsia,list_bipedi);
                         end if;
                      end if;
@@ -5762,6 +5764,9 @@ package body risorse_strade_e_incroci is
                         next_abitante_velocity:= 0.0;
 
                         -- un bipede non andrà mai a destra dall'indice della strada mancante nell'incrocio a 3
+                        if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=146 then
+                           stop_entity:= False;
+                        end if;
                         road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,i,destra));
 
                         if traiettoria_bipede=destra_pedoni and then list_bipedi.get_next_from_list_posizione_abitanti/=null then
@@ -5869,6 +5874,10 @@ package body risorse_strade_e_incroci is
                         next_id_abitante:= 0;
                         next_entity_distance:= 0.0;
                         next_abitante_velocity:= 0.0;
+
+                        if list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=121 then
+                           stop_entity:= False;
+                        end if;
 
                         if mailbox.get_semaforo_bipedi then
                            -- semaforo verde per i bipedi
@@ -6013,7 +6022,7 @@ package body risorse_strade_e_incroci is
                                  if list_bipedi=null or else (list_bipedi/=null and then list_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-quantità_percorsa>min_distance) then
                                     if index_road/=id_mancante then
                                        road:= get_road_from_incrocio(id_task,i);
-                                       if ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio))/=null and then (ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_abilitazione_cambio_traiettoria_bipede(mezzo)) then
+                                       if ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio))/=null and then (ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_abilitazione_cambio_traiettoria_bipede(road.get_polo_road_incrocio,mezzo)) then
                                           mailbox.sposta_bipede_da_sinistra_a_dritto(index_road,mezzo,list_near_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti,list_near_bipedi.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti);
                                           -- list_bipedi è quindi cambiato
                                           list_bipedi:= mailbox.get_list_bipede_to_move(index_road,traiettoria_bipede);

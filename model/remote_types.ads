@@ -81,7 +81,7 @@ package remote_types is
    function get_distanza_percorsa_first_abitante(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return new_float is abstract;
    function get_distanza_percorsa_first_bipede(obj: access rt_urbana; polo: Boolean; mezzo: means_of_carrying) return new_float is abstract;
    function first_car_abitante_has_passed_incrocio(obj: access rt_urbana; polo: Boolean; num_corsia: id_corsie) return Boolean is abstract;
-   function get_abilitazione_cambio_traiettoria_bipede(obj: access rt_urbana; mezzo: means_of_carrying) return Boolean is abstract;
+   function get_abilitazione_cambio_traiettoria_bipede(obj: access rt_urbana; verso: Boolean; mezzo: means_of_carrying) return Boolean is abstract;
 
    procedure insert_new_car(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; car: posizione_abitanti_on_road) is abstract;
    procedure insert_new_bipede(obj: access rt_incrocio; from_id_quartiere: Positive; from_id_road: Positive; bipede: posizione_abitanti_on_road; mezzo: means_of_carrying; traiettoria: traiettoria_incroci_type) is abstract;

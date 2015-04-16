@@ -1026,7 +1026,7 @@ package body mailbox_risorse_attive is
                while list_abitanti/=null loop
                   next_is_calculated:= False;
                   list_abitanti.posizione_abitante.set_where_now_abitante(list_abitanti.posizione_abitante.get_where_next_posizione_abitanti);
-                  Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " mezzo " & means_of_carrying'Image(mezzo));
+                  Put_Line("id_abitante " & Positive'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti) & " is at " & new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti) & ", gestore is urbana " & Positive'Image(id_risorsa) & " quartiere " & Positive'Image(get_id_quartiere) & " mezzo " & means_of_carrying'Image(mezzo) & " LATO " & Boolean'Image(i));
                   if list_abitanti.posizione_abitante.get_destination.get_traiettoria_incrocio_to_follow=empty then
                      if get_ingresso_from_id(list_abitanti.posizione_abitante.get_destination.get_ingresso_to_go_trajectory).get_polo_ingresso=i then
                         distance:= get_distance_from_polo_percorrenza(get_ingresso_from_id(list_abitanti.posizione_abitante.get_destination.get_ingresso_to_go_trajectory),i)-get_larghezza_corsia-get_larghezza_marciapiede;
@@ -1409,7 +1409,7 @@ package body mailbox_risorse_attive is
 
                         if list_abitanti.posizione_abitante.get_where_now_posizione_abitanti=get_traiettoria_ingresso(traiettoria).get_lunghezza then
                            if list_abitanti.next/=null then
-                              Put_Line("next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
+                              Put_Line("ERRORE: " & Positive'Image(list_abitanti.posizione_abitante.get_id_quartiere_posizione_abitanti) & " " & Positive'Image(list_abitanti.posizione_abitante.get_id_abitante_posizione_abitanti) & " next abitante is id:" & Positive'Image(list_abitanti.next.posizione_abitante.get_id_abitante_posizione_abitanti) & " " & Positive'Image(list_abitanti.next.posizione_abitante.get_id_quartiere_posizione_abitanti));
                               raise lista_abitanti_rotta;
                            end if;
                            new_abitante:= list_abitanti;

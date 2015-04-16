@@ -8,7 +8,7 @@ package global_data is
 
    --num_quartieri: constant Positive:= 3;
    min_length_pedoni: constant new_float:= 0.5;
-   min_length_bici: constant new_float:= 1.5;
+   min_length_bici: constant new_float:= 1.0;
    min_length_auto: constant new_float:= 3.0;
    max_length_pedoni: constant new_float:= 0.5;
    max_length_bici: constant new_float:= 1.0;

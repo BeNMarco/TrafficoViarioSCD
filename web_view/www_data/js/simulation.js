@@ -93,6 +93,64 @@ Simulation.prototype.init = function() {
 
 }
 
+Simulation.prototype.setCarPathLength = function(state)
+{
+	switch (state.where) {
+		case 'strada':
+			state.pathLength = this.map.streets[state.id_where].getStreetLength();
+			break;
+		case 'strada_ingresso':
+			state.pathLength = this.map.entranceStreets[state.id_where].getStreetLength();
+			break;
+		case 'traiettoria_ingresso':
+			state.pathLength = this.map.streets[state.id_where]
+			.getEntrancePathLength(state.polo,
+				state.distanza_ingresso,
+				state.traiettoria);
+			break;
+		case 'incrocio':
+			state.pathLength = this.map.crossroads[state.id_where]
+			.getCrossingPathLength(state.strada_ingresso,
+				state.quartiere_strada_ingresso,
+				state.direzione);
+
+			break;
+		case 'cambio_corsia':
+			state.pathLength = this.map.streets[state.id_where]
+			.getOvertakingPathLength(state.distanza_inizio,
+				state.polo, state.corsia_inizio - 1,
+				state.corsia_fine - 1, 20);
+			break;
+	}
+	return state;
+}
+
+Simulation.prototype.setPedPathLength = function(state)
+{
+	state.bike = (state.mezzo == "bike");
+	switch (state.where) {
+		case 'strada':
+			state.pathLength = this.map.streets[state.id_where].getStreetLength();
+			break;
+		case 'strada_ingresso':
+			state.pathLength = this.map.entranceStreets[state.id_where].getStreetLength();
+			break;
+		case 'traiettoria_ingresso':
+			state.pathLength = this.map.streets[state.id_where]
+			.getOnZebraPathLength(state.polo,
+				state.distanza_ingresso,
+				state.traiettoria, state.bike);
+			break;
+		case 'incrocio':
+			state.pathLength = this.map.crossroads[state.id_where]
+			.getPedestrianPathLength(state.strada_ingresso,
+				state.quartiere_strada_ingresso,
+				state.direzione);
+			break;
+	}
+	return state;
+}
+
 Simulation.prototype.initPrevState = function(state) {
 	var len = state.abitanti.length;
 	for (var i = 0; i < len; i++) {
@@ -103,24 +161,21 @@ Simulation.prototype.initPrevState = function(state) {
 		{
 			case 'car':
 				o = this.objects.cars[id];
+				curState = this.setCarPathLength(curState);
 				break;
 			case 'bike':
 				o = this.objects.bikes[id];
+				curState = this.setPedPathLength(curState);
 				break;
 			case 'walking':
 				o = this.objects.pedestrians[id];
+				curState = this.setPedPathLength(curState);
 				break;
 		}
 		if (o) {
 			o.prevState = curState;
 		}
 	}
-}
-
-Simulation.prototype.getNewDistacnce = function(distance, prevPosition)
-{
-	var curDist = (distance < 0) ? 0 : distance;
-	return prevPosition + ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 }
 
 Simulation.prototype.addNewCar = function(carState)
@@ -131,6 +186,144 @@ Simulation.prototype.addNewCar = function(carState)
 	this.objects.cars[carState.id_quartiere_abitante+"_"+carState.id_abitante] = curCar;
 }
 
+Simulation.prototype.computeNewDistance = function(distance, prevPosition)
+{
+	var curDist = (distance < 0) ? 0 : distance;
+	return prevPosition + ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
+}
+
+Simulation.prototype.computeCurrentLength = function(length)
+{
+	return length * (this.currentState.stateTime / this.statesDuration);
+}
+
+function onSamePath(prevState, curState)
+{
+	var toRet = (curState.where == prevState.where);
+	if(toRet)
+	{
+		switch(curState.where)
+		{
+			case 'incrocio':
+				toRet = (toRet && 
+					(curState.strada_ingresso == prevSate.strada_ingresso) && 
+					(curState.quartiere_strada_ingresso == prevSate.quartiere_strada_ingresso) &&
+					(curState.direzione == prevState.direzione));
+				break;
+			case 'traiettoria_ingresso':
+				toRet = (toRet &&
+					(curState.traiettoria == prevState.traiettoria));
+				break;
+			case 'cambio_corsia':
+				toRet = (toRet &&
+					(curState.distanza_inizio == prevSate.distanza_inizio));
+				break;
+		}
+	}
+	return toRet;
+	return true;
+}
+
+Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
+{
+	var newDistance = 0;
+	var stateToUse = curState;
+
+	// se lo stato precedente è vuoto posizioniamo 
+	// l'oggetto alla posizione indicata dallo stato attuale
+	// (FALLBACK)
+	if (!doesExists(this.prevState)) {
+		newDistance = curState.distanza;
+	}
+	// altrimenti calcoliamo la posizione giusta
+	else {
+		// se l'oggetto è passato da uno stato all'altro
+		try {
+			if (!onSamePath(prevState, curState)) {
+				// calcolo della posizione iniziale dello stato successivo
+
+				// se ci arriva dallo stato la usiamo
+				var curInizio = curState.inizio;
+
+				// se non abbiamo un riferimento di inizion traiettoria lo calcoliamo
+				if(!curInizio){
+
+					// settiamo a 0 nel caso in cui non riusciamo a risolverlo
+					curInizio = 0;
+
+					// se la traiettoria precedente era una traiettoria di ingresso
+					// e quella attuale è una strada prendiamo come inzio traiettoria
+					// il punto della strada di ingresso + la larghezza della corisa 
+					// sommata alla larghezza del marciapiede
+					if (curState.where == 'strada'
+							&& prevState.where == 'traiettoria_ingresso') {
+						curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
+					}
+					// altrimenti, se siamo in una strada e prima eravamo in un cambio
+					// corsia, prendiamo la posizione in cui abbiamo iniziato a fare 
+					// il cambio corsia e ci sommiamo la lunghezza del cambio
+					else if(curState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
+					{
+						prevPosition = prevState.distanza_inizio + 20;
+					}
+				}
+
+				var segLen1 = prevState.pathLength - prevState.distanza;
+				var segLen2 = curState.distanza - curInizio;
+				var segLen = segLen1+segLen2;
+
+				// lunghezza che abbiamo percorso in questo Dt
+				var doneLen = this.computeCurrentLength(segLen);
+
+				// se abbiamo fatto più di segLen1 allora siamo sulla nuova 
+				// traiettoria
+				if(doneLen > segLen1)
+				{
+					// prendiamo come nuova distanza l'inizio della nuova traiettoria
+					// più la distanza che abbiamo coperto meno la lunghezza coperta
+					// nella traiettoria precedente
+					newDistance = curInizio + doneLen - segLen1;
+				} 
+				// altrimenti siamo ancora nella traiettoria precedente
+				else {
+					// prendiamo la distanza percorsa
+					newDistance = prevState.distanza + doneLen;
+					// e usiamo lo stato precedente per risolvere 
+					// la posizione sulla traiettoria precedente
+					stateToUse = prevState;
+				}
+			}
+			// altrimenti prendiamo la posizione dallo stato precedente
+			else {
+				if(prevState.distanza > curState.distanza)
+				{
+					console.log("Not possible!");
+					console.log(prevState);
+					console.log(curState);
+				}
+				prevPosition = prevState.distanza;
+				// in questo caso un oggetto è arrivato alla fine di una strada 
+				// di ingresso e vuole tornare indietro
+				if (curState.where == 'strada_ingresso'
+						&& (prevState.in_uscita != curState.in_uscita)) {
+					prevPosition = 0;
+				}
+				newDistance = this.computeNewDistance(curState.distanza, prevPosition);
+			}
+		} catch (err) {
+			console.log("curCar:");
+			console.log(curState);
+			console.log("prevState:");
+			console.log(prevState);
+			console.log("this.prevSate:");
+			console.log(this.prevSate);
+			console.log(err);
+			throw err;
+		}
+	}
+	return {state: stateToUse, distance: newDistance};
+}
+
 Simulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
@@ -138,70 +331,12 @@ Simulation.prototype.moveCar = function(time, curCarState)
 	if(curCar == null)
 	{
 		console.log("New car!");
-		curCar = this.objects.addCar(curCarState.id_abitante, curCarState.id_quartiere_abitante);
+		curCar = this.objects.addCar(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante);
 	}
 	try {
-		var newDistance = 0;
-		var prevPosition = 0;
-
-		// if the previous state is empty (simulation just initiated) we
-		// put
-		// the object at the position given by the state
-		if (!doesExists(this.prevState)) {
-			newDistance = curCarState.distanza;
-		}
-		// otherwise we compute the correct position
-		else {
-			var prevState = curCar.prevState;
-			// if the object switched from a place to another
-			try {
-				if (curCarState.where != prevState.where) {
-					// if the initial position in the current state is
-					// set we use it, otherwise we use 0
-					prevPosition = curCarState.inizio !== undefined ? curCarState.inizio
-							: 0;
-					if (curCarState.where == 'strada'
-							&& prevState.where == 'traiettoria_ingresso') {
-						prevPosition = prevState.distanza_ingresso + 10;
-					/*
-						if(curCarState.id_where == 29){
-							console.log("("+curCarState.id_abitante+") now: " + curCarState.where + " before:"
-								+ prevState.where + " prevPosition:"
-								+ prevPosition);
-						}
-					*/
-					}
-
-					if(curCarState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
-					{
-						prevPosition = prevState.distanza_inizio + 20;
-					}
-				}
-				// otherwise simply take the position from the previous
-				// state
-				else {
-					prevPosition = prevState.distanza;
-					if (curCarState.where == 'strada_ingresso'
-							&& (prevState.in_uscita != curCarState.in_uscita)) {
-						prevPosition = 0;
-					}
-				}
-			} catch (err) {
-				console.log("curCar:");
-				console.log(curCarState);
-				console.log("prevState:");
-				console.log(prevState);
-				console.log("this.prevSate:");
-				console.log(this.prevSate);
-				console.log(err);
-				throw err;
-			}
-			var curDist = (curCarState.distanza < 0) ? 0 : curCarState.distanza;
-			newDistance = 1
-					* prevPosition
-					+ 1
-					* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
-		}
+		var toUse = this.computeNewDistanceAndState(curCar.prevState, curCarState);
+		curCarState = toUse.state;
+		var newDistance = toUse.distance;
 
 		var newPos = null;
 		switch (curCarState.where) {
@@ -267,64 +402,10 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 		}
 	}
 	try {
-		var newDistance = 0;
-		var prevPosition = 0;
-
-		// if the previous state is empty (simulation just initiated) we
-		// put
-		// the object at the position given by the state
-		if (!doesExists(this.prevState)) {
-			newDistance = curBiState.distanza;
-		}
-		// otherwise we compute the correct position
-		else {
-			var prevState = curBi.prevState;
-			// if the object switched from a place to another
-			try {
-				if (curBiState.where != prevState.where) {
-					// if the initial position in the current state is
-					// set we use it, otherwise we use 0
-					prevPosition = curBiState.inizio !== undefined ? curBiState.inizio: 0;
-					/*if (curBiState.where == 'strada'
-							&& prevState.where == 'traiettoria_ingresso') {
-						prevPosition = prevState.distanza_ingresso + 10;
-					/*
-						if(curBiState.id_where == 29){
-							console.log("("+curBiState.id_abitante+") now: " + curBiState.where + " before:"
-								+ prevState.where + " prevPosition:"
-								+ prevPosition);
-						}
-					
-					} */
-				}
-				// otherwise simply take the position from the previous
-				// state
-				else {
-					prevPosition = prevState.distanza;
-					if (curBiState.where == 'strada_ingresso'
-							&& (prevState.in_uscita != curBiState.in_uscita)) {
-						prevPosition = 0;
-					}
-				}
-			} catch (err) {
-				console.log("curBi:");
-				console.log(curBiState);
-				console.log("prevState:");
-				console.log(prevState);
-				console.log("this.prevSate:");
-				console.log(this.prevSate);
-				console.log(err);
-				throw err;
-			}
-			/*
-			var curDist = (curBiState.distanza < 0) ? 0 : curBiState.distanza;
-			newDistance = 1
-					* prevPosition
-					+ 1
-					* ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
-					*/
-			var newDistance = this.getNewDistacnce(curBiState.distanza, prevPosition);
-		}
+		
+		var toUse = this.computeNewDistanceAndState(curBi.prevState, curBiState);
+		curBiState = toUse.state;
+		var newDistance = toUse.distance;
 
 		var newPos = null;
 		switch (curBiState.where) {

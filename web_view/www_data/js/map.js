@@ -951,6 +951,11 @@ Street.prototype.getPositionAtOffset = function(distance, side, offset)
 	return getPositionAtOffset(this.guidingPath, distance, side, offset);
 }
 
+Street.prototype.getStreetLength = function()
+{
+	return this.len;
+}
+
 Street.prototype.getPositionAt = function(distance, side, lane, drive){
 	drive = typeof drive === 'undefined' ? true : drive;
 
@@ -999,12 +1004,13 @@ Street.prototype.getOnZebraPositionAt	 = function(distance, side, entranceDistan
 	return getPositionAtOffset(path, distance, 1, 0);
 }
 
+Street.prototype.getOnZebraPathLength = function(side, entrance, way)
+{
+	return this.pedestrianSidestreetPaths[side][entrance][way].length;
+}
 
 Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, crossingPath, distance){
-	//var loc = this.sideStreetsEntrancePaths[crossingPaths].getLocationAt(distance);
-	//console.log(side + " " + entranceDistance + " " + crossingPath + " " + distance);
-	//console.log(this.sideStreets[side][entranceDistance].paths[crossingPath]);
-	//console.log(distance +" on "+ this.sideStreets[side][entranceDistance].paths[crossingPath].path.length)
+
 	try{
 		var curPath = this.sideStreets[side][entranceDistance].paths[crossingPath].path;
 		var newDistance = (distance < 0) ? 0 : distance;
@@ -1033,48 +1039,27 @@ Street.prototype.getPositionAtEntrancePath = function(side, entranceDistance, cr
 			console.log(curPath);
 			throw "ENTRANCE_PATH_TOO_LONG: Spostamento su traiettoria di ingresso della strada "+this.id+" al metro "+distance+" di "+curPath.path.length + " (traiettoria "+crossingPath+", lato "+side+", distanza ingresso: "+entranceDistance+")";
 		}
-		/*
-		var newDistance = (distance < 0) ? 0 : distance;
-		newDistance = (distance > curPath.length) ? curPath.length : distance;
-		var loc = curPath.getLocationAt(newDistance);
-		*/
 	}
 	return {angle:loc.tangent.angle, position: loc.point};
 }
 
-Street.prototype.getSidestreetPositionAt = function(distance, side){
+Street.prototype.getEntrancePathLength = function(side, entranceDistance, crossingPath)
+{
+	return this.sideStreets[side][entranceDistance].paths[crossingPath].path.length;
+}
+
+Street.prototype.getSidestreetPositionAt = function(distance, side)
+{
 	var offset = this.nLanes*this.laneWidth + this.pavementWidth;
-	/*
-	if (typeof side === 'string'){
-		side = (side === 'true');
-	}
-	var loc = this.guidingPath.getLocationAt(distance);
-
-	var offset = this.nLanes*this.laneWidth + this.pavementWidth;
-	offset = side ? offset : -offset;
-
-	var normal = this.guidingPath.getNormalAt(distance);
-	normal.length = offset;
-
-	return {angle: loc.tangent.angle-90, position: new Point(loc.point.x+normal.x, loc.point.y+normal.y)};*/
 	return this.getPositionAtOffset(distance, side, offset);
 }
 
-Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toLane, moveLength){
-	//console.log("startPosition: "+startPosition);
-	//console.log("side: "+side);
-	//console.log("fromLane: "+fromLane);
-	//console.log("toLane: "+toLane);
-	//console.log("moveLength: "+moveLength);
+Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toLane, moveLength)
+{
 	var p1 = this.getPositionAt(startPosition, side, fromLane).position;
 	var hp1 = this.getPositionAt(startPosition+0.5*moveLength, side, fromLane).position;
 	var p2 = this.getPositionAt(startPosition+moveLength, side, toLane).position;
 	var hp2 = this.getPositionAt(startPosition+0.5*moveLength, side, toLane).position;
-	/*
-	console.log("Get overtaking path");
-	console.log(p1);
-	console.log(p2)
-	*/
 
 	var p = new Path(p1, p2);
 	p.firstSegment.handleOut = hp1.subtract(p1);
@@ -1083,6 +1068,11 @@ Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toL
 	p.lastSegment.handleIn.length =  0.5*moveLength;
 	p.visible = false;
 	return p;
+}
+
+Street.prototype.getOvertakingPathLength = function(startPosition, side, fromLane, toLane, moveLength)
+{
+	return getOvertakingPath(startPosition, side, fromLane, toLane, moveLength).length;
 }
 
 
@@ -1534,52 +1524,6 @@ Crossroad.prototype.draw = function(style){
 
 	this.group.rotate(this.angle%90); 
 
-	/*
-	if(controlloIncrociAuto || !lunghezza_traiettorie_incroci['auto'])
-	{
-		lunghezza_traiettorie_incroci['auto'] = {};
-		var cc1 = new Path();
-		cc1.add(new Point(
-			(path.position.x+2*style.laneWidth),
-			(path.position.y-2*style.laneWidth)
-			));
-		cc1.add(new Point(
-			(path.position.x+2*style.laneWidth),
-			(path.position.y+2*style.laneWidth)
-			));
-		//cc1.strokeWidth = 0.5;
-		//cc1.strokeColor = 'violet';
-		//cc1.selected = true;
-
-		var intr1 = controllo_destra.getIntersections(cc1)[0];
-		if(intr1 != null)
-		{
-			console.log("intersezione incrocio destra: "+controllo_destra.getOffsetOf(intr1.point)+" di "+controllo_destra.length);
-			lunghezza_traiettorie_incroci['auto']['destra'] = {"intersezione_bipedi": controllo_destra.getOffsetOf(intr1.point)};
-		}
-
-		var cc2 = new Path();
-		cc2.add(new Point(
-			(path.position.x-2*style.laneWidth),
-			(path.position.y-2*style.laneWidth)
-			));
-		cc2.add(new Point(
-			(path.position.x-2*style.laneWidth),
-			(path.position.y+2*style.laneWidth)
-			));
-		//cc2.strokeWidth = 0.5;
-		//cc2.strokeColor = 'violet';
-		//cc2.selected = true;
-
-		var intr2 = controllo_sinistra.getIntersections(cc2)[0];
-		if(intr2 != null)
-		{
-			console.log("intersezione incrocio sinistra: "+controllo_sinistra.getOffsetOf(intr2.point) +" di "+controllo_sinistra.length);
-			lunghezza_traiettorie_incroci['auto']['sinistra'] = {"intersezione_bipedi": controllo_sinistra.getOffsetOf(intr2.point)};
-		}
-		controlloIncrociAuto = false;
-	}*/
-
 	// adjusting the streets
 	for (var i = 0; i < this.streets.length; i++) {
 		if(this.streets[i]!= null){
@@ -1603,10 +1547,12 @@ Crossroad.prototype.getEntranceStreetNumber = function(streetId, district){
 }
 
 Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, direction){
-	//console.log(this.getEntranceStreetNumber(enteringStreet, streetDistrict));
-	//console.log(this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)]);
-	//console.log(direction);
 	return this.crossingPaths[this.getEntranceStreetNumber(enteringStreet, streetDistrict)][direction].path;
+}
+
+Crossroad.prototype.getCrossingPathLength = function(enteringStreet, streetDistrict, direction)
+{
+	return getCrossingPath(enteringStreet, streetDistrict, direction).length;
 }
 
 Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDistrict, direction){
@@ -1652,6 +1598,12 @@ Crossroad.prototype.getPositionOnPedestrianPath = function(distance, enteringStr
 
 	var loc = path.getLocationAt(distance);
 	return {angle: loc.tangent.angle, position: loc.point};
+}
+
+Crossroad.prototype.getPedestrianPathLength = function(enteringStreet, streetDistrict, direction)
+{
+	var num = this.getEntranceStreetNumber(enteringStreet, streetDistrict);
+	return this.pedestrianPaths[num][direction].length;
 }
 
 Crossroad.prototype.switchTrafficLights = function(){

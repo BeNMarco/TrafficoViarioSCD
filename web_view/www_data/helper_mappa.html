@@ -1,297 +1,349 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="UTF-8">
-	<title>Mappa quartiere test</title>
+	<title>Visualizzazione file mappa</title>
 	<link rel="stylesheet" href="css/style.css">
-<!--
-	<link rel="stylesheet" href="js/utils/jquery-ui.theme.min.css">
-	<link rel="stylesheet" href="js/themes/smoothness/jquery-ui.min.css">
-	<link rel="stylesheet" href="js/themes/smoothness/jquery.ui.theme.css">
--->
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-<script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/simulation.js"></script>
-<script type="text/javascript" src="js/entities.js"></script>
-<script type="text/javascript" src="js/utils.js"></script>
-<script type="text/javascript" src="js/utils/paper-full.js"></script>
-<script type="text/javascript" src="js/utils/chain.js"></script>
-<script type="text/javascript" src="js/utils/jquery.min.js"></script>
-<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
-<!-- <script type="text/javascript" src="js/utils/jquery-ui.min.js"></script> -->
-<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
-<script type="text/javascript">
-myMap = new Map();
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/utils/paper-full.js"></script>
+	<script type="text/javascript" src="js/utils/FileSaver.js"></script>
+	<script type="text/javascript" src="js/utils/Blob.js"></script>
+	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
+	<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript">
 
+		myMap = new Map();
+		currentFile = null;
+		currentData = null;
 
-myMap.onFinishDrawing(function(){closeLoadingDialog(); console.log("done with the drawing");});
-myMap.setProgressNotifier(setProgressText);
-
-mapLayer = null;
-
-paper.install(window);
-
-var style = new MapStyle();
-
-var dDialog = null;
-
-function traslladar(a, b) {
-	var center = paper.project.view.center;
-	var desX = (a.x - b.x);
-	var desY = (a.y - b.y);
-
-	var newCenter = [ center.x + desX, center.y + desY ];
-	return newCenter;
-}
-
-function zoomIn() {
-	view.zoom = view.zoom * 1.1;
-}
-
-function zoomOut() {
-	view.zoom = view.zoom / 1.1;
-}
-
-
-function selectText(containerid) {
-
-	var node = document.getElementById(containerid);
-
-	if (document.selection) {
-		var range = document.body.createTextRange();
-		range.moveToElementText(node);
-		range.select();
-	} else if (window.getSelection) {
-		var range = document.createRange();
-		range.selectNodeContents(node);
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(range);
-	}
-}
-
-function openLoadingDialog() {
-	console.log("openLoadingDialog fired");
-	$('#loadingMessage').html(
-		"Please wait!<br />Loading and drawing the map");
-	$('#loadingDialog').modal('show');
-		//$('#outputData').text("Started loading and drawing");
-	}
-
-	function closeLoadingDialog() {
-		$('#loadingDialog').modal('hide');
-		//$('#loadingDialog .progress-label').text("");
-		//$('#loadingDialog').dialog('destroy');
-	}
-
-	function openMessageDialog(text) {
-		$('#messageDialogText').html(text);
-		$('#messageDialog').modal('show');
-	}
-
-	function closeMessageDialog() {
-		$('#messageDialog').modal('hide');
-	}
-
-
-
-
-	function setProgressText(text) {
-		console.log("notified " + text);
-		$('#loadingMessage').html(text);
-	}
-
-	function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-
-    console.log(evt.target);
-    console.log(files);
-    // files is a FileList of File objects. List some properties.
-    var output = [];
-    var data = files[0];
-    var reader = new FileReader();
-
-    // Closure to capture the file information.
-    reader.onload = (function(theFile) {
-    	return function(e) {
-    		JsonObj = JSON.parse(e.target.result);
-    		console.log(JsonObj);
-    		loadMap(JsonObj);
-    	};
-    })(data);
-
-    openLoadingDialog();
-    // Read in the image file as a data URL.
-
-    setTimeout(function(){reader.readAsText(data);}, 10);
-}
-
-function loadMap(data)
-{
-
-	project.clear();
-	myMap.resetData();
-	myMap.load(data);
-	myMap.draw();
-
-	myMap.bringTrafficLightsToFront();
-	mapLayer = project.activeLayer;
-	secondLayer = new Layer();
-	view.draw();
-}
-
-onload = function(e) {
-	if (window.File && window.FileReader && window.FileList && window.Blob) {
-
-		document.getElementById('files').addEventListener('change', handleFileSelect, false);
-	} else {
-		alert('The File APIs are not fully supported in this browser.');
-	}
-
-	$('#loadingDialog').modal({
-		backdrop : 'static',
-		keyboard : false,
-		show : false,
-	});
-
-	$('#dataDialog').modal({
-		show : false,
-	});
-
-	paper.setup(document.getElementById("canvas"));
-
-	myMap.setStyle(style);
-
-
-	var myTool = new Tool();
-	myTool.onMouseDown = function(event) {
-		path = new Point();
-		path.add(event.point);
-		$("#canvas").css('cursor', '-webkit-grabbing');
-
-	};
-
-	myTool.onMouseDrag = function(event) {
-		path.add(event.point);
-
-		var des = traslladar(event.downPoint, event.point);
-		paper.project.view.center = des;
-
-	}
-
-	myTool.onMouseUp = function(event) {
-		$("#canvas").css('cursor', '-webkit-grab');
-		$("#canvas").css('cursor', '-moz-grab');
-	}
-
-	$('#canvas').mousewheel(function(event) {
-		event.deltaY > 0 ? zoomIn() : zoomOut();
-	});
-
-	$('#getData').on(
-		'click',
-		function() {
-			$('#jsonDataArea').text(
-				JSON.stringify(myMap.getUpdatedData(), null, 2));
-			$('#dataDialog').modal("show");
+		myMap.onFinishDrawing(function() {
+			closeLoadingDialog();
+			currentData = myMap.getUpdatedData();
+			console.log("done with the drawing");
 		});
 
-	$('#action1').on('click', function() {
-		craftStatesForCar(state, 1, route2, myMap, 10, 1000);
-		console.log(state);
-	});
-}
-</script>
+		myMap.setProgressNotifier(setProgressText);
+
+		mapLayer = null;
+
+		paper.install(window);
+
+		var style = new MapStyle();
+
+		var dDialog = null;
+
+		function traslladar(a, b) {
+			var center = paper.project.view.center;
+			var desX = (a.x - b.x);
+			var desY = (a.y - b.y);
+
+			var newCenter = [center.x + desX, center.y + desY];
+			return newCenter;
+		}
+
+		function zoomIn() {
+			view.zoom = view.zoom * 1.1;
+		}
+
+		function zoomOut() {
+			view.zoom = view.zoom / 1.1;
+		}
+
+
+		function selectText(containerid) {
+
+			var node = document.getElementById(containerid);
+
+			if (document.selection) {
+				var range = document.body.createTextRange();
+				range.moveToElementText(node);
+				range.select();
+			} else if (window.getSelection) {
+				var range = document.createRange();
+				range.selectNodeContents(node);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}
+
+		function openLoadingDialog() {
+			$('#loadingMessage').html(
+				"Please wait!<br />Loading and drawing the map");
+			$('#loadingDialog').modal('show');
+		}
+
+		function closeLoadingDialog() {
+			$('#loadingDialog').modal('hide');
+		}
+
+		function openMessageDialog(text) {
+			$('#messageDialogText').html(text);
+			$('#messageDialog').modal('show');
+		}
+
+		function closeMessageDialog() {
+			$('#messageDialog').modal('hide');
+		}
+
+		function setProgressText(text) {
+			console.log("notified " + text);
+			$('#loadingMessage').html(text);
+		}
+
+		function handleFileSelect(evt) {
+			var files = evt.target.files;
+
+			console.log(evt.target);
+			console.log(files);
+
+			var output = [];
+			var data = files[0];
+			currentFile = data;
+			var reader = new FileReader();
+
+			setFilename(data.name);
+
+			reader.onload = (function(theFile) {
+				return function(e) {
+					JsonObj = JSON.parse(e.target.result);
+					console.log(JsonObj);
+					setInfos(JsonObj);
+					loadMap(JsonObj);
+				};
+			})(data);
+
+			openLoadingDialog();
+
+			setTimeout(function() {
+				reader.readAsText(data);
+			}, 10);
+		}
+
+		function setFilename(filename)
+		{
+			$("#filename-val").text(filename);
+		}
+
+		function setInfos(data)
+		{
+			$("#id-q").text(data.info.id);
+			$("#dim-width").text(data.info.larghezza);
+			$("#dim-height").text(data.info.altezza);
+			$("#ab-num").text(data.abitanti.length);
+			$("#car-num").text(data.auto.length);
+			$("#bike-num").text(data.bici.length);
+			$("#ped-num").text(data.pedoni.length);
+		}
+
+		function saveFile()
+		{
+
+		}
+
+		function loadMap(data) {
+
+			project.clear();
+			myMap.resetData();
+			myMap.load(data);
+			myMap.draw();
+
+			myMap.bringTrafficLightsToFront();
+			mapLayer = project.activeLayer;
+			secondLayer = new Layer();
+			view.draw();
+			$('#getData').prop('disabled', false);
+			$('#save').prop('disabled', false);
+		}
+
+		onload = function(e) {
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+
+				document.getElementById('files').addEventListener('change', handleFileSelect, false);
+			} else {
+				alert('The File APIs are not fully supported in this browser.');
+			}
+
+			$(function () {
+				$('[data-toggle="tooltip"]').tooltip()
+			})
+
+			$('#loadingDialog').modal({
+				backdrop: 'static',
+				keyboard: false,
+				show: false,
+			});
+
+			$('#dataDialog').modal({
+				show: false,
+			});
+
+			paper.setup(document.getElementById("canvas"));
+
+			myMap.setStyle(style);
+
+			var myTool = new Tool();
+			myTool.onMouseDown = function(event) {
+				path = new Point();
+				path.add(event.point);
+				$("#canvas").css('cursor', '-webkit-grabbing');
+
+			};
+
+			myTool.onMouseDrag = function(event) {
+				path.add(event.point);
+
+				var des = traslladar(event.downPoint, event.point);
+				paper.project.view.center = des;
+
+			}
+
+			myTool.onMouseUp = function(event) {
+				$("#canvas").css('cursor', '-webkit-grab');
+				$("#canvas").css('cursor', '-moz-grab');
+			}
+
+			$('#canvas').mousewheel(function(event) {
+				event.deltaY > 0 ? zoomIn() : zoomOut();
+			});
+
+			$('#getData').on(
+				'click',
+				function() {
+					$('#jsonDataArea').text(
+						JSON.stringify(currentData, null, 2));
+					$('#dataDialog').modal("show");
+				});
+
+			$('#save').on(
+				'click',
+				function() {
+					if(currentFile != null)
+					{
+						var blob = new Blob([JSON.stringify(currentData, null, 2)], {type: "application/json;charset=utf-8"});
+						saveAs(blob, currentFile.name);
+					}
+				});
+
+			$('#getData').prop('disabled', true);
+			$('#save').prop('disabled', true);
+
+		}
+	</script>
 
 </head>
-<body>
 
-	<!--
-	<p>
-		<a id="openws" href="#" onClick="openSocket()">Open</a>
-		<a id="closews" href="#" onClick="closeSocket()">Close</a>
-	</p>-->
+<body>
 
 	<div id="canvas-wrap">
 
 
-		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"
-		aria-labelledby="myDataDialogLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h4 class="modal-title" id="myDataDialogLabel">Json Data</h4>
-				</div>
-				<div class="modal-body">
-					<pre id="jsonDataArea" style="overflow: auto; max-height: 500px;"></pre>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary"
-					onClick="selectText('jsonDataArea')">Select all</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal" id="loadingDialog" tabindex="-1" role="dialog"
-	aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="myLoadingDialogLabel">Loading...</h4>
-			</div>
-			<div class="modal-body">
-				<p id="loadingMessage"></p>
-				<div class="progress">
-					<div class="progress-bar progress-bar-striped active"
-					role="progressbar" aria-valuenow="100" aria-valuemin="0"
-					aria-valuemax="100" style="width: 100%">
-					<span class="sr-only">Loading</span>
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog" aria-labelledby="myDataDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myDataDialogLabel">Json Data</h4>
+					</div>
+					<div class="modal-body">
+						<pre id="jsonDataArea" style="overflow: auto; max-height: 500px;"></pre>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onClick="selectText('jsonDataArea')">Seleziona tutto</button>
+					</div>
 				</div>
 			</div>
 		</div>
+
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog" aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myLoadingDialogLabel">Loading...</h4>
+					</div>
+					<div class="modal-body">
+						<p id="loadingMessage"></p>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+								<span class="sr-only">Loading</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="messageDialog" tabindex="-1" role="dialog" aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
+					</div>
+					<div class="modal-body">
+						<p id="messageDialogText"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<canvas id="canvas" resize hidpi="off" style="background-color: #F0EDE5;"></canvas>
+
+		<div id="title-div">
+			<h1>Visualizzazione file mappa</h1>
+		</div>
+
+		<div id="controls-div">
+			<label class="btn btn-primary glyphicon glyphicon-folder-open" data-toggle="tooltip" data-placement="right" title="Apri un file" for="files">
+				<input type="file" id="files" name="files" style="display:none;"/>
+			</label>
+
+			<div class="divisor"></div>
+			<button id="getData" type="button" class="btn btn-info glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="right" title="Visualizza dati"></button>
+
+			<div class="divisor"></div>
+			<button id="save" type="button" class="btn btn-success glyphicon glyphicon-save" data-toggle="tooltip" data-placement="right" title="Salva"></button>
+		
+		</div>
+
+		<div id="info-box">
+			<p id="info-title"><strong>Infos</strong></p>
+			<div class="info-filename propsBlock" style="width:100%; float:none; padding-bottom:0;"><p>File: <span id="filename-val"></span></p></div>
+			<div class="propsBlock">
+				<div class="labels">
+					<p>ID:</p>
+					<p>Larghezza:</p>
+					<p>Altezza:</p>
+				</div>
+				<div class="values">
+					<p id="id-q"></p>
+					<p id="dim-width"></p>
+					<p id="dim-height"></p>
+				</div>
+			</div>
+			<div class="propsBlock">
+				<div class="labels">
+					<p>Abitanti:</p>
+					<p>Macchine:</p>
+					<p>Bici:</p>
+					<p>Pedoni:</p>
+				</div>
+				<div class="values">
+					<p id="ab-num"></p>
+					<p id="car-num"></p>
+					<p id="bike-num"></p>
+					<p id="ped-num"></p>
+				</div>
+			</div>
+		</div>
+
 	</div>
-</div>
-</div>
-
-<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
-aria-labelledby="myMessageDialogLabel" aria-hidden="true">
-<div class="modal-dialog">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
-		</div>
-		<div class="modal-body">
-			<p id="messageDialogText"></p>
-		</div>
-	</div>
-</div>
-</div>
-
-		<!--
-		<div id="dialog" style="overflow:auto;">
-			<p style="font-size:10pt;"></p>
-		</div>
-		<div id="loadingDialog" title="Loading map">
-			<div class="progress-label">Starting loading...</div>
-			<div id="progressbar"></div>
-		</div>
-	-->
-	<form >
-		<span id="debug"><a id="getData" href="#">Get data</a> - </span>
-		<input type="file" id="files" name="files" />
-	</div>
-</form>
-<canvas id="canvas" resize hidpi="off"
-style="background-color: #F0EDE5;"></canvas>
-
-<div id="info-box">
-
-</div>
-</div>
 </body>
+
 </html>

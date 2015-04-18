@@ -1072,7 +1072,7 @@ Street.prototype.getOvertakingPath = function(startPosition, side, fromLane, toL
 
 Street.prototype.getOvertakingPathLength = function(startPosition, side, fromLane, toLane, moveLength)
 {
-	return getOvertakingPath(startPosition, side, fromLane, toLane, moveLength).length;
+	return this.getOvertakingPath(startPosition, side, fromLane, toLane, moveLength).length;
 }
 
 
@@ -1558,7 +1558,7 @@ Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, d
 
 Crossroad.prototype.getCrossingPathLength = function(enteringStreet, streetDistrict, direction)
 {
-	return getCrossingPath(enteringStreet, streetDistrict, direction).length;
+	return this.getCrossingPath(enteringStreet, streetDistrict, direction).length;
 }
 
 Crossroad.prototype.getPositionAt = function(distance, enteringStreet, streetDistrict, direction){
@@ -2246,6 +2246,17 @@ Map.prototype.bringTrafficLightsToFront = function()
 }
 
 Map.prototype.getUpdatedData = function(){
+	var l = this.objData.strade_urbane.length;
+	var i = 0;
+	for(var i = 0; i < l; i++){ 
+		for(var i in this.objData.strade_urbane){ 	
+			this.objData.strade_urbane[i].lunghezza = this.streets[this.objData.strade_urbane[i].id].guidingPath.length;
+		}
+	}
+	return this.objData;
+}
+
+Map.prototype.getUpdatedDataAndPaths = function(){
 	var l = this.objData.strade_urbane.length;
 	var i = 0;
 	for(var i = 0; i < l; i++){ 

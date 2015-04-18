@@ -9,7 +9,7 @@
   "strade_urbane": [
     {
       "id": 1,
-      "lunghezza": 4.66444E+02,
+      "lunghezza": 0,
       "from": [
         0,
         300
@@ -22,7 +22,7 @@
     },
     {
       "id": 2,
-      "lunghezza": 1.66000E+02,
+      "lunghezza": 0,
       "from": [
         300,
         0
@@ -35,7 +35,7 @@
     },
     {
       "id": 3,
-      "lunghezza": 2.16000E+02,
+      "lunghezza": 0,
       "from": [
         500,
         0

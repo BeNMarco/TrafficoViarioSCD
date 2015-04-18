@@ -65,8 +65,14 @@ body {
 
 }
 
+.vert-btn {
+	display: block !important;
+	float: none;
+	clear: both;
+}
+
 #info-box .propsBlock{
-	clear:both;
+	float:left;
 	padding:10px;
 }
 

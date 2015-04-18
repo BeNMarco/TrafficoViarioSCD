@@ -324,6 +324,11 @@
 			show : false,
 		});
 
+
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+
 		paper.setup(document.getElementById("canvas"));
 		//loadingDialog.dialog('open');
 		$('#outputData').text("Iniziato caricamento e rendering...");
@@ -503,14 +508,14 @@
 			<h1>Simulazione quartiere @_ID_QUARTIERE_@</h1>
 		</div>
 
-		<div id="controls-div">
+		<div id="controls-div btn-group">
 		<div class="btn-group-vertical" role="group" aria-label="...">
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"></button>
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"></button>
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
 		</div>
 		<div class="divisor"></div>
 		<div>
-			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"></button>
+			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
 		</div>
 		</div>
 

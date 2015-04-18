@@ -1851,88 +1851,96 @@ Map.prototype.resetData = function(){
 	this.entranceStreets = {};
 }
 
-Map.prototype.load2 = function(obj){
+Map.prototype.asyncLoad = function(obj){
 	//console.log(obj);
 	//for (var i = 0; i < obj.strade.length; i++) {
-	chain(
-		function()
+	var myController = {
+		init: function(This, obj, next)
 		{
-			if(typeof this.startLoadingCallback === 'function'){
-				this.startLoadingCallback();
-			}
-			this.resetData();
-			this.objData = obj;
-			this.id = obj.info.id;
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Loading streets");
-			}
-			setTimeout(Chain.next(), 10);
-		},
-		function()
-		{
-			for(var i in obj.strade_urbane){
-				this.streets[obj.strade_urbane[i].id] = new Street(obj.strade_urbane[i]);
+			if(typeof This.startLoadingCallback === 'function'){
+				This.startLoadingCallback();
 			}
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Loading crossroads");
+			This.resetData();
+			This.objData = obj;
+			This.id = This.objData.info.id;
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("strade", 20);
 			}
-			setTimeout(Chain.next(), 10);
+			setTimeout(next, 100);
 		},
-		function()
+		loadStreets: function(This, next)
 		{
-			for (var i = 0; i < obj.incroci_a_4.length; i++) {
-				var cur_inc = obj.incroci_a_4[i];
-				var c = new Crossroad(cur_inc);
-				c.linkStreets(this.streets, this.id);
-				this.crossroads[cur_inc.id] = c;
+			for(var i in This.objData.strade_urbane){
+				This.streets[This.objData.strade_urbane[i].id] = new Street(This.objData.strade_urbane[i]);
 			}
-			for (var i in obj.incroci_a_3){
-				//obj.incroci_a_3[i].strade.splice(obj.incroci_a_3[i].strada_mancante,0,null);
-				var cur_inc = obj.incroci_a_3[i];
-				var c = new Crossroad(cur_inc);
-				c.linkStreets(this.streets, this.id);
-				this.crossroads[cur_inc.id] = c;
-			}
-			//for(var i = 0; i < obj.strade_ingresso.length; i++){
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Loading sidestreets");
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("incroci", 40);
 			}
-			setTimeout(Chain.next(), 10);
+			setTimeout(next, 100);
 		},
-		function()
+		loadCrossroads: function(This, next)
 		{
-			for(var i in obj.strade_ingresso){
-				obj.strade_ingresso[i]['from'] = 0;
-				obj.strade_ingresso[i]['to'] = 0;
-				var str = new Street(obj.strade_ingresso[i]);
-				str.mainStreet = obj.strade_ingresso[i].strada_confinante;
-				str.mainStreetObj = this.streets[str.mainStreet];
-				str.entranceSide = obj.strade_ingresso[i].polo;
-				str.entranceDistance = obj.strade_ingresso[i].distanza_da_from;
+			for (var i = 0; i < This.objData.incroci_a_4.length; i++) {
+				var cur_inc = This.objData.incroci_a_4[i];
+				var c = new Crossroad(cur_inc);
+				c.linkStreets(This.streets, This.id);
+				This.crossroads[cur_inc.id] = c;
+			}
+			for (var i in This.objData.incroci_a_3){
+				//This.objData.incroci_a_3[i].strade.splice(This.objData.incroci_a_3[i].strada_mancante,0,null);
+				var cur_inc = This.objData.incroci_a_3[i];
+				var c = new Crossroad(cur_inc);
+				c.linkStreets(This.streets, This.id);
+				This.crossroads[cur_inc.id] = c;
+			}
+			//for(var i = 0; i < This.objData.strade_ingresso.length; i++){
+
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("strade ingresso", 60);
+			}
+			setTimeout(next, 100);
+		},
+		loadEntranceStreets: function(This, next)
+		{
+			for(var i in This.objData.strade_ingresso){
+				This.objData.strade_ingresso[i]['from'] = 0;
+				This.objData.strade_ingresso[i]['to'] = 0;
+				var str = new Street(This.objData.strade_ingresso[i]);
+				str.mainStreet = This.objData.strade_ingresso[i].strada_confinante;
+				str.mainStreetObj = This.streets[str.mainStreet];
+				str.entranceSide = This.objData.strade_ingresso[i].polo;
+				str.entranceDistance = This.objData.strade_ingresso[i].distanza_da_from;
 				str.setType('entrance');
-				this.entranceStreets[str.id] = str;
-				this.streets[str.mainStreet].addSideStreet(str);
+				This.entranceStreets[str.id] = str;
+				This.streets[str.mainStreet].addSideStreet(str);
 			}
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Loading places");
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("luoghi", 80);
 			}
 
-			setTimeout(Chain.next(), 10);
+			setTimeout(next, 100);
 		},
-		function()
+		loadPlaces: function(This, next)
 		{
-			for(var i = 0; i < obj.luoghi.length; i++){
-				var p = new Place(obj.luoghi[i]);
-				this.places[p.id] = p;
+			for(var i = 0; i < This.objData.luoghi.length; i++){
+				var p = new Place(This.objData.luoghi[i]);
+				This.places[p.id] = p;
 			}
-			if(typeof this.finishLoadingCallback === 'function'){
-				this.finishLoadingCallback();
+
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("Caricamento completato", 100);
+			}
+
+			if(typeof This.finishLoadingCallback === 'function'){
+				This.finishLoadingCallback();
 			}
 		}
-	);	
+	};	
+
+	new JSChain(myController).init(this, obj).loadStreets(this).loadCrossroads(this).loadEntranceStreets(this).loadPlaces(this);
 }
 
 Map.prototype.load = function(obj){
@@ -2075,166 +2083,94 @@ Map.prototype.draw = function(){
 	liftPaths();
 }
 
-function chainer(funcs)
-{
-	if(!funcs || funcs.length < 1)
-		throw "you kidding me?";
-	if(funcs.length == 1)
-	{
-		console.log("got to the bottom");
-		console.log(funcs);
-		return funcs.shift();
-	}
-	else
-	{
-		console.log("going to recurse");
-		console.log(funcs);
-		var f = funcs.shift();
-		var nextF = chainer(funcs);
-		var toRet = function(){console.log("called");f.apply(); setTimeout(nextF, 10);};
-		return toRet;
-	}
-}
+Map.prototype.asyncDraw = function(){
 
-Map.prototype.draw2 = function(){
-
-	var chain =[
-		function()
+	var myController = {
+		init: function(This, next)
 		{
-			if(typeof this.startDrawingCallback === 'function'){
-				this.startDrawingCallback();
+			if(typeof This.startDrawingCallback === 'function'){
+				This.startDrawingCallback();
 			}
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Drawing crossroads");
-				console.log("iniyio");
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("incroci", 25);
 			}
-			//setTimeout(Chain.next(),10);
+			setTimeout(next,100);
 		},
-		function()
+		drawCrossroads: function(This, next)
 		{
-			for (var i in this.crossroads) {
-				this.crossroads[i].draw(this.mapStyle);
+			for (var i in This.crossroads) {
+				This.crossroads[i].draw(This.mapStyle);
 			}
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Drawing streets");
-				console.log("finito crossroads");
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("strade", 50);
 			}
-			//setTimeout(Chain.next(),10);
+			setTimeout(next, 100);
 		},
-		function()
+		drawStreets: function(This, next)
 		{
-			for (var i in this.streets) {
-				this.streets[i].draw(this.mapStyle);
+			for (var i in This.streets) {
+				This.streets[i].draw(This.mapStyle);
 			}
 
-			for (var i in this.entranceStreets){
+			for (var i in This.entranceStreets){
 
-				var curStr = this.entranceStreets[i];
+				var curStr = This.entranceStreets[i];
 
-				var mainStreet = this.streets[curStr.mainStreet];
+				var mainStreet = This.streets[curStr.mainStreet];
 				var side = curStr.entranceSide ? 1 : -1;
 
 				var entrDist = /*(side == 1) ? mainStreet.guidingPath.length - curStr.entranceDistance :*/curStr.entranceDistance;
 				var refPoint = mainStreet.guidingPath.getPointAt(entrDist);
 				var normalFrom = mainStreet.guidingPath.getNormalAt(entrDist);
-				normalFrom.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth);
+				normalFrom.length = side*(mainStreet.nLanes*This.mapStyle.laneWidth + This.mapStyle.pavementWidth);
 
 				var normalTo = mainStreet.guidingPath.getNormalAt(entrDist);
-				normalTo.length = side*(mainStreet.nLanes*this.mapStyle.laneWidth + this.mapStyle.pavementWidth + curStr.len);	
+				normalTo.length = side*(mainStreet.nLanes*This.mapStyle.laneWidth + This.mapStyle.pavementWidth + curStr.len);	
 
 				curStr.from = [(refPoint.x + normalTo.x), (refPoint.y + normalTo.y)];
 				curStr.to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
 				curStr.reposition();
-				curStr.draw(this.mapStyle);
-				curStr.drawHorizontalLines(this.mapStyle);
+				curStr.draw(This.mapStyle);
+				//curStr.drawHorizontalLines(This.mapStyle);
 			}
 
-			for (var i in this.streets) {
-				this.streets[i].drawHorizontalLines(this.mapStyle);
+			for (var i in This.streets) {
+				This.streets[i].drawHorizontalLines(This.mapStyle);
 			}
 
-			if(typeof this.loadingProgressNotifier === 'function'){
-				this.loadingProgressNotifier("Drawing places");
-				console.log("finito streets");
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("luoghi", 75);
 			}
-			//setTimeout(Chain.next(),10);
+			setTimeout(next,100);
 		},
-		function()
+		drawPlaces : function(This, next)
 		{
-			for (var i in this.places){
-				this.places[i].setEnteringStreet(this.entranceStreets[this.places[i].entranceStreetId]);
-				if(this.entranceStreets[this.places[i].entranceStreetId] != null)
-					this.places[i].draw(this.mapStyle);
+			for (var i in This.places){
+				This.places[i].setEnteringStreet(This.entranceStreets[This.places[i].entranceStreetId]);
+				if(This.entranceStreets[This.places[i].entranceStreetId] != null)
+					This.places[i].draw(This.mapStyle);
 			}
 
 			liftPaths();
 
-			if(typeof this.finishDrawingCallback === 'function'){
-				this.finishDrawingCallback();
+			if(typeof This.loadingProgressNotifier === 'function'){
+				This.loadingProgressNotifier("Disegno completato", 100);
 			}
 
-			if(typeof this.mapReadyCallback === 'function'){
-				this.mapReadyCallback();
+			if(typeof This.finishDrawingCallback === 'function'){
+				This.finishDrawingCallback();
 			}
-			console.log("finito alll");
-		}
-		];
-		var interval = 20;
-		var fchain = new TimeoutChain();
-		for(i in chain)
-		{
-			fchain.add(chain[i], interval);
-		}
-		fchain.start();
-		/*var f = chainer(chain);
-		console.log(f);
-		f.apply();*/
-}
 
-TimeoutChain = function(){
-    var This = this;
-    this._timeoutHandler = null;    
-    this.chain = new Array();
-    this.currentStep = 0;
-    this.isRunning = false;
-    this.nextStep = function(){
-        This.currentStep = This.currentStep +1;
-        if (This.currentStep == This.chain.length)
-        {
-            This.stop();
-        }else
-        {
-            This.processCurrentStep();
-        }
-    },
-    this.processCurrentStep = function(){
-        This._timeoutHandler = window.setTimeout(function(){
-            This.chain[This.currentStep].func();
-            This.nextStep();
-        },This.chain[This.currentStep].time);
-    },
-    this.start =function(){
-        if (This.chain.length == 0)
-        {
-            return;
-        }
-        if (This.isRunning == true)
-        {
-            return;
-        }
-        This.isRunning = true;
-        This.currentStep = 0;
-        This.processCurrentStep();
-    },
-    this.stop = function(){
-        This.isRunning = false;
-        window.clearTimeout(This._timeoutHandler)
-    },
-    this.add = function(_function,_timeout){
-        This.chain[This.chain.length] = {func : _function, time : _timeout};
-    }
+			if(typeof This.mapReadyCallback === 'function'){
+				This.mapReadyCallback();
+			}
+			setTimeout(next,100);
+		}
+	};
+
+	new JSChain(myController).init(this).drawCrossroads(this).drawStreets(this).drawPlaces(this);
 }
 
 Map.prototype.bringTrafficLightsToFront = function()

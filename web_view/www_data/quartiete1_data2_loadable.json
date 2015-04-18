@@ -223,7 +223,7 @@
       "id": 62,
       "lunghezza": 1.00000E+01,
       "numcorsie": 1,
-      "strada_confinante": 3,
+      "strada_confinante": 300,
       "polo": true,
       "distanza_da_from": 1.00000E+02,
       "from": 0,

@@ -11,6 +11,7 @@
 <script type="text/javascript" src="js/simulation.js"></script>
 <script type="text/javascript" src="js/entities.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/utils/JSChain.js"></script>
 <script type="text/javascript" src="js/utils/paper-full.js"></script>
 <script type="text/javascript" src="js/utils/jquery.min.js"></script>
 <script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
@@ -39,18 +40,28 @@
 	myMap = new Map();
 	entities = new EntitiesRegistry();
 	entStyle = new EntitiesStyle();
+	oggettoCaricamento = "Caricamento";
+	caricato = false;
 
 	sim = null;
 
 	setupSimulation();
 
-	// callbacks for the map loading
-	myMap.onFinishDrawing(
-		function(){closeLoadingDialog(); 
-			if(enableSimulation){
+
+	myMap.onFinishLoading(function(){myMap.asyncDraw();});
+	myMap.onFinishDrawing(function() {
+		myMap.bringTrafficLightsToFront();
+		mapLayer = project.activeLayer;
+		view.draw();
+		closeLoadingDialog();
+		entities.draw();
+		entities.hide();
+		console.log("done with the drawing");
+		if(enableSimulation){
 				getUpdates();
 			}
-		});
+	});
+
 	myMap.setProgressNotifier(setProgressText);
 
 	// callbacks for the counters
@@ -267,6 +278,25 @@
 		$('#loadingMessage').html(text);
 	}
 
+
+
+		function setProgressText(text, value) {
+			var msg = "";
+			var perc = value;
+			if(caricato)
+				perc = perc + 50;
+			if(value != 100)
+			{
+				msg = oggettoCaricamento+" "+text;
+			} else {
+				msg = text;
+				caricato = true;
+				oggettoCaricamento = "Disegno";
+			}
+			$('#loadingMessage').html(msg);
+			$('.progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
+		}
+
 	function update(event) {
 		// the number of times the frame event was fired:
 		console.log(event.count);
@@ -341,18 +371,18 @@
 		setTimeout(function() {
 			jQuery.getJSON("quartiere@_ID_QUARTIERE_@/map.json",
 					function(data) {
-						myMap.load(data);
-						myMap.draw();
+						myMap.asyncLoad(data);
+						// myMap.draw();
 						//entities.load(data);
-						entities.draw();
-						entities.hide();
-						myMap.bringTrafficLightsToFront();
+						// entities.draw();
+						// entities.hide();
+						// myMap.bringTrafficLightsToFront();
 					});
 		}, 10);
 
-		mapLayer = project.activeLayer;
-		secondLayer = new Layer();
-		view.draw();
+		// mapLayer = project.activeLayer;
+		// secondLayer = new Layer();
+		// view.draw();
 		//view.onFrame = update;
 
 		var myTool = new Tool();
@@ -476,8 +506,8 @@
 						<p id="loadingMessage"></p>
 						<div class="progress">
 							<div class="progress-bar progress-bar-striped active"
-								role="progressbar" aria-valuenow="100" aria-valuemin="0"
-								aria-valuemax="100" style="width: 100%">
+								role="progressbar" aria-valuenow="0" aria-valuemin="0"
+								aria-valuemax="100" style="width: 0%">
 								<span class="sr-only">Caricamento</span>
 							</div>
 						</div>
@@ -508,7 +538,7 @@
 			<h1>Simulazione quartiere @_ID_QUARTIERE_@</h1>
 		</div>
 
-		<div id="controls-div btn-group">
+		<div id="controls-div">
 		<div class="btn-group-vertical" role="group" aria-label="...">
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
@@ -592,7 +622,7 @@
 
 		<div id="info-box">
 			<p id="info-title"><strong>Infos</strong></p>
-			<div class="propsBlock">
+			<div class="propsBlock-run">
 				<div class="labels">
 					<p>Macchine:</p>
 					<p>Bici:</p>

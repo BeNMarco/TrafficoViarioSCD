@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="js/utils/paper-full.js"></script>
 	<script type="text/javascript" src="js/utils/FileSaver.js"></script>
 	<script type="text/javascript" src="js/utils/Blob.js"></script>
+	<script type="text/javascript" src="js/utils/JSChain.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.min.js"></script>
 	<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
@@ -22,7 +23,16 @@
 		currentFile = null;
 		currentData = null;
 
+		oggettoCaricamento = "Caricamento";
+		caricato = false;
+
+		myMap.onFinishLoading(function(){myMap.asyncDraw();});
 		myMap.onFinishDrawing(function() {
+			myMap.bringTrafficLightsToFront();
+			mapLayer = project.activeLayer;
+			$('#getData').prop('disabled', false);
+			$('#save').prop('disabled', false);
+			view.draw();
 			closeLoadingDialog();
 			currentData = myMap.getUpdatedData();
 			console.log("done with the drawing");
@@ -79,6 +89,7 @@
 		}
 
 		function closeLoadingDialog() {
+			$('.progress-bar').css('width', 0+'%').attr('aria-valuenow', 0); 
 			$('#loadingDialog').modal('hide');
 		}
 
@@ -91,12 +102,28 @@
 			$('#messageDialog').modal('hide');
 		}
 
-		function setProgressText(text) {
-			console.log("notified " + text);
-			$('#loadingMessage').html(text);
+		function setProgressText(text, value) {
+			var msg = "";
+			var perc = value;
+			if(caricato)
+				perc = perc + 50;
+			if(value != 100)
+			{
+				msg = oggettoCaricamento+" "+text;
+			} else {
+				msg = text;
+				caricato = true;
+				oggettoCaricamento = "Disegno";
+			}
+			$('#loadingMessage').html(msg);
+			$('.progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
 		}
 
 		function handleFileSelect(evt) {
+			$('#getData').prop('disabled', true);
+			$('#save').prop('disabled', true);
+			oggettoCaricamento = "Caricamento";
+
 			var files = evt.target.files;
 
 			console.log(evt.target);
@@ -111,10 +138,21 @@
 
 			reader.onload = (function(theFile) {
 				return function(e) {
-					JsonObj = JSON.parse(e.target.result);
-					console.log(JsonObj);
-					setInfos(JsonObj);
-					loadMap(JsonObj);
+					try{
+						JsonObj = JSON.parse(e.target.result);
+						console.log(JsonObj);
+						setInfos(JsonObj);
+						loadMap(JsonObj);
+					} catch(err) 
+					{
+						if(err.name == "SyntaxError");
+						{
+							closeLoadingDialog();
+							$('#messageDialogText').html("Il file JSON presenta errori di sintassi!<br />Messaggio: "+err.message);
+							
+							openMessageDialog();
+						}
+					}
 				};
 			})(data);
 
@@ -141,24 +179,15 @@
 			$("#ped-num").text(data.pedoni.length);
 		}
 
-		function saveFile()
-		{
-
-		}
-
 		function loadMap(data) {
-
 			project.clear();
 			myMap.resetData();
-			myMap.load(data);
-			myMap.draw();
-
-			myMap.bringTrafficLightsToFront();
-			mapLayer = project.activeLayer;
-			secondLayer = new Layer();
-			view.draw();
-			$('#getData').prop('disabled', false);
-			$('#save').prop('disabled', false);
+			try{
+				myMap.asyncLoad(data);
+			} catch(err)
+			{
+				console.log(err);
+			}
 		}
 
 		onload = function(e) {
@@ -271,7 +300,7 @@
 					<div class="modal-body">
 						<p id="loadingMessage"></p>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+							<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%" id="loading-bar">
 								<span class="sr-only">Loading</span>
 							</div>
 						</div>
@@ -289,6 +318,9 @@
 					<div class="modal-body">
 						<p id="messageDialogText"></p>
 					</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+		      </div>
 				</div>
 			</div>
 		</div>

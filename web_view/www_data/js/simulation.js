@@ -295,18 +295,18 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 			}
 			// altrimenti prendiamo la posizione dallo stato precedente
 			else {
-				if(prevState.distanza > curState.distanza)
-				{
-					console.log("Not possible!");
-					console.log(prevState);
-					console.log(curState);
-				}
 				prevPosition = prevState.distanza;
 				// in questo caso un oggetto è arrivato alla fine di una strada 
 				// di ingresso e vuole tornare indietro
 				if (curState.where == 'strada_ingresso'
 						&& (prevState.in_uscita != curState.in_uscita)) {
 					prevPosition = 0;
+				} else 
+				if(prevState.distanza > curState.distanza)
+				{
+					console.log("Not possible!");
+					console.log(prevState);
+					console.log(curState);
 				}
 				newDistance = this.computeNewDistance(curState.distanza, prevPosition);
 			}

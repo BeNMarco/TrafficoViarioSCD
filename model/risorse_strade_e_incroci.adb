@@ -66,7 +66,7 @@ package body risorse_strade_e_incroci is
          when car =>
             residente:= move_parameters(get_quartiere_utilities_obj.all.get_auto_quartiere(id_quartiere_abitante,id_abitante));
       end case;
-      if distance_to_stop_line<0.0 or else next_entity_distance<0.0 then
+      if distance_to_stop_line<=0.0 or else next_entity_distance<0.0 then
          return 0.0;
       end if;
       while (distance_to_stop_line/=0.0 and then distance_to_stop_line<abitante_velocity) or else (next_entity_distance/=0.0 and then next_entity_distance<abitante_velocity) loop
@@ -96,6 +96,7 @@ package body risorse_strade_e_incroci is
       if next_entity_distance=0.0 then
          intersection_coeff:= (Float(abitante_velocity/distance_to_stop_line))**2;
          coeff:= 1.0 - new_float(free_road_coeff) - new_float(intersection_coeff);
+
 
          if (free_road_coeff>intersection_coeff and intersection_coeff>0.0) or else (1.0 - free_road_coeff - intersection_coeff<=0.0) then
             coeff:= ((residente.get_desired_velocity-abitante_velocity)/delta_value)/(2.0*residente.get_max_acceleration);
@@ -4341,7 +4342,7 @@ package body risorse_strade_e_incroci is
                      step_is_just_calculated:= False;
                      next_abitante:= list_abitanti.get_next_from_list_posizione_abitanti;
 
-                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=141 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0 then
+                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=206 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=10.0 then
                      --   signal:= False;
                      --end if;
 

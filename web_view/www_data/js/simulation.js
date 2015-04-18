@@ -206,8 +206,8 @@ function onSamePath(prevState, curState)
 		{
 			case 'incrocio':
 				toRet = (toRet && 
-					(curState.strada_ingresso == prevSate.strada_ingresso) && 
-					(curState.quartiere_strada_ingresso == prevSate.quartiere_strada_ingresso) &&
+					(curState.strada_ingresso == prevState.strada_ingresso) && 
+					(curState.quartiere_strada_ingresso == prevState.quartiere_strada_ingresso) &&
 					(curState.direzione == prevState.direzione));
 				break;
 			case 'traiettoria_ingresso':
@@ -216,7 +216,7 @@ function onSamePath(prevState, curState)
 				break;
 			case 'cambio_corsia':
 				toRet = (toRet &&
-					(curState.distanza_inizio == prevSate.distanza_inizio));
+					(curState.distanza_inizio == prevState.distanza_inizio));
 				break;
 		}
 	}
@@ -441,6 +441,7 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 		console.log("Got exception");
 		console.log(e);
 		console.log(curBiState);
+		console.log(curBi.prevState);
 	}
 }
 

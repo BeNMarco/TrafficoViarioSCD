@@ -1095,7 +1095,7 @@ function Crossroad(obj){
 	this.firstEntrance = 1;
 	this.group = new Group();
 	this.trafficLights = {};
-	this.pedestrianPaths = {};
+	this.pedestrianPaths = [];
 	this.crossingPaths = {};
 	if("strada_mancante" in obj){
 		this.streetsRef.splice(obj.strada_mancante,0,null);
@@ -1169,6 +1169,7 @@ Crossroad.prototype.draw = function(style){
 	this.group.addChild(path);
 
 	var poleMap = {true: 'firstSegment', false: 'lastSegment'};
+	this.pedestrianPaths[-1]={};
 
 	for (var i = 0; i < this.streetsRef.length; i++) {
 		var g = new Group();
@@ -1186,7 +1187,7 @@ Crossroad.prototype.draw = function(style){
 			(path.position.x+this.lanesNumber[i%2]*style.laneWidth+0.5*style.pavementWidth),
 			(path.position.y-this.lanesNumber[(i+1)%2]*style.laneWidth-ped)
 			));
-		this.pedestrianPaths[i] = pP;
+		//this.pedestrianPaths[i] = pP;
 		//pP.selected = true;
 
 		// creating the path that cross the crossroad
@@ -1200,6 +1201,7 @@ Crossroad.prototype.draw = function(style){
 
 
 		this.crossingPaths[i] = {};	
+		this.pedestrianPaths[i] = {};
 
 		if(this.streetsRef[i] == null){
 			// if there is no street we draw the middle line
@@ -1410,10 +1412,8 @@ Crossroad.prototype.draw = function(style){
 				if(!lunghezza_traiettorie_incroci['pedoni']['destra_bici'])
 					lunghezza_traiettorie_incroci['pedoni']['destra_bici'] = bikePD.length;
 
-				this.pedestrianPaths[i] = {
-					'destra_pedoni': pedPD,
-					'destra_bici' : bikePD
-				};
+				this.pedestrianPaths[i].destra_pedoni = pedPD;
+				this.pedestrianPaths[i].destra_bici = bikePD;
 
 				g.addChild(pedPD);
 				g.addChild(bikePD);
@@ -1497,11 +1497,9 @@ Crossroad.prototype.draw = function(style){
 			console.log("lunghezza bici dritto: "+bikeP.length);
 		}
 
-		var idx = l == 0 ? -1 : i;
-		this.pedestrianPaths[idx] = {
-			'dritto_pedoni': pedP,
-			'dritto_bici' : bikeP
-		};
+		var idx = l == 0 ? i : -1;
+		this.pedestrianPaths[idx].dritto_pedoni = pedP;
+		this.pedestrianPaths[idx].dritto_bici = bikeP;
 
 		g.addChild(pedP);
 		g.addChild(bikeP);
@@ -1538,12 +1536,20 @@ Crossroad.prototype.draw = function(style){
 
 Crossroad.prototype.getEntranceStreetNumber = function(streetId, district){
 	//console.log("asking to crossroad "+this.id+" street "+streetId+" form district "+district);
-	for (var i = 0; i < this.streetsRef.length; i ++){
-		if(this.streetsRef[i] != null && streetId == this.streetsRef[i].id_strada && district == this.streetsRef[i].quartiere){
-			return i;
+	var toRet = null;
+	if(streetId == 0 && district == 0)
+	{
+		toRet == -1;
+	} else {
+		for (var i = 0; i < this.streetsRef.length; i ++){
+			if(this.streetsRef[i] != null && streetId == this.streetsRef[i].id_strada && district == this.streetsRef[i].quartiere){
+				return i;
+			}
 		}
 	}
-	return null;
+//	console.log("streetId: "+streetId+" district:"+district+" resolved:"+toRet);
+	//console.log(this);
+	return toRet;
 }
 
 Crossroad.prototype.getCrossingPath = function(enteringStreet, streetDistrict, direction){
@@ -1593,6 +1599,11 @@ Crossroad.prototype.getPositionOnPedestrianPath = function(distance, enteringStr
 	}
 
 	var path = this.pedestrianPaths[num][direction];
+	if(path == null)
+	{
+		console.log("streetId: "+enteringStreet+" district:"+streetDistrict+" resolved:"+num+" direction: "+direction);
+		console.log(this);
+	}
 	if(distance > path.length) distance = path.length;
 	if(distance < 0) distance = 0;
 

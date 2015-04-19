@@ -2766,6 +2766,7 @@ package body mailbox_risorse_attive is
          distance_one: new_float:= -1.0;
          distance_two: new_float:= -1.0;
          car_length: new_float;
+         costante: new_float;
       begin
          if polo_to_consider then
             type_ingressi_structure:= ordered_polo_true;
@@ -2808,9 +2809,7 @@ package body mailbox_risorse_attive is
                            distance_one:= distance_ingresso+get_larghezza_corsia;
                         end if;
                      else
-                        if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>0.0 and then (list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti<=get_larghezza_corsia*2.0+get_larghezza_marciapiede or else
-                                                                                                                     list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti*2.0-bipede_length<get_larghezza_corsia+get_larghezza_marciapiede) then
-
+                        if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>0.0 and then list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti<get_larghezza_corsia*2.0+get_larghezza_marciapiede then
                            distance_one:= distance_ingresso+get_larghezza_corsia;
                         end if;
                      end if;
@@ -2898,7 +2897,7 @@ package body mailbox_risorse_attive is
                               end if;
                            else
                               if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>get_larghezza_corsia*2.0 and then
-                                list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti-bipede_length<get_larghezza_corsia*4.0 then
+                                list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti<get_larghezza_corsia*4.0 then
                                  distance_one:= distance_ingresso-get_larghezza_corsia-get_larghezza_marciapiede;
                                  segnale:= True;
                               end if;
@@ -2964,7 +2963,7 @@ package body mailbox_risorse_attive is
                               segnale:= True;
                            end if;
                         else
-                           if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti-bipede_length<get_larghezza_corsia*2.0 then
+                           if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti<get_larghezza_corsia*2.0 then
                               distance_two:= distance_ingresso+get_larghezza_corsia;
                               segnale:= True;
                            end if;
@@ -3027,7 +3026,13 @@ package body mailbox_risorse_attive is
                                  segnale:= True;
                               end if;
                            else
-                              if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>get_larghezza_corsia*2.0+get_larghezza_marciapiede then
+                              if h=1 then
+                                 costante:= min_bici_distance-min_length_bici;
+                              else
+                                 costante:= min_pedone_distance-min_length_pedoni;
+                              end if;
+                              if list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>get_larghezza_corsia*2.0+get_larghezza_marciapiede and then
+                                list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti<get_larghezza_corsia*4.0+get_larghezza_marciapiede-costante then
                                  distance_two:= distance_ingresso-get_larghezza_corsia-get_larghezza_marciapiede;
                                  segnale:= True;
                               end if;
@@ -4436,13 +4441,13 @@ package body mailbox_risorse_attive is
                               -- size_incrocio=4
                               road:= get_road_from_incrocio(id_risorsa,i);
                            end if;
-                           if i=get_mancante_incrocio_a_3(id_risorsa) then
-                              state_view_abitante:= create_entità_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),0,0,traiettoria_bipede,mezzo);
-                           else
-                              state_view_abitante:= create_entità_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio,traiettoria_bipede,mezzo);
-                           end if;
-                           Append(state_view_abitanti,state_view_abitante);
                         end if;
+                        if i=get_mancante_incrocio_a_3(id_risorsa) then
+                           state_view_abitante:= create_entità_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),0,0,traiettoria_bipede,mezzo);
+                        else
+                           state_view_abitante:= create_entità_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio,traiettoria_bipede,mezzo);
+                        end if;
+                        Append(state_view_abitanti,state_view_abitante);
                      elsif traiettoria_bipede=destra_bici or else traiettoria_bipede=destra_pedoni then
                         if list.posizione_abitante.get_where_now_posizione_abitanti>=get_traiettoria_incrocio(traiettoria_bipede).get_lunghezza_traiettoria_incrocio then
                            if list.next/=null then

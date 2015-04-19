@@ -68,6 +68,8 @@ package WebServer is
 	     
 		procedure registra_mappa_quartiere(data: String; quartiere: Natural);
 		procedure invia_aggiornamento(data: String; quartiere: Natural);
+		procedure registra_descrizione_mappa(data: String);
+		procedure registra_traiettorie(data: String);
 
     function is_alive return Boolean; 
 

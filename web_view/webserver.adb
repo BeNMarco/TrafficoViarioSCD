@@ -235,6 +235,16 @@ package body WebServer is
          WS_Wrapper.registra_mappa_quartiere(data, quartiere);
       end registra_mappa_quartiere;
 
+      procedure registra_descrizione_mappa(data: String) is
+      begin
+         WS_Wrapper.registra_descrizione_mappa(data);
+      end registra_descrizione_mappa;
+
+      procedure registra_traiettorie(data: String) is
+      begin
+         WS_Wrapper.registra_traiettorie(data);
+      end registra_traiettorie;
+
       procedure invia_aggiornamento(data: String; quartiere: Natural) is
       begin
          WS_Wrapper.invia_aggiornamento(data, quartiere);

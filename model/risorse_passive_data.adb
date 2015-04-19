@@ -697,18 +697,18 @@ package body risorse_passive_data is
          end if;
 
          while list/=null loop
-            if jolly_arrived then
-               mailbox_fermata.add_abitante_in_fermata(list.identificativo_abitante);
+            abitante_is_arrived:= False;
+            destination:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list.identificativo_abitante.get_id_quartiere_tratto).get_destination_abitante_in_bus(list.identificativo_abitante.get_id_tratto);
+            id_urbana_to_go:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(destination.get_id_tratto);
+            id_fermata:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana_to_go);
+            if tratto(from_fermata)=create_tratto(destination.get_id_quartiere_tratto,id_fermata) then
+               abitante_is_arrived:= True;
+            end if;
+            if abitante_is_arrived then
+               get_quartiere_entities_life(list.identificativo_abitante.get_id_quartiere_tratto).abitante_scende_dal_bus(list.identificativo_abitante.get_id_tratto,from_fermata);
             else
-               abitante_is_arrived:= False;
-               destination:= get_quartiere_utilities_obj.get_classe_locate_abitanti(list.identificativo_abitante.get_id_quartiere_tratto).get_destination_abitante_in_bus(list.identificativo_abitante.get_id_tratto);
-               id_urbana_to_go:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(destination.get_id_tratto);
-               id_fermata:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana_to_go);
-               if tratto(from_fermata)=create_tratto(destination.get_id_quartiere_tratto,id_fermata) then
-                  abitante_is_arrived:= True;
-               end if;
-               if abitante_is_arrived then
-                  get_quartiere_entities_life(list.identificativo_abitante.get_id_quartiere_tratto).abitante_scende_dal_bus(list.identificativo_abitante.get_id_tratto,from_fermata);
+               if jolly_arrived then
+                  mailbox_fermata.add_abitante_in_fermata(list.identificativo_abitante);
                end if;
             end if;
             if jolly_arrived or else abitante_is_arrived then

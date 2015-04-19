@@ -13,6 +13,7 @@ use gps_utilities;
 procedure configuration_server is
    gps: ptr_registro_strade_resource;
    all_ok: Boolean:= True;
+   exit_sys: Boolean:= False;
 begin
    gps:= new registro_strade_resource(get_num_quartieri);
    registra_server_gps(ptr_gps_interface(gps),all_ok);
@@ -29,9 +30,9 @@ begin
          end if;
       exception
          when others =>
-            return;
+            exit_sys:= True;
       end;
-      exit when gps.has_to_been_closed;
+      exit when exit_sys or gps.has_to_been_closed;
 
    end loop;
 

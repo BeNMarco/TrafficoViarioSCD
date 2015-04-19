@@ -32,7 +32,7 @@ with the_name_server; use the_name_server;
 
 with WebServer; use WebServer;
 
-package body WebSock_CB is
+package body WebSock_Quartiere_CB is
 
 
    use Ada;
@@ -163,4 +163,4 @@ package body WebSock_CB is
       Text_IO.Put_Line ("]");
    end W_Log;
 
-end WebSock_CB;
+end WebSock_Quartiere_CB;

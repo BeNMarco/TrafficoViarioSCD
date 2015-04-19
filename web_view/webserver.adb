@@ -21,7 +21,8 @@ with Ada.Directories;
 with GNATCOLL.JSON;
 
 with Page_CB;
-with Websock_CB;
+with WebSock_Quartiere_CB;
+with WebSock_Mainpage_CB;
 with Home_Page;
 with JS_Page_Compiler;
 with Districts_Repository;
@@ -31,7 +32,7 @@ with absolute_path;
 with JSON_Helper;
 
 use Page_CB;
-use Websock_CB;
+use WebSock_Quartiere_CB;
 use Home_Page;
 use JS_Page_Compiler;
 use Districts_Repository;
@@ -52,6 +53,7 @@ package body WebServer is
    Admin_Dir : String := abs_path & "web_view/admin_data";
    WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
+   MainPage_WebSocket_Updates_URI : String := "mainpageUpdates";
    WebServer_Config_File : String := "data/webserver_config.json";
    Standard_Port : Integer := 12345;
 
@@ -63,6 +65,51 @@ package body WebServer is
       return WebServerInstance'Access;
    end get_webserver;
 
+   procedure Init(This : in out WebServer_Wrapper_Type) is
+      use JSON_Helper;
+
+      JS_Compiler : JS_Page_Compiler_Handler;
+      JWebConfig : JSON_Value := Get_Json_Value(Json_File_Name => abs_path & WebServer_Config_File);
+      WS_Port : Integer := Get(JWebConfig, "port");
+   begin
+      if WS_Port = 0 then
+        WS_Port := Standard_Port;
+      end if;
+      
+      AWS.Config.Set.Reuse_Address(This.WsConfig, True);
+      AWS.Config.Set.WWW_Root(This.WsConfig, abs_path & "web_view/www_data");
+      AWS.Config.Set.Admin_URI(This.WsConfig, abs_path & "web_view/admin_aws");
+      AWS.Config.Set.Admin_Password(This.WsConfig, "f3378e86bbcb838a242ab29627425b93");
+      AWS.Config.Set.Status_Page(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_status.thtml");
+      AWS.Config.Set.Up_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_up.png");
+      AWS.Config.Set.Down_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_down.png");
+      AWS.Config.Set.Logo_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_logo.png");
+      AWS.Config.Set.Server_Port(This.WsConfig, WS_Port);
+
+      This.Home.Set_Districts_Repository(This'Unchecked_Access);
+
+      Services.Dispatchers.URI.Register_Default_Callback(This.Root, AWS.Dispatchers.Callback.Create(AWS.Services.Page_Server.Callback'Access));
+      Services.Dispatchers.URI.Register(This.Root, "/", This.Home);
+      Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
+      begin
+         Server.Start(This.WS, This.Root, This.WsConfig);
+         Put_Line("Call me on port " & Integer'Image(WS_Port));
+      exception
+         when Error: others =>
+            Put_Line("Unexpected exception: ");
+            Put_Line(Exception_Information(Error));
+      end;
+      
+      Net.WebSocket.Registry.Control.Start;
+
+      -- aggiungiamo un websocket per notificare alla pagina principale dell'avvenuta registrazione di un quartiere
+      This.MainPage_WebSocket_Recipient := Net.WebSocket.Registry.Create (URI => "/" & MainPage_WebSocket_Updates_URI);
+
+      -- riusiamo il gestore di websocket usato per i quartieri: dobbiamo inviare messaggi semplici
+      -- e vogliamo poter chidere la simulazione anche da qui
+      Net.WebSocket.Registry.Register ("/" & MainPage_WebSocket_Updates_URI, WebSock_Mainpage_CB.Websocket_Factory'Access);
+   end Init;
+
    --protected body WebServer_Wrapper_Type is
    overriding procedure Finalize(This : in out WebServer_Wrapper_Type) is
    begin
@@ -71,9 +118,9 @@ package body WebServer is
             This.Page_Handler_Registry(I).Clean;
          end if;
       end loop;
-      Put_Line("Deleting temp file " & WWW_Root & "/" & Traiettorie_FileName);
+      -- Put_Line("Deleting temp file " & WWW_Root & "/" & Traiettorie_FileName);
       -- Delete_File(WWW_Root & "/" & Traiettorie_FileName);
-      Put_Line("Deleting temp file " & WWW_Root & "/" & DescrizioneMappa_FileName);
+      -- Put_Line("Deleting temp file " & WWW_Root & "/" & DescrizioneMappa_FileName);
       -- Delete_File(WWW_Root & "/" & DescrizioneMappa_FileName);
       -- exception
       --   when Directories.Name_Error => Put_Line("File "&WWW_Root & "/" & DescrizioneMappa_FileName&" not found");
@@ -83,6 +130,7 @@ package body WebServer is
    procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: String;  quartiere : Natural) is
       TmpID : String := Natural'Image(quartiere);
       StringID : String := TmpID(TmpID'First+1 .. TmpID'Last);
+      JData : JSON_Value := Create_Object;
    begin
       This.Page_Handler_Registry(quartiere).Init(quartiere, data);
       Put_Line("Activating /quartiere" & StringID);
@@ -91,6 +139,12 @@ package body WebServer is
 
       This.Rcp_Registry(quartiere) := Net.WebSocket.Registry.Create (URI => "/quartiere" & StringID & "/" & WebSocket_Updates_URI);
       Net.WebSocket.Registry.Register ("/quartiere" & StringID & "/" & WebSocket_Updates_URI, Websocket_Factory'Access);
+      
+      -- notifica dell'avvenuta registrazione
+      Set_Field(Val => JData, Field_Name => "type", Field => "update");
+      Set_Field(Val => JData, Field_Name => "quartiere", Field => quartiere);
+
+      Net.WebSocket.Registry.Send (This.MainPage_WebSocket_Recipient, Write(JData));
 
    end registra_mappa_quartiere;
 
@@ -163,45 +217,6 @@ package body WebServer is
    --    return WebServerObject;
    -- end get_webserver;
 
-   procedure Init(This : in out WebServer_Wrapper_Type) is
-      use JSON_Helper;
-
-      JS_Compiler : JS_Page_Compiler_Handler;
-      JWebConfig : JSON_Value := Get_Json_Value(Json_File_Name => abs_path & WebServer_Config_File);
-      WS_Port : Integer := Get(JWebConfig, "port");
-   begin
-      if WS_Port = 0 then
-        WS_Port := Standard_Port;
-      end if;
-      
-      AWS.Config.Set.Reuse_Address(This.WsConfig, True);
-      AWS.Config.Set.WWW_Root(This.WsConfig, abs_path & "web_view/www_data");
-      AWS.Config.Set.Admin_URI(This.WsConfig, abs_path & "web_view/admin_aws");
-      AWS.Config.Set.Admin_Password(This.WsConfig, "f3378e86bbcb838a242ab29627425b93");
-      AWS.Config.Set.Status_Page(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_status.thtml");
-      AWS.Config.Set.Up_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_up.png");
-      AWS.Config.Set.Down_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_down.png");
-      AWS.Config.Set.Logo_Image(This.WsConfig, abs_path & "web_view/" & Admin_Dir & "/aws_logo.png");
-      AWS.Config.Set.Server_Port(This.WsConfig, WS_Port);
-
-      This.Home.Set_Districts_Repository(This'Unchecked_Access);
-
-      Services.Dispatchers.URI.Register_Default_Callback(This.Root, AWS.Dispatchers.Callback.Create(AWS.Services.Page_Server.Callback'Access));
-      Services.Dispatchers.URI.Register(This.Root, "/", This.Home);
-      Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
-      begin
-         Server.Start(This.WS, This.Root, This.WsConfig);
-         Put_Line("Call me on port " & Integer'Image(WS_Port));
-      exception
-         when Error: others =>
-            Put_Line("Unexpected exception: ");
-            Put_Line(Exception_Information(Error));
-      end;
-      
-      
-      Net.WebSocket.Registry.Control.Start;
-   end Init;
-
    function Get_Max_Partitions(This : in WebServer_Wrapper_Type) return Integer is
    begin 
       return This.Max_Partitions;
@@ -211,6 +226,11 @@ package body WebServer is
    begin
       return This.Cur_Registered_Partitions;
    end Get_Cur_Partitions;
+
+   function Get_Registered_Districts(This : in WebServer_Wrapper_Type) return Registered_Districts_Type is
+   begin
+      return This.Home.Get_Registered_Districts;
+   end;
 
    overriding function Get_Districts_Registry(This : in WebServer_Wrapper_Type) return Districts_Registry_Type is
    begin

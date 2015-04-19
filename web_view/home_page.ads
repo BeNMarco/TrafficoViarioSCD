@@ -12,7 +12,7 @@ package Home_Page is
 	use AWS;
 	use AWS.Status;
 
-	type Registered_Districts_Type is array (Natural range <>) of Boolean;
+	-- type Registered_Districts_Type is array (Natural range <>) of Boolean;
 	type Home_Page_Handler(Num : Natural) is new Dispatchers.Handler with private;
 
 	overriding function Dispatch
@@ -20,6 +20,8 @@ package Home_Page is
 		Request : in Status.Data) return Response.Data;
 		
 	procedure Set_Districts_Repository(This : in out Home_Page_Handler; R : Access_Districts_Repository_Interface);
+
+	function Get_Registered_Districts(This : in Home_Page_Handler) return Registered_Districts_Type;
 
 private
 

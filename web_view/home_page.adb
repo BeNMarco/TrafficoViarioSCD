@@ -32,10 +32,12 @@ package body Home_Page is
       This.Districts_Repository := R;
     end Set_Districts_Repository;
 
-    overriding function Dispatch
-     (This : in Home_Page_Handler;
-      Request : in Status.Data) return Response.Data
-    is
+    function Get_Registered_Districts(This : in Home_Page_Handler) return Registered_Districts_Type is
+    begin
+      return This.Registered_Districts;
+    end Get_Registered_Districts;
+
+    overriding function Dispatch(This : in Home_Page_Handler; Request : in Status.Data) return Response.Data is
       use type Templates_Parser.Vector_Tag;
 
       URI : constant String := Status.URI (Request);

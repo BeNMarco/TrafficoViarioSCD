@@ -7,6 +7,9 @@
     <script type="text/javascript">
 
       var ws;
+      var updatesURI = "mainpageUpdates";
+
+      var ws1;
       var server = window.location.host;
 
       function updateP(id, message) {
@@ -32,12 +35,34 @@
 
       };
 
-      onLoad = function(e){
+      onload = function(e){
         console.log("prova");
         if (window.jQuery) {  
             console.log("Jquery loaded");
         } else {
             console.log("Jquery not loaded");
+        }
+
+
+        var target = "ws://" + server
+            + "/" + updatesURI;
+        console.log("Opening the websocket against " + target);
+        ws1 = new WebSocket(target);
+
+        ws1.onopen = function(event) {
+          //ws1.send("ciao server");
+          console.log(event);
+        }
+        ws1.onmessage = function(event) {
+          //console.log(event);
+          //console.log(event.data);
+          //console.log(JSON.parse(event.data));
+          var msg = JSON.parse(event.data);
+          console.log(msg);
+        }
+
+        ws1.onerror = function(event) {
+          console.log(event);
         }
       }
 

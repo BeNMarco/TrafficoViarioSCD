@@ -24,7 +24,7 @@ with AWS.Status;
 
 with AWS.Net.WebSocket;
 
-package WebSock_CB is
+package WebSock_Quartiere_CB is
 
    use Ada.Streams;
    use AWS;
@@ -64,4 +64,4 @@ private
      C : Natural := 0;
    end record
 ;
-end WebSock_CB;
+end WebSock_Quartiere_CB;

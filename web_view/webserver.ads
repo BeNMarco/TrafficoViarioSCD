@@ -57,8 +57,10 @@ package WebServer is
 
 	function Get_Max_Partitions(This : in WebServer_Wrapper_Type) return Integer;
 	function Get_Cur_Partitions(This : in WebServer_Wrapper_Type) return Integer;
-	overriding function Get_Districts_Registry(This : in WebServer_Wrapper_Type) return Districts_Registry_Type;
 
+	function Get_Registered_Districts(This : in WebServer_Wrapper_Type) return Registered_Districts_Type;
+
+	overriding function Get_Districts_Registry(This : in WebServer_Wrapper_Type) return Districts_Registry_Type;
 	overriding procedure Finalize(This : in out WebServer_Wrapper_Type);
 
 	
@@ -92,6 +94,7 @@ private
 		Home : Home_Page.Home_Page_Handler(Num);
 		Rcp : Net.WebSocket.Registry.Recipient;
 		Rcp_Registry : WebSocket_Registry_Type(1 .. Num);
+		MainPage_WebSocket_Recipient : Net.WebSocket.Registry.Recipient;
 		WS     : Server.HTTP;
 		WsConfig : AWS.Config.Object;
    	Root : Services.Dispatchers.URI.Handler;

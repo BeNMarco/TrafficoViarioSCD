@@ -16,6 +16,7 @@ with AWS.Services.Page_Server;
 with AWS.Response;
 with AWS.Dispatchers;
 with AWS.Dispatchers.Callback;
+with Ada.Directories; 
 
 with GNATCOLL.JSON;
 
@@ -45,12 +46,17 @@ use remote_types;
 use absolute_path;
 
 package body WebServer is
+   use Ada.Directories;
+   use Ada.Text_IO;
    
    Admin_Dir : String := abs_path & "web_view/admin_data";
    WWW_Root : String :=  abs_path & "web_view/www_data";
    WebSocket_Updates_URI : String := "updatesStream";
    WebServer_Config_File : String := "data/webserver_config.json";
    Standard_Port : Integer := 12345;
+
+   Traiettorie_FileName : String := "traiettorie.json";
+   DescrizioneMappa_FileName : String := "descrizione_mappa.json";
 
    function get_webserver return Access_WebServer_Wrapper_Type is
    begin
@@ -65,6 +71,13 @@ package body WebServer is
             This.Page_Handler_Registry(I).Clean;
          end if;
       end loop;
+      Put_Line("Deleting temp file " & WWW_Root & "/" & Traiettorie_FileName);
+      -- Delete_File(WWW_Root & "/" & Traiettorie_FileName);
+      Put_Line("Deleting temp file " & WWW_Root & "/" & DescrizioneMappa_FileName);
+      -- Delete_File(WWW_Root & "/" & DescrizioneMappa_FileName);
+      -- exception
+      --   when Directories.Name_Error => Put_Line("File "&WWW_Root & "/" & DescrizioneMappa_FileName&" not found");
+      --   when Directories.Use_Error => Put_Line("Can't delete the file " &WWW_Root & "/" & DescrizioneMappa_FileName);
    end Finalize;
    
    procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: String;  quartiere : Natural) is
@@ -72,7 +85,7 @@ package body WebServer is
       StringID : String := TmpID(TmpID'First+1 .. TmpID'Last);
    begin
       This.Page_Handler_Registry(quartiere).Init(quartiere, data);
-      Text_IO.Put_Line("Activating /quartiere" & StringID);
+      Put_Line("Activating /quartiere" & StringID);
       Services.Dispatchers.URI.Register(This.Root, "/quartiere" & StringID, This.Page_Handler_Registry(quartiere), True);
       Server.Set(This.WS, This.Root);
 
@@ -80,6 +93,23 @@ package body WebServer is
       Net.WebSocket.Registry.Register ("/quartiere" & StringID & "/" & WebSocket_Updates_URI, Websocket_Factory'Access);
 
    end registra_mappa_quartiere;
+
+   procedure registra_traiettorie(This : in out WebServer_Wrapper_Type; data: String) is 
+      JSON_File : File_Type;
+    begin
+      Create(File => JSON_File, Mode => Out_File, Name => WWW_Root & "/" & Traiettorie_FileName);
+      Put_Line(JSON_File, data);
+      Close(JSON_File);
+    end registra_traiettorie;
+
+   procedure registra_descrizione_mappa(This : in out WebServer_Wrapper_Type; data: String) is 
+      JSON_File : File_Type;
+      JSON_File_Name : String := "descrizione_mappa.json";
+    begin
+      Create(File => JSON_File, Mode => Out_File, Name => WWW_Root & "/" & DescrizioneMappa_FileName);
+      Put_Line(JSON_File, data);
+      Close(JSON_File);
+    end registra_descrizione_mappa;
 
    procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural) is
       JData : JSON_Value := Read(Strm => data,
@@ -161,11 +191,11 @@ package body WebServer is
       Services.Dispatchers.URI.Register(This.Root, "/we_js/", JS_Compiler, True);
       begin
          Server.Start(This.WS, This.Root, This.WsConfig);
-         Text_IO.Put_Line("Call me on port " & Integer'Image(WS_Port));
+         Put_Line("Call me on port " & Integer'Image(WS_Port));
       exception
          when Error: others =>
-            Text_IO.Put_Line("Unexpected exception: ");
-            Text_IO.Put_Line(Exception_Information(Error));
+            Put_Line("Unexpected exception: ");
+            Put_Line(Exception_Information(Error));
       end;
       
       

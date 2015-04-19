@@ -45,7 +45,9 @@ package WebServer is
 
 	-- function get_webserver return WebServer_Wrapper_Type;
 
-	procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: string; quartiere : Natural);
+	procedure registra_mappa_quartiere(This : in out WebServer_Wrapper_Type; data: String; quartiere : Natural);
+	procedure registra_descrizione_mappa(This : in out WebServer_Wrapper_Type; data: String);
+	procedure registra_traiettorie(This : in out WebServer_Wrapper_Type; data: String);
 	procedure invia_aggiornamento(This : in out WebServer_Wrapper_Type; data: String; quartiere: Natural);
 	procedure notifica_terminazione(This : in out WebServer_Wrapper_Type);
 	procedure notifica_richiesta_terminazione(This : in out WebServer_Wrapper_Type);

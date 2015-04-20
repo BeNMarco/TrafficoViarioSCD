@@ -690,6 +690,9 @@ package body risorse_passive_data is
       begin
          -- l'abitante è arrivato alla fermata
          -- fa scendere abitanti
+         --if from_fermata.get_id_tratto=93 then
+         --   Put_Line("dd");
+         --end if;
          mailbox_fermata:= get_id_ingresso_quartiere(from_fermata.get_id_quartiere_tratto,from_fermata.get_id_tratto);
          prec_list:= null;
          if autobus.is_a_bus_jolly and linee_autobus(autobus.get_id_luogo_lavoro_from_abitante).get_numero_fermate=stato_bus(to_id_autobus).index_fermata then
@@ -725,7 +728,9 @@ package body risorse_passive_data is
                end if;
             end if;
             prec_list:= list;
-            list:= list.next;
+            if list/=null then
+               list:= list.next;
+            end if;
          end loop;
 
          -- l'autobus non è arrivato alla posizione jolly
@@ -746,7 +751,7 @@ package body risorse_passive_data is
                id_urbana_to_go:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_main_road_from_id_ingresso(destination.get_id_tratto);
                id_fermata:= get_ref_quartiere(destination.get_id_quartiere_tratto).get_id_fermata_id_urbana(id_urbana_to_go);
                -- fermata è la fermata in cui l'abitante deve andare
-               if fermata_da_fare(to_id_autobus,create_tratto(destination.get_id_quartiere_tratto,id_fermata))or else
+               if fermata_da_fare(to_id_autobus,create_tratto(destination.get_id_quartiere_tratto,id_fermata)) or else
                  (autobus.is_a_bus_jolly and then (autobus.is_a_jolly_to_quartiere=destination.get_id_quartiere_tratto)) then
                   overwrite_abitanti(index):= abitanti(i);
                   index:= index+1;
@@ -792,7 +797,7 @@ package body risorse_passive_data is
             to:= linee_autobus(num_linea).get_numero_fermate;
          else
             from:= 1;
-            to:= stato_bus(id_autobus).index_fermata-1;
+            to:= linee_autobus(num_linea).get_numero_fermate-stato_bus(id_autobus).index_fermata;
          end if;
          for i in from..to loop
             if tratto(linee_autobus(num_linea).get_num_tratto(i))=tratto(fermata) then
@@ -996,6 +1001,7 @@ package body risorse_passive_data is
          Put_Line("request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
          print_percorso(percorso.get_percorso_from_route_and_distance);
          Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso);
          ptr_rt_ingresso(get_id_ingresso_quartiere(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,walking);
       end;
    exception

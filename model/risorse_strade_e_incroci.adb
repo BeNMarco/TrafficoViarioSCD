@@ -3819,7 +3819,7 @@ package body risorse_strade_e_incroci is
                      next_abitante_velocity:= 0.0;
                      step_is_just_calculated:= False;
                      --Put_Line(new_float'Image(list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti));
-                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>14.0 then
+                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>21.0 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=118 then
                      --   stop_entity:= False;
                      --end if;
                      next_abitante:= list_abitanti.get_next_from_list_posizione_abitanti;
@@ -3867,7 +3867,7 @@ package body risorse_strade_e_incroci is
                            distance_to_stop_line:= get_larghezza_corsia*4.0-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti;
                         end if;
                         if next_abitante/=null then
-                           if next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=get_larghezza_corsia*4.0-list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti then
+                           if next_abitante.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=get_larghezza_corsia*4.0 then
                               next_abitante:= null;
                            else
                               if mezzo=bike then
@@ -4381,10 +4381,6 @@ package body risorse_strade_e_incroci is
                      next_abitante_velocity:= 0.0;
                      step_is_just_calculated:= False;
                      next_abitante:= list_abitanti.get_next_from_list_posizione_abitanti;
-
-                     --if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti=206 and list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=10.0 then
-                     --   signal:= False;
-                     --end if;
 
                      if list_abitanti.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=0.0 then
                         if next_abitante/=null then
@@ -5067,7 +5063,7 @@ package body risorse_strade_e_incroci is
          mailbox.delta_terminate;
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
       end loop;
 
@@ -5503,7 +5499,7 @@ package body risorse_strade_e_incroci is
          --crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
          -- l'urbana 1 è il rappresentante per la chiusura del quartiere in questione
          get_synchronization_tasks_partition_object.task_has_finished;
@@ -6372,7 +6368,7 @@ package body risorse_strade_e_incroci is
             end if;
          end loop;
 
-         get_log_stallo_quartiere.finish(id_task);
+         --get_log_stallo_quartiere.finish(id_task);
 
       end loop;
    exception

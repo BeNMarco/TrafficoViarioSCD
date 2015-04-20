@@ -156,6 +156,10 @@ def main(num_quartieri):
 						raise Exception("Errore quartiere " + str(id+1) + ": Errore id_abitante " + str(id_prog) + ": Luogo casa non in range dei luoghi del quartiere")
 				else:
 					raise Exception("Errore quartiere " + str(id+1) + ": Errore id_abitante " + str(id_prog) + ": numerazione progressiva errata (partendo da 1)")
+				if abitante["id_quartiere_luogo_lavoro"]==id+1:
+					if abitante["id_luogo_casa"]==abitante["id_luogo_lavoro"]:
+						raise Exception("Errore quartiere " + str(id+1) + ": Errore id_abitante " + str(id_prog) + ": luogo lavoro e luogo casa devono essere diversi")
+
 				id_prog=id_prog+1
 
 

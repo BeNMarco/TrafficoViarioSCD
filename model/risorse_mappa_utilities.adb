@@ -317,8 +317,8 @@ package body risorse_mappa_utilities is
       traiettoria_entrata_ritorno_bici:= Get(Val => json_traiettorie, Field => "entrata_ritorno_bici");
       traiettorie(entrata_ritorno_bici):= create_traiettoria_ingresso(Get(Val => traiettoria_entrata_ritorno_bici, Field => "lunghezza"),null,null,0.0);
 
-      traiettorie(entrata_dritto_pedoni):= create_traiettoria_ingresso(Float(get_default_larghezza_corsia*4.0)+Float(get_default_larghezza_corsia),null,null,0.0);
-      traiettorie(entrata_dritto_bici):= create_traiettoria_ingresso(Float(get_default_larghezza_corsia*4.0)+Float(get_default_larghezza_corsia),null,null,0.0);
+      traiettorie(entrata_dritto_pedoni):= create_traiettoria_ingresso(Float(get_default_larghezza_corsia*4.0)+Float(get_default_larghezza_marciapiede),null,null,0.0);
+      traiettorie(entrata_dritto_bici):= create_traiettoria_ingresso(Float(get_default_larghezza_corsia*4.0)+Float(get_default_larghezza_marciapiede),null,null,0.0);
 
       -- end traiettorie bici/pedoni
 

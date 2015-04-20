@@ -128,6 +128,7 @@ Simulation.prototype.setCarPathLength = function(state)
 Simulation.prototype.setPedPathLength = function(state)
 {
 	state.bike = (state.mezzo == "bike");
+
 	switch (state.where) {
 		case 'strada':
 			state.pathLength = this.map.streets[state.id_where].getStreetLength();
@@ -148,6 +149,7 @@ Simulation.prototype.setPedPathLength = function(state)
 				state.direzione);
 			break;
 	}
+
 	return state;
 }
 
@@ -157,23 +159,35 @@ Simulation.prototype.initPrevState = function(state) {
 		var curState = state.abitanti[i];
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
 		var o = null;
-		switch(curState.mezzo)
-		{
-			case 'car':
-				o = this.objects.cars[id];
-				curState = this.setCarPathLength(curState);
-				break;
-			case 'bike':
-				o = this.objects.bikes[id];
-				curState = this.setPedPathLength(curState);
-				break;
-			case 'walking':
-				o = this.objects.pedestrians[id];
-				curState = this.setPedPathLength(curState);
-				break;
-		}
-		if (o) {
-			o.prevState = curState;
+		try{
+			switch(curState.mezzo)
+			{
+				case 'car':
+					o = this.objects.cars[id];
+					curState = this.setCarPathLength(curState);
+					break;
+				case 'bike':
+					o = this.objects.bikes[id];
+					curState = this.setPedPathLength(curState);
+					break;
+				case 'walking':
+					o = this.objects.pedestrians[id];
+					curState = this.setPedPathLength(curState);
+					break;
+			}
+			if (o) {
+				o.prevState = curState;
+			}
+		} catch (e) {
+			console.log("INIT PREV STATE > Exception ++++++++++++++++++++");
+			console.log("exception:");
+			console.log(e);
+			console.log("state:");
+			console.log(curState);
+			console.log("o:");
+			console.log(o);
+			console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
+			throw e;
 		}
 	}
 }
@@ -311,13 +325,16 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 				newDistance = this.computeNewDistance(curState.distanza, prevPosition);
 			}
 		} catch (err) {
+			console.log("COMPUTER NEW DISTANCE > Exception ------------------------");
+			console.log("exception:");
+			console.log(err);
 			console.log("curCar:");
 			console.log(curState);
 			console.log("prevState:");
 			console.log(prevState);
 			console.log("this.prevSate:");
 			console.log(this.prevSate);
-			console.log(err);
+			console.log("----------------------------------------------------------");
 			throw err;
 		}
 	}
@@ -327,46 +344,48 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 Simulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
+	var s = curCarState;
 	var curCar = this.objects.cars[curCarID];
 	if(curCar == null)
 	{
 		console.log("New car!");
 		curCar = this.objects.addCar(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante);
+		curCar.prevState = curCarState;
 	}
 	try {
 		var toUse = this.computeNewDistanceAndState(curCar.prevState, curCarState);
-		curCarState = toUse.state;
+		s = toUse.state;
 		var newDistance = toUse.distance;
 
 		var newPos = null;
-		switch (curCarState.where) {
+		switch (s.where) {
 		case 'strada':
-			newPos = this.map.streets[curCarState.id_where].getPositionAt(
-					newDistance, curCarState.polo, curCarState.corsia - 1);
+			newPos = this.map.streets[s.id_where].getPositionAt(
+					newDistance, s.polo, s.corsia - 1);
 			break;
 		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[curCarState.id_where]
-					.getPositionAt(newDistance, !curCarState.in_uscita,
-							curCarState.corsia - 1);
+			newPos = this.map.entranceStreets[s.id_where]
+					.getPositionAt(newDistance, !s.in_uscita,
+							s.corsia - 1);
 			break;
 		case 'traiettoria_ingresso':
-			newPos = this.map.streets[curCarState.id_where]
-					.getPositionAtEntrancePath(curCarState.polo,
-							curCarState.distanza_ingresso,
-							curCarState.traiettoria, newDistance);
+			newPos = this.map.streets[s.id_where]
+					.getPositionAtEntrancePath(s.polo,
+							s.distanza_ingresso,
+							s.traiettoria, newDistance);
 			break;
 		case 'incrocio':
-			newPos = this.map.crossroads[curCarState.id_where]
-					.getPositionAt(newDistance, curCarState.strada_ingresso,
-							curCarState.quartiere_strada_ingresso,
-							curCarState.direzione);
+			newPos = this.map.crossroads[s.id_where]
+					.getPositionAt(newDistance, s.strada_ingresso,
+							s.quartiere_strada_ingresso,
+							s.direzione);
 			
 			break;
 		case 'cambio_corsia':
-			var path = this.map.streets[curCarState.id_where]
-					.getOvertakingPath(curCarState.distanza_inizio,
-							curCarState.polo, curCarState.corsia_inizio - 1,
-							curCarState.corsia_fine - 1, 20);
+			var path = this.map.streets[s.id_where]
+					.getOvertakingPath(s.distanza_inizio,
+							s.polo, s.corsia_inizio - 1,
+							s.corsia_fine - 1, 20);
 			var loc = path.getLocationAt(newDistance);
 			newPos = {
 				position : loc.point,
@@ -377,19 +396,25 @@ Simulation.prototype.moveCar = function(time, curCarState)
 		curCar.move(newPos.position, newPos.angle);
 		if(typeof this.onObjectMoved === 'function')
 		{
-			this.onObjectMoved(curCar, curCarState, newDistance, newPos);
+			this.onObjectMoved(curCar, s, newDistance, newPos);
 		}
 	} catch (e) {
-		console.log("Got exception");
+		console.log("MOVE CAR > Got exception =====");
 		console.log(e);
+		console.log("current:");
 		console.log(curCarState);
+		console.log("previous:");
+		console.log(curCar.prevState);
+		console.log("used:");
+		console.log(s);
+		console.log("==============================");
 	}
 }
 
 Simulation.prototype.moveBipede = function(time, curBiState)
 {
 	var curBiID = curBiState.id_quartiere_abitante+"_"+curBiState.id_abitante;
-
+	var s = curBiState;
 	var curBi = (curBiState.mezzo == 'bike') ? this.objects.bikes[curBiID] : this.objects.pedestrians[curBiID];
 	curBiState.bike = (curBiState.mezzo == "bike");
 	if(curBi == null)
@@ -400,48 +425,54 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 		} else {
 			curBi = this.objects.addPedestrian(curBiState.id_abitante, curBiState.id_quartiere_abitante);
 		}
+		curBi.prevState = curBiState;
 	}
 	try {
 		
 		var toUse = this.computeNewDistanceAndState(curBi.prevState, curBiState);
-		curBiState = toUse.state;
+		s = toUse.state;
 		var newDistance = toUse.distance;
 
 		var newPos = null;
-		switch (curBiState.where) {
+		switch (s.where) {
 		case 'strada':
-			newPos = this.map.streets[curBiState.id_where].getOnPavementPositionAt(
-					newDistance, curBiState.polo, curBiState.bike);
+			newPos = this.map.streets[s.id_where].getOnPavementPositionAt(
+					newDistance, s.polo, s.bike);
 			break;
 		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[curBiState.id_where]
-					.getOnPavementPositionAt(newDistance, !curBiState.in_uscita,
-							curBiState.bike);
+			newPos = this.map.entranceStreets[s.id_where]
+					.getOnPavementPositionAt(newDistance, !s.in_uscita,
+							s.bike);
 			break;
 		case 'traiettoria_ingresso':
-			newPos = this.map.streets[curBiState.id_where]
-					.getOnZebraPositionAt(newDistance, curBiState.polo,
-							curBiState.distanza_ingresso,
-							curBiState.traiettoria, curBiState.bike);
+			newPos = this.map.streets[s.id_where]
+					.getOnZebraPositionAt(newDistance, s.polo,
+							s.distanza_ingresso,
+							s.traiettoria, s.bike);
 			break;
 		case 'incrocio':
-			newPos = this.map.crossroads[curBiState.id_where]
-					.getPositionOnPedestrianPath(newDistance, curBiState.strada_ingresso,
-							curBiState.quartiere_strada_ingresso,
-							curBiState.direzione);
+			newPos = this.map.crossroads[s.id_where]
+					.getPositionOnPedestrianPath(newDistance, s.strada_ingresso,
+							s.quartiere_strada_ingresso,
+							s.direzione);
 			
 			break;
 		}
 		curBi.move(newPos.position);
 		if(typeof this.onObjectMoved === 'function')
 		{
-			this.onObjectMoved(curBi, curBiState, newDistance, newPos);
+			this.onObjectMoved(curBi, s, newDistance, newPos);
 		}
 	} catch (e) {
-		console.log("Got exception");
+		console.log("MOVE BIPEDE > Got exception =====");
 		console.log(e);
+		console.log("current:");
 		console.log(curBiState);
+		console.log("previous:");
 		console.log(curBi.prevState);
+		console.log("used:");
+		console.log(s);
+		console.log("=================================");
 	}
 }
 

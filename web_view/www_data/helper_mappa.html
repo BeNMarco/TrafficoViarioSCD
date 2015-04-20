@@ -26,8 +26,8 @@
 		oggettoCaricamento = "Caricamento";
 		caricato = false;
 
-		myMap.onFinishLoading(function(){myMap.asyncDraw();});
-		myMap.onFinishDrawing(function() {
+		myMap.onFinishLoading = function(){myMap.asyncDraw();};
+		myMap.onFinishDrawing = function() {
 			myMap.bringTrafficLightsToFront();
 			mapLayer = project.activeLayer;
 			$('#getData').prop('disabled', false);
@@ -36,7 +36,12 @@
 			closeLoadingDialog();
 			currentData = myMap.getUpdatedData();
 			console.log("done with the drawing");
-		});
+		};
+
+		myMap.onLoadingError = function(err){
+			closeLoadingDialog();
+
+		};
 
 		myMap.setProgressNotifier(setProgressText);
 

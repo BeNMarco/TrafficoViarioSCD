@@ -4427,6 +4427,7 @@ package body mailbox_risorse_attive is
                            else
                               bipedi_to_move(i,traiettoria_bipede):= null;
                            end if;
+                           road:= get_road_from_incrocio(id_risorsa,i);
                         else
                            if size_incrocio=3 and i/=get_mancante_incrocio_a_3(id_risorsa) then
                               if i>get_mancante_incrocio_a_3(id_risorsa) then
@@ -4441,6 +4442,9 @@ package body mailbox_risorse_attive is
                               -- size_incrocio=4
                               road:= get_road_from_incrocio(id_risorsa,i);
                            end if;
+                        end if;
+                        if road.get_id_quartiere_road_incrocio>3 then
+                           other_index:=1;
                         end if;
                         if i=get_mancante_incrocio_a_3(id_risorsa) then
                            state_view_abitante:= create_entità_incrocio_state(list.posizione_abitante.get_id_quartiere_posizione_abitanti,list.posizione_abitante.get_id_abitante_posizione_abitanti,get_id_quartiere,id_risorsa,Float(list.posizione_abitante.get_where_now_posizione_abitanti),0,0,traiettoria_bipede,mezzo);

@@ -92,7 +92,7 @@
 	var server = window.location.host;
 
 	function setupSimulation() {
-		sim = new Simulation(myMap, entities, 4, 500);
+		sim = new Simulation(myMap, entities, 20, 1000);
 		sim.onReady(startSimulation);
 		sim.onStateReceived(function(nInCache){
 			$('.statesCount').html(nInCache);

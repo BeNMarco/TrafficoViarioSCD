@@ -185,6 +185,11 @@ package body data_quartiere is
       return num_task;
    end get_num_task;
 
+   function get_num_ingressi return Positive is
+   begin
+      return to_ingressi-from_ingressi+1;
+   end get_num_ingressi;
+
    function get_num_linee_fermate return Natural is
    begin
       return num_linee_fermate;

@@ -1750,8 +1750,6 @@ package body risorse_strade_e_incroci is
       --index_ingresso_opposite_polo: Natural;
       error_flag: Boolean:= False;
 
-      flag_chiusura_is_set: Boolean:= False;
-
       new_abitante: posizione_abitanti_on_road;
    begin
       select
@@ -1779,6 +1777,9 @@ package body risorse_strade_e_incroci is
       --for p in 1..100 loop
 
          synchronization_with_delta(id_task);
+         if get_synchronization_tasks_partition_object.is_regular_closure then
+            raise regular_exit_system;
+         end if;
          if log_system_error.is_in_error then
             raise propaga_error;
          end if;
@@ -1795,9 +1796,6 @@ package body risorse_strade_e_incroci is
          mailbox.update_bipedi_on_traiettorie_ingressi(state_view_abitanti);
 
          --mailbox.view_updated(True);
-         if get_quartiere_utilities_obj.is_system_closing then
-            raise regular_exit_system;
-         end if;
 
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,JSON_Null,mailbox.get_entità_in_out_quartiere);
          mailbox.reset_entità_in_out_quartiere;
@@ -5065,32 +5063,11 @@ package body risorse_strade_e_incroci is
          -- crea snapshot se necessario
          --crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
 
+         get_synchronization_tasks_partition_object.task_has_finished;
          mailbox.delta_terminate;
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         --get_log_stallo_quartiere.finish(id_task);
-
-         -- l'urbana 1 è il rappresentante per la chiusura del quartiere in questione
-         if (id_task=1 and flag_chiusura_is_set=False) and signal_quit_arrived then
-            declare
-               registro: registro_quartieri:= get_quartiere_utilities_obj.get_saved_partitions;
-               able_to_stop: Boolean:= True;
-            begin
-               -- viene controllato se  il quartiere in questione
-               -- sta aspettando altri quartieri
-               for i in registro'Range loop
-                  if registro(i)/=null and then i/=get_id_quartiere then
-                     if get_quartiere_utilities_obj.is_a_quartiere_to_wait(i)=False then
-                        able_to_stop:= False;
-                     end if;
-                  end if;
-               end loop;
-               if able_to_stop then
-                  flag_chiusura_is_set:= True;
-                  quartiere_non_ha_nuove_partizioni(get_id_quartiere);
-               end if;
-            end;
-         end if;
+         get_log_stallo_quartiere.finish(id_task);
 
       end loop;
 
@@ -5145,6 +5122,8 @@ package body risorse_strade_e_incroci is
       entity_length: new_float;
       error_flag: Boolean:= False;
 
+      flag_chiusura_is_set: Boolean:= False;
+
       --s: Boolean;
       --destination_abitante_on_bus: tratto;
    begin
@@ -5176,6 +5155,9 @@ package body risorse_strade_e_incroci is
 
       --for p in 1..100 loop
          synchronization_with_delta(id_task);
+         if get_synchronization_tasks_partition_object.is_regular_closure then
+            raise regular_exit_system;
+         end if;
          if log_system_error.is_in_error then
             raise propaga_error;
          end if;
@@ -5185,10 +5167,6 @@ package body risorse_strade_e_incroci is
          state_view_abitanti:= Empty_Array;
 
          mailbox.update_position_entity(state_view_abitanti);
-         if get_quartiere_utilities_obj.is_system_closing then
-            raise regular_exit_system;
-         end if;
-
 
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,JSON_Null,Empty_Array);
 
@@ -5525,7 +5503,37 @@ package body risorse_strade_e_incroci is
          --crea_snapshot(num_delta,ptr_backup_interface(mailbox),id_task);
          --log_mio.write_task_arrived("id_task " & Positive'Image(id_task) & " id_quartiere " & Positive'Image(get_id_quartiere));
 
-         --get_log_stallo_quartiere.finish(id_task);
+         get_log_stallo_quartiere.finish(id_task);
+
+         -- l'urbana 1 è il rappresentante per la chiusura del quartiere in questione
+         get_synchronization_tasks_partition_object.task_has_finished;
+         if id_task=get_from_ingressi then
+            get_synchronization_tasks_partition_object.wait_to_be_last_task;
+            if log_system_error.is_in_error then
+               raise propaga_error;
+            end if;
+
+            if flag_chiusura_is_set=False and signal_quit_arrived then
+               declare
+                  registro: registro_quartieri:= get_quartiere_utilities_obj.get_saved_partitions;
+                  able_to_stop: Boolean:= True;
+               begin
+                  -- viene controllato se  il quartiere in questione
+                  -- sta aspettando altri quartieri
+                  for i in registro'Range loop
+                     if registro(i)/=null and then i/=get_id_quartiere then
+                        if get_quartiere_utilities_obj.is_a_quartiere_to_wait(i)=False then
+                           able_to_stop:= False;
+                        end if;
+                     end if;
+                  end loop;
+                  if able_to_stop then
+                     flag_chiusura_is_set:= True;
+                     quartiere_non_ha_nuove_partizioni(get_id_quartiere);
+                  end if;
+               end;
+            end if;
+         end if;
 
       end loop;
    exception
@@ -5629,6 +5637,9 @@ package body risorse_strade_e_incroci is
       loop
       --for p in 1..100 loop
          synchronization_with_delta(id_task);
+         if get_synchronization_tasks_partition_object.is_regular_closure then
+            raise regular_exit_system;
+         end if;
          if log_system_error.is_in_error then
             raise propaga_error;
          end if;
@@ -5638,10 +5649,6 @@ package body risorse_strade_e_incroci is
          mailbox.update_avanzamento_cars(state_view_abitanti);
          mailbox.update_avanzamento_bipedi(state_view_abitanti);
          mailbox.update_colore_semafori(state_view_semafori);
-
-         if get_quartiere_utilities_obj.is_system_closing then
-            raise regular_exit_system;
-         end if;
 
          state_view_quartiere.registra_aggiornamento_stato_risorsa(id_task,state_view_abitanti,state_view_semafori,mailbox.get_entità_in_out_quartiere);
          mailbox.reset_entità_in_out_quartiere;
@@ -6347,6 +6354,9 @@ package body risorse_strade_e_incroci is
          end loop;
 
          -- wake urbane
+
+         get_synchronization_tasks_partition_object.task_has_finished;
+
          for r in 1..get_size_incrocio(id_task) loop
             if get_id_urbana_quartiere(get_road_from_incrocio(id_task,r).get_id_quartiere_road_incrocio,get_road_from_incrocio(id_task,r).get_id_strada_road_incrocio)/=null then
                declare
@@ -6362,7 +6372,7 @@ package body risorse_strade_e_incroci is
             end if;
          end loop;
 
-         --get_log_stallo_quartiere.finish(id_task);
+         get_log_stallo_quartiere.finish(id_task);
 
       end loop;
    exception

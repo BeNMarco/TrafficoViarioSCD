@@ -41,7 +41,6 @@ package body System_error is
       begin
          num_task_finished:= num_task_finished+1;
          if num_task_finished=get_num_task then
-            Put_Line("Il quartiere sta terminando il suo lavoro.");
             quartiere_has_closed_tasks(get_id_quartiere);
          end if;
       end add_finished_task;

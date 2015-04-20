@@ -39,6 +39,9 @@ def main(num_quartieri):
 
 			#print num_incroci_urbana[id+1]
 
+			if len(input_jsons[id+1]["strade_ingresso"])<1:
+					raise Exception("Errore quartiere " + str(id+1) + ": Necessaria almeno la presenza di un luogo e quindi di una strada d'ingresso")
+
 			id_prog=1			
 			for elemento in input_jsons[id+1]["strade_ingresso"]:
 				if elemento["id"]!=id_prog:

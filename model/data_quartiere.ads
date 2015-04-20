@@ -68,6 +68,7 @@ pragma Elaborate_Body;
    function get_num_abitanti return Natural;
    function get_num_autobus return Natural;
    function get_num_task return Natural;
+   function get_num_ingressi return Positive;
    function get_num_linee_fermate return Natural;
    function get_recovery return Boolean;
    function get_abilita_aggiornamenti_view return Boolean;
@@ -125,7 +126,7 @@ private
    --from_rotonde_a_3: Natural:= to_rotonde_a_4+1;
    --to_rotonde_a_3: Natural:= from_rotonde_a_3-1+size_rotonde_a_3;
 
-   num_task: Natural:= size_json_urbane+size_json_ingressi+size_incroci_a_4+size_incroci_a_3+size_rotonde_a_4+size_rotonde_a_3;
+   num_task: Natural:= size_json_urbane+size_json_ingressi+size_incroci_a_4+size_incroci_a_3;--+size_rotonde_a_4+size_rotonde_a_3;
 
    json_abitanti: JSON_Array:= Get(Val => json_quartiere, Field => "abitanti");
    json_pedoni: JSON_Array:= Get(Val => json_quartiere, Field => "pedoni");

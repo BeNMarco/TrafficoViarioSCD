@@ -22,8 +22,14 @@ package synchronization_task_partition is
       entry registra_task(id: Positive);
       entry wait_tasks_partitions;
 
-      procedure exit_system;
+      procedure exit_system(regular: Boolean:= False);
+      function is_regular_closure return Boolean;
+
+      entry wait_to_be_last_task;
+      procedure task_has_finished;
+
    private
+      regular_exit_sys: Boolean:= False;
       exit_sys: Boolean:= False;
       num_task_ready: Natural:= 0;
       num_task_to_go: Natural:= 0;
@@ -32,6 +38,7 @@ package synchronization_task_partition is
 
       num: Natural:= 0;
       first_synch: Boolean:= True;
+      num_task_arrived: Natural:= 0;
    end synchronization_tasks;
 
    type ptr_synchronization_tasks is access all synchronization_tasks;

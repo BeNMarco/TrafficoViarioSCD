@@ -99,6 +99,11 @@ package body synchronization_task_partition is
                   synchronization_partitions_obj.update_semafori;
                   pragma warnings(on);
 
+                  if get_quartiere_utilities_obj.is_system_closing then
+                     exit_system(True);
+                     return;
+                  end if;
+
                   -- viene eseguita una pulizia per le risorse che sono nuove
                   -- perchè appunto non viste da tutte e hanno uno stato non
                   -- consistente in queue
@@ -175,11 +180,33 @@ package body synchronization_task_partition is
          end if;
       end wait_tasks_partitions;
 
-      procedure exit_system is
+      procedure exit_system(regular: Boolean:= False) is
       begin
          exit_sys:= True;
+         if regular then
+            regular_exit_sys:= True;
+            return;
+         end if;
          synchronization_partitions_obj.exit_system;
       end exit_system;
+
+      function is_regular_closure return Boolean is
+      begin
+         if exit_sys and regular_exit_sys then
+            return True;
+         end if;
+         return False;
+      end is_regular_closure;
+
+      entry wait_to_be_last_task when (num_task_arrived=get_num_task or exit_sys) is
+      begin
+         num_task_arrived:= 0;
+      end wait_to_be_last_task;
+
+      procedure task_has_finished is
+      begin
+         num_task_arrived:= num_task_arrived+1;
+      end task_has_finished;
 
    end synchronization_tasks;
 end synchronization_task_partition;

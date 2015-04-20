@@ -192,12 +192,15 @@ package body avvio_quartiere is
          exit when log_system_error.is_in_error
            or get_quartiere_utilities_obj.all_system_can_be_closed;
       end loop;
+      Put_Line("Il quartiere " & Positive'Image(get_id_quartiere) & " sta terminando il suo lavoro.");
 
       recovery_status.wait_finish_work;
          -- qui si potrebbe ricostruire una snapshot del quartiere
          -- prima di chiuderlo effettivamente
 
       quartiere_has_finished_all_operations(get_id_quartiere);
+
+      Put_Line("Il quartiere " & Positive'Image(get_id_quartiere) & " è stato chiuso correttamente.");
 
    exception
       when others =>

@@ -690,9 +690,6 @@ package body risorse_passive_data is
       begin
          -- l'abitante è arrivato alla fermata
          -- fa scendere abitanti
-         --if from_fermata.get_id_tratto=93 then
-         --   Put_Line("dd");
-         --end if;
          mailbox_fermata:= get_id_ingresso_quartiere(from_fermata.get_id_quartiere_tratto,from_fermata.get_id_tratto);
          prec_list:= null;
          if autobus.is_a_bus_jolly and linee_autobus(autobus.get_id_luogo_lavoro_from_abitante).get_numero_fermate=stato_bus(to_id_autobus).index_fermata then
@@ -724,11 +721,10 @@ package body risorse_passive_data is
                   -- list prende prec_list
                   -- cosichè list:= list.next prende
                   -- l'elemento successivo a quello eliminato
-                  list:= prec_list;
+                  list:= prec_list.next;
                end if;
-            end if;
-            prec_list:= list;
-            if list/=null then
+            else
+               prec_list:= list;
                list:= list.next;
             end if;
          end loop;
@@ -887,7 +883,7 @@ package body risorse_passive_data is
          --residente.get_id_quartiere_from_abitante
          if residente.get_id_quartiere_from_abitante=arrived_tratto.get_id_quartiere_tratto and then arrived_tratto.get_id_tratto=residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1 then
             -- il residente è arrivato a casa lo si manda a lavorare
-            get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(residente.get_id_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1));
+            get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(residente.get_id_quartiere_luogo_lavoro_from_abitante,residente.get_id_luogo_lavoro_from_abitante+get_ref_quartiere(residente.get_id_quartiere_luogo_lavoro_from_abitante).get_from_type_resource_quartiere(ingresso)-1));
          else
             get_location_abitanti_quartiere.set_destination_abitante_in_bus(id_abitante,create_tratto(get_id_quartiere,residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1));
          end if;

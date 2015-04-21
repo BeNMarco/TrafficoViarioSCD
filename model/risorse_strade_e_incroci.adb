@@ -5433,6 +5433,9 @@ package body risorse_strade_e_incroci is
                --      resource_main_strada.remove_first_element_traiettoria(id_task,entrata_andata);
                --   end if;
                --end if;
+               --if ((current_posizione_abitante.get_id_abitante_posizione_abitanti=70 or current_posizione_abitante.get_id_abitante_posizione_abitanti=72) and current_posizione_abitante.get_id_quartiere_posizione_abitanti=3) and then id_task=93 then
+               --   speed_abitante:= current_posizione_abitante.get_current_speed_abitante;
+               --end if;
                mailbox.delete_car_in_entrata(current_posizione_abitante.get_id_quartiere_posizione_abitanti,current_posizione_abitante.get_id_abitante_posizione_abitanti);
                get_quartiere_utilities_obj.get_classe_locate_abitanti(current_posizione_abitante.get_id_quartiere_posizione_abitanti).set_finish_route(current_posizione_abitante.get_id_abitante_posizione_abitanti);
                if get_ingresso_from_id(id_task).get_type_ingresso=fermata then

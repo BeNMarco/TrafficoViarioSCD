@@ -290,7 +290,7 @@ package body start_simulation is
          end loop;
 
          list:= coda_abitanti_to_restart.get_abitanti_non_partiti;
-         if list=null then
+         if list=null and fermate_are_configured then
             recovery_status.work_is_finished;
             return;
          end if;

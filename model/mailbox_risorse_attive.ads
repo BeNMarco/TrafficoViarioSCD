@@ -226,6 +226,9 @@ package mailbox_risorse_attive is
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;
    type ptr_resource_segmenti_urbane is access all resource_segmenti_urbane;
 
+   --type set_flushed is array(id_corsie range 1..2) of Natural;
+   type last_flushed is array(id_corsie range 1..2) of posizione_abitanti_on_road;
+
    protected type resource_segmento_ingresso(id_risorsa: Positive) is new rt_ingresso and backup_interface with
       function get_id_risorsa return Positive;
       function get_id_quartiere_risorsa return Positive;
@@ -277,6 +280,9 @@ package mailbox_risorse_attive is
       procedure add_abitante_in_fermata(identificativo_abitante: tratto);
       function create_array_abitanti_in_fermata return set_tratti;
       procedure aggiorna_abitanti_in_fermata(abitanti_saliti_in_bus: set_tratti);
+
+
+      procedure increase_delta_istantanea;
    private
       index_inizio_moto: Boolean;
       risorsa_features: strada_ingresso_features;
@@ -307,6 +313,10 @@ package mailbox_risorse_attive is
 
       abitanti_waiting_bus: ptr_lista_passeggeri:= null;
       num_abitanti_waiting_bus: Natural:= 0;
+
+      num_delta_istantanea_flush: Natural:= 0;
+      --num_bipedi_flushed: set_flushed;
+      last_bipede_flushed: last_flushed;
 
    end resource_segmento_ingresso;
    type ptr_resource_segmento_ingresso is access all resource_segmento_ingresso;

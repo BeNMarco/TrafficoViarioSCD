@@ -36,6 +36,7 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.onObjectMoved = null;
 
 	this.lastStateTime = 0;
+	this.curStateNum = 0;
 }
 
 Simulation.prototype.onReady = function(callback) {
@@ -47,9 +48,14 @@ Simulation.prototype.onStateReceived = function(callback) {
 }
 
 Simulation.prototype.addState = function(state) {
+	console.log("got state");
+	for(var i in state.abitanti)
+	{
+		state.abitanti[i].num = this.curStateNum;
+	}
 	this.stateCache.push(state);
 	this.receivedStates++;
-	console.log("got state");
+	this.curStateNum++;
 
 	if (this.gotStateCallback && (typeof this.gotStateCallback === 'function')) {
 		this.gotStateCallback(this.stateCache.length);
@@ -155,6 +161,7 @@ Simulation.prototype.setPedPathLength = function(state)
 
 Simulation.prototype.initPrevState = function(state) {
 	var len = state.abitanti.length;
+	var done = false;
 	for (var i = 0; i < len; i++) {
 		var curState = state.abitanti[i];
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
@@ -175,9 +182,11 @@ Simulation.prototype.initPrevState = function(state) {
 					curState = this.setPedPathLength(curState);
 					break;
 			}
+			if(!done) {console.log("Before> Prev:"+o.prevState.num+" Cur:"+curState.num); }
 			if (o) {
 				o.prevState = curState;
 			}
+			if(!done) {console.log("After> Prev:"+o.prevState.num+" Cur:"+curState.num); done = true;}
 		} catch (e) {
 			console.log("INIT PREV STATE > Exception ++++++++++++++++++++");
 			console.log("exception:");
@@ -228,6 +237,10 @@ function onSamePath(prevState, curState)
 				toRet = (toRet &&
 					(curState.traiettoria == prevState.traiettoria));
 				break;
+			case 'strada_ingresso':
+				toRet = (toRet &&
+					(curState.in_uscita == prevState.in_uscita));
+				break;
 			case 'cambio_corsia':
 				toRet = (toRet &&
 					(curState.distanza_inizio == prevState.distanza_inizio));
@@ -235,31 +248,32 @@ function onSamePath(prevState, curState)
 		}
 	}
 	return toRet;
-	return true;
 }
 
 Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 {
 	var newDistance = 0;
-	var stateToUse = curState;
+	var stateToUse = null;
+	var prevPosition = 0;
 
 	// se lo stato precedente è vuoto posizioniamo 
 	// l'oggetto alla posizione indicata dallo stato attuale
 	// (FALLBACK)
 	if (!doesExists(this.prevState)) {
 		newDistance = curState.distanza;
+		stateToUse = curState;
 	}
 	// altrimenti calcoliamo la posizione giusta
 	else {
 		// se l'oggetto è passato da uno stato all'altro
 		try {
 			if (!onSamePath(prevState, curState)) {
-				// calcolo della posizione iniziale dello stato successivo
+				// calcolo della posizione iniziale della traiettoria dello stato successivo
 
 				// se ci arriva dallo stato la usiamo
 				var curInizio = curState.inizio;
 
-				// se non abbiamo un riferimento di inizion traiettoria lo calcoliamo
+				// se non abbiamo un riferimento di inizio traiettoria lo calcoliamo
 				if(!curInizio){
 
 					// settiamo a 0 nel caso in cui non riusciamo a risolverlo
@@ -278,7 +292,7 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 					// il cambio corsia e ci sommiamo la lunghezza del cambio
 					else if(curState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
 					{
-						prevPosition = prevState.distanza_inizio + 20;
+						curInizio = prevState.distanza_inizio + 20;
 					}
 				}
 
@@ -297,6 +311,7 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 					// più la distanza che abbiamo coperto meno la lunghezza coperta
 					// nella traiettoria precedente
 					newDistance = curInizio + doneLen - segLen1;
+					stateToUse = curState;
 				} 
 				// altrimenti siamo ancora nella traiettoria precedente
 				else {
@@ -310,19 +325,25 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 			// altrimenti prendiamo la posizione dallo stato precedente
 			else {
 				prevPosition = prevState.distanza;
+				stateToUse = curState;
 				// in questo caso un oggetto è arrivato alla fine di una strada 
 				// di ingresso e vuole tornare indietro
 				if (curState.where == 'strada_ingresso'
 						&& (prevState.in_uscita != curState.in_uscita)) {
 					prevPosition = 0;
-				} else 
+				}
 				if(prevState.distanza > curState.distanza)
 				{
 					console.log("Not possible!");
+					console.log("prev");
 					console.log(prevState);
+					console.log("cur");
 					console.log(curState);
+					console.log("selected");
+					console.log(stateToUse);
 				}
-				newDistance = this.computeNewDistance(curState.distanza, prevPosition);
+				//newDistance = this.computeNewDistance(curState.distanza, prevPosition);
+				newDistance = prevState.distanza + this.computeCurrentLength((curState.distanza-prevState.distanza));
 			}
 		} catch (err) {
 			console.log("COMPUTER NEW DISTANCE > Exception ------------------------");
@@ -334,6 +355,8 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 			console.log(prevState);
 			console.log("this.prevSate:");
 			console.log(this.prevSate);
+			console.log("prevPosition:");
+			console.log(prevPosition);
 			console.log("----------------------------------------------------------");
 			throw err;
 		}
@@ -344,7 +367,7 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 Simulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
-	var s = curCarState;
+	var s = null;
 	var curCar = this.objects.cars[curCarID];
 	if(curCar == null)
 	{
@@ -414,7 +437,7 @@ Simulation.prototype.moveCar = function(time, curCarState)
 Simulation.prototype.moveBipede = function(time, curBiState)
 {
 	var curBiID = curBiState.id_quartiere_abitante+"_"+curBiState.id_abitante;
-	var s = curBiState;
+	var s = null;
 	var curBi = (curBiState.mezzo == 'bike') ? this.objects.bikes[curBiID] : this.objects.pedestrians[curBiID];
 	curBiState.bike = (curBiState.mezzo == "bike");
 	if(curBi == null)
@@ -555,7 +578,7 @@ Simulation.prototype.updateState = function(deltaTime) {
 		// if the current state is finished we pass to the next
 		if (this.currentState.stateTime >= this.statesDuration) {
 			this.prevState = this.currentState;
-			this.initPrevState(this.prevState);
+			this.initPrevState(this.currentState);
 			this.currentState = this.stateCache.shift();
 			if (this.currentState === undefined) {
 				if (typeof this.emptyStateCacheCallback === 'function') {

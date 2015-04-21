@@ -52,6 +52,18 @@ Simulation.prototype.addState = function(state) {
 	for(var i in state.abitanti)
 	{
 		state.abitanti[i].num = this.curStateNum;
+		switch(state.abitanti[i].mezzo)
+		{
+			case 'car':
+				state.abitanti[i] = this.setCarPathLength(state.abitanti[i]);
+				break;
+			case 'bike':
+				state.abitanti[i] = this.setPedPathLength(state.abitanti[i]);
+				break;
+			case 'walking':
+				state.abitanti[i] = this.setPedPathLength(state.abitanti[i]);
+				break;
+		}
 	}
 	this.stateCache.push(state);
 	this.receivedStates++;
@@ -171,22 +183,21 @@ Simulation.prototype.initPrevState = function(state) {
 			{
 				case 'car':
 					o = this.objects.cars[id];
-					curState = this.setCarPathLength(curState);
+					//curState = this.setCarPathLength(curState);
 					break;
 				case 'bike':
 					o = this.objects.bikes[id];
-					curState = this.setPedPathLength(curState);
+					//curState = this.setPedPathLength(curState);
 					break;
 				case 'walking':
 					o = this.objects.pedestrians[id];
-					curState = this.setPedPathLength(curState);
+					//curState = this.setPedPathLength(curState);
 					break;
 			}
-			if(!done) {console.log("Before> Prev:"+o.prevState.num+" Cur:"+curState.num); }
+			// if(!done) {console.log("Before> Prev:"+o.prevState.num+" Cur:"+curState.num); }
 			if (o) {
 				o.prevState = curState;
 			}
-			if(!done) {console.log("After> Prev:"+o.prevState.num+" Cur:"+curState.num); done = true;}
 		} catch (e) {
 			console.log("INIT PREV STATE > Exception ++++++++++++++++++++");
 			console.log("exception:");
@@ -285,14 +296,22 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 					// sommata alla larghezza del marciapiede
 					if (curState.where == 'strada'
 							&& prevState.where == 'traiettoria_ingresso') {
-						curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
+						if(curState.polo){
+							curInizio = curState.pathLength - prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
+						} else {
+							curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
+						}
 					}
 					// altrimenti, se siamo in una strada e prima eravamo in un cambio
 					// corsia, prendiamo la posizione in cui abbiamo iniziato a fare 
 					// il cambio corsia e ci sommiamo la lunghezza del cambio
 					else if(curState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
 					{
-						curInizio = prevState.distanza_inizio + 20;
+						if(curState.polo){
+							curInizio = curState.pathLength - prevState.distanza_inizio + 16;
+						} else {
+							curInizio = prevState.distanza_inizio + 16;
+						}
 					}
 				}
 
@@ -561,7 +580,7 @@ Simulation.prototype.updateTrafficLightsState = function()
 	}
 }
 
-Simulation.prototype.updateState = function(deltaTime) {
+Simulation.prototype.updateState2 = function(deltaTime) {
 	if (deltaTime != 0 && this.currentState != null) {
 		this.simulationTime += deltaTime;
 
@@ -602,6 +621,51 @@ Simulation.prototype.updateState = function(deltaTime) {
 		if (this.running && remainingTime > 0) {
 			this.moveObjects(remainingTime);
 		}
+	}
+}
+
+Simulation.prototype.updateState = function(deltaTime) {
+	if (deltaTime != 0 && this.currentState != null) {
+		this.simulationTime += deltaTime;
+
+		var remainingTime = 0;
+
+		// controllo se il delta copre più di uno stato
+		if ((this.currentState.stateTime + deltaTime) > this.statesDuration) {
+			// calcoliamo l'eccesso di tempo
+			remainingTime = deltaTime
+					- (this.statesDuration - this.currentState.stateTime);
+
+			// calcoliamo il numero di stati che questo eccesso copre
+			// aggiungiamo 1 perché abbiamo già superato il tempo dello stato
+			// corrente quindi passiamo al prossimo
+			var numStatesSkip = (remainingTime/this.statesDuration>>0) + 1;
+
+			for(var i = 0; i < numStatesSkip; i++){
+				this.prevState = this.currentState;
+				this.initPrevState(this.currentState);
+				this.currentState = this.stateCache.shift();
+				if (this.currentState === undefined) {
+					if (typeof this.emptyStateCacheCallback === 'function') {
+						console.log("calling callback");
+						this.emptyStateCacheCallback();
+					}
+					console.log("no more states");
+					this.ranOutOfStates = true;
+					this.running = false;
+					this.receivedStates = 0;
+				} else {
+					this.currentState.stateTime = 0;
+
+					this.removeOnesWhoLeft();
+					this.updateTrafficLightsState();
+				}
+			}
+			deltaTime = remainingTime - this.statesDuration*(numStatesSkip - 1);
+		}
+
+		if(this.running)
+			this.moveObjects(deltaTime);
 	}
 }
 

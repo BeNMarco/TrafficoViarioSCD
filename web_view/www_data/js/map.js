@@ -2281,7 +2281,7 @@ Map.prototype.asyncDraw = function() {
 					curStr.to = [(refPoint.x + normalFrom.x), (refPoint.y + normalFrom.y)];
 					curStr.reposition();
 					curStr.draw(This.mapStyle);
-					//curStr.drawHorizontalLines(This.mapStyle);
+					curStr.drawHorizontalLines(This.mapStyle);
 				}
 
 				for (var i in This.streets) {

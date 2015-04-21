@@ -290,32 +290,48 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 					// settiamo a 0 nel caso in cui non riusciamo a risolverlo
 					curInizio = 0;
 
+					// lunghezza da percorrere nella traiettoria indicata dallo stato
+					// precedente
+					var segLen1 = prevState.pathLength - prevState.distanza;
+
 					// se la traiettoria precedente era una traiettoria di ingresso
 					// e quella attuale è una strada prendiamo come inzio traiettoria
 					// il punto della strada di ingresso + la larghezza della corisa 
 					// sommata alla larghezza del marciapiede
-					if (curState.where == 'strada'
-							&& prevState.where == 'traiettoria_ingresso') {
+					if (prevState.where == 'traiettoria_ingresso' 
+							&& curState.where == 'strada') {
 						if(curState.polo){
 							curInizio = curState.pathLength - prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
 						} else {
 							curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
 						}
 					}
+					else if (prevState.where == 'strada' 
+							&& curState.where == 'traiettoria_ingresso') {
+						if(prevState.polo){
+							segLen1 = prevState.pathLength - curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
+						} else {
+							segLen1 = curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
+						}
+					}
 					// altrimenti, se siamo in una strada e prima eravamo in un cambio
 					// corsia, prendiamo la posizione in cui abbiamo iniziato a fare 
 					// il cambio corsia e ci sommiamo la lunghezza del cambio
-					else if(curState.where == 'strada' && prevState.where == 'cambio_corsia' && prevPosition == 0)
-					{
+					else if(prevState.where == 'cambio_corsia' && curState.where == 'strada') {
 						if(curState.polo){
-							curInizio = curState.pathLength - prevState.distanza_inizio + 16;
+							curInizio = curState.pathLength - prevState.distanza_inizio + 20;
 						} else {
-							curInizio = prevState.distanza_inizio + 16;
+							curInizio = prevState.distanza_inizio + 20;
 						}
+					}
+					// se eravamo in una strada e dobbiamo fare un cambio corsia, 
+					// la lunghezza della strada che consideriamo arriva fino al punto in 
+					// cui abbiamo il cambio corsia
+					else if (prevState.where == 'strada' && curState.where == 'cambio_corsia'){
+						segLen1 = curState.distanza_inizio - prevState.distanza;
 					}
 				}
 
-				var segLen1 = prevState.pathLength - prevState.distanza;
 				var segLen2 = curState.distanza - curInizio;
 				var segLen = segLen1+segLen2;
 

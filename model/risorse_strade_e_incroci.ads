@@ -62,7 +62,7 @@ package risorse_strade_e_incroci is
 
    procedure synchronization_with_delta(id: Positive);
 
-   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: new_float; distance_to_stop_line: new_float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: in out new_float; next_abitante_velocity: new_float; disable_rallentamento_1: Boolean:= False; disable_rallentamento_2: Boolean:= False) return new_float;
+   function calculate_acceleration(mezzo: means_of_carrying; id_abitante: Positive; id_quartiere_abitante: Positive; next_entity_distance: new_float; distance_to_stop_line: new_float; next_id_quartiere_abitante: Natural; next_id_abitante: Natural; abitante_velocity: in out new_float; next_abitante_velocity: new_float; disable_rallentamento_1: Boolean:= False; disable_rallentamento_2: Boolean:= False; request_by_incrocio: Boolean:= False) return new_float;
    function calculate_new_speed(current_speed: new_float; acceleration: new_float) return new_float;
    function calculate_new_step(new_speed: new_float; acceleration: new_float) return new_float;
    function calculate_traiettoria_to_follow_from_ingresso(mezzo: means_of_carrying; id_quartiere_abitante: Positive; id_abitante: Positive; id_ingresso: Positive; ingressi: indici_ingressi) return traiettoria_ingressi_type;

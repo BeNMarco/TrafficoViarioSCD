@@ -285,7 +285,7 @@ package body risorse_mappa_utilities is
       array_intersezioni_corsie(2):= create_intersezione_linea(linea_mezzaria,Get(Val => intersezione, Field => "distanza"));
       intersezione_bipedi:= Get(Val => traiettoria_uscita_ritorno, Field => "intersezione_bipedi");
       traiettorie(uscita_ritorno):= create_traiettoria_ingresso(Get(Val => traiettoria_uscita_ritorno, Field => "lunghezza"),
-                                                                array_intersezioni,array_intersezioni_corsie,0.0);
+                                                                array_intersezioni,array_intersezioni_corsie,Get(Val => traiettoria_uscita_ritorno, Field => "intersezione_bipedi"));
       -- end traiettorie car
 
       -- begin traiettorie bici/pedoni

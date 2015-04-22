@@ -13,8 +13,8 @@ package global_data is
    max_length_pedoni: constant new_float:= 0.5;
    max_length_bici: constant new_float:= 1.0;
    max_length_veicolo: constant new_float:= 4.3;
-   num_delta_semafori: constant Positive:= 28;
-   num_delta_semafori_bipedi: constant Positive:= 16;
+   num_delta_semafori: constant Positive:= 40;
+   num_delta_semafori_bipedi: constant Positive:= 20;
    delta_value: constant new_float:= 0.5;
    max_larghezza_veicolo: constant new_float:= 1.5;
    bound_to_change_corsia: constant new_float:= 45.0;
@@ -27,5 +27,6 @@ package global_data is
    distance_at_witch_can_be_thinked_overtake: constant new_float:= 120.0;
 
    safe_distance_to_overtake: constant new_float:= 20.0;
+   num_delta_before_insert_bipede: constant Positive:= 45;
 
 end global_data;

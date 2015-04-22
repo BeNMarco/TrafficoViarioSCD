@@ -175,9 +175,8 @@ PieceSimulation.prototype.setCarPathLength = function(state)
 }
 
 PieceSimulation.prototype.initPrevState = function(state) {
-	var len = state.abitanti.length;
 	var done = false;
-	for (var i = 0; i < len; i++) {
+	for (var i in this.abitanti) {
 		var curState = state.abitanti[i];
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
 		this.objects.cars[id].prevState = curState;

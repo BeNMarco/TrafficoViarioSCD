@@ -38,7 +38,7 @@ function WorldMapStyle(){
   this.zebraDash = [0.5, 0.5];
   this.pavementMiddleDash = [1, 1.5];
   this.middlePathEntranceDashOffset = 5;
-  this.crossroadHighlightWidth = 5;
+  this.crossroadHighlightWidth = 0;
   this.crossroadHighlightColor = 'grey';
 }
 

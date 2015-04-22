@@ -186,6 +186,7 @@ package body WebServer is
       Set_Field(Val => JData, Field_Name => "type", Field => "command");
       Set_Field(Val => JData, Field_Name => "command", Field => "terminated");
 
+      Net.WebSocket.Registry.Send(This.MainPage_WebSocket_Recipient, Write(JData));
       for recipient of This.Rcp_Registry loop
          Net.WebSocket.Registry.Send (recipient , Write(JData));
       end loop;
@@ -197,6 +198,7 @@ package body WebServer is
       Set_Field(Val => JData, Field_Name => "type", Field => "command");
       Set_Field(Val => JData, Field_Name => "command", Field => "termination_requested");
 
+      Net.WebSocket.Registry.Send(This.MainPage_WebSocket_Recipient, Write(JData));
       for recipient of This.Rcp_Registry loop
          Net.WebSocket.Registry.Send (recipient , Write(JData));
       end loop;

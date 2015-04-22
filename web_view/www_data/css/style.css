@@ -61,7 +61,7 @@ body {
 #rendering-state-box{
 	position:absolute;
 	bottom: 0;
-	right: left;
+	left: 0;
 	border-top-right-radius: 5px;
 	background-color: white;
 	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
@@ -78,7 +78,33 @@ body {
 	width: 150px;
 }
 
+#rendering-state-box .progress{
+	margin: 0;
+}
+
+#rendering-state-box .table{
+	margin: 0 0 10px 0;
+}
+
+#rendering-state-box tr{
+	padding-left: 10px;
+}
+
+#rendering-state-box tr th{
+	padding:5px;
+}
+
+#rendering-state-box tr td{
+	padding:5px;
+}
+
 #info-title{
+	padding: 10px;
+	border-bottom: 1px solid gray;
+	text-align: center;
+}
+
+.box-title{
 	padding: 10px;
 	border-bottom: 1px solid gray;
 	text-align: center;
@@ -119,6 +145,14 @@ body {
 	padding-left: 2px;
 	padding-right: 10px;
 	min-width: 20px;
+}
+
+/**
+ *   Per INDEX.HTML
+ */
+
+#districts-status tr th{
+	text-align:center;
 }
 
 #controls-div{

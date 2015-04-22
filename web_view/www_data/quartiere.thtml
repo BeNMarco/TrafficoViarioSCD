@@ -39,16 +39,18 @@
 		return suppressErrorAlert;
 	};
 
-	enableSimulation = true;
-	myMap = new Map();
-	entities = new EntitiesRegistry();
-	entStyle = new EntitiesStyle();
-	oggettoCaricamento = "Caricamento";
-	caricato = false;
+	var enableSimulation = true;
+	var myMap = new Map();
+	var entities = new EntitiesRegistry();
+	var entStyle = new EntitiesStyle();
+	var oggettoCaricamento = "Caricamento";
+	var caricato = false;
 
-	sim = null;
+	var sim = null;
 
 	setupSimulation();
+
+	var bufferSize = 20;
 
 
 	myMap.onFinishLoading = function(){myMap.asyncDraw();};
@@ -98,43 +100,39 @@
 	var server = window.location.host;
 
 	function setupSimulation() {
-		sim = new Simulation(myMap, entities, 20, 1000);
+		sim = new Simulation(myMap, entities, bufferSize, 1000);
 		sim.setTraiettorie(traiettorie);
-		sim.onReady(startSimulation);
-		sim.onStateReceived(function(nInCache){
-			$('.statesCount').html(nInCache);
-		});
+		sim.onReady = startSimulation;
+		sim.onStateReceived = function(nInCache){
+			var perc = (nInCache / bufferSize);
+			perc = perc > 1.0 ? 1.0 : perc;
 
-		sim.emptyStateCacheCallback = setBufferingState;
-		/*function() {
-			/*
-			$('#loadingMessage').html(
-					"Cache degli stati vuota.<br />Buffering in corso...");
-			$('#loadingDialog').modal('show');
-			progress-bar-striped active
-			
-			$(this).attr("class","newclass");
-			$('#rendering-state-bar').removeClass("progress-bar-danger");
-			$('#rendering-state-bar').removeClass("progress-bar-success");
-		}*/
+			$('#rendering-cache-bar').html(nInCache);
+			$('#rendering-cache-bar').css('width', (perc*100)+'%').attr('aria-valuenow', (perc*100)); 
 
-		sim.statesAvailableCallback = setRunningState;
-		/*function() {
-			$('#loadingDialog').modal('hide');
-		}*/
+			var barStyle = "progress-bar-default";
+			if(perc < 0.33){
+				barStyle = "progress-bar-danger";
+			} else if (perc < 1){
+				barStyle = "progress-bar-warning";
+			}
+			$('#rendering-cache-bar').attr("class", "progress-bar active "+barStyle); 
+		};
+
+		sim.onEmptyCache = setBufferingState;
+
+		sim.onStatesAvailable = setRunningState;
 
 		sim.onObjectMoved = objectMovedCallback;
 	}
 
 	function setBufferingState(){
-		//$('#rendering-state-bar').removeClass("progress-bar-danger");
-		//$('#rendering-state-bar').removeClass("progress-bar-success");
 		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-striped active"); 
 		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-refresh"> </i> Buffering');
 	}
 
 	function setRunningState(){
-		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-success"); 
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-success active"); 
 		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-play"> </i> Running');
 	}
 
@@ -421,17 +419,10 @@
 </head>
 <body>
 
-	<!--
-	<p>
-		<a id="openws" href="#" onClick="openSocket()">Open</a>
-		<a id="closews" href="#" onClick="closeSocket()">Close</a>
-	</p>-->
-
 	<div id="canvas-wrap">
 
 
-		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myDataDialogLabel" aria-hidden="true">
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"	aria-labelledby="myDataDialogLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -445,14 +436,13 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary"
-							onClick="selectText('jsonDataArea')">Select all</button>
+						onClick="selectText('jsonDataArea')">Select all</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog" aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -462,157 +452,90 @@
 						<p id="loadingMessage"></p>
 						<div class="progress">
 							<div class="progress-bar progress-bar-striped active"
-								role="progressbar" aria-valuenow="0" aria-valuemin="0"
-								aria-valuemax="100" style="width: 0%">
-								<span class="sr-only">Caricamento</span>
-							</div>
+							role="progressbar" aria-valuenow="0" aria-valuemin="0"
+							aria-valuemax="100" style="width: 0%">
+							<span class="sr-only">Caricamento</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myMessageDialogLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
-					</div>
-					<div class="modal-body">
-						<p id="messageDialogText"></p>
-					</div>
+	<div class="modal" id="messageDialog" tabindex="-1" role="dialog" aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
+				</div>
+				<div class="modal-body">
+					<p id="messageDialogText"></p>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		
-		<canvas id="canvas" resize hidpi="off"
-			style="background-color: #F0EDE5;"></canvas>
-		
-		<div id="title-div">
-			<h1>Simulazione quartiere @_ID_QUARTIERE_@</h1>
-		</div>
 
-		<div id="controls-div">
+	<canvas id="canvas" resize hidpi="off"
+	style="background-color: #F0EDE5;"></canvas>
+
+	<div id="title-div">
+		<h1>Simulazione quartiere @_ID_QUARTIERE_@</h1>
+	</div>
+
+	<div id="controls-div">
 		<div class="btn-group-vertical" role="group" aria-label="...">
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
+			<button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
+			<button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
 		</div>
 		<div class="divisor-small"></div>
-			<button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
+		<button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
 		<div class="divisor"></div>
-			<button type="button" class="btn btn-primary glyphicon glyphicon-home" onClick="window.open('/', '_self');"  data-toggle="tooltip" data-placement="right" title="Torna alla mappa della città"></button>
+		<button type="button" class="btn btn-primary glyphicon glyphicon-home" onClick="window.open('/', '_self');"  data-toggle="tooltip" data-placement="right" title="Torna alla mappa della città"></button>
 		<div class="divisor"></div>
 		<div>
 			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
 		</div>
-		</div>
-
-				<div id="status-box">
-			<div id="statusPanel" class="panel panel-default collaps">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Posizione oggetti</div>
-				<!--<div class="panel-body">-->
-				<div role="tabpanel">
-
-					<!-- Nav tabs -->
-					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#carPane" aria-controls="carPane" role="tab" data-toggle="tab">Auto</a></li>
-						<li role="presentation"><a href="#bikePane" aria-controls="bikePane" role="tab" data-toggle="tab">Bici</a></li>
-						<li role="presentation"><a href="#pedPane" aria-controls="pedPane" role="tab" data-toggle="tab">Pedoni</a></li>
-					</ul>
-
-					<!-- Tab panes -->
-					<div class="tab-content">
-						<div role="tabpanel" class="tab-pane active" id="carPane">
-							<table class="table" id="carTable" style="width:100%;">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-						<div role="tabpanel" class="tab-pane" id="bikePane">
-
-							<table class="table" id="bikeTable">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-						<div role="tabpanel" class="tab-pane" id="pedPane">
-
-							<table class="table" id="pedTable">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-				</div>
-			</div>	
-
-			<div class="toggle" style="position:relative; left:0;">
-				<button type="button" class="btn btn-default" data-toggle="collapse" href="#statusPanel" aria-expanded="false" aria-controls="statusPanel">Status</button>
-			</div>
-		</div>
-
-
-		<div id="info-box">
-			<p id="info-title"><strong>Infos</strong></p>
-			<div class="propsBlock-run">
-				<div class="labels">
-					<p>Macchine:</p>
-					<p>Autobus:</p>
-					<p>Bici:</p>
-					<p>Pedoni:</p>
-					<p>Cache:</p>
-				</div>
-				<div class="values">
-					<p id="car-num">0</p>
-					<p id="buses-num">0</p>
-					<p id="bike-num">0</p>
-					<p id="ped-num">0</p>
-					<p class="statesCount">0</p>
-				</div>
-			</div>
-		</div>
-
-		<div id="rendering-state-box">
-			<p id="info-title"><strong>Stato rendering</strong></p>
-			<div class="renderingState">
-			<div class="progress">
-							<div id="rendering-state-bar" class="progress-bar progress-bar-danger"
-								role="progressbar" aria-valuenow="100" aria-valuemin="0"
-								aria-valuemax="100" style="width: 100%">
-								<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo
-							</div>
-						</div>
-			</div>
-		</div>
-
 	</div>
+
+
+
+	<div id="info-box">
+		<p id="info-title" class="box-title"><strong>Infos</strong></p>
+		<div class="propsBlock-run">
+			<div class="labels">
+				<p>Macchine:</p>
+				<p>Autobus:</p>
+				<p>Bici:</p>
+				<p>Pedoni:</p>
+			</div>
+			<div class="values">
+				<p id="car-num">0</p>
+				<p id="buses-num">0</p>
+				<p id="bike-num">0</p>
+				<p id="ped-num">0</p>
+			</div>
+		</div>
+	</div>
+
+	<div id="rendering-state-box">
+		<p id="status-title" class="box-title"><strong>Rendering</strong></p>
+		<div class="renderingState">
+			<p style="text-align:center; margin-bottom:5px;">Stato</p>
+			<div class="progress">
+				<div id="rendering-state-bar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0"	aria-valuemax="100" style="width: 100%">
+					<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo
+				</div>
+			</div>
+			<p style="text-align:center; margin-bottom:5px;">Cache</p>
+			<div class="progress">
+				<div id="rendering-cache-bar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; min-width:10%;">
+					0
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
 </body>
 </html>

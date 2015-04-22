@@ -34,6 +34,12 @@ WorldSimulation.prototype.stop = function(){
 	}
 }
 
+WorldSimulation.prototype.fastForward = function(){
+	for (var i in this.pieces) {
+		this.pieces[i].fastForward();
+	}
+}
+
 
 function PieceSimulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.stateCache = [];
@@ -55,10 +61,10 @@ function PieceSimulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.ranOutOfStates = false;
 
 	// callbacks
-	this.readyCallback = null;
-	this.emptyStateCacheCallback = null;
-	this.statesAvailableCallback = null;
-	this.gotStateCallback = null;
+	this.onReady = null;
+	this.onEmptyCache = null;
+	this.onStatesAvailable = null;
+	this.onStateReceived = null;
 
 	this.onObjectMoved = null;
 
@@ -90,14 +96,6 @@ PieceSimulation.prototype.setTraiettorie = function(traiettorie){
 	this.traiettorie = traiettorie;
 }
 
-PieceSimulation.prototype.onReady = function(callback) {
-	this.readyCallback = callback;
-}
-
-PieceSimulation.prototype.onStateReceived = function(callback) {
-	this.gotStateCallback = callback;
-}
-
 PieceSimulation.prototype.addState = function(state) {
 	var newState = [];
 	for(var i in state.abitanti)
@@ -110,8 +108,8 @@ PieceSimulation.prototype.addState = function(state) {
 	this.stateCache.push(state);
 	this.receivedStates++;
 
-	if (this.gotStateCallback && (typeof this.gotStateCallback === 'function')) {
-		this.gotStateCallback(this.stateCache.length);
+	if (this.onStateReceived && (typeof this.onStateReceived === 'function')) {
+		this.onStateReceived(this.stateCache.length);
 	}
 
 	/*
@@ -120,15 +118,15 @@ PieceSimulation.prototype.addState = function(state) {
 	 * new Date().getTime(); console.log(state);
 	 */
 	if (!this.running && this.receivedStates == this.requiredStates
-			&& (typeof this.readyCallback === 'function')) {
+			&& (typeof this.onReady === 'function')) {
 		console.log("i'm ready!");
-		this.readyCallback();
+		this.onReady();
 		if (this.ranOutOfStates) {
 			console.log("recovered from empty states");
 			this.ranOutOfStates = false;
 		}
-		if (typeof this.statesAvailableCallback === 'function') {
-			this.statesAvailableCallback();
+		if (typeof this.onStatesAvailable === 'function') {
+			this.onStatesAvailable();
 		}
 	}
 }
@@ -464,9 +462,9 @@ PieceSimulation.prototype.updateState2 = function(deltaTime) {
 			this.initPrevState(this.currentState);
 			this.currentState = this.stateCache.shift();
 			if (this.currentState === undefined) {
-				if (typeof this.emptyStateCacheCallback === 'function') {
+				if (typeof this.onEmptyCache === 'function') {
 					console.log("calling callback");
-					this.emptyStateCacheCallback();
+					this.onEmptyCache();
 				}
 				console.log("no more states");
 				this.ranOutOfStates = true;
@@ -510,9 +508,9 @@ PieceSimulation.prototype.updateState = function(deltaTime) {
 				this.initPrevState(this.currentState);
 				this.currentState = this.stateCache.shift();
 				if (this.currentState === undefined) {
-					if (typeof this.emptyStateCacheCallback === 'function') {
+					if (typeof this.onEmptyCache === 'function') {
 						console.log("calling callback");
-						this.emptyStateCacheCallback();
+						this.onEmptyCache();
 					}
 					console.log("no more states");
 					this.ranOutOfStates = true;

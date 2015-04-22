@@ -46,7 +46,9 @@
   var entities = new EntitiesRegistry();
   entities.setStyle(new WorldEntitiesStyle());
 
-  var sim = new WorldSimulation(entities, 10, 1000);
+  var bufferSize = 10;
+
+  var sim = new WorldSimulation(entities, bufferSize, 1000);
   
   var enableSimulation = true;
   var simulationRunning = false;
@@ -56,7 +58,6 @@
 
   var target = "ws://" + server
       + "/" + updatesURI;
-  console.log("Opening the websocket against " + target);
 
   var ws1 = new WebSocket(target);
 
@@ -69,47 +70,23 @@
     //console.log(event.data);
     //console.log(JSON.parse(event.data));
     var msg = JSON.parse(event.data);
-    console.log(msg);
     if(msg.type == 'update' && msg.quartiere){
       var mapURI = "http://"+server+"/quartiere"+msg.quartiere+"/map.json"
-      jQuery.getJSON("quartiere"+msg.quartiere+"/map.json",
-        function(data) {
-          console.log(data);
-          var map = world.addMapPiece(data);
-          map.setTraiettorie(traiettorie);
-          map.onMapMouseEnter = function(event){
-            this.prevCursor = $('#canvas').css('cursor');
-            $('#canvas').css('cursor', 'pointer');
-          }
-          map.onMapMouseLeave = function(event){
-            $('#canvas').css('cursor', this.prevCursor); 
-          }
-          map.onMapMouseUp = function(event){
-            $('#canvas').css('cursor', 'pointer');
-          }
-
-          map.onPieceReady = function(){
-            console.log("the piece is ready");
-            var pSim = sim.addPiece(this);
-            var target = "ws://" + server
-                + "/quartiere"+this.id+"/updatesStream"
-            pSim.prepareSocket(target);
-            if(enableSimulation && !simulationRunning){
-              view.onFrame = function(event) {
-                sim.updateState(event.delta * 1000);
-              }
-              simulationRunning = true;
-            }
-            pSim.onReady(function(){
-              console.log("The simulation is ready");
-              this.init();
-            });
-          };
-          map.load(data);
-          map.draw(worldStyle);
-          world.liftPiecesBorders();
-          fitMap();
-        });
+      jQuery.getJSON("quartiere"+msg.quartiere+"/map.json", prepareDistrict);
+    } 
+    else if (msg.type == "command"){
+      if(msg.command == "terminated"){
+        ws1.close();
+        sim.stop();
+        view.onFrame = null;
+        closeLoadingDialog();
+        openMessageDialog("Simulazione terminata.<br />Ora è possibile chiudere il browser.");
+        setStoppedState();
+      }
+      if(msg.command == "termination_requested"){
+        openLoadingDialog();
+        setProgressText("Terminazione richiesta.<br />In attesa del segnale di terminazione da parte del sistema.", 100);
+      } 
     }
   }
 
@@ -117,8 +94,31 @@
     console.log(event);
   }
 
-  function setupSimulation(){
-    console.log("the piece is ready");
+  function setStoppedState(){}
+
+  function prepareDistrict(data){
+    var map = world.addMapPiece(data);
+    map.setTraiettorie(traiettorie);
+
+    map.onMapMouseEnter = function(event){
+      this.prevCursor = $('#canvas').css('cursor');
+      $('#canvas').css('cursor', 'pointer');
+    }
+    map.onMapMouseLeave = function(event){
+      $('#canvas').css('cursor', this.prevCursor); 
+    }
+    map.onMapMouseUp = function(event){
+      $('#canvas').css('cursor', 'pointer');
+    }
+    map.onPieceReady = setupPieceSimulation;
+
+    map.load(data);
+    map.draw(worldStyle);
+    world.liftPiecesBorders();
+    fitMap();
+  }
+
+  function setupPieceSimulation(){
     var pSim = sim.addPiece(this);
     var target = "ws://" + server
         + "/quartiere"+this.id+"/updatesStream"
@@ -127,7 +127,53 @@
       view.onFrame = function(event) {
         sim.updateState(event.delta * 1000);
       }
+      simulationRunning = true;
     }
+    pSim.onReady = function(){
+      console.log("The simulation is ready");
+      this.init();
+    }
+    pSim.onEmptyCache = function(){}
+    pSim.onStatesAvailable = function(){}
+    pSim.onStateReceived = cacheStatusUpdate;
+  }
+
+  function cacheStatusUpdate(nInCache){
+    console.log(nInCache);
+    var id = this.map.id;
+    var perc = (nInCache / bufferSize);
+    perc = perc > 1.0 ? 1.0 : perc;
+
+    $('#statusDistrict'+id+' .rendering-cache-bar').html(nInCache);
+    $('#statusDistrict'+id+' .rendering-cache-bar').css('width', (perc*100)+'%').attr('aria-valuenow', (perc*100)); 
+
+    var barStyle = "progress-bar-default";
+    if(perc < 0.33){
+      barStyle = "progress-bar-danger";
+    } else if (perc < 1){
+      barStyle = "progress-bar-warning";
+    }
+    $('#statusDistrict'+id+' .rendering-cache-bar').attr("class", "progress-bar active "+barStyle); 
+  }
+
+  window.onfocus = function()
+  {
+    if(sim != null && sim.running){
+      console.log("adding renderer");
+      sim.fastForward();
+      view.onFrame = function(event) {
+        // use this trick to throw away the first delta that is usually huge
+        view.onFrame = function(event){
+          sim.updateState(event.delta * 1000);
+        }
+      }
+    }
+  }
+
+  window.onblur = function()
+  {
+    console.log("removing renderer");
+    view.onFrame = null;
   }
 
 	paper.install(window);
@@ -214,20 +260,8 @@
 
 
 		function setProgressText(text, value) {
-			var msg = "";
-			var perc = value;
-			if(caricato)
-				perc = perc + 50;
-			if(value != 100)
-			{
-				msg = oggettoCaricamento+" "+text;
-			} else {
-				msg = text;
-				caricato = true;
-				oggettoCaricamento = "Disegno";
-			}
-			$('#loadingMessage').html(msg);
-			$('.progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
+			$('#loadingMessage').html(text);
+			$('#loadingDialog .progress-bar').css('width', value+'%').attr('aria-valuenow', value); 
 		}
 
 	function update(event) {
@@ -241,34 +275,8 @@
 		// The time passed in seconds since the last frame event:
 		console.log(event.delta);
 	}
-	/*
-	function carTest(){
-		entStyle.carShape.args.size = [3.5,5];
-		var carOne = new Car();
-		carOne.draw(entStyle);
-		carOne.hide();
-		var newPos = world.crossroads['i1'].getPositionAt(10, 34, curDistrict,'left');
-		carOne.move(newPos.position, newPos.angle);
-		carOne.show();
 
-		var car2 = new Car();
-		car2.draw(entStyle);
-		car2.hide();
-		var p1 = world.streets['1'].getPositionAt(150, true, 0);
-		car2.move(p1.position, p1.angle);
-		car2.show();
-
-		var car3 = new Car();
-		car3.draw(entStyle);
-		car3.hide();
-		var p2 = world.streets['1'].getPositionAt(150, false, 1);
-		car3.move(p2.position, p2.angle);
-		car3.show();
-	}
-	 */
 	onload = function(e) {
-
-		//entStyle.carShape.args.size = [ 3.5, 5 ];
 
 		$('#loadingDialog').modal({
 			backdrop : 'static',
@@ -287,13 +295,6 @@
 		})
 
 		paper.setup(document.getElementById("canvas"));
-		//loadingDialog.dialog('open');
-	
-
-		// mapLayer = project.activeLayer;
-		// secondLayer = new Layer();
-		// view.draw();
-		//view.onFrame = update;
 
 		var myTool = new Tool();
 		myTool.onMouseDown = function(event) {
@@ -320,63 +321,17 @@
 			event.deltaY > 0 ? zoomIn() : zoomOut();
 		});
 
-    /*
-		var a = new Path.Rectangle(new Point(0,0), new Size(400, 500));
-    a.strokeColor = '#A7A8A7';
-    a.strokeWidth = 2;
-    a.dashArray = [7,7];
-    a.fillColor = '#DD4F42';
-    a.fillColor.alpha = 0;
-    a.strokeScaling = false;
-    a.myNumber = 0;
-    a.onMouseDown = function(event){
-      // window.open("www.google.com", "_self");
-      // console.log(event.event);
-      // this.positionOnDown
-      this.positionOnDown = {"x":event.event.x, "y":event.event.y};
-      console.log(event.event);
-    }
-    a.onMouseUp = function(event){
-      // window.open("www.google.com", "_self");
-      console.log(event.event);
-      if(event.event.x == this.positionOnDown.x && event.event.y == this.positionOnDown.y){
-        window.open("www.google.com", "_self");
-      }
-    }
-    a.onMouseEnter = function(event){
-      this.dashArray = null;
-      this.strokeWidth = 2;
-      this.fillColor.alpha = 0.1;
-      this.strokeColor = '#DD4F42';
-    }
-    a.onMouseLeave = function(event){
-      this.strokeColor = '#A7A8A7';
-      this.strokeWidth = 2;
-      this.fillColor.alpha = 0;
-      this.dashArray = [7,7];
-    }
-
-    var b = new Path.Rectangle(new Point(50,50), new Size(100,100));
-    b.fillColor = 'blue';
-    a.bringToFront();
-    */
+    
 	}
 </script>
 
 </head>
 <body>
 
-	<!--
-	<p>
-		<a id="openws" href="#" onClick="openSocket()">Open</a>
-		<a id="closews" href="#" onClick="closeSocket()">Close</a>
-	</p>-->
-
 	<div id="canvas-wrap">
 
 
-		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myDataDialogLabel" aria-hidden="true">
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog" aria-labelledby="myDataDialogLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -389,15 +344,13 @@
 						<pre id="jsonDataArea" style="overflow: auto; max-height: 500px;"></pre>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary"
-							onClick="selectText('jsonDataArea')">Select all</button>
+						<button type="button" class="btn btn-primary" onClick="selectText('jsonDataArea')">Select all</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog" aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -406,9 +359,7 @@
 					<div class="modal-body">
 						<p id="loadingMessage"></p>
 						<div class="progress">
-							<div class="progress-bar progress-bar-striped active"
-								role="progressbar" aria-valuenow="0" aria-valuemin="0"
-								aria-valuemax="100" style="width: 0%">
+							<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
 								<span class="sr-only">Caricamento</span>
 							</div>
 						</div>
@@ -417,8 +368,7 @@
 			</div>
 		</div>
 
-		<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
-			aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+		<div class="modal" id="messageDialog" tabindex="-1" role="dialog" aria-labelledby="myMessageDialogLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -433,116 +383,78 @@
 
 		
 		<canvas id="canvas" resize hidpi="off"
-			style="background-color: #F0EDE5;"></canvas>
-		
-		<div id="title-div">
-			<h1>Mappa città</h1>
-		</div>
+   style="background-color: #F0EDE5;"></canvas>
 
-		<div id="controls-div">
-		<div class="btn-group-vertical" role="group" aria-label="...">
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
-		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
-		</div>
+   <div id="title-div">
+     <h1>Mappa città</h1>
+   </div>
+
+   <div id="controls-div">
+    <div class="btn-group-vertical" role="group" aria-label="...">
+      <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
+      <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
+    </div>
     <div class="divisor-small"></div>
     <div>
       <button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
     </div>
-		<div class="divisor"></div>
-		<div>
-			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
-		</div>
-		</div>
+    <div class="divisor"></div>
+    <div>
+     <button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
+   </div>
+ </div>
 
-				<div id="status-box">
-			<div id="statusPanel" class="panel panel-default">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Posizione oggetti</div>
-				<!--<div class="panel-body">-->
-				<div role="tabpanel">
+ <div id="info-box">
+   <p id="info-title" class="box-title"><strong>Infos</strong></p>
+   <div class="propsBlock-run">
+    <div class="labels">
+     <p>Macchine:</p>
+     <p>Bici:</p>
+     <p>Pedoni:</p>
+   </div>
+   <div class="values">
+     <p id="car-num">0</p>
+     <p id="bike-num">0</p>
+     <p id="ped-num">0</p>
+   </div>
+ </div>
+</div>
 
-					<!-- Nav tabs -->
-					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#carPane" aria-controls="carPane" role="tab" data-toggle="tab">Auto</a></li>
-						<li role="presentation"><a href="#bikePane" aria-controls="bikePane" role="tab" data-toggle="tab">Bici</a></li>
-						<li role="presentation"><a href="#pedPane" aria-controls="pedPane" role="tab" data-toggle="tab">Pedoni</a></li>
-					</ul>
+<div id="rendering-state-box">
+  <p id="info-title" class="box-title"><strong>Stato quartieri</strong></p>
 
-					<!-- Tab panes -->
-					<div class="tab-content">
-						<div role="tabpanel" class="tab-pane active" id="carPane">
-							<table class="table" id="carTable" style="width:100%;">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-						<div role="tabpanel" class="tab-pane" id="bikePane">
+  <table class="table" id="districts-status">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Stato</th>
+        <th>Cache</th>
+      </tr>
+    </thead>
+    <tbody>
+      @@TABLE@@
+      <tr id="statusDistrict@_DISTRICT_ID_@" class="district-status">
+        <td>@_DISTRICT_ID_@</td>
+        <td>
+          <div class="progress" style="width:100px;">
+            <div class="rendering-state-bar progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+              <iclass="rendering-state-icon glyphicon glyphicon-stop"> </i> Fermo
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="progress" style="width:100px;">
+          <div class="rendering-cache-bar progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; min-width:10%;">
+              0
+            </div>
+          </div>
+        </td>
+      </tr>
+      @@END_TABLE@@
+    </tbody>
+  </table>
+</div>
 
-							<table class="table" id="bikeTable">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-						<div role="tabpanel" class="tab-pane" id="pedPane">
-
-							<table class="table" id="pedTable">
-								<thead>
-									<tr>
-										<th>Id</th>
-										<th>Quartiere</th>
-										<th>Where</th>
-										<th>Posizione</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-				</div>
-			</div>	
-
-			<div class="toggle" style="position:relative; left:0;">
-				<button type="button" class="btn btn-default" data-toggle="collapse" href="#statusPanel" aria-expanded="false" aria-controls="statusPanel">Status</button>
-			</div>
-		</div>
-
-
-		<div id="info-box">
-			<p id="info-title"><strong>Infos</strong></p>
-			<div class="propsBlock-run">
-				<div class="labels">
-					<p>Macchine:</p>
-					<p>Bici:</p>
-					<p>Pedoni:</p>
-					<p>Cache:</p>
-				</div>
-				<div class="values">
-					<p id="car-num">0</p>
-					<p id="bike-num">0</p>
-					<p id="ped-num">0</p>
-					<p class="statesCount">0</p>
-				</div>
-			</div>
-		</div>
-
-	</div>
+</div>
 </body>
 </html>

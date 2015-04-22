@@ -6,7 +6,9 @@
     "riferimento": {
       "quartiere": 1,
       "angolo": 0
-    }
+    },
+    "dimensioni":[2000, 3000],
+    "posizione" : [2000, 0]
   },
   "id_quartiere": 3,
   "strade_urbane": [

@@ -3,7 +3,9 @@
     "id": 1,
     "larghezza": 2000,
     "altezza": 1500,
-    "riferimento": null
+    "riferimento": null,
+    "dimensioni":[2000, 1500],
+    "posizione" : [0,0]
   },
   "id_quartiere": 1,
   "strade_urbane": [

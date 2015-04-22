@@ -2,11 +2,13 @@
   "info": {
     "id": 2,
     "larghezza": 2000,
-    "altezza": 3000,
+    "altezza": 1500,
     "riferimento": {
       "quartiere": 1,
       "angolo": 0
-    }
+    },
+    "dimensioni":[2000, 1500],
+    "posizione": [0, 1500]
   },
   "id_quartiere": 2,
   "strade_urbane": [

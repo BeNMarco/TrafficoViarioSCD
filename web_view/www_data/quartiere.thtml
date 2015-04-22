@@ -412,55 +412,7 @@
 			event.deltaY > 0 ? zoomIn() : zoomOut();
 		});
 
-		$('#getData').on(
-				'click',
-				function() {
-					//console.log(JSON.stringify(myMap.getUpdatedData(), null, 2));
-					$('#jsonDataArea').text(
-							JSON.stringify(myMap.getUpdatedData(), null, 2));
-					$('#dataDialog').modal("show");
-				});
-
-		$('#action1').on('click', function() {
-			craftStatesForCar(state, 1, route2, myMap, 10, 1000);
-			console.log(state);
-		});
-
-		$('#action2').on('click', function() {
-
-			myState = [];
-			craftStatesForCar(myState, 1, route4, myMap, 10, 300);
-			//craftStatesForCar(myState, 2, route3, myMap, 15, 1000);
-			//simulation = new Simulation(myMap, myObjects, 4, 1000);
-			console.log(myState);
-
-			//var mText = JSON.stringify(myState, null, 0) + "\n";
-			$('#jsonDataArea').text(JSON.stringify(myState, null, 0));
-			$('#dataDialog').modal("show")
-			/*
-			for(var i in myState){
-				mText += JSON.stringify(myState[i], null, 0) + "\n";
-			}
-			
-			var mText = JSON.stringify(myState[0], null, 0) + "\n";
-			$('#jsonDataArea').text(JSON.stringify(myState, null, 0));
-			$('#dataDialog').modal("show");
-
-
-			for(var i in myState){
-				simulation.addState(myState[i]);
-			}
-			/*
-			simulation.init();
-			view.onFrame = function(event){
-				simulation.updateState(event.delta*1000);
-			}
-			 */
-		});
-
-		$('#action3').on('click', function() {
-			view.onFrame = null;
-		});
+		
 	}
 </script>
 
@@ -545,6 +497,8 @@
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
 		</div>
+		<div class="divisor"></div>
+			<button type="button" class="btn btn-primary glyphicon glyphicon-home" onClick="window.open('/', '_self');"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
 		<div class="divisor"></div>
 		<div>
 			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>

@@ -1,143 +1,601 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Web Socket Demo</title>
+<head>
+<meta charset="UTF-8">
+<title>Mappa quartiere @_ID_QUARTIERE_@</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-    <script type="text/javascript" src="js/utils/jquery.min.js"></script>
+<script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript" src="js/worldMap.js"></script>
+<script type="text/javascript" src="js/simulation.js"></script>
+<script type="text/javascript" src="js/entities.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/utils/JSChain.js"></script>
+<script type="text/javascript" src="js/utils/paper-full.js"></script>
+<script type="text/javascript" src="js/utils/jquery.min.js"></script>
+<script type="text/javascript" src="js/utils/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/utils/jquery.mousewheel.min.js"></script>
+<script type="text/javascript">
+	window.onerror = function(msg, url, line, col, error) {
+		// Note that col & error are new to the HTML 5 spec and may not be 
+		// supported in every browser.  It worked for me in Chrome.
+		var extra = !col ? '' : '\ncolumn: ' + col;
+		extra += !error ? '' : '\nerror: ' + error;
 
-    <script type="text/javascript">
+		// You can view the information in an alert to see things working like this:
+		console.log("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+		alert("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+		console.log(error);
+		console.log(error.stack);
 
-      var ws;
-      var updatesURI = "mainpageUpdates";
+		// TODO: Report this error via ajax so you can keep track
+		//       of what pages have JS issues
 
-      var ws1;
-      var server = window.location.host;
+		var suppressErrorAlert = true;
+		// If you return true, then error alerts (like in older versions of 
+		// Internet Explorer) will be suppressed.
+		return suppressErrorAlert;
+	};
 
-      function updateP(id, message) {
-        var a = document.getElementById(id);
-        a.innerHTML = a.innerHTML + "<br>" + message;
-      }
+  var world = new WorldMap();
+  
+  var ws1 = null;
+  var updatesURI = "mainpageUpdates";
+  var server = window.location.host;
 
-      function newMessage() {
-        ws.send('A message sent after 5 seconds');
-      }
+  var target = "ws://" + server
+      + "/" + updatesURI;
+  console.log("Opening the websocket against " + target);
+  ws1 = new WebSocket(target);
 
-      function startWS() {
-          updateP('server', 'Server is ' + server);
-
-          // ws = AWS.WebSocket.open('ws://' + server + '/websock', 'data', 'status');
-          ws = new WebSocket('ws://' + server + '/websock');
-          ws.onmessage = function (event){
-            updateP('data', event.data);
+  ws1.onopen = function(event) {
+    //ws1.send("ciao server");
+    console.log(event);
+  }
+  ws1.onmessage = function(event) {
+    //console.log(event);
+    //console.log(event.data);
+    //console.log(JSON.parse(event.data));
+    var msg = JSON.parse(event.data);
+    console.log(msg);
+    if(msg.type == 'update' && msg.quartiere){
+      var mapURI = "http://"+server+"/quartiere"+msg.quartiere+"/map.json"
+      jQuery.getJSON("quartiere"+msg.quartiere+"/map.json",
+        function(data) {
+          console.log(data);
+          var map = world.addMapPiece(data);
+          map.onMapMouseEnter = function(event){
+            this.prevCursor = $('#canvas').css('cursor');
+            $('#canvas').css('cursor', 'pointer');
           }
-
-          if (ws != false)
-             updateP('status', "Your browser supports webSocket.");
-
-      };
-
-      onload = function(e){
-        console.log("prova");
-        if (window.jQuery) {  
-            console.log("Jquery loaded");
-        } else {
-            console.log("Jquery not loaded");
-        }
-
-
-        var target = "ws://" + server
-            + "/" + updatesURI;
-        console.log("Opening the websocket against " + target);
-        ws1 = new WebSocket(target);
-
-        ws1.onopen = function(event) {
-          //ws1.send("ciao server");
-          console.log(event);
-        }
-        ws1.onmessage = function(event) {
-          //console.log(event);
-          //console.log(event.data);
-          //console.log(JSON.parse(event.data));
-          var msg = JSON.parse(event.data);
-          console.log(msg);
-        }
-
-        ws1.onerror = function(event) {
-          console.log(event);
-        }
-      }
-
-      function myGet() {
-        console.log("called");
-        if (window.jQuery) {  
-            console.log("Jquery loaded");
-        } else {
-            console.log("Jquery not loaded");
-        }
-
-        var mapStyleUri = 'http://'+server+'/js/map_style.json';
-
-        var xhr = new XMLHttpRequest();
-        xhr.overrideMimeType("application/json");
-        xhr.open("GET", mapStyleUri, true);
-
-        xhr.onreadystatechange = function(){
-          if (xhr.readyState == 4 && xhr.status == 200){
-            console.log(xhr.responseText);
-            var jss = JSON.parse(xhr.responseText);
-            console.log(jss);
+          map.onMapMouseLeave = function(event){
+            $('#canvas').css('cursor', this.prevCursor); 
           }
-        }
-
-        xhr.send();
-
-
-        console.log("calling "+ mapStyleUri);
-        $.getJSON(
-          mapStyleUri, 
-          {format: 'json'})
-        .done(function(data){
-            console.log("called getJSON");
-            var JSON = data;
-            //alert(JSON);
-            console.log(JSON);
-          })
-        .fail(function(err){
-          console.log(err);
+          map.onMapMouseUp = function(event){
+            $('#canvas').css('cursor', 'pointer');
+          }
+          map.draw(null);
+          world.liftPiecesBorders();
+          fitMap();
         });
-      };
-    </script>
-  </head>
+    }
+  }
 
-  <body>
-    <p>This is the main page, bellow is a simple websocket counter</p>
-    <p>Click <button onclick="myGet()" value="Here">Get JSON!</button> to start</p>
-    <p>Click <button onclick="startWS()" value="Here">Here</button> to start</p>
+  ws1.onerror = function(event) {
+    console.log(event);
+  }
 
-    <p id="server"></p>
+/*
+	world.onFinishLoading = function(){world.asyncDraw();};
+	world.onFinishDrawing = function() {
+		world.bringTrafficLightsToFront();
+		mapLayer = project.activeLayer;
+		view.draw();
+		closeLoadingDialog();
+		console.log("done with the drawing");
+		if(enableSimulation){
+				getUpdates();
+			}
+	};
 
-    <h3>Data</h3>
-    <p id="data"></p>
+	world.setProgressNotifier(setProgressText);
+*/
+	// callbacks for the counters
 
-    <h3>From user</h3>
-    <p id="from_user"></p>
 
-    <h3>Echo</h3>
-    <p id="echo"></p>
 
-    <h3>Status</h3>
-    <p id="status"></p>
-    <ul>
-    @@TABLE@@
-       <li>
-       @@IF@@ @_REG_@ 
-       <a href="quartiere@_DISTRICT_ID_@">
-       @@END_IF@@
-       Quartiere @_DISTRICT_ID_@ @_REG_@
-       @@IF@@ @_REG_@ 
-       </a>
-       @@END_IF@@
-       </li>
-    @@END_TABLE@@
-    </ul>
-  </body>
+	mapLayer = null;
+
+	paper.install(window);
+
+	var style = new MapStyle();
+
+	var dDialog = null;
+	var ws1;
+	var ws2;
+	var server = window.location.host;
+
+	function setupSimulation() {
+		
+	}
+
+	function startSimulation() {
+		console.log("start simulation");
+		//world.bringTrafficLightsToFront();
+		
+	}
+
+	
+	function traslladar(a, b) {
+		var center = paper.project.view.center;
+		var desX = (a.x - b.x);
+		var desY = (a.y - b.y);
+
+		var newCenter = [ center.x + desX, center.y + desY ];
+		return newCenter;
+	}
+
+	function zoomIn() {
+		view.zoom = view.zoom * 1.1;
+    console.log(view.size);
+	}
+
+	function zoomOut() {
+		view.zoom = view.zoom / 1.1;
+    console.log(view.size);
+	}
+
+  function fitMap(){
+    var g = project.activeLayer;
+    var xP = view.size.width / g.bounds.width;
+    var yP = view.size.height / g.bounds.height;
+    var z = xP;
+    if(Math.abs(yP) > Math.abs(yP))
+      z = yP;
+    console.log(view.size);
+    console.log(g.bounds);
+    console.log("zoom: "+view.zoom+" z:"+z);
+    view.zoom = z;
+    view.center = project.activeLayer.position;
+  }
+
+	function selectText(containerid) {
+
+		var node = document.getElementById(containerid);
+
+		if (document.selection) {
+			var range = document.body.createTextRange();
+			range.moveToElementText(node);
+			range.select();
+		} else if (window.getSelection) {
+			var range = document.createRange();
+			range.selectNodeContents(node);
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(range);
+		}
+	}
+
+	function openLoadingDialog() {
+		console.log("openLoadingDialog fired");
+		$('#loadingMessage').html(
+				"Prego attendere!<br />Caricamento e rendering della mappa in corso");
+		$('#loadingDialog').modal('show');
+		//$('#outputData').text("Started loading and drawing");
+	}
+
+	function closeLoadingDialog() {
+		$('#loadingDialog').modal('hide');
+	}
+
+	function openMessageDialog(text) {
+		$('#messageDialogText').html(text);
+		$('#messageDialog').modal('show');
+	}
+
+	function closeMessageDialog() {
+		$('#messageDialog').modal('hide');
+	}
+
+
+
+	function getUpdates() {
+		var target = "ws://" + server
+				+ "/quartiere@_ID_QUARTIERE_@/updatesStream";
+		console.log("Opening the websocket against " + target);
+		ws1 = new WebSocket(target);
+
+		ws1.onopen = function(event) {
+			//ws1.send("ciao server");
+			console.log(event);
+		}
+		ws1.onmessage = function(event) {
+			//console.log(event);
+			//console.log(event.data);
+			//console.log(JSON.parse(event.data));
+			var msg = JSON.parse(event.data);
+			if(msg.type)
+			{
+				if(msg.type == "update")
+				{
+					
+				} 
+				else if (msg.type == "command")
+				{
+					console.log(msg);
+					if(msg.command == "terminated")
+					{
+						ws1.close();
+
+						view.onFrame = null;
+						closeLoadingDialog();
+						openMessageDialog("Simulazione terminata.<br />Ora è possibile chiudere il browser.");
+					}
+					if(msg.command == "termination_requested")
+					{
+						openLoadingDialog();
+						$('#loadingMessage').html(
+								"Terminazione richiesta.<br />In attesa del segnale di terminazione da parte del sistema.");
+					}	
+				}
+			}
+		}
+
+		ws1.onerror = function(event) {
+			console.log(event);
+		}
+	}
+
+	function requestTermination()
+	{
+		console.log("request Termination");
+		view.onFrame = null;
+		if(ws1)
+		{
+			var data = {type:"command", command:"terminate"};
+			var text = JSON.stringify(data);
+			ws1.send(text);
+		}
+	}
+
+	function setProgressText(text) {
+		console.log("notified " + text);
+		$('#loadingMessage').html(text);
+	}
+
+
+
+		function setProgressText(text, value) {
+			var msg = "";
+			var perc = value;
+			if(caricato)
+				perc = perc + 50;
+			if(value != 100)
+			{
+				msg = oggettoCaricamento+" "+text;
+			} else {
+				msg = text;
+				caricato = true;
+				oggettoCaricamento = "Disegno";
+			}
+			$('#loadingMessage').html(msg);
+			$('.progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
+		}
+
+	function update(event) {
+		// the number of times the frame event was fired:
+		console.log(event.count);
+
+		// The total amount of time passed since
+		// the first frame event in seconds:
+		console.log(event.time);
+
+		// The time passed in seconds since the last frame event:
+		console.log(event.delta);
+	}
+	/*
+	function carTest(){
+		entStyle.carShape.args.size = [3.5,5];
+		var carOne = new Car();
+		carOne.draw(entStyle);
+		carOne.hide();
+		var newPos = world.crossroads['i1'].getPositionAt(10, 34, curDistrict,'left');
+		carOne.move(newPos.position, newPos.angle);
+		carOne.show();
+
+		var car2 = new Car();
+		car2.draw(entStyle);
+		car2.hide();
+		var p1 = world.streets['1'].getPositionAt(150, true, 0);
+		car2.move(p1.position, p1.angle);
+		car2.show();
+
+		var car3 = new Car();
+		car3.draw(entStyle);
+		car3.hide();
+		var p2 = world.streets['1'].getPositionAt(150, false, 1);
+		car3.move(p2.position, p2.angle);
+		car3.show();
+	}
+	 */
+	onload = function(e) {
+
+		//entStyle.carShape.args.size = [ 3.5, 5 ];
+
+		$('#loadingDialog').modal({
+			backdrop : 'static',
+			keyboard : false,
+			show : false,
+		});
+
+		$('#dataDialog').modal({
+			show : false,
+		});
+
+    $('#status-box').hide();
+
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+
+		paper.setup(document.getElementById("canvas"));
+		//loadingDialog.dialog('open');
+	
+
+		// mapLayer = project.activeLayer;
+		// secondLayer = new Layer();
+		// view.draw();
+		//view.onFrame = update;
+
+		var myTool = new Tool();
+		myTool.onMouseDown = function(event) {
+			path = new Point();
+			path.add(event.point);
+			$("#canvas").css('cursor', '-webkit-grabbing');
+
+		};
+
+		myTool.onMouseDrag = function(event) {
+			path.add(event.point);
+
+			var des = traslladar(event.downPoint, event.point);
+			paper.project.view.center = des;
+
+		}
+
+		myTool.onMouseUp = function(event) {
+			$("#canvas").css('cursor', '-webkit-grab');
+			$("#canvas").css('cursor', '-moz-grab');
+		}
+
+		$('#canvas').mousewheel(function(event) {
+			event.deltaY > 0 ? zoomIn() : zoomOut();
+		});
+
+    /*
+		var a = new Path.Rectangle(new Point(0,0), new Size(400, 500));
+    a.strokeColor = '#A7A8A7';
+    a.strokeWidth = 2;
+    a.dashArray = [7,7];
+    a.fillColor = '#DD4F42';
+    a.fillColor.alpha = 0;
+    a.strokeScaling = false;
+    a.myNumber = 0;
+    a.onMouseDown = function(event){
+      // window.open("www.google.com", "_self");
+      // console.log(event.event);
+      // this.positionOnDown
+      this.positionOnDown = {"x":event.event.x, "y":event.event.y};
+      console.log(event.event);
+    }
+    a.onMouseUp = function(event){
+      // window.open("www.google.com", "_self");
+      console.log(event.event);
+      if(event.event.x == this.positionOnDown.x && event.event.y == this.positionOnDown.y){
+        window.open("www.google.com", "_self");
+      }
+    }
+    a.onMouseEnter = function(event){
+      this.dashArray = null;
+      this.strokeWidth = 2;
+      this.fillColor.alpha = 0.1;
+      this.strokeColor = '#DD4F42';
+    }
+    a.onMouseLeave = function(event){
+      this.strokeColor = '#A7A8A7';
+      this.strokeWidth = 2;
+      this.fillColor.alpha = 0;
+      this.dashArray = [7,7];
+    }
+
+    var b = new Path.Rectangle(new Point(50,50), new Size(100,100));
+    b.fillColor = 'blue';
+    a.bringToFront();
+    */
+	}
+</script>
+
+</head>
+<body>
+
+	<!--
+	<p>
+		<a id="openws" href="#" onClick="openSocket()">Open</a>
+		<a id="closews" href="#" onClick="closeSocket()">Close</a>
+	</p>-->
+
+	<div id="canvas-wrap">
+
+
+		<div class="modal fade" id="dataDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myDataDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myDataDialogLabel">Json Data</h4>
+					</div>
+					<div class="modal-body">
+						<pre id="jsonDataArea" style="overflow: auto; max-height: 500px;"></pre>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary"
+							onClick="selectText('jsonDataArea')">Select all</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="loadingDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myLoadingDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myLoadingDialogLabel">Caricamento in corso...</h4>
+					</div>
+					<div class="modal-body">
+						<p id="loadingMessage"></p>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active"
+								role="progressbar" aria-valuenow="0" aria-valuemin="0"
+								aria-valuemax="100" style="width: 0%">
+								<span class="sr-only">Caricamento</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="messageDialog" tabindex="-1" role="dialog"
+			aria-labelledby="myMessageDialogLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myMessageDialogLabel">Info</h4>
+					</div>
+					<div class="modal-body">
+						<p id="messageDialogText"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+		<canvas id="canvas" resize hidpi="off"
+			style="background-color: #F0EDE5;"></canvas>
+		
+		<div id="title-div">
+			<h1>Mappa città</h1>
+		</div>
+
+		<div id="controls-div">
+		<div class="btn-group-vertical" role="group" aria-label="...">
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
+		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
+		</div>
+    <div class="divisor"></div>
+    <div>
+      <button type="button" class="btn btn-info glyphicon glyphicon-stop" onClick="fitMap()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
+    </div>
+		<div class="divisor"></div>
+		<div>
+			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
+		</div>
+		</div>
+
+				<div id="status-box">
+			<div id="statusPanel" class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading">Posizione oggetti</div>
+				<!--<div class="panel-body">-->
+				<div role="tabpanel">
+
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li role="presentation" class="active"><a href="#carPane" aria-controls="carPane" role="tab" data-toggle="tab">Auto</a></li>
+						<li role="presentation"><a href="#bikePane" aria-controls="bikePane" role="tab" data-toggle="tab">Bici</a></li>
+						<li role="presentation"><a href="#pedPane" aria-controls="pedPane" role="tab" data-toggle="tab">Pedoni</a></li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="carPane">
+							<table class="table" id="carTable" style="width:100%;">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="bikePane">
+
+							<table class="table" id="bikeTable">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="pedPane">
+
+							<table class="table" id="pedTable">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Quartiere</th>
+										<th>Where</th>
+										<th>Posizione</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</div>	
+
+			<div class="toggle" style="position:relative; left:0;">
+				<button type="button" class="btn btn-default" data-toggle="collapse" href="#statusPanel" aria-expanded="false" aria-controls="statusPanel">Status</button>
+			</div>
+		</div>
+
+
+		<div id="info-box">
+			<p id="info-title"><strong>Infos</strong></p>
+			<div class="propsBlock-run">
+				<div class="labels">
+					<p>Macchine:</p>
+					<p>Bici:</p>
+					<p>Pedoni:</p>
+					<p>Cache:</p>
+				</div>
+				<div class="values">
+					<p id="car-num">0</p>
+					<p id="bike-num">0</p>
+					<p id="ped-num">0</p>
+					<p class="statesCount">0</p>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
 </html>

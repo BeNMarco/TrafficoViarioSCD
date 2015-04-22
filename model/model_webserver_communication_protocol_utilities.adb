@@ -35,21 +35,32 @@ package body model_webserver_communication_protocol_utilities is
       end case;
    end set_length_parameters_abitante;
 
-   function create_entità_traiettoria_ingresso_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: Float; polo: Boolean; where_ingresso: Float; traiettoria: traiettoria_ingressi_type; mezzo: means_of_carrying) return JSON_Value is
+   function create_entità_traiettoria_ingresso_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: new_float; polo: Boolean; where_ingresso: Float; traiettoria: traiettoria_ingressi_type; mezzo: means_of_carrying) return JSON_Value is
       json: JSON_Value:= Create_Object;
+      length_car: Float;
    begin
       json.Set_Field("id_quartiere_abitante",id_quartiere_abitante);
       json.Set_Field("id_abitante",id_abitante);
       json.Set_Field("where","traiettoria_ingresso");
       json.Set_Field("id_quartiere_where",id_quartiere_urbana);
       json.Set_Field("id_where",id_urbana);
-      json.Set_Field("distanza",where);
+      json.Set_Field("distanza",Float(where));
       json.Set_Field("polo",polo);
       json.Set_Field("distanza_ingresso",where_ingresso);
       json.Set_Field("traiettoria",to_string_ingressi_type(traiettoria));
       json.Set_Field("mezzo",convert_means_to_string(mezzo));
 
       set_length_parameters_abitante(json,mezzo,id_quartiere_abitante,id_abitante);
+
+      length_car:= Float(get_quartiere_utilities_obj.get_auto_quartiere(id_quartiere_abitante,id_abitante).get_length_entità_passiva)/2.0;
+      if traiettoria=entrata_ritorno or else traiettoria=uscita_ritorno then
+         if where=get_traiettoria_ingresso(traiettoria).get_intersezioni_corsie(linea_corsia).get_distanza_intersezioni_corsie then
+            json.Set_Field("length_abitante",length_car);
+         end if;
+         if where=get_traiettoria_ingresso(traiettoria).get_intersezioni_corsie(linea_mezzaria).get_distanza_intersezioni_corsie then
+            json.Set_Field("length_abitante",length_car);
+         end if;
+      end if;
 
       return json;
    end create_entità_traiettoria_ingresso_state;

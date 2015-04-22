@@ -642,7 +642,7 @@
       "numcorsie": 1,
       "strada_confinante": 16,
       "polo": false,
-      "distanza_da_from": 340.0,
+      "distanza_da_from": 325.0,
       "from": 0,
       "to": 0
     },
@@ -702,7 +702,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 200.0,
+      "distanza_da_from": 100.0,
       "from": 0,
       "to": 0
     },
@@ -802,7 +802,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": false,
-      "distanza_da_from": 100.0,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     },

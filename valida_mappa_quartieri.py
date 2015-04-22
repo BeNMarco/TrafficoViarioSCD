@@ -55,19 +55,19 @@ def main(num_quartieri):
 			for id_urbana in range(1,len(input_jsons[id+1]["strade_urbane"])+1):
 				for id_ingresso in hash_urbane[id_urbana]:
 					if hash_urbane[id_urbana].index(id_ingresso)==0:
-						if input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<60.0:
-							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 60 rispetto a distanza_from")
+						if input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<70.0:
+							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 70 rispetto a distanza_from")
 						if len(hash_urbane[id_urbana])==1:
-							if input_jsons[id+1]["strade_urbane"][id_urbana-1]["lunghezza"]-input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<60.0:
-								raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 60 rispetto alla fine della strada")
+							if input_jsons[id+1]["strade_urbane"][id_urbana-1]["lunghezza"]-input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<70.0:
+								raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 70 rispetto alla fine della strada")
 					elif hash_urbane[id_urbana].index(id_ingresso)==(len(hash_urbane[id_urbana])-1):
-						if input_jsons[id+1]["strade_urbane"][id_urbana-1]["lunghezza"]-input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<60.0:
-							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 60 rispetto alla fine della strada")
+						if input_jsons[id+1]["strade_urbane"][id_urbana-1]["lunghezza"]-input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]<70.0:
+							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 70 rispetto alla fine della strada")
 					
 					if hash_urbane[id_urbana].index(id_ingresso)>0:
 						prec_id_ingresso=hash_urbane[id_urbana][hash_urbane[id_urbana].index(id_ingresso)-1]
-						if input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]-input_jsons[id+1]["strade_ingresso"][prec_id_ingresso-1]["distanza_da_from"]<60.0:
-							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 60 rispetto all'ingresso precedente " + str(prec_id_ingresso))
+						if input_jsons[id+1]["strade_ingresso"][id_ingresso-1]["distanza_da_from"]-input_jsons[id+1]["strade_ingresso"][prec_id_ingresso-1]["distanza_da_from"]<70.0:
+							raise Exception("Errore quartiere " + str(id+1) + ": La strada d'ingresso " + str(id_ingresso) + " e' a distanza minore di 70 rispetto all'ingresso precedente " + str(prec_id_ingresso))
 							
 					#print list_ingressi
 					#for i in range(0,len(list_ingressi)+1):

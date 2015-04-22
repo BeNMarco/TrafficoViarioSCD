@@ -362,7 +362,7 @@
       "numcorsie": 1,
       "strada_confinante": 6,
       "polo": true,
-      "distanza_da_from": 350.0,
+      "distanza_da_from": 250.0,
       "from": 0,
       "to": 0
     },
@@ -402,7 +402,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1200.0,
+      "distanza_da_from": 1050.0,
       "from": 0,
       "to": 0
     },
@@ -412,7 +412,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1300.0,
+      "distanza_da_from": 1200.0,
       "from": 0,
       "to": 0
     },
@@ -422,7 +422,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1400.0,
+      "distanza_da_from": 1300.0,
       "from": 0,
       "to": 0
     },
@@ -432,7 +432,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1500.0,
+      "distanza_da_from": 1400.0,
       "from": 0,
       "to": 0
     },
@@ -442,7 +442,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1600.0,
+      "distanza_da_from": 1500.0,
       "from": 0,
       "to": 0
     },
@@ -452,7 +452,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1700.0,
+      "distanza_da_from": 1600.0,
       "from": 0,
       "to": 0
     },
@@ -462,7 +462,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1800.0,
+      "distanza_da_from": 1700.0,
       "from": 0,
       "to": 0
     },
@@ -472,7 +472,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1900.0,
+      "distanza_da_from": 1800.0,
       "from": 0,
       "to": 0
     },
@@ -542,7 +542,7 @@
       "numcorsie": 1,
       "strada_confinante": 6,
       "polo": false,
-      "distanza_da_from": 250.0,
+      "distanza_da_from": 350.0,
       "from": 0,
       "to": 0
     },
@@ -572,7 +572,7 @@
       "numcorsie": 1,
       "strada_confinante": 9,
       "polo": true,
-      "distanza_da_from": 1050.0,
+      "distanza_da_from": 1900.0,
       "from": 0,
       "to": 0
     },
@@ -1425,15 +1425,45 @@
 ],
 
 "auto":[
+{"id_abitante":1},
+{"id_abitante":2},
+{"id_abitante":3},
+{"id_abitante":4},
+{"id_abitante":5},
+{"id_abitante":6},
+{"id_abitante":7},
+{"id_abitante":8},
+{"id_abitante":9},
+{"id_abitante":10},
+{"id_abitante":11},
+{"id_abitante":12},
+{"id_abitante":13},
+{"id_abitante":14}
 ],
 
 "bici":[
 ],
 
 "abitanti":[
+
 ],
 
-"autobus":[],
+"autobus":[
+{"id_autobus":1,"stazione_partenza":29,"linea":1,"jolly": false},
+{"id_autobus":2,"stazione_partenza":29,"linea":1,"jolly": false},
+{"id_autobus":3,"stazione_partenza":29,"linea":2,"jolly": false},
+{"id_autobus":4,"stazione_partenza":29,"linea":2,"jolly": false},
+{"id_autobus":5,"stazione_partenza":29,"linea":3,"jolly": false},
+{"id_autobus":6,"stazione_partenza":29,"linea":3,"jolly": false},
+{"id_autobus":7,"stazione_partenza":29,"linea":1,"jolly": true,"jolly_to_quartiere": 3},
+{"id_autobus":8,"stazione_partenza":29,"linea":1,"jolly": true,"jolly_to_quartiere": 2},
+{"id_autobus":9,"stazione_partenza":29,"linea":1,"jolly": true,"jolly_to_quartiere": 3},
+{"id_autobus":10,"stazione_partenza":29,"linea":1,"jolly": true,"jolly_to_quartiere": 2},
+{"id_autobus":11,"stazione_partenza":29,"linea":2,"jolly": true,"jolly_to_quartiere": 1},
+{"id_autobus":12,"stazione_partenza":29,"linea":2,"jolly": true,"jolly_to_quartiere": 3},
+{"id_autobus":13,"stazione_partenza":29,"linea":3,"jolly": true,"jolly_to_quartiere": 1},
+{"id_autobus":14,"stazione_partenza":29,"linea":3,"jolly": true,"jolly_to_quartiere": 2}
+],
 
 "abitanti_in_bus":[]
 }

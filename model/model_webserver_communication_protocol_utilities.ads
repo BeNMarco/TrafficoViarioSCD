@@ -2,16 +2,18 @@ with GNATCOLL.JSON;
 
 with JSON_Helper;
 with strade_e_incroci_common;
+with numerical_types;
 
 use GNATCOLL.JSON;
 
 use JSON_Helper;
 use strade_e_incroci_common;
+use numerical_types;
 
 package model_webserver_communication_protocol_utilities is
 
    -- where_ingresso è distance_from_road_head dell'urbana id_urbana
-   function create_entità_traiettoria_ingresso_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: Float; polo: Boolean; where_ingresso: Float; traiettoria: traiettoria_ingressi_type; mezzo: means_of_carrying) return JSON_Value;
+   function create_entità_traiettoria_ingresso_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: new_float; polo: Boolean; where_ingresso: Float; traiettoria: traiettoria_ingressi_type; mezzo: means_of_carrying) return JSON_Value;
 
    function create_car_traiettoria_cambio_corsia_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_urbana: Positive; id_urbana: Positive; where: Float; polo: Boolean; begin_overtaken: Float; from_corsia: Positive; to_corsia: Positive) return JSON_Value;
 

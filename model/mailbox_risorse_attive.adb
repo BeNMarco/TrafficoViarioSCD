@@ -1651,6 +1651,19 @@ package body mailbox_risorse_attive is
 
       end update_bipedi_on_traiettorie_ingressi;
 
+
+      procedure set_num_stalli_for_car_in_ingresso(traiettoria: traiettoria_ingressi_entrata_car; index_ingresso: Positive; num_stalli: Natural) is
+      begin
+         --cars_in_entrata_ingresso(get_key_ingresso(index_ingresso,not_ordered),traiettoria):= num_stalli;
+         null;
+      end set_num_stalli_for_car_in_ingresso;
+
+      function get_num_stalli_for_car_in_ingresso(traiettoria: traiettoria_ingressi_entrata_car; index_ingresso: Positive) return Natural is
+      begin
+         --return cars_in_entrata_ingresso(get_key_ingresso(index_ingresso,not_ordered),traiettoria);
+         return 0;
+      end get_num_stalli_for_car_in_ingresso;
+
       procedure remove_first_element_traiettoria(index_ingresso: Positive; traiettoria: traiettoria_ingressi_type) is
          key_ingresso: Positive:= get_key_ingresso(index_ingresso,not_ordered);
       begin
@@ -2938,7 +2951,7 @@ package body mailbox_risorse_attive is
                   end if;
 
                   if list_traiettorie_bipedi/=null and then ((list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti=0.0 and then list_traiettorie_bipedi.posizione_abitante.get_flag_overtake_next_corsia) or else
-                                                            (list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>0.0 or else list_traiettorie_bipedi.next/=null)) then
+                                                            (list_traiettorie_bipedi.posizione_abitante.get_where_now_posizione_abitanti>0.0)) then
                      distance_two:= distance_ingresso+get_larghezza_corsia;
                      segnale:= True;
                   end if;
@@ -5280,14 +5293,14 @@ package body mailbox_risorse_attive is
                               if list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>distanza_intersezione-max_larghezza_veicolo then
                                  --  distanza_intersezione-max_larghezza_veicolo indica distanza pt intersezione con traiettoria dritto_1
                                  -- si ferma sempre nel punto distanza_intersezione-max_larghezza_veicolo, la volta dopo avanza sse non si hanno macchine che vanno diritte
+                                 id_quartiere_next_car:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti;
+                                 id_abitante_next_car:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti;
                                  if list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti>=get_traiettoria_incrocio(sinistra).get_lunghezza_traiettoria_incrocio then
                                     road:= get_road_from_incrocio(id_task,calulate_index_road_to_go(id_task,index_other_road,traiettoria_near_car));
                                     quantità_percorsa:= get_traiettoria_incrocio(traiettoria_near_car).get_lunghezza_traiettoria_incrocio+ptr_rt_urbana(get_id_urbana_quartiere(road.get_id_quartiere_road_incrocio,road.get_id_strada_road_incrocio)).get_distanza_percorsa_first_abitante(not road.get_polo_road_incrocio,list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_destination.get_corsia_to_go_trajectory);
                                  else
                                     quantità_percorsa:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti-get_quartiere_utilities_obj.get_auto_quartiere(id_quartiere_next_car,id_abitante_next_car).get_length_entità_passiva;
                                  end if;
-                                 id_quartiere_next_car:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_quartiere_posizione_abitanti;
-                                 id_abitante_next_car:= list_near_car.get_posizione_abitanti_from_list_posizione_abitanti.get_id_abitante_posizione_abitanti;
                                  if quantità_percorsa<limite+max_larghezza_veicolo then
                                     if distance_to_next_car=-1.0 then
                                        --if list_car/=null and then list_car.get_posizione_abitanti_from_list_posizione_abitanti.get_where_now_posizione_abitanti=limite-max_larghezza_veicolo then

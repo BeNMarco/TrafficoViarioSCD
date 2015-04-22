@@ -29,4 +29,6 @@ package global_data is
    safe_distance_to_overtake: constant new_float:= 20.0;
    num_delta_before_insert_bipede: constant Positive:= 45;
 
+   max_num_stalli_car_in_entrata_ingresso: constant Positive:= 12;
+
 end global_data;

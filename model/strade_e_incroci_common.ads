@@ -15,7 +15,8 @@ package strade_e_incroci_common is
 
    type traiettoria_incroci_type is (empty,        destra,sinistra,dritto_1,dritto_2,     destra_pedoni,dritto_pedoni,sinistra_pedoni,destra_bici,dritto_bici,sinistra_bici);
    type traiettorie_intersezioni_linee_corsie is (linea_corsia,linea_mezzaria);
-   type traiettoria_ingressi_type is (empty,      entrata_andata,uscita_andata,entrata_ritorno,uscita_ritorno,     uscita_destra_pedoni,uscita_dritto_pedoni,uscita_destra_bici,uscita_dritto_bici,uscita_ritorno_pedoni,uscita_ritorno_bici,            entrata_destra_pedoni,entrata_destra_bici,entrata_ritorno_pedoni,entrata_ritorno_bici,entrata_dritto_pedoni,entrata_dritto_bici);
+   type traiettoria_ingressi_type is (empty,      entrata_andata,entrata_ritorno,uscita_andata,uscita_ritorno,     uscita_destra_pedoni,uscita_dritto_pedoni,uscita_destra_bici,uscita_dritto_bici,uscita_ritorno_pedoni,uscita_ritorno_bici,            entrata_destra_pedoni,entrata_destra_bici,entrata_ritorno_pedoni,entrata_ritorno_bici,entrata_dritto_pedoni,entrata_dritto_bici);
+   subtype traiettoria_ingressi_entrata_car is traiettoria_ingressi_type range entrata_andata..entrata_ritorno;
 
    function to_string_incroci_type(obj: traiettoria_incroci_type) return String;
    function to_string_ingressi_type(obj: traiettoria_ingressi_type) return String;

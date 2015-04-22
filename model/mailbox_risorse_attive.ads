@@ -71,6 +71,7 @@ package mailbox_risorse_attive is
    type attraversamenti_bipedi is array (Boolean range <>, Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
    type attraveramento_cars is array (Boolean range <>) of ptr_abilita_attraversamenti_bipedi;
    type set_boolean is array(False..True) of Boolean;
+   type in_entrata_cars is array(Positive range <>,traiettoria_ingressi_entrata_car range <>) of Natural;
 
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       function get_id_risorsa return Positive;
@@ -183,6 +184,11 @@ package mailbox_risorse_attive is
       procedure reset_entità_in_out_quartiere;
       function get_entità_in_out_quartiere return JSON_Array;
 
+
+
+      procedure set_num_stalli_for_car_in_ingresso(traiettoria: traiettoria_ingressi_entrata_car; index_ingresso: Positive; num_stalli: Natural);
+      function get_num_stalli_for_car_in_ingresso(traiettoria: traiettoria_ingressi_entrata_car; index_ingresso: Positive) return Natural;
+
    private
       function get_num_estremi_urbana return Natural;
       function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
@@ -221,6 +227,8 @@ package mailbox_risorse_attive is
       abilita_sinistra_bici_in_incroci: set_boolean:= (others => True);
 
       entità_outing_quartiere: JSON_Array:= Empty_Array;
+
+      cars_in_entrata_ingresso: in_entrata_cars(1..num_ingressi,entrata_andata..entrata_ritorno):= (others => (others => 0));
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;
    type resource_segmenti_urbane is array(Positive range <>) of ptr_resource_segmento_urbana;

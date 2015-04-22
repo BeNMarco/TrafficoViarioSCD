@@ -11,6 +11,7 @@
 <script type="text/javascript" src="js/simulation.js"></script>
 <script type="text/javascript" src="js/entities.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/traiettorie.js"></script>
 	<script type="text/javascript" src="js/utils/JSChain.js"></script>
 <script type="text/javascript" src="js/utils/paper-full.js"></script>
 <script type="text/javascript" src="js/utils/jquery.min.js"></script>
@@ -55,6 +56,7 @@
 		myMap.bringTrafficLightsToFront();
 		mapLayer = project.activeLayer;
 		view.draw();
+		fitMap();
 		closeLoadingDialog();
 		entities.draw();
 		entities.hide();
@@ -70,6 +72,10 @@
 
 	entities.onCarsChange = function(cars){
 		$('#car-num').text(Object.keys(cars).length);
+	}
+
+	entities.onBusesChange = function(buses){
+		$('#buses-num').text(Object.keys(buses).length);
 	}
 
 	entities.onBikesChange = function(bikes){
@@ -93,20 +99,48 @@
 
 	function setupSimulation() {
 		sim = new Simulation(myMap, entities, 20, 1000);
+		sim.setTraiettorie(traiettorie);
 		sim.onReady(startSimulation);
 		sim.onStateReceived(function(nInCache){
 			$('.statesCount').html(nInCache);
 		});
-		sim.emptyStateCacheCallback = function() {
+
+		sim.emptyStateCacheCallback = setBufferingState;
+		/*function() {
+			/*
 			$('#loadingMessage').html(
 					"Cache degli stati vuota.<br />Buffering in corso...");
 			$('#loadingDialog').modal('show');
-		}
+			progress-bar-striped active
+			
+			$(this).attr("class","newclass");
+			$('#rendering-state-bar').removeClass("progress-bar-danger");
+			$('#rendering-state-bar').removeClass("progress-bar-success");
+		}*/
 
-		sim.statesAvailableCallback = function() {
+		sim.statesAvailableCallback = setRunningState;
+		/*function() {
 			$('#loadingDialog').modal('hide');
-		}
+		}*/
+
 		sim.onObjectMoved = objectMovedCallback;
+	}
+
+	function setBufferingState(){
+		//$('#rendering-state-bar').removeClass("progress-bar-danger");
+		//$('#rendering-state-bar').removeClass("progress-bar-success");
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-striped active"); 
+		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-refresh"> </i> Buffering');
+	}
+
+	function setRunningState(){
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-success"); 
+		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-play"> </i> Running');
+	}
+
+	function setStoppedState(){
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-danger"); 
+		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo');
 	}
 
 	function startSimulation() {
@@ -172,6 +206,19 @@
 		view.zoom = view.zoom / 1.1;
 	}
 
+  function fitMap(){
+    if(project.activeLayer.children.length > 0){
+      var g = project.activeLayer;
+      var xP = view.size.width / g.bounds.width;
+      var yP = view.size.height / g.bounds.height;
+      var z = xP;
+      if(Math.abs(yP) < Math.abs(xP))
+        z = yP;
+      view.zoom = view.zoom * z;
+      view.center = project.activeLayer.position;
+    }
+  }
+
 	function switchTrafficLights() {
 		myMap.switchTrafficLights();
 	}
@@ -224,6 +271,7 @@
 		ws1.onopen = function(event) {
 			//ws1.send("ciao server");
 			console.log(event);
+			setBufferingState();
 		}
 		ws1.onmessage = function(event) {
 			//console.log(event);
@@ -246,6 +294,7 @@
 						view.onFrame = null;
 						closeLoadingDialog();
 						openMessageDialog("Simulazione terminata.<br />Ora è possibile chiudere il browser.");
+						setStoppedState();
 					}
 					if(msg.command == "termination_requested")
 					{
@@ -296,45 +345,8 @@
 				oggettoCaricamento = "Disegno";
 			}
 			$('#loadingMessage').html(msg);
-			$('.progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
+			$('#loadingDialog .progress-bar').css('width', perc+'%').attr('aria-valuenow', perc); 
 		}
-
-	function update(event) {
-		// the number of times the frame event was fired:
-		console.log(event.count);
-
-		// The total amount of time passed since
-		// the first frame event in seconds:
-		console.log(event.time);
-
-		// The time passed in seconds since the last frame event:
-		console.log(event.delta);
-	}
-	/*
-	function carTest(){
-		entStyle.carShape.args.size = [3.5,5];
-		var carOne = new Car();
-		carOne.draw(entStyle);
-		carOne.hide();
-		var newPos = myMap.crossroads['i1'].getPositionAt(10, 34, curDistrict,'left');
-		carOne.move(newPos.position, newPos.angle);
-		carOne.show();
-
-		var car2 = new Car();
-		car2.draw(entStyle);
-		car2.hide();
-		var p1 = myMap.streets['1'].getPositionAt(150, true, 0);
-		car2.move(p1.position, p1.angle);
-		car2.show();
-
-		var car3 = new Car();
-		car3.draw(entStyle);
-		car3.hide();
-		var p2 = myMap.streets['1'].getPositionAt(150, false, 1);
-		car3.move(p2.position, p2.angle);
-		car3.show();
-	}
-	 */
 
 	function resetSimulation() {
 		console.log("resetting simulation");
@@ -356,7 +368,7 @@
 			show : false,
 		});
 
-
+		setStoppedState();
 		$(function () {
 			$('[data-toggle="tooltip"]').tooltip()
 		})
@@ -374,18 +386,8 @@
 			jQuery.getJSON("quartiere@_ID_QUARTIERE_@/map.json",
 					function(data) {
 						myMap.asyncLoad(data);
-						// myMap.draw();
-						//entities.load(data);
-						// entities.draw();
-						// entities.hide();
-						// myMap.bringTrafficLightsToFront();
 					});
 		}, 10);
-
-		// mapLayer = project.activeLayer;
-		// secondLayer = new Layer();
-		// view.draw();
-		//view.onFrame = update;
 
 		var myTool = new Tool();
 		myTool.onMouseDown = function(event) {
@@ -497,8 +499,10 @@
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
 		</div>
+		<div class="divisor-small"></div>
+			<button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
 		<div class="divisor"></div>
-			<button type="button" class="btn btn-primary glyphicon glyphicon-home" onClick="window.open('/', '_self');"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
+			<button type="button" class="btn btn-primary glyphicon glyphicon-home" onClick="window.open('/', '_self');"  data-toggle="tooltip" data-placement="right" title="Torna alla mappa della città"></button>
 		<div class="divisor"></div>
 		<div>
 			<button type="button" class="btn btn-danger glyphicon glyphicon-stop" onClick="requestTermination()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
@@ -506,7 +510,7 @@
 		</div>
 
 				<div id="status-box">
-			<div id="statusPanel" class="panel panel-default">
+			<div id="statusPanel" class="panel panel-default collaps">
 				<!-- Default panel contents -->
 				<div class="panel-heading">Posizione oggetti</div>
 				<!--<div class="panel-body">-->
@@ -581,16 +585,31 @@
 			<div class="propsBlock-run">
 				<div class="labels">
 					<p>Macchine:</p>
+					<p>Autobus:</p>
 					<p>Bici:</p>
 					<p>Pedoni:</p>
 					<p>Cache:</p>
 				</div>
 				<div class="values">
 					<p id="car-num">0</p>
+					<p id="buses-num">0</p>
 					<p id="bike-num">0</p>
 					<p id="ped-num">0</p>
 					<p class="statesCount">0</p>
 				</div>
+			</div>
+		</div>
+
+		<div id="rendering-state-box">
+			<p id="info-title"><strong>Stato rendering</strong></p>
+			<div class="renderingState">
+			<div class="progress">
+							<div id="rendering-state-bar" class="progress-bar progress-bar-danger"
+								role="progressbar" aria-valuenow="100" aria-valuemin="0"
+								aria-valuemax="100" style="width: 100%">
+								<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo
+							</div>
+						</div>
 			</div>
 		</div>
 

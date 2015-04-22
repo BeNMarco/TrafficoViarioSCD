@@ -70,6 +70,18 @@
 			view.zoom = view.zoom / 1.1;
 		}
 
+  function fitMap(){
+    if(project.activeLayer.children.length > 0){
+      var g = project.activeLayer;
+      var xP = view.size.width / g.bounds.width;
+      var yP = view.size.height / g.bounds.height;
+      var z = xP;
+      if(Math.abs(yP) < Math.abs(xP))
+        z = yP;
+      view.zoom = view.zoom * z;
+      view.center = project.activeLayer.position;
+    }
+  }
 
 		function selectText(containerid) {
 
@@ -342,9 +354,12 @@
 			</label>
 
 			<div class="divisor"></div>
-			<button id="getData" type="button" class="btn btn-info glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="right" title="Visualizza dati"></button>
+			<button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
 
 			<div class="divisor"></div>
+			<button id="getData" type="button" class="btn btn-info glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="right" title="Visualizza dati"></button>
+
+			<div class="divisor-small"></div>
 			<button id="save" type="button" class="btn btn-success glyphicon glyphicon-save" data-toggle="tooltip" data-placement="right" title="Salva"></button>
 		
 		</div>

@@ -25,7 +25,7 @@ function EntitiesStyle(){
 		color: 'red'
 	};
 	this.bus = {
-		shape: {type:'Rectangle', args: {point:[0,0],size:[8,15]}},
+		shape: {type:'Rectangle', args: {point:[0,0],size:[2,3]}},
 		color: 'blue'
 	};
 	this.bike = {
@@ -35,6 +35,18 @@ function EntitiesStyle(){
 	this.pedestrian = {
 		shape: {type:'Circle', args: {center:[0,0], radius:0.25}},
 		color: 'pink'
+	};
+}
+
+function WorldEntitiesStyle(){
+
+	this.car = {
+		shape: {type:'Circle', args: {center:[0,0], radius:7}},
+		color: 'red'
+	};
+	this.bus = {
+		shape: {type:'Circle', args: {center:[0,0], radius:7}},
+		color: 'blue'
 	};
 }
 
@@ -158,19 +170,23 @@ function Car(id, id_quartiere, length){
 }
 
 Car.prototype.move = function(pos, angle){
+	var rotate = (typeof angle === 'undefined') ? false : true;
 	var p = new Point();
 	p.length = this.length/2;
-	p.angle = this.angle;
+	if(rotate) p.angle = this.angle;
 	this.path.position = pos.subtract(p);
-	this.path.rotate(angle-this.angle);
-	this.angle=angle;
+	if(rotate){
+		this.path.rotate(angle-this.angle);
+		this.angle=angle;
+	}
 }
 
 Car.prototype.draw = function(style)
 {
 	// calling the "super" method
 	var tmpSt = style;
-	tmpSt.shape.args.size[1] = this.length;
+	if(tmpSt.shape.args.size)
+		tmpSt.shape.args.size[1] = this.length;
 	Entity.prototype.draw.call(this, tmpSt);
 }
 
@@ -206,6 +222,7 @@ function EntitiesRegistry(){
 	this.cars = [];
 	this.bikes = [];
 	this.pedestrians = [];
+	this.buses = [];
 	this.style = new EntitiesStyle();
 
 	this.onCarsChange = null;
@@ -224,6 +241,28 @@ EntitiesRegistry.prototype.addCar = function(id, id_quartiere_abitante, length)
 		this.onCarsChange(this.cars);
 	}
 	return curCar;
+}
+
+EntitiesRegistry.prototype.addBus = function(id, id_quartiere_abitante, length)
+{
+	var curBus = new Car(id, id_quartiere_abitante, length);
+	curBus.draw(this.style.bus);
+	curBus.show();
+	this.buses[id_quartiere_abitante+"_"+id] = curBus;
+	if(typeof this.onBusesChange === 'function')
+	{
+		this.onBusesChange(this.buses);
+	}
+	return curBus;
+}
+
+EntitiesRegistry.prototype.addVehicle = function(id, id_quartiere_abitante, length, isBus){
+	isBus = typeof isBus === 'undefined' ? false : isBus;
+	if(isBus){
+		return this.addBus(id, id_quartiere_abitante, length);
+	} else {
+		return this.addCar(id, id_quartiere_abitante, length);
+	}
 }
 
 EntitiesRegistry.prototype.removeCar = function(id, id_quartiere_abitante)

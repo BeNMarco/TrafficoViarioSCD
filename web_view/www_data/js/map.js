@@ -1163,7 +1163,7 @@ function Crossroad(obj, map, designMode) {
 Crossroad.prototype.linkStreets = function(streets, district) {
 	var firstIn = null;
 	var polo = true;
-	var entr = 0;
+	var entr = 1;
 	for (var i = 0; i < this.streetsRef.length; i++) {
 		entr++;
 		if (this.streetsRef[i] != null) {

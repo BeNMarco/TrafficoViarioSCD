@@ -2,15 +2,15 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Mappa quartiere @_ID_QUARTIERE_@</title>
+<title>Mappa città</title>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-<script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/worldMap.js"></script>
-<script type="text/javascript" src="js/simulation.js"></script>
+<script type="text/javascript" src="js/worldSimulation.js"></script>
 <script type="text/javascript" src="js/entities.js"></script>
+<script type="text/javascript" src="js/traiettorie.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/utils/JSChain.js"></script>
 <script type="text/javascript" src="js/utils/paper-full.js"></script>
@@ -38,17 +38,27 @@
 		// Internet Explorer) will be suppressed.
 		return suppressErrorAlert;
 	};
+  var server = window.location.host;
 
+  var worldStyle = new WorldMapStyle();
   var world = new WorldMap();
+
+  var entities = new EntitiesRegistry();
+  entities.setStyle(new WorldEntitiesStyle());
+
+  var sim = new WorldSimulation(entities, 10, 1000);
   
-  var ws1 = null;
+  var enableSimulation = true;
+  var simulationRunning = false;
+
   var updatesURI = "mainpageUpdates";
   var server = window.location.host;
 
   var target = "ws://" + server
       + "/" + updatesURI;
   console.log("Opening the websocket against " + target);
-  ws1 = new WebSocket(target);
+
+  var ws1 = new WebSocket(target);
 
   ws1.onopen = function(event) {
     //ws1.send("ciao server");
@@ -66,6 +76,7 @@
         function(data) {
           console.log(data);
           var map = world.addMapPiece(data);
+          map.setTraiettorie(traiettorie);
           map.onMapMouseEnter = function(event){
             this.prevCursor = $('#canvas').css('cursor');
             $('#canvas').css('cursor', 'pointer');
@@ -76,7 +87,26 @@
           map.onMapMouseUp = function(event){
             $('#canvas').css('cursor', 'pointer');
           }
-          map.draw(null);
+
+          map.onPieceReady = function(){
+            console.log("the piece is ready");
+            var pSim = sim.addPiece(this);
+            var target = "ws://" + server
+                + "/quartiere"+this.id+"/updatesStream"
+            pSim.prepareSocket(target);
+            if(enableSimulation && !simulationRunning){
+              view.onFrame = function(event) {
+                sim.updateState(event.delta * 1000);
+              }
+              simulationRunning = true;
+            }
+            pSim.onReady(function(){
+              console.log("The simulation is ready");
+              this.init();
+            });
+          };
+          map.load(data);
+          map.draw(worldStyle);
           world.liftPiecesBorders();
           fitMap();
         });
@@ -87,39 +117,24 @@
     console.log(event);
   }
 
-/*
-	world.onFinishLoading = function(){world.asyncDraw();};
-	world.onFinishDrawing = function() {
-		world.bringTrafficLightsToFront();
-		mapLayer = project.activeLayer;
-		view.draw();
-		closeLoadingDialog();
-		console.log("done with the drawing");
-		if(enableSimulation){
-				getUpdates();
-			}
-	};
-
-	world.setProgressNotifier(setProgressText);
-*/
-	// callbacks for the counters
-
-
-
-	mapLayer = null;
+  function setupSimulation(){
+    console.log("the piece is ready");
+    var pSim = sim.addPiece(this);
+    var target = "ws://" + server
+        + "/quartiere"+this.id+"/updatesStream"
+    pSim.prepareSocket(target);
+    if(enableSimulation && !simulationRunning){
+      view.onFrame = function(event) {
+        sim.updateState(event.delta * 1000);
+      }
+    }
+  }
 
 	paper.install(window);
-
-	var style = new MapStyle();
 
 	var dDialog = null;
 	var ws1;
 	var ws2;
-	var server = window.location.host;
-
-	function setupSimulation() {
-		
-	}
 
 	function startSimulation() {
 		console.log("start simulation");
@@ -139,43 +154,24 @@
 
 	function zoomIn() {
 		view.zoom = view.zoom * 1.1;
-    console.log(view.size);
 	}
 
 	function zoomOut() {
 		view.zoom = view.zoom / 1.1;
-    console.log(view.size);
 	}
 
   function fitMap(){
-    var g = project.activeLayer;
-    var xP = view.size.width / g.bounds.width;
-    var yP = view.size.height / g.bounds.height;
-    var z = xP;
-    if(Math.abs(yP) > Math.abs(yP))
-      z = yP;
-    console.log(view.size);
-    console.log(g.bounds);
-    console.log("zoom: "+view.zoom+" z:"+z);
-    view.zoom = z;
-    view.center = project.activeLayer.position;
+    if(project.activeLayer.children.length > 0){
+      var g = project.activeLayer;
+      var xP = view.size.width / g.bounds.width;
+      var yP = view.size.height / g.bounds.height;
+      var z = xP;
+      if(Math.abs(yP) < Math.abs(xP))
+        z = yP;
+      view.zoom = view.zoom * z;
+      view.center = project.activeLayer.position;
+    }
   }
-
-	function selectText(containerid) {
-
-		var node = document.getElementById(containerid);
-
-		if (document.selection) {
-			var range = document.body.createTextRange();
-			range.moveToElementText(node);
-			range.select();
-		} else if (window.getSelection) {
-			var range = document.createRange();
-			range.selectNodeContents(node);
-			window.getSelection().removeAllRanges();
-			window.getSelection().addRange(range);
-		}
-	}
 
 	function openLoadingDialog() {
 		console.log("openLoadingDialog fired");
@@ -196,55 +192,6 @@
 
 	function closeMessageDialog() {
 		$('#messageDialog').modal('hide');
-	}
-
-
-
-	function getUpdates() {
-		var target = "ws://" + server
-				+ "/quartiere@_ID_QUARTIERE_@/updatesStream";
-		console.log("Opening the websocket against " + target);
-		ws1 = new WebSocket(target);
-
-		ws1.onopen = function(event) {
-			//ws1.send("ciao server");
-			console.log(event);
-		}
-		ws1.onmessage = function(event) {
-			//console.log(event);
-			//console.log(event.data);
-			//console.log(JSON.parse(event.data));
-			var msg = JSON.parse(event.data);
-			if(msg.type)
-			{
-				if(msg.type == "update")
-				{
-					
-				} 
-				else if (msg.type == "command")
-				{
-					console.log(msg);
-					if(msg.command == "terminated")
-					{
-						ws1.close();
-
-						view.onFrame = null;
-						closeLoadingDialog();
-						openMessageDialog("Simulazione terminata.<br />Ora è possibile chiudere il browser.");
-					}
-					if(msg.command == "termination_requested")
-					{
-						openLoadingDialog();
-						$('#loadingMessage').html(
-								"Terminazione richiesta.<br />In attesa del segnale di terminazione da parte del sistema.");
-					}	
-				}
-			}
-		}
-
-		ws1.onerror = function(event) {
-			console.log(event);
-		}
 	}
 
 	function requestTermination()
@@ -497,9 +444,9 @@
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-in" onClick="zoomIn()"  data-toggle="tooltip" data-placement="right" title="Zoom Im"></button>
 		  <button type="button" class="btn btn-default glyphicon glyphicon-zoom-out" onClick="zoomOut()"  data-toggle="tooltip" data-placement="right" title="Zoom out"></button>
 		</div>
-    <div class="divisor"></div>
+    <div class="divisor-small"></div>
     <div>
-      <button type="button" class="btn btn-info glyphicon glyphicon-stop" onClick="fitMap()"  data-toggle="tooltip" data-placement="right" title="Richiedi terminazione"></button>
+      <button id="fitMapButton" type="button" class="btn btn-default glyphicon glyphicon-fullscreen" data-toggle="tooltip" data-placement="right" title="Centra e ridimensiona" onClick="fitMap()"></button>
     </div>
 		<div class="divisor"></div>
 		<div>

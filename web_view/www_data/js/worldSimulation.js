@@ -8,7 +8,34 @@ function doesExists(thing) {
 	return typeof thing !== 'undefined' && thing != null;
 }
 
-function Simulation(map, objects, requiredStatesToStart, statesDuration) {
+function WorldSimulation(objects, requiredStatesToStart, statesDuration){
+	this.pieces = {};
+	this.entities = objects;
+	this.requiredStatesToStart = requiredStatesToStart;
+	this.statesDuration = statesDuration;
+}
+
+WorldSimulation.prototype.addPiece = function(map){
+	var toRet = new PieceSimulation(map, this.entities, this.requiredStatesToStart, this.statesDuration);
+	this.pieces[map.id] = toRet;
+	return toRet;
+}
+
+WorldSimulation.prototype.updateState = function(deltaTime){
+	for (var i in this.pieces) {
+		this.pieces[i].updateState(deltaTime);
+	}
+}
+
+WorldSimulation.prototype.stop = function(){
+	for (var i = this.pieces.length - 1; i >= 0; i--) {
+		this.pieces[i].socket.close();
+		this.pieces[i].stop();
+	}
+}
+
+
+function PieceSimulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.stateCache = [];
 	this.pathCache = {
 		cars : {}
@@ -37,42 +64,51 @@ function Simulation(map, objects, requiredStatesToStart, statesDuration) {
 
 	this.lastStateTime = 0;
 	this.curStateNum = 0;
-	this.traiettorie = null;
+	this.traiettorie = map.traiettorie;
+	this.sockets = null;
 }
 
-Simulation.prototype.setTraiettorie = function(traiettorie){
+PieceSimulation.prototype.prepareSocket = function(target){
+	this.socket = new WebSocket(target);
+
+	var that = this;
+  this.socket.onmessage = function(event) {
+
+    var msg = JSON.parse(event.data);
+    if(msg.type)
+    {
+      if(msg.type == "update")
+      {
+        that.addState(msg);
+      } 
+    }
+  }
+  return this.socket;
+}
+
+PieceSimulation.prototype.setTraiettorie = function(traiettorie){
 	this.traiettorie = traiettorie;
 }
 
-Simulation.prototype.onReady = function(callback) {
+PieceSimulation.prototype.onReady = function(callback) {
 	this.readyCallback = callback;
 }
 
-Simulation.prototype.onStateReceived = function(callback) {
+PieceSimulation.prototype.onStateReceived = function(callback) {
 	this.gotStateCallback = callback;
 }
 
-Simulation.prototype.addState = function(state) {
-	console.log("got state");
+PieceSimulation.prototype.addState = function(state) {
+	var newState = [];
 	for(var i in state.abitanti)
 	{
-		state.abitanti[i].num = this.curStateNum;
-		switch(state.abitanti[i].mezzo)
-		{
-			case 'car':
-				state.abitanti[i] = this.setCarPathLength(state.abitanti[i]);
-				break;
-			case 'bike':
-				state.abitanti[i] = this.setPedPathLength(state.abitanti[i]);
-				break;
-			case 'walking':
-				state.abitanti[i] = this.setPedPathLength(state.abitanti[i]);
-				break;
+		if(state.abitanti[i].mezzo == 'car'){
+			newState.push(this.setCarPathLength(state.abitanti[i]));
 		}
 	}
+	state.abitanti = newState;
 	this.stateCache.push(state);
 	this.receivedStates++;
-	this.curStateNum++;
 
 	if (this.gotStateCallback && (typeof this.gotStateCallback === 'function')) {
 		this.gotStateCallback(this.stateCache.length);
@@ -97,7 +133,7 @@ Simulation.prototype.addState = function(state) {
 	}
 }
 
-Simulation.prototype.init = function() {
+PieceSimulation.prototype.init = function() {
 	this.prevState = null;
 	this.currentState = this.stateCache.shift();
 	this.currentState.stateTime = 0;
@@ -116,108 +152,39 @@ Simulation.prototype.init = function() {
 
 }
 
-Simulation.prototype.setCarPathLength = function(state)
+PieceSimulation.prototype.setCarPathLength = function(state)
 {
 	switch (state.where) {
 		case 'strada':
 			state.pathLength = this.map.streets[state.id_where].getStreetLength();
-			break;
-		case 'strada_ingresso':
-			state.pathLength = this.map.entranceStreets[state.id_where].getStreetLength();
-			break;
-		case 'traiettoria_ingresso':
-			state.pathLength = this.map.streets[state.id_where]
-			.getEntrancePathLength(state.polo,
-				state.distanza_ingresso,
-				state.traiettoria);
 			break;
 		case 'incrocio':
 			state.pathLength = this.map.crossroads[state.id_where]
 			.getCrossingPathLength(state.strada_ingresso,
 				state.quartiere_strada_ingresso,
 				state.direzione);
-
-			break;
-		case 'cambio_corsia':
-			state.pathLength = this.map.streets[state.id_where]
-			.getOvertakingPathLength(state.distanza_inizio,
-				state.polo, state.corsia_inizio - 1,
-				state.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare);
-			break;
-	}
-	return state;
-}
-
-Simulation.prototype.setPedPathLength = function(state)
-{
-	state.bike = (state.mezzo == "bike");
-
-	switch (state.where) {
-		case 'strada':
-			state.pathLength = this.map.streets[state.id_where].getStreetLength();
-			break;
-		case 'strada_ingresso':
-			state.pathLength = this.map.entranceStreets[state.id_where].getStreetLength();
 			break;
 		case 'traiettoria_ingresso':
-			state.pathLength = this.map.streets[state.id_where]
-			.getOnZebraPathLength(state.polo,
-				state.distanza_ingresso,
-				state.traiettoria, state.bike);
+			state.pathLength = this.traiettorie.traiettorie_ingresso[state.traiettoria].lunghezza;
 			break;
-		case 'incrocio':
-			state.pathLength = this.map.crossroads[state.id_where]
-			.getPedestrianPathLength(state.strada_ingresso,
-				state.quartiere_strada_ingresso,
-				state.direzione);
+		case 'cambio_corsia':
+			state.pathLength = this.traiettorie.cambio_corsia.lunghezza_traiettoria;
 			break;
 	}
-
 	return state;
 }
 
-Simulation.prototype.initPrevState = function(state) {
+PieceSimulation.prototype.initPrevState = function(state) {
 	var len = state.abitanti.length;
 	var done = false;
 	for (var i = 0; i < len; i++) {
 		var curState = state.abitanti[i];
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
-		var o = null;
-		try{
-			switch(curState.mezzo)
-			{
-				case 'car':
-					o = this.objects.cars[id];
-					//curState = this.setCarPathLength(curState);
-					break;
-				case 'bike':
-					o = this.objects.bikes[id];
-					//curState = this.setPedPathLength(curState);
-					break;
-				case 'walking':
-					o = this.objects.pedestrians[id];
-					//curState = this.setPedPathLength(curState);
-					break;
-			}
-			// if(!done) {console.log("Before> Prev:"+o.prevState.num+" Cur:"+curState.num); }
-			if (o) {
-				o.prevState = curState;
-			}
-		} catch (e) {
-			console.log("INIT PREV STATE > Exception ++++++++++++++++++++");
-			console.log("exception:");
-			console.log(e);
-			console.log("state:");
-			console.log(curState);
-			console.log("o:");
-			console.log(o);
-			console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
-			throw e;
-		}
+		this.objects.cars[id].prevState = curState;
 	}
 }
 
-Simulation.prototype.addNewCar = function(carState)
+PieceSimulation.prototype.addNewCar = function(carState)
 {
 	curCar = new Car(carState.id_abitante, carState.id_quartiere_abitante);
 	curCar.draw(this.objects.style);
@@ -225,13 +192,13 @@ Simulation.prototype.addNewCar = function(carState)
 	this.objects.cars[carState.id_quartiere_abitante+"_"+carState.id_abitante] = curCar;
 }
 
-Simulation.prototype.computeNewDistance = function(distance, prevPosition)
+PieceSimulation.prototype.computeNewDistance = function(distance, prevPosition)
 {
 	var curDist = (distance < 0) ? 0 : distance;
 	return prevPosition + ((curDist - prevPosition) * (this.currentState.stateTime / this.statesDuration));
 }
 
-Simulation.prototype.computeCurrentLength = function(length)
+PieceSimulation.prototype.computeCurrentLength = function(length)
 {
 	return length * (this.currentState.stateTime / this.statesDuration);
 }
@@ -266,7 +233,7 @@ function onSamePath(prevState, curState)
 	return toRet;
 }
 
-Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
+PieceSimulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 {
 	var newDistance = 0;
 	var stateToUse = null;
@@ -404,7 +371,7 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 	return {state: stateToUse, distance: newDistance};
 }
 
-Simulation.prototype.moveCar = function(time, curCarState)
+PieceSimulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
 	var s = null;
@@ -424,50 +391,35 @@ Simulation.prototype.moveCar = function(time, curCarState)
 		var newPos = null;
 		switch (s.where) {
 		case 'strada':
-			newPos = this.map.streets[s.id_where].getPositionAt(
-					newDistance, s.polo, s.corsia - 1);
+			newPos = this.map.streets[s.id_where].getPositionAt(newDistance, s.polo);
+			curCar.show();
 			break;
 		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[s.id_where]
-					.getPositionAt(newDistance, !s.in_uscita,
-							s.corsia - 1);
+			curCar.hide();
 			break;
 		case 'traiettoria_ingresso':
-			newPos = this.map.streets[s.id_where]
-					.getPositionAtEntrancePath(s.polo,
-							s.distanza_ingresso,
-							s.traiettoria, newDistance);
+			curCar.hide();
 			break;
 		case 'incrocio':
 			newPos = this.map.crossroads[s.id_where]
 					.getPositionAt(newDistance, s.strada_ingresso,
 							s.quartiere_strada_ingresso,
 							s.direzione);
-			
+			curCar.show();
 			break;
 		case 'cambio_corsia':
-		try{
-			var path = this.map.streets[s.id_where]
-					.getOvertakingPath(s.distanza_inizio,
-							s.polo, s.corsia_inizio - 1,
-							s.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare);
-			var loc = path.getLocationAt(newDistance);
-			newPos = {
-				position : loc.point,
-				angle : loc.tangent.angle
-			}
-		}catch(e){
-			console.log("Spostamento a "+newDistance+" di "+this.map.streets[s.id_where]
-					.getOvertakingPathLength(s.distanza_inizio,
-							s.polo, s.corsia_inizio - 1,
-							s.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare))
-		}
+			var newPos = this.map.streets[s.id_where]
+					.getPositionAtOvertaking(newDistance, s.polo, s.distanza_inizio);
+
+			curCar.show();
 			break;
 		}
-		curCar.move(newPos.position, newPos.angle);
-		if(typeof this.onObjectMoved === 'function')
-		{
-			this.onObjectMoved(curCar, s, newDistance, newPos);
+		if(newPos != null){
+			curCar.move(newPos.position, newPos.angle);
+			if(typeof this.onObjectMoved === 'function')
+			{
+				this.onObjectMoved(curCar, s, newDistance, newPos);
+			}
 		}
 	} catch (e) {
 		console.log("MOVE CAR > Got exception =====");
@@ -483,134 +435,17 @@ Simulation.prototype.moveCar = function(time, curCarState)
 	}
 }
 
-Simulation.prototype.moveBipede = function(time, curBiState)
-{
-	var curBiID = curBiState.id_quartiere_abitante+"_"+curBiState.id_abitante;
-	var s = null;
-	var curBi = (curBiState.mezzo == 'bike') ? this.objects.bikes[curBiID] : this.objects.pedestrians[curBiID];
-	curBiState.bike = (curBiState.mezzo == "bike");
-	if(curBi == null)
-	{
-		if(curBiState.bike)
-		{
-			curBi = this.objects.addBike(curBiState.id_abitante, curBiState.id_quartiere_abitante);
-		} else {
-			curBi = this.objects.addPedestrian(curBiState.id_abitante, curBiState.id_quartiere_abitante);
-		}
-		curBi.prevState = curBiState;
-	}
-	try {
-		
-		var toUse = this.computeNewDistanceAndState(curBi.prevState, curBiState);
-		s = toUse.state;
-		var newDistance = toUse.distance;
-
-		var newPos = null;
-		switch (s.where) {
-		case 'strada':
-			newPos = this.map.streets[s.id_where].getOnPavementPositionAt(
-					newDistance, s.polo, s.bike);
-			break;
-		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[s.id_where]
-					.getOnPavementPositionAt(newDistance, !s.in_uscita,
-							s.bike);
-			break;
-		case 'traiettoria_ingresso':
-			newPos = this.map.streets[s.id_where]
-					.getOnZebraPositionAt(newDistance, s.polo,
-							s.distanza_ingresso,
-							s.traiettoria, s.bike);
-			break;
-		case 'incrocio':
-			newPos = this.map.crossroads[s.id_where]
-					.getPositionOnPedestrianPath(newDistance, s.strada_ingresso,
-							s.quartiere_strada_ingresso,
-							s.direzione);
-			
-			break;
-		}
-		curBi.move(newPos.position);
-		if(typeof this.onObjectMoved === 'function')
-		{
-			this.onObjectMoved(curBi, s, newDistance, newPos);
-		}
-	} catch (e) {
-		console.log("MOVE BIPEDE > Got exception =====");
-		console.log(e);
-		console.log("current:");
-		console.log(curBiState);
-		console.log("previous:");
-		console.log(curBi.prevState);
-		console.log("used:");
-		console.log(s);
-		console.log("=================================");
-	}
-}
-
-Simulation.prototype.moveObjects = function(time) {
+PieceSimulation.prototype.moveObjects = function(time) {
 	this.currentState.stateTime += time;
 	var len = this.currentState.abitanti.length;
 	for (var c = 0; c < len; c++) {
 		var s = this.currentState.abitanti[c];
-		switch(s.mezzo)
-		{
-			case 'car':
-				this.moveCar(time, s);
-				break;
-			case 'bike':
-			case 'walking':
-				this.moveBipede(time, s);
-				break;
-		}
+		this.moveCar(time, s);
 	}
 }
 
-Simulation.prototype.removeOnesWhoLeft = function()
-{
-	for (var i = this.currentState.abitanti_uscenti.length - 1; i >= 0; i--) {
-		var a = this.currentState.abitanti_uscenti[i];
-		switch(a.mezzo)
-		{
-			case "car":
-				this.objects.removeCar(a.id_abitante, a.id_quartiere_abitante);
-			case "bike":
-				this.objects.removeBike(a.id_abitante, a.id_quartiere_abitante);
-			case "pedestrian":
-				this.objects.removePedestrian(a.id_abitante, a.id_quartiere_abitante);
-			default:
-				break;
-		}
-	}
-}
 
-Simulation.prototype.setTrafficLights = function(trafficLights, idxArray, state)
-{
-	for(var r in idxArray)
-	{
-		var trl = trafficLights[idxArray[r]];
-		for(tri in trl)
-		{
-			trl[tri].setColor(state);
-		}
-	}
-}
-
-Simulation.prototype.updateTrafficLightsState = function()
-{
-	for(var i in this.currentState.semafori)
-	{
-		var s = this.currentState.semafori[i];
-		if(s)
-		{
-			var tArr = this.map.crossroads[s.id_incrocio].trafficLights;
-			this.setTrafficLights(tArr, s.index_road_rossi, 'red');
-			this.setTrafficLights(tArr, s.index_road_verdi ,'green');
-		}
-	}
-}
-
-Simulation.prototype.updateState2 = function(deltaTime) {
+PieceSimulation.prototype.updateState2 = function(deltaTime) {
 	if (deltaTime != 0 && this.currentState != null) {
 		this.simulationTime += deltaTime;
 
@@ -654,7 +489,7 @@ Simulation.prototype.updateState2 = function(deltaTime) {
 	}
 }
 
-Simulation.prototype.updateState = function(deltaTime) {
+PieceSimulation.prototype.updateState = function(deltaTime) {
 	if (deltaTime != 0 && this.currentState != null) {
 		this.simulationTime += deltaTime;
 
@@ -686,9 +521,6 @@ Simulation.prototype.updateState = function(deltaTime) {
 					this.receivedStates = 0;
 				} else {
 					this.currentState.stateTime = 0;
-
-					this.removeOnesWhoLeft();
-					this.updateTrafficLightsState();
 				}
 			}
 			deltaTime = remainingTime - this.statesDuration*(numStatesSkip - 1);
@@ -699,7 +531,7 @@ Simulation.prototype.updateState = function(deltaTime) {
 	}
 }
 
-Simulation.prototype.fastForward = function() {
+PieceSimulation.prototype.fastForward = function() {
 	console.log("Called fastForward");
 	if (this.running && this.stateCache.length >= this.requiredStates) {
 		var tmpArr = this.stateCache.slice(this.stateCache.length
@@ -711,6 +543,6 @@ Simulation.prototype.fastForward = function() {
 	}
 }
 
-Simulation.prototype.stop = function(){
+PieceSimulation.prototype.stop = function(){
 	this.running = false;
 }

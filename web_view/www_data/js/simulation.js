@@ -180,7 +180,7 @@ Simulation.prototype.initPrevState = function(state) {
 			switch(curState.mezzo)
 			{
 				case 'car':
-					o = this.objects.cars[id];
+					o = this.objects.getOrAddVehicle(curState.id_abitante, curState.id_quartiere_abitante, curState.length_abitante, curState.is_a_bus);
 					//curState = this.setCarPathLength(curState);
 					break;
 				case 'bike':
@@ -208,14 +208,6 @@ Simulation.prototype.initPrevState = function(state) {
 			throw e;
 		}
 	}
-}
-
-Simulation.prototype.addNewCar = function(carState)
-{
-	curCar = new Car(carState.id_abitante, carState.id_quartiere_abitante);
-	curCar.draw(this.objects.style);
-	curCar.show();
-	this.objects.cars[carState.id_quartiere_abitante+"_"+carState.id_abitante] = curCar;
 }
 
 Simulation.prototype.computeNewDistance = function(distance, prevPosition)
@@ -569,7 +561,7 @@ Simulation.prototype.removeOnesWhoLeft = function()
 		switch(a.mezzo)
 		{
 			case "car":
-				this.objects.removeCar(a.id_abitante, a.id_quartiere_abitante);
+				this.objects.removeVehicle(a.id_abitante, a.id_quartiere_abitante, a.is_a_bus);
 			case "bike":
 				this.objects.removeBike(a.id_abitante, a.id_quartiere_abitante);
 			case "pedestrian":

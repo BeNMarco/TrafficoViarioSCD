@@ -77,7 +77,11 @@ function PieceSimulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.curStateNum = 0;
 	this.traiettorie = map.traiettorie;
 	this.sockets = null;
+
+	this.world = null;
 }
+
+
 
 PieceSimulation.prototype.prepareSocket = function(target){
 	this.socket = new WebSocket(target);
@@ -348,7 +352,7 @@ PieceSimulation.prototype.computeNewDistanceAndState = function(prevState, curSt
 				if (curState.where == 'strada_ingresso'
 						&& (prevState.in_uscita != curState.in_uscita)) {
 					prevPosition = 0;
-				}
+				} else
 				if(prevState.distanza > curState.distanza)
 				{
 					console.log("Not possible!");
@@ -435,6 +439,8 @@ PieceSimulation.prototype.moveCar = function(time, curCarState)
 		}
 	} catch (e) {
 		console.log("MOVE CAR > Got exception =====");
+		console.log("MAP: "+this.map.id);
+		console.log(this.map);
 		console.log("New distance: "+newDistance);
 		console.log(e);
 		console.log("current:");

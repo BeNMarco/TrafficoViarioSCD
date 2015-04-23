@@ -1499,31 +1499,31 @@ Crossroad.prototype.draw = function(style) {
 
 
 			debgArr.push(crossPath);
-		}
-		if (style.debug) {
-			for (var dI in debgArr) {
-				debgArr[dI].fullySelected = true;
-				//debgArr[dI].strokeColor = 'green';
-				//debgArr[dI].strokeWidth = 0.2;
+			
+			if (style.debug) {
+				for (var dI in debgArr) {
+					debgArr[dI].fullySelected = true;
+					//debgArr[dI].strokeColor = 'green';
+					//debgArr[dI].strokeWidth = 0.2;
+				}
 			}
+
+			this.trafficLights[i] = [];
+			for (var a = 0; a < this.lanesNumber[i % 2]; a++) {
+				var tc = new Point(
+					(path.position.x + (-this.lanesNumber[i % 2] + 0.5 + (a % 4)) * style.laneWidth), (path.position.y - (this.lanesNumber[(i + 1) % 2] + 1) * style.laneWidth)
+				);
+				var t = new TrafficLight(
+					(((i % 2) == 0) ? true : false),
+					tc,
+					style,
+					2000
+				);
+				this.trafficLights[i][a] = t;
+				g.addChild(t.path);
+			}
+
 		}
-
-		this.trafficLights[i] = [];
-		for (var a = 0; a < this.lanesNumber[i % 2]; a++) {
-			var tc = new Point(
-				(path.position.x + (-this.lanesNumber[i % 2] + 0.5 + (a % 4)) * style.laneWidth), (path.position.y - (this.lanesNumber[(i + 1) % 2] + 1) * style.laneWidth)
-			);
-			var t = new TrafficLight(
-				(((i % 2) == 0) ? true : false),
-				tc,
-				style,
-				2000
-			);
-			this.trafficLights[i][a] = t;
-			g.addChild(t.path);
-		}
-
-
 		p.add(new Point(
 			(path.position.x - this.lanesNumber[i % 2] * style.laneWidth - pedOffset), (path.position.y - this.lanesNumber[(i + 1) % 2] * style.laneWidth - ped)
 		));
@@ -1580,8 +1580,6 @@ Crossroad.prototype.draw = function(style) {
 
 		if (!lunghezza_traiettorie_incroci['pedoni']['dritto_bici'])
 			lunghezza_traiettorie_incroci['pedoni']['dritto_bici'] = bikeP.length;
-
-
 
 
 		g.rotate(90 * (i % 4), path.position);

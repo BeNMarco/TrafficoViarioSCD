@@ -47,11 +47,10 @@
   entities.setStyle(new WorldEntitiesStyle());
 
   var bufferSize = 10;
-
-  var sim = new WorldSimulation(entities, bufferSize, 1000);
   
   var enableSimulation = true;
   var simulationRunning = false;
+  var terminated = false;
 
   var updatesURI = "mainpageUpdates";
   var server = window.location.host;
@@ -59,12 +58,33 @@
   var target = "ws://" + server
       + "/" + updatesURI;
 
+  var sim = new WorldSimulation(entities, bufferSize, 1000);
+
+  paper.install(window);
+
+  entities.onCarsChange = function(cars){
+    $('#car-num').text(Object.keys(cars).length);
+  }
+
+  entities.onBusesChange = function(buses){
+    $('#buses-num').text(Object.keys(buses).length);
+  }
+
+  entities.onBikesChange = function(bikes){
+    $('#bike-num').text(Object.keys(bikes).length);
+  }
+
+  entities.onPedestriansChange = function(ped){
+    $('#ped-num').text(Object.keys(ped).length);
+  }
+
   var ws1 = new WebSocket(target);
 
   ws1.onopen = function(event) {
     //ws1.send("ciao server");
     console.log(event);
   }
+
   ws1.onmessage = function(event) {
     //console.log(event);
     //console.log(event.data);
@@ -76,12 +96,12 @@
     } 
     else if (msg.type == "command"){
       if(msg.command == "terminated"){
+        terminated = true;
         ws1.close();
         sim.stop();
         view.onFrame = null;
         closeLoadingDialog();
         openMessageDialog("Simulazione terminata.<br />Ora è possibile chiudere il browser.");
-        setStoppedState();
       }
       if(msg.command == "termination_requested"){
         openLoadingDialog();
@@ -91,15 +111,30 @@
   }
 
   ws1.onerror = function(event) {
-    console.log(event);
+    if(!terminated){
+      sim.stop();
+      view.onFrame = null;
+      closeLoadingDialog();
+      openMessageDialog("Errore nella connessione.<br />"+event);
+    } 
   }
 
-  function setStoppedState(){}
+  ws1.onclose = function(event){
+    if(!terminated){
+      sim.stop();
+      view.onFrame = null;
+      closeLoadingDialog();
+      openMessageDialog("Disconnesso dal server.<br />Il server non è più raggiungibile, provare a ricaricare la pagina.");
+    } 
+  }
 
   function prepareDistrict(data){
     var map = world.addMapPiece(data);
     map.setTraiettorie(traiettorie);
-
+    $('#statusDistrict'+map.id+' .district-status-bar').attr("class", "district-status-bar progress-bar progress-bar-info active"); 
+    $('#statusDistrict'+map.id+' .district-status-bar').html('<i class="rendering-state-icon glyphicon glyphicon-flash"> </i> Attivo'); 
+// fa fa-medkit
+// glyphicon glyphicon-flash
     map.onMapMouseEnter = function(event){
       this.prevCursor = $('#canvas').css('cursor');
       $('#canvas').css('cursor', 'pointer');
@@ -118,34 +153,36 @@
     fitMap();
   }
 
-  function setupPieceSimulation(){
-    var pSim = sim.addPiece(this);
-    var target = "ws://" + server
-        + "/quartiere"+this.id+"/updatesStream"
-    pSim.prepareSocket(target);
-    if(enableSimulation && !simulationRunning){
-      view.onFrame = function(event) {
-        sim.updateState(event.delta * 1000);
-      }
-      simulationRunning = true;
-    }
-    pSim.onReady = function(){
-      console.log("The simulation is ready");
-      this.init();
-    }
-    pSim.onEmptyCache = function(){}
-    pSim.onStatesAvailable = function(){}
-    pSim.onStateReceived = cacheStatusUpdate;
+  function setBufferingState(id){
+    //var id = this.map.id;
+    $('#statusDistrict'+id+' .district-status-bar').attr("class", "district-status-bar progress-bar progress-bar-striped active"); 
+    $('#statusDistrict'+id+' .district-status-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-refresh"> </i> Buffering');
   }
 
-  function cacheStatusUpdate(nInCache){
-    console.log(nInCache);
-    var id = this.map.id;
+  function setRunningState(id){
+    //var id = this.map.id;
+    $('#statusDistrict'+id+' .district-status-bar').attr("class", "district-status-bar progress-bar progress-bar-striped progress-bar-success active"); 
+    $('#statusDistrict'+id+' .district-status-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-play"> </i> Running');
+  }
+
+  function setStoppedState(id){
+    //var id = this.map.id;
+    $('#statusDistrict'+id+' .district-status-bar').attr("class", "district-status-bar progress-bar progress-bar-danger"); 
+    $('#statusDistrict'+id+' .district-status-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo');
+  }
+
+  function setDisconnectedState(id){
+    $('#statusDistrict'+id+' .district-status-bar').attr("class", "district-status-bar progress-bar progress-bar-danger"); 
+    $('#statusDistrict'+id+' .district-status-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-exclamation-sign"> </i> Disconnesso');
+  }
+
+  function cacheStatusUpdate(id, nInCache){
+    //var id = this.map.id;
     var perc = (nInCache / bufferSize);
     perc = perc > 1.0 ? 1.0 : perc;
-
-    $('#statusDistrict'+id+' .rendering-cache-bar').html(nInCache);
-    $('#statusDistrict'+id+' .rendering-cache-bar').css('width', (perc*100)+'%').attr('aria-valuenow', (perc*100)); 
+    var barSelector = '#statusDistrict'+id+' .rendering-cache-bar';
+    $(barSelector).html(nInCache);
+    $(barSelector).css('width', (perc*100)+'%').attr('aria-valuenow', (perc*100)); 
 
     var barStyle = "progress-bar-default";
     if(perc < 0.33){
@@ -153,7 +190,39 @@
     } else if (perc < 1){
       barStyle = "progress-bar-warning";
     }
-    $('#statusDistrict'+id+' .rendering-cache-bar').attr("class", "progress-bar active "+barStyle); 
+    $(barSelector).attr("class", "rendering-cache-bar progress-bar active "+barStyle); 
+  }
+
+  function setupPieceSimulation(){
+    var pSim = sim.addPiece(this);
+
+    pSim.onEmptyCache = setBufferingState;
+    pSim.onStatesAvailable = setRunningState;
+    pSim.onStateReceived = cacheStatusUpdate;
+    pSim.onStateConsumed = cacheStatusUpdate;
+    pSim.onSimulationStopped = setStoppedState;
+    
+    pSim.onReady = function(){
+      console.log("The simulation is ready");
+      this.init();
+      sim.running = true;
+    }
+
+    var target = "ws://" + server
+        + "/quartiere"+this.id+"/updatesStream"
+    pSim.prepareSocket(target);
+
+    if(enableSimulation && !simulationRunning){
+      console.log("registering renderer");
+      view.onFrame = function(event) {
+        sim.updateState(event.delta * 1000);
+      }
+      simulationRunning = true;
+    }
+
+    pSim.socket.onclose = function(){
+      setDisconnectedState(pSim.map.id);
+    }
   }
 
   window.onfocus = function()
@@ -175,12 +244,6 @@
     console.log("removing renderer");
     view.onFrame = null;
   }
-
-	paper.install(window);
-
-	var dDialog = null;
-	var ws1;
-	var ws2;
 
 	function startSimulation() {
 		console.log("start simulation");
@@ -253,28 +316,14 @@
 	}
 
 	function setProgressText(text) {
-		console.log("notified " + text);
 		$('#loadingMessage').html(text);
 	}
-
-
-
-		function setProgressText(text, value) {
-			$('#loadingMessage').html(text);
-			$('#loadingDialog .progress-bar').css('width', value+'%').attr('aria-valuenow', value); 
-		}
-
-	function update(event) {
-		// the number of times the frame event was fired:
-		console.log(event.count);
-
-		// The total amount of time passed since
-		// the first frame event in seconds:
-		console.log(event.time);
-
-		// The time passed in seconds since the last frame event:
-		console.log(event.delta);
+  
+	function setProgressText(text, value) {
+		$('#loadingMessage').html(text);
+		$('#loadingDialog .progress-bar').css('width', value+'%').attr('aria-valuenow', value); 
 	}
+
 
 	onload = function(e) {
 
@@ -408,16 +457,18 @@
    <p id="info-title" class="box-title"><strong>Infos</strong></p>
    <div class="propsBlock-run">
     <div class="labels">
-     <p>Macchine:</p>
-     <p>Bici:</p>
-     <p>Pedoni:</p>
-   </div>
-   <div class="values">
-     <p id="car-num">0</p>
-     <p id="bike-num">0</p>
-     <p id="ped-num">0</p>
-   </div>
- </div>
+      <p>Macchine:</p>
+      <p>Autobus:</p>
+      <p>Bici:</p>
+      <p>Pedoni:</p>
+    </div>
+    <div class="values">
+      <p id="car-num">0</p>
+      <p id="buses-num">0</p>
+      <p id="bike-num">0</p>
+      <p id="ped-num">0</p>
+    </div>
+  </div>
 </div>
 
 <div id="rendering-state-box">
@@ -437,8 +488,8 @@
         <td>@_DISTRICT_ID_@</td>
         <td>
           <div class="progress" style="width:100px;">
-            <div class="rendering-state-bar progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-              <iclass="rendering-state-icon glyphicon glyphicon-stop"> </i> Fermo
+            <div class="district-status-bar progress-bar progress-bar-inactive" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+              <i class="rendering-state-icon glyphicon glyphicon-minus-sign"> </i> Non attivo
             </div>
           </div>
         </td>

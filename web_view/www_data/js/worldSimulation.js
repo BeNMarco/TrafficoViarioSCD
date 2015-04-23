@@ -18,6 +18,7 @@ function WorldSimulation(objects, requiredStatesToStart, statesDuration){
 WorldSimulation.prototype.addPiece = function(map){
 	var toRet = new PieceSimulation(map, this.entities, this.requiredStatesToStart, this.statesDuration);
 	this.pieces[map.id] = toRet;
+	console.log(this.pieces);
 	return toRet;
 }
 
@@ -28,7 +29,9 @@ WorldSimulation.prototype.updateState = function(deltaTime){
 }
 
 WorldSimulation.prototype.stop = function(){
-	for (var i = this.pieces.length - 1; i >= 0; i--) {
+	console.log("Stopping");
+	console.log(this);
+	for (var i in this.pieces) {
 		this.pieces[i].socket.close();
 		this.pieces[i].stop();
 	}
@@ -61,10 +64,12 @@ function PieceSimulation(map, objects, requiredStatesToStart, statesDuration) {
 	this.ranOutOfStates = false;
 
 	// callbacks
+
 	this.onReady = null;
 	this.onEmptyCache = null;
 	this.onStatesAvailable = null;
 	this.onStateReceived = null;
+	this.onSimulationStopped = null;
 
 	this.onObjectMoved = null;
 
@@ -104,12 +109,14 @@ PieceSimulation.prototype.addState = function(state) {
 			newState.push(this.setCarPathLength(state.abitanti[i]));
 		}
 	}
+	this.curStateNum++;
 	state.abitanti = newState;
+	state.num = this.curStateNum;
 	this.stateCache.push(state);
 	this.receivedStates++;
 
 	if (this.onStateReceived && (typeof this.onStateReceived === 'function')) {
-		this.onStateReceived(this.stateCache.length);
+		this.onStateReceived(this.map.id, this.stateCache.length);
 	}
 
 	/*
@@ -126,7 +133,7 @@ PieceSimulation.prototype.addState = function(state) {
 			this.ranOutOfStates = false;
 		}
 		if (typeof this.onStatesAvailable === 'function') {
-			this.onStatesAvailable();
+			this.onStatesAvailable(this.map.id);
 		}
 	}
 }
@@ -137,8 +144,7 @@ PieceSimulation.prototype.init = function() {
 	this.currentState.stateTime = 0;
 	this.running = true;
 
-	this.moveObjects(0);
-	this.objects.show();
+	//this.moveObjects(0);
 
 	this.prevState = this.currentState;
 	this.initPrevState(this.currentState);
@@ -147,7 +153,6 @@ PieceSimulation.prototype.init = function() {
 
 	this.simulationTime = 0;
 	this.firstStateNum = this.prevState.num;
-
 }
 
 PieceSimulation.prototype.setCarPathLength = function(state)
@@ -174,10 +179,18 @@ PieceSimulation.prototype.setCarPathLength = function(state)
 
 PieceSimulation.prototype.initPrevState = function(state) {
 	var done = false;
-	for (var i in this.abitanti) {
+	for (var i in state.abitanti) {
 		var curState = state.abitanti[i];
+		curState.num = state.num;
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
-		this.objects.cars[id].prevState = curState;
+		var v = this.objects.getOrAddVehicle(curState.id_abitante, curState.id_quartiere_abitante, curState.length_abitante, curState.is_a_bus);
+		/*
+		if(curState.is_a_bus){
+			this.objects.buses[id].prevState = curState;
+		} else {
+			this.objects.cars[id].prevState = curState;
+		}*/
+		v.prevState = curState;
 	}
 }
 
@@ -372,9 +385,12 @@ PieceSimulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
 	var s = null;
-	var curCar = this.objects.cars[curCarID];
 	var newDistance = 0;
-	if(curCar == null)
+
+	// var curCar = this.objects.getOrAddVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);
+	
+	var curCar = this.objects.getVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);
+	if(!curCar)
 	{
 		console.log("New car!");
 		curCar = this.objects.addVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);
@@ -384,7 +400,6 @@ PieceSimulation.prototype.moveCar = function(time, curCarState)
 		var toUse = this.computeNewDistanceAndState(curCar.prevState, curCarState);
 		s = toUse.state;
 		newDistance = toUse.distance;
-
 		var newPos = null;
 		switch (s.where) {
 		case 'strada':
@@ -464,7 +479,7 @@ PieceSimulation.prototype.updateState2 = function(deltaTime) {
 			if (this.currentState === undefined) {
 				if (typeof this.onEmptyCache === 'function') {
 					console.log("calling callback");
-					this.onEmptyCache();
+					this.onEmptyCache(this.map.id);
 				}
 				console.log("no more states");
 				this.ranOutOfStates = true;
@@ -488,6 +503,7 @@ PieceSimulation.prototype.updateState2 = function(deltaTime) {
 
 PieceSimulation.prototype.updateState = function(deltaTime) {
 	if (deltaTime != 0 && this.currentState != null) {
+		var id = this.map.id;
 		this.simulationTime += deltaTime;
 
 		var remainingTime = 0;
@@ -507,10 +523,13 @@ PieceSimulation.prototype.updateState = function(deltaTime) {
 				this.prevState = this.currentState;
 				this.initPrevState(this.currentState);
 				this.currentState = this.stateCache.shift();
+				if(typeof this.onStateConsumed === 'function'){
+					this.onStateConsumed(this.map.id, this.stateCache.length);
+				}
 				if (this.currentState === undefined) {
 					if (typeof this.onEmptyCache === 'function') {
 						console.log("calling callback");
-						this.onEmptyCache();
+						this.onEmptyCache(this.map.id);
 					}
 					console.log("no more states");
 					this.ranOutOfStates = true;
@@ -542,4 +561,8 @@ PieceSimulation.prototype.fastForward = function() {
 
 PieceSimulation.prototype.stop = function(){
 	this.running = false;
+	console.log("Stopping "+this.map.id);
+	console.log(this);
+	if(typeof this.onSimulationStopped === 'function')
+		this.onSimulationStopped(this.map.id);
 }

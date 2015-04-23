@@ -257,12 +257,29 @@ EntitiesRegistry.prototype.addBus = function(id, id_quartiere_abitante, length)
 }
 
 EntitiesRegistry.prototype.addVehicle = function(id, id_quartiere_abitante, length, isBus){
-	isBus = typeof isBus === 'undefined' ? false : isBus;
+	var isBus = typeof isBus === 'undefined' ? false : isBus;
 	if(isBus){
 		return this.addBus(id, id_quartiere_abitante, length);
 	} else {
 		return this.addCar(id, id_quartiere_abitante, length);
 	}
+}
+
+EntitiesRegistry.prototype.getVehicle = function(id, id_quartiere_abitante, length, isBus){
+	var isBus = typeof isBus === 'undefined' ? false : isBus;
+	var id = id_quartiere_abitante+"_"+id;
+	if(isBus){
+		return this.buses[id];
+	} else {
+		return this.cars[id];
+	}
+}
+
+EntitiesRegistry.prototype.getOrAddVehicle = function(id, id_quartiere_abitante, length, isBus){
+	var v = this.getVehicle(id, id_quartiere_abitante, length, isBus);
+	if(!v)
+		v = this.addVehicle(id, id_quartiere_abitante, length, isBus);
+	return v;
 }
 
 EntitiesRegistry.prototype.removeCar = function(id, id_quartiere_abitante)

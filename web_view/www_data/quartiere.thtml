@@ -39,24 +39,30 @@
 		return suppressErrorAlert;
 	};
 
-	var enableSimulation = true;
 	var myMap = new Map();
+
 	var entities = new EntitiesRegistry();
 	var entStyle = new EntitiesStyle();
 	var oggettoCaricamento = "Caricamento";
 	var caricato = false;
 
 	var sim = null;
+	var bufferSize = 20;
+	var enableSimulation = true;
+
+	var style = new MapStyle();
+
+	var dDialog = null;
+	var ws1;
+	var ws2;
+	var server = window.location.host;
+	var terminated = false;
 
 	setupSimulation();
-
-	var bufferSize = 20;
-
 
 	myMap.onFinishLoading = function(){myMap.asyncDraw();};
 	myMap.onFinishDrawing = function() {
 		myMap.bringTrafficLightsToFront();
-		mapLayer = project.activeLayer;
 		view.draw();
 		fitMap();
 		closeLoadingDialog();
@@ -88,16 +94,7 @@
 		$('#ped-num').text(Object.keys(ped).length);
 	}
 
-	mapLayer = null;
-
 	paper.install(window);
-
-	var style = new MapStyle();
-
-	var dDialog = null;
-	var ws1;
-	var ws2;
-	var server = window.location.host;
 
 	function setupSimulation() {
 		sim = new Simulation(myMap, entities, bufferSize, 1000);
@@ -120,7 +117,7 @@
 		};
 
 		sim.onEmptyCache = setBufferingState;
-
+		sim.onStateConsumed = sim.onStateReceived;
 		sim.onStatesAvailable = setRunningState;
 
 		sim.onObjectMoved = objectMovedCallback;
@@ -132,13 +129,18 @@
 	}
 
 	function setRunningState(){
-		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-success active"); 
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-striped progress-bar-success active"); 
 		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-play"> </i> Running');
 	}
 
 	function setStoppedState(){
 		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-danger"); 
 		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo');
+	}
+
+	function setDisconnectedState(){
+		$('#rendering-state-bar').attr("class", "progress-bar progress-bar-danger"); 
+		$('#rendering-state-bar').html('<i id="rendering-state-icon" class="glyphicon glyphicon-exclamation-sign"> </i> Disconnesso');
 	}
 
 	function startSimulation() {
@@ -287,6 +289,7 @@
 					console.log(msg);
 					if(msg.command == "terminated")
 					{
+						terminated = true;
 						ws1.close();
 						sim.stop();
 						view.onFrame = null;
@@ -306,6 +309,16 @@
 
 		ws1.onerror = function(event) {
 			console.log(event);
+		}
+
+		ws1.onclose = function(event){
+			if(!terminated){
+				sim.stop();
+				view.onFrame = null;
+				closeLoadingDialog();
+				setDisconnectedState();
+				openMessageDialog("Disconnesso dal server.<br />Il server non è più raggiungibile, provare a ricaricare la pagina.");
+			}
 		}
 	}
 
@@ -519,7 +532,7 @@
 	</div>
 
 	<div id="rendering-state-box">
-		<p id="status-title" class="box-title"><strong>Rendering</strong></p>
+		<p id="status-title" class="box-title"><strong>Simulazione</strong></p>
 		<div class="renderingState">
 			<p style="text-align:center; margin-bottom:5px;">Stato</p>
 			<div class="progress">
@@ -527,8 +540,8 @@
 					<i id="rendering-state-icon" class="glyphicon glyphicon-stop"> </i> Fermo
 				</div>
 			</div>
-			<p style="text-align:center; margin-bottom:5px;">Cache</p>
-			<div class="progress">
+			<p style="text-align:center; margin:10px 0 5px 0;">Cache</p>
+			<div class="progress" style="margin-bottom:15px;">
 				<div id="rendering-cache-bar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%; min-width:10%;">
 					0
 				</div>

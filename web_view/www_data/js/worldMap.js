@@ -111,6 +111,18 @@ MapPiece.prototype.draw = function(style){
   this.path.fillColor = '#DD4F42';
   this.path.fillColor.alpha = 0;
 
+
+  this.label = new PointText({
+    point: this.path.position,
+    content: this.id,
+    fillColor: '#DD4F42',
+    fontFamily: 'Courier New',
+    fontWeight: 'bold',
+    fontSize: '20em'
+  });
+  this.label.justification = 'center';
+  this.label.visible = false;
+
   var self = this;
   this.path.onMouseDown = function(event){
     this.positionOnDown = {"x":event.event.x, "y":event.event.y};
@@ -132,6 +144,7 @@ MapPiece.prototype.draw = function(style){
     this.fillColor.alpha = 0.1;
     this.strokeColor.alpha = 1;
     this.strokeColor = '#DD4F42';
+    self.label.visible = true;
     if(typeof self.onMapMouseEnter === 'function')
       self.onMapMouseEnter(event);
   }
@@ -142,6 +155,7 @@ MapPiece.prototype.draw = function(style){
     this.fillColor.alpha = 0;
     this.strokeColor.alpha = 0.7;
     this.dashArray = [7,7];
+    self.label.visible = false;
     if(typeof self.onMapMouseLeave === 'function')
       self.onMapMouseLeave(event);
   }
@@ -190,7 +204,7 @@ function WorldMap(){
 
 WorldMap.prototype.addMapPiece = function(obj){
   var toRet = new MapPiece(obj);
-  this.pieces[obj.id] = toRet;
+  this.pieces[toRet.id] = toRet;
   return toRet;
 }
 

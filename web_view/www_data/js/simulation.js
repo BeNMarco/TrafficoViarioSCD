@@ -75,6 +75,7 @@ Simulation.prototype.addState = function(state) {
 	 * console.log("Got state after "+stateDelta + " ms"); this.lastStateTime =
 	 * new Date().getTime(); console.log(state);
 	 */
+
 	if (!this.running && this.receivedStates == this.requiredStates
 			&& (typeof this.onReady === 'function')) {
 		console.log("i'm ready!");
@@ -400,8 +401,11 @@ Simulation.prototype.moveCar = function(time, curCarState)
 {
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
 	var s = null;
-	var curCar = this.objects.cars[curCarID];
 	var newDistance = 0;
+
+	//var curCar = this.objects.getOrAddVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);;
+	
+	var curCar = this.objects.getVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);;
 	if(curCar == null)
 	{
 		console.log("New car!");
@@ -667,6 +671,9 @@ Simulation.prototype.updateState = function(deltaTime) {
 				this.prevState = this.currentState;
 				this.initPrevState(this.currentState);
 				this.currentState = this.stateCache.shift();
+				if(typeof this.onStateConsumed === 'function'){
+					this.onStateConsumed(this.stateCache.length);
+				}
 				if (this.currentState === undefined) {
 					if (typeof this.onEmptyCache === 'function') {
 						console.log("calling callback");

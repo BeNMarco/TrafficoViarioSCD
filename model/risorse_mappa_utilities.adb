@@ -271,7 +271,7 @@ package body risorse_mappa_utilities is
       intersezione:= Get(Arr => intersezioni,Index => 2);
       array_intersezioni_corsie(2):= create_intersezione_linea(linea_mezzaria,Get(Val => intersezione, Field => "distanza"));
       traiettorie(entrata_ritorno):= create_traiettoria_ingresso(Get(Val => traiettoria_entrata_ritorno, Field => "lunghezza"),
-                                                                 array_intersezioni,array_intersezioni_corsie,0.0);
+                                                                 array_intersezioni,array_intersezioni_corsie,Float(array_intersezioni_corsie(1).distanza+max_larghezza_veicolo*2.0));
 
       intersezioni:= Get(Val => traiettoria_uscita_ritorno, Field => "intersezioni");
       array_intersezioni:= new intersezioni_ingresso(1..1);

@@ -38,8 +38,8 @@ package global_data is
    max_num_stalli_uscita_ritorno_from_linea_corsia: constant Positive:= 15;
    max_num_stalli_uscita_ritorno_from_linea_mezzaria: constant Positive:= 15;
 
-   max_num_stalli_entrata_ritorno_from_linea_corsia: constant Positive:= 15;
-   max_num_stalli_entrata_ritorno_from_linea_mezzaria: constant Positive:= 15;
+   max_num_stalli_entrata_ritorno_from_linea_corsia: constant Positive:= 8;
+   max_num_stalli_entrata_ritorno_from_linea_mezzaria: constant Positive:= 8;
 
    max_num_stalli_uscita_ritorno_in_intersezione_entrata_ritorno: constant Positive:= 15;
 
@@ -55,5 +55,9 @@ package global_data is
 
    max_num_stalli_uscite_ritorno_bipedi: constant Positive:= 15; -- uscita_(destra/dritto)_(bici/pedoni)
    max_num_stalli_entrata_ritorno_bipedi: constant Positive:= 30;
+
+
+   max_num_bipedi_cross_per_sessione: constant Positive:= 8;
+
 
 end global_data;

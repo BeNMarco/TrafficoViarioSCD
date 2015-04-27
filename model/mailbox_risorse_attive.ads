@@ -80,6 +80,9 @@ package mailbox_risorse_attive is
    type bipedi_in_wait_ingressi_uscita_rit is array (Positive range <>, id_corsie range <>) of Natural;
    type type_disabi_att_cars_ingresso_per_intersezione is array(Boolean range <>, Positive range <>) of Boolean;
 
+   type set_tratti_uno is array(Positive range <>) of tratto;
+   type contatori is array(Positive range <>) of Natural;
+
    protected type resource_segmento_urbana(id_risorsa: Positive; num_ingressi: Natural; num_ingressi_polo_true: Natural; num_ingressi_polo_false: Natural) is new rt_urbana and backup_interface with
       function get_id_risorsa return Positive;
       function get_id_quartiere_risorsa return Positive;
@@ -213,6 +216,8 @@ package mailbox_risorse_attive is
       --procedure get_id_bipedi_in_wait_ingressi(traiettoria: traiettoria_ingressi_type; first_step: Boolean; id_abitante: Positive; id_quartiere_ab: Positive);
       procedure update_num_stalli_for_bipede_in_ingresso(traiettoria: traiettoria_ingressi_type; bipede: ptr_list_posizione_abitanti_on_road; index_ingresso: Positive);
 
+      procedure bipede_is_valid_for_session_of_cross(traiettoria: traiettoria_ingressi_type; key_ingresso: Positive; id_quart_bipede: Positive; id_bipede: Positive; from_begin: Boolean; i_am_valid: out Boolean);
+
    private
       function get_num_estremi_urbana return Natural;
       function slide_list_road(range_1: Boolean; range_2: id_corsie; index_to_slide: Natural) return ptr_list_posizione_abitanti_on_road;
@@ -283,6 +288,15 @@ package mailbox_risorse_attive is
       -- primo range seguente usato per indicare se si f
       disabilitazione_per_intersezione_attraversamento_cars_ingresso: type_disabi_att_cars_ingresso_per_intersezione(False..True,1..num_ingressi):= (others => (others => False));
 
+
+      how_many_bipedi_uscita_from_begin: contatori(1..num_ingressi):= (others => 0);
+      id_bipedi_close_session_uscita_from_begin: set_tratti_uno(1..num_ingressi);
+
+      how_many_bipedi_uscita_from_mezzaria: contatori(1..num_ingressi):= (others => 0);
+      id_bipedi_close_session_uscita_from_mezzaria: set_tratti_uno(1..num_ingressi);
+
+      how_many_bipedi_entrata_from_mezzaria: contatori(1..num_ingressi):= (others => 0);
+      id_bipedi_close_session_entrata_from_mezzaria: set_tratti_uno(1..num_ingressi);
 
    end resource_segmento_urbana;
    type ptr_resource_segmento_urbana is access all resource_segmento_urbana;

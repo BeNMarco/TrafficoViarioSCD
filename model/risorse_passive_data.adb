@@ -16,6 +16,7 @@ with global_data;
 with snapshot_interface;
 with JSON_Helper;
 with the_name_server;
+with support_strade_incroci_common;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -33,6 +34,7 @@ use JSON_Helper;
 use the_name_server;
 use Ada.Exceptions;
 use Ada.Strings.Unbounded;
+use support_strade_incroci_common;
 
 package body risorse_passive_data is
 
@@ -541,6 +543,7 @@ package body risorse_passive_data is
       procedure set_percorso_abitante(id_abitante: Positive; percorso: route_and_distance) is
       begin
          abitanti_arrived(id_abitante):= False;
+         Free_route_and_distance(percorsi(id_abitante));
          percorsi(id_abitante):= new route_and_distance'(percorso);
          position_abitanti(id_abitante):= 1;
       end set_percorso_abitante;
@@ -847,14 +850,14 @@ package body risorse_passive_data is
             num_fermate:= num_fermate+1;
          end if;
       end loop;
-      Put_Line("numero fermate quartiere " & Positive'Image(get_id_quartiere) & " " & Positive'Image(num_fermate));
+      --*Put_Line("numero fermate quartiere " & Positive'Image(get_id_quartiere) & " " & Positive'Image(num_fermate));
    end configure_map_fermate_urbane;
 
    procedure update_percorso_abitante_arrived(percorso: route_and_distance; residente: abitante) is
    begin
-      Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-      print_percorso(percorso.get_percorso_from_route_and_distance);
-      Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+      Put_Line("Richiesta percorso da [" & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_abitante_from_abitante) & "]");
+      --*print_percorso(percorso.get_percorso_from_route_and_distance);
+      --*Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
       get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso);
    end update_percorso_abitante_arrived;
 
@@ -873,7 +876,7 @@ package body risorse_passive_data is
       arrived_tratto:= resource_locate_abitanti.get_next(id_abitante);
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
       -- get_id_quartiere coincide con residente.get_id_quartiere_from_abitante
-      Put_Line(Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
+      Put_Line("Abitante [" & Positive'Image(get_id_quartiere) & ", " & Positive'Image(id_abitante) & " ] " & "arrivato nel luogo" & Positive'Image(arrived_tratto.get_id_quartiere_tratto) & " " & Positive'Image(arrived_tratto.get_id_tratto));
       mezzo:= residente.get_mezzo_abitante;
       if is_abitante_in_bus(id_abitante) then
          mezzo:= walking;
@@ -897,7 +900,7 @@ package body risorse_passive_data is
          --if id_abitante=125 and then arrived_tratto.get_id_tratto=47 then
          --   error_state:= False;
          --end if;
-         Put_Line("BUSSSSS " & Positive'Image(id_abitante) & " " & Positive'Image(get_id_quartiere));
+         --*Put_Line("BUSSSSS " & Positive'Image(id_abitante) & " " & Positive'Image(get_id_quartiere));
          if get_gestore_bus_quartiere_obj.get_num_fermate_rimaste(id_abitante)=0 then
             segnale:= False;
             if residente.is_a_bus_jolly then
@@ -987,16 +990,16 @@ package body risorse_passive_data is
    begin
       residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,id_abitante);
 
-      Put_Line(Positive'Image(alla_fermata.get_id_quartiere_tratto) & " " & Positive'Image(alla_fermata.get_id_tratto) & "id quart ab " & Positive'Image(get_id_quartiere) & " id ab " & Positive'Image(id_abitante));
+      Put_Line("Abitante [" & Positive'Image(get_id_quartiere) & ", " & Positive'Image(id_abitante) & "] arrivato alla fermata " & Positive'Image(alla_fermata.get_id_quartiere_tratto) & " " & Positive'Image(alla_fermata.get_id_tratto));
 
       tratto_to_go:= get_location_abitanti_quartiere.get_destination_abitante_in_bus(id_abitante);
 
       declare
          percorso: route_and_distance:= get_server_gps.calcola_percorso(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto,tratto_to_go.get_id_quartiere_tratto,tratto_to_go.get_id_tratto,get_id_quartiere,id_abitante);
       begin
-         Put_Line("request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
-         print_percorso(percorso.get_percorso_from_route_and_distance);
-         Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         Put_Line("Richiesta percorso abitante sceso da bus, abitante: [" & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_abitante_from_abitante) & "]");
+         --print_percorso(percorso.get_percorso_from_route_and_distance);
+         --Put_Line("end request percorso abitante sceso da bus " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
          get_locate_abitanti_quartiere.set_percorso_abitante(residente.get_id_abitante_from_abitante,percorso);
          ptr_rt_ingresso(get_id_ingresso_quartiere(alla_fermata.get_id_quartiere_tratto,alla_fermata.get_id_tratto)).new_abitante_to_move(get_id_quartiere,id_abitante,walking);
       end;

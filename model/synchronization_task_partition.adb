@@ -49,7 +49,8 @@ package body synchronization_task_partition is
                   only_one_quartiere: Boolean:= True;
                   partition_to_clean: registro_quartieri(1..get_num_quartieri):= (others => null);
                begin
-
+                  --Put_Line(Positive'Image(cont));
+                  --cont:= cont+1;
                   for i in registro'Range loop
                      if (registro(i)/=null and i/=get_id_quartiere) and get_quartiere_utilities_obj.is_configured_cache_quartiere(i)=False then
                         declare
@@ -81,12 +82,12 @@ package body synchronization_task_partition is
 
                   get_quartiere_utilities_obj.set_synch_cache(registro);
 
-                  Put_Line("resynch " & Positive'Image(get_id_quartiere));
+                  --*Put_Line("resynch " & Positive'Image(get_id_quartiere));
                   synchronization_partitions_obj.resynch_new_partition;
 
                   for i in registro'Range loop
                      if i/=get_id_quartiere and then registro(i)/=null then
-                        Put_Line("ready? " & Positive'Image(get_id_quartiere) & " on "  & Positive'Image(i));
+                        --*Put_Line("ready? " & Positive'Image(get_id_quartiere) & " on "  & Positive'Image(i));
                         get_synchronizer_quartiere(i).partition_is_ready(get_id_quartiere,registro);
                      end if;
                   end loop;
@@ -115,7 +116,7 @@ package body synchronization_task_partition is
                   -- non riesce a ripulire lo stato della coda.
                   -- OCCORRE RIPULIRLO SULLE SOLE PARTIZIONI VECCHIE NON SU QUELLE
                   -- NUOVE IN ATTESA SU ALTRE NUOVE
-                  Put_Line("before clean");
+                  --*Put_Line("before clean");
                   for i in 1..get_num_quartieri loop
                      if registro(i)/=null and synchronization_partitions_obj.is_partition_to_wait(i) then
                         partition_to_clean(i):= get_ref_quartiere(i);
@@ -127,11 +128,11 @@ package body synchronization_task_partition is
                      end if;
                   end loop;
                   synchronization_partitions_obj.set_clean_executed;
-                  Put_Line("after clean");
+                  --*Put_Line("after clean");
 
                   for i in registro'Range loop
                      if (i/=get_id_quartiere and then registro(i)/=null) and then synchronization_partitions_obj.is_partition_to_wait(i) then
-                        Put_Line("wait " & Positive'Image(get_id_quartiere) & " on "  & Positive'Image(i));
+                        --*Put_Line("wait " & Positive'Image(get_id_quartiere) & " on "  & Positive'Image(i));
                         get_synchronizer_quartiere(i).wait_synch_quartiere(get_id_quartiere);
                      end if;
                   end loop;
@@ -141,7 +142,7 @@ package body synchronization_task_partition is
                   end if;
 
                   get_quartiere_utilities_obj.set_quartieri_to_not_wait(synchronization_partitions_obj.get_partitions_to_not_wait);
-                  Put_Line("end wait synch " & Positive'Image(get_id_quartiere));
+                  --*Put_Line("end wait synch " & Positive'Image(get_id_quartiere));
 
                   -- TO DO controllo se ci sono tutti i quartieri se no setto lo stato di errore
                   awake:= True;

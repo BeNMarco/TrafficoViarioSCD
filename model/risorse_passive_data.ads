@@ -129,7 +129,7 @@ package risorse_passive_data is
    function get_resource_estremi_urbana(id_urbana: Positive) return estremi_resource_strada_urbana;
    function get_estremi_urbana(id_urbana: Positive) return estremi_strada_urbana;
 
-   type ptr_route_and_distance is access all route_and_distance'Class;
+   type ptr_route_and_distance is access route_and_distance;
    type percorso_abitanti is array(Positive range <>) of ptr_route_and_distance;
    type array_position_abitanti is array(Positive range <>) of Positive;
    type array_abitanti_finish_route is array(Positive range <>) of Boolean;

@@ -2,11 +2,13 @@
   "info": {
     "id": 2,
     "larghezza": 2000,
-    "altezza": 3000,
+    "altezza": 1500,
     "riferimento": {
       "quartiere": 1,
       "angolo": 0
-    }
+    },
+    "dimensioni":[2000, 1500],
+    "posizione": [0, 1500]
   },
   "id_quartiere": 2,
   "strade_urbane": [
@@ -310,8 +312,8 @@
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 4,
-      "polo": true,
-      "distanza_da_from": 320.0,
+      "polo": false,
+      "distanza_da_from": 150.0,
       "from": 0,
       "to": 0
     },
@@ -320,7 +322,7 @@
       "lunghezza": 50.0,
       "numcorsie": 1,
       "strada_confinante": 4,
-      "polo": false,
+      "polo": true,
       "distanza_da_from": 250.0,
       "from": 0,
       "to": 0
@@ -431,7 +433,7 @@
       "numcorsie": 1,
       "strada_confinante": 3,
       "polo": true,
-      "distanza_da_from": 350.0,
+      "distanza_da_from": 200.0,
       "from": 0,
       "to": 0
     },
@@ -461,7 +463,7 @@
       "numcorsie": 1,
       "strada_confinante": 3,
       "polo": true,
-      "distanza_da_from": 200.0,
+      "distanza_da_from": 350.0,
       "from": 0,
       "to": 0
     },
@@ -471,7 +473,7 @@
       "numcorsie": 1,
       "strada_confinante": 4,
       "polo": false,
-      "distanza_da_from": 150.0,
+      "distanza_da_from": 320.0,
       "from": 0,
       "to": 0
     },
@@ -531,7 +533,7 @@
       "numcorsie": 1,
       "strada_confinante": 10,
       "polo": true,
-      "distanza_da_from": 900.0,
+      "distanza_da_from": 890.0,
       "from": 0,
       "to": 0
     },
@@ -1456,6 +1458,8 @@
 
   "rotonde_a_3":[],
 
+"fermate_autobus":[],
+
 "pedoni":[
 ],
 
@@ -1466,5 +1470,9 @@
 ],
 
 "abitanti":[
-]
+],
+
+"autobus":[],
+
+"abitanti_in_bus":[]
 }

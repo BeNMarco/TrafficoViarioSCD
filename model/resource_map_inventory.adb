@@ -79,7 +79,7 @@ package body resource_map_inventory is
       set:= rci_parameters_are_set;
       gps:= get_server_gps;
       
-      Put_Line(Positive'Image(get_id_quartiere) & " begin cfg");
+      Put_Line("Inizio configurazione");
       create_synchronize_partitions_obj;
       synchronization_tasks_partition_obj:= new synchronization_tasks;
 
@@ -89,7 +89,7 @@ package body resource_map_inventory is
       -- end
       -- crea mailbox task
       
-      Put_Line(Positive'Image(get_id_quartiere) & " create risorse");
+      Put_Line("Creazione risorse");
       create_mailbox_entità(get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3);
       registro_risorse_ingressi:= create_risorse_ingressi;
       registro_risorse_urbane:= create_risorse_urbane;
@@ -114,9 +114,9 @@ package body resource_map_inventory is
          return;
       end if;
 
-      Put_Line(Positive'Image(get_id_quartiere) & " begin register map");
+      Put_Line("Regitrazione mappa al server gps");
       gps.registra_mappa_quartiere(get_id_quartiere,get_urbane,get_ingressi,get_incroci_a_4,get_incroci_a_3);
-      Put_Line(Positive'Image(get_id_quartiere) & " end register map");
+      Put_Line("Mappa registrata");
       quartiere_has_registered_map(get_id_quartiere);
         
    exception

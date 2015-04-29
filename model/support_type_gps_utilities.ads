@@ -16,6 +16,7 @@ package support_type_gps_utilities is
    procedure Free_percorso is new Ada.Unchecked_Deallocation
      (Object => list_percorso, Name => ptr_percorso);
 
+
    type ptr_strade_urbane_features is access all strade_urbane_features;
    procedure Free_strade_urbane_features is new Ada.Unchecked_Deallocation
      (Object => strade_urbane_features, Name => ptr_strade_urbane_features);

@@ -8,6 +8,17 @@ with the_name_server;
 with remote_types;
 with global_data;
 with risorse_passive_data;
+with Ada.Strings.Unbounded;
+with Ada.Characters.Handling;
+with absolute_path;
+with data_quartiere;
+with Ada.Direct_IO;
+with Ada.Directories;
+with support_strade_incroci_common;
+
+use data_quartiere;
+
+use Ada.Characters.Handling;
 
 use GNATCOLL.JSON;
 use Ada.Text_IO;
@@ -19,6 +30,10 @@ use the_name_server;
 use remote_types;
 use global_data;
 use risorse_passive_data;
+use Ada.Strings.Unbounded;
+use absolute_path;
+use support_strade_incroci_common;
+
 
 package body model_webserver_communication_protocol_utilities is
 
@@ -131,6 +146,7 @@ package body model_webserver_communication_protocol_utilities is
    function create_entità_incrocio_state(id_quartiere_abitante: Positive; id_abitante: Positive; id_quartiere_incrocio: Positive; id_incrocio: Positive; where: Float; id_quartiere_urbana_ingresso: Natural; id_urbana_ingresso: Natural; direzione: traiettoria_incroci_type; mezzo: means_of_carrying) return JSON_Value is
       json: JSON_Value:= Create_Object;
    begin
+
       json.Set_Field("id_quartiere_abitante",id_quartiere_abitante);
       json.Set_Field("id_abitante",id_abitante);
       json.Set_Field("where","incrocio");
@@ -191,19 +207,25 @@ package body model_webserver_communication_protocol_utilities is
          if get_abilita_aggiornamenti_view then
             num_task_updated:= num_task_updated+1;
             for i in 1..Length(stato_abitanti) loop
-               Append(global_state_abitanti_quartiere,Get(stato_abitanti,i));
+               Append(wrap_global_state_abitanti_quartiere.js_array,Get(stato_abitanti,i));
             end loop;
-            Append(global_state_semafori_quartiere,stato_semafori);
+            Append(wrap_global_state_semafori_quartiere.all.js_array,stato_semafori);
             for i in 1..Length(stato_abitanti_uscenti) loop
-               Append(global_state_abitanti_quartiere_uscenti,Get(stato_abitanti_uscenti,i));
+               Append(wrap_global_state_abitanti_quartiere_uscenti.js_array,Get(stato_abitanti_uscenti,i));
             end loop;
             if num_task_updated=get_num_task then
                num_task_updated:= 0;
                json:= Create_Object;
-               json.Set_Field("abitanti",global_state_abitanti_quartiere);
-               json.Set_Field("semafori",global_state_semafori_quartiere);
-               json.Set_Field("abitanti_uscenti",global_state_abitanti_quartiere_uscenti);
+               json.Set_Field("abitanti",wrap_global_state_abitanti_quartiere.js_array);
+               json.Set_Field("semafori",wrap_global_state_semafori_quartiere.js_array);
+               json.Set_Field("abitanti_uscenti",wrap_global_state_abitanti_quartiere_uscenti.js_array);
                get_webServer.invia_aggiornamento(Write(json),get_id_quartiere);
+               Free_wrap_json_ar(wrap_global_state_abitanti_quartiere_uscenti);
+               Free_wrap_json_ar(wrap_global_state_semafori_quartiere);
+               Free_wrap_json_ar(wrap_global_state_abitanti_quartiere);
+               wrap_global_state_abitanti_quartiere:= new wrap_json_ar;
+               wrap_global_state_semafori_quartiere:= new wrap_json_ar;
+               wrap_global_state_abitanti_quartiere_uscenti:= new wrap_json_ar;
                global_state_abitanti_quartiere:= Empty_Array;
                global_state_semafori_quartiere:= Empty_Array;
                global_state_abitanti_quartiere_uscenti:= Empty_Array;

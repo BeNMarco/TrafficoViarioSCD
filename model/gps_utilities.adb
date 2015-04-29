@@ -132,14 +132,14 @@ package body gps_utilities is
          return_estremi: estremi_strade_urbane(hash_strade'First..hash_strade'Last,1..2);
       begin
          --Put_Line("estremi urbana" & Any_Priority'Image(Get_Priority(Ada.Task_Identification.Current_Task)));
-         Put_Line("estremi id urbana " & Positive'Image(id_quartiere));
+         --Put_Line("estremi id urbana " & Positive'Image(id_quartiere));
          for i in hash_strade.all'Range loop
             estremi:= hash_urbane_quartieri(id_quartiere)(i);
             return_estremi(i,1):= create_estremo_urbana(estremi(1).id_quartiere,estremi(1).id_incrocio,estremi(1).polo);
             return_estremi(i,2):= create_estremo_urbana(estremi(2).id_quartiere,estremi(2).id_incrocio,estremi(2).polo);
-            Put_Line("ESTREMI QUARTIERE " & Positive'Image(id_quartiere));
-            Put_Line(Positive'Image(estremi(1).id_quartiere) & " " & Positive'Image(estremi(1).id_incrocio));
-            Put_Line(Positive'Image(estremi(2).id_quartiere) & " " & Positive'Image(estremi(2).id_incrocio));
+            --Put_Line("ESTREMI QUARTIERE " & Positive'Image(id_quartiere));
+            --Put_Line(Positive'Image(estremi(1).id_quartiere) & " " & Positive'Image(estremi(1).id_incrocio));
+            --Put_Line(Positive'Image(estremi(2).id_quartiere) & " " & Positive'Image(estremi(2).id_incrocio));
          end loop;
          --Put_Line("estremi id quart " & Positive'Image(id_quartiere));
          return return_estremi;
@@ -210,7 +210,7 @@ package body gps_utilities is
          adiacente_4: adiacente;
          index_to_place: Positive := 1;
       begin
-
+         Put_Line("Registrazione mappa del nuovo quartiere");
          Free_strade_urbane_features(cache_urbane(id_quartiere));
          if cache_urbane(id_quartiere)=null then
             cache_urbane(id_quartiere):= new strade_urbane_features'(urbane);
@@ -330,7 +330,7 @@ package body gps_utilities is
          --Put_Line("incroci registrati" & Positive'Image(num_incroci_quartieri_registrati));
          if True then--num_incroci_quartieri_registrati = num_quartieri then
             -- il grafo pu\F2 essere costruito
-            Put_Line("costruzione grafo");
+            --Put_Line("costruzione grafo");
             for quartiere in 1..num_quartieri loop
                quartiere_strade:= hash_urbane_quartieri(quartiere);
                if cache_incroci_a_4(quartiere)/=null or else cache_incroci_a_3(quartiere)/=null then
@@ -408,14 +408,14 @@ package body gps_utilities is
                            end if;
                         end if;
                      else
-                        Put_Line("Errore la strada non \E8 raggiungibile");
+                        --Put_Line("Errore la strada non \E8 raggiungibile");
                         -- ERRORE LA STRADA \C8 ISOLATA, (NON \C8 RAGGIUNGIBILE NEL GRAFO)
                         null;
                      end if;
                   end loop;
                end if;
             end loop;
-            Put_Line("Effettuata registrazione nodi grafo");
+            --Put_Line("Effettuata registrazione nodi grafo");
             --num_strade_quartieri:= 0;
             print_grafo;
          end if;
@@ -474,7 +474,7 @@ package body gps_utilities is
          --new_to_id_luogo:= cache_ingressi(to_id_quartiere).all'First  +to_id_luogo-1;
          new_from_id_luogo:= from_id_luogo;
          new_to_id_luogo:= to_id_luogo;
-         Put_Line("gps, quartiere " & Natural'Image(from_id_quartiere) & " luogo " & Natural'Image(new_from_id_luogo) & " quartiere ab " & Positive'Image(id_quartiere) & " ab " & Positive'Image(id_abitante));
+         Put_Line("Richiesta di percorso da quartiere " & Natural'Image(from_id_quartiere) & " da luogo " & Natural'Image(new_from_id_luogo) & " per conto dell'abitante [ " & Positive'Image(id_quartiere) & " , " & Positive'Image(id_abitante) & "]");
          ingresso_partenza:= cache_ingressi(from_id_quartiere)(new_from_id_luogo);
          estremi:= hash_urbane_quartieri(from_id_quartiere)(ingresso_partenza.get_id_main_strada_ingresso);
          estremo_1_partenza:= estremi(1);
@@ -710,7 +710,7 @@ package body gps_utilities is
                         end if;
                      end if;
                   end if;
-                  Put_Line("DISTANZA:" & new_float'Image(distanza));
+                  --Put_Line("DISTANZA:" & new_float'Image(distanza));
                   if indice=1 then
                      distanza_estremo_1:=distanza;
                   else

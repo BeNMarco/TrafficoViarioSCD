@@ -38,7 +38,7 @@ procedure rci_utilities is
    end wait_quit_signal;
 
 begin
-   num_quartieri:= 3;
+   num_quartieri:= 8;
    configure_num_quartieri_name_server(num_quartieri);
    Put_Line(IOR);
    Create(File => IOR_File, Mode => Out_File, Name => "ior.txt");

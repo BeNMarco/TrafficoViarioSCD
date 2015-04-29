@@ -73,7 +73,7 @@ package body synchronization_partitions is
                can_be_open_ready_task_queue:= True;
             end if;
          end loop;
-         Put_Line("cfg quart " & Boolean'Image(can_be_open_ready_task_queue) & " " & Positive'Image(get_id_quartiere));
+         --*Put_Line("cfg quart " & Boolean'Image(can_be_open_ready_task_queue) & " " & Positive'Image(get_id_quartiere));
       end configure_remote_obj;
 
       procedure resynch_new_partition is
@@ -89,7 +89,7 @@ package body synchronization_partitions is
          else
             new_partition_guard:= True;
          end if;
-         Put_Line("resynch current task guard" & Boolean'Image(current_partition_tasks_are_ready) & " " & Boolean'Image(can_be_open_ready_task_queue) & " " & Positive'Image(get_id_quartiere) & " length coda " & Natural'Image(new_partition'Count));
+         --*Put_Line("resynch current task guard" & Boolean'Image(current_partition_tasks_are_ready) & " " & Boolean'Image(can_be_open_ready_task_queue) & " " & Positive'Image(get_id_quartiere) & " length coda " & Natural'Image(new_partition'Count));
 
       end resynch_new_partition;
 
@@ -111,17 +111,17 @@ package body synchronization_partitions is
          segnale: Boolean:= True;
       begin
 
-         Put_Line("ENTRY " & Positive'Image(id) & " in quartiere " & Positive'Image(get_id_quartiere));
+         --*Put_Line("ENTRY " & Positive'Image(id) & " in quartiere " & Positive'Image(get_id_quartiere));
 
          if exit_sys then
             return;
          end if;
          -- a new partition
          if remote_quartieri(id)=null then
-            Put_Line("go to requeue " & Positive'Image(id) & " " & Positive'Image(get_id_quartiere));
+            Put_Line("Requeue " & Positive'Image(id) & " in quartiere " & Positive'Image(get_id_quartiere));
             requeue new_partition;
          end if;
-         Put_Line("contENTRY " & Positive'Image(id) & " in quartiere " & Positive'Image(get_id_quartiere));
+         --*Put_Line("contENTRY " & Positive'Image(id) & " in quartiere " & Positive'Image(get_id_quartiere));
 
          --for i in 1..num_quartieri loop
          --   -- se A vede B => B vede A  MENTRE se A non vede B => non è detto che B non vede A
@@ -159,7 +159,7 @@ package body synchronization_partitions is
                if quartieri(i)=null and remote_quartieri(i)/=null then
                   temp_registro(i):= True;
                   not_wait_partitions(i):= True;
-                  Put_Line("ENTRY temp registro TRUE on " & Positive'Image(i) & " quartiere " & Positive'Image(get_id_quartiere));
+                  --*Put_Line("ENTRY temp registro TRUE on " & Positive'Image(i) & " quartiere " & Positive'Image(get_id_quartiere));
                end if;
             end loop;
 
@@ -173,13 +173,13 @@ package body synchronization_partitions is
                   -- gli altri
                   if queue(i)=False and temp_registro(i)=False then
                      segnale:= False;
-                     Put_Line("ENTRY nega segnale");
+                     --*Put_Line("ENTRY nega segnale");
                   end if;
                end if;
             end loop;
 
             if segnale then
-               Put_Line("segnale TRUE " & Positive'Image(get_id_quartiere));
+               --*Put_Line("segnale TRUE " & Positive'Image(get_id_quartiere));
                for i in 1..num_quartieri loop
                   if temp_registro(i)=False then
                      queue(i):= False;
@@ -204,7 +204,7 @@ package body synchronization_partitions is
                -- CAMBIO VERSO SEMAFORI
             end if;
          end;
-         Put_Line("END ENTRY " & Boolean'Image(current_partition_tasks_are_ready) & " in quartiere " & Positive'Image(get_id_quartiere));
+         --*Put_Line("END ENTRY " & Boolean'Image(current_partition_tasks_are_ready) & " in quartiere " & Positive'Image(get_id_quartiere));
 
       end partition_is_ready;
 
@@ -283,7 +283,7 @@ package body synchronization_partitions is
          -- deve chiudere la guardia all_is_synchronized quando tutti i quartieri
          -- interessati hanno eseguito la corrente entry
          --if all_is_synchronized then
-         Put_Line("all is synchronized " & Positive'Image(get_id_quartiere));
+         --*Put_Line("all is synchronized " & Positive'Image(get_id_quartiere));
          waiting_queue(from_quartiere):= True;
          for i in 1..num_quartieri loop
             -- qui la chiamata is_a_new_quartiere è coerente con il registro del quartiere chiamante
@@ -291,12 +291,12 @@ package body synchronization_partitions is
                if waiting_queue(i)=True or else get_ref_quartiere(from_quartiere).is_a_new_quartiere(i) then
                   null;
                else
-                  Put_Line("on " & Positive'Image(get_id_quartiere) & " FALSE CAUSA " & Positive'Image(i));
+                  --*Put_Line("on " & Positive'Image(get_id_quartiere) & " FALSE CAUSA " & Positive'Image(i));
                   segnale:= False;
                end if;
             end if;
          end loop;
-         Put_Line("segnale on " & Positive'Image(get_id_quartiere) & " vale " & Boolean'Image(segnale));
+         --*Put_Line("segnale on " & Positive'Image(get_id_quartiere) & " vale " & Boolean'Image(segnale));
          if segnale then
             waiting_queue:= (others => False);
             all_is_synchronized:= False;

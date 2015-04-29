@@ -39,6 +39,8 @@ package synchronization_task_partition is
       num: Natural:= 0;
       first_synch: Boolean:= True;
       num_task_arrived: Natural:= 0;
+
+      --cont: Natural:= 0;
    end synchronization_tasks;
 
    type ptr_synchronization_tasks is access all synchronization_tasks;

@@ -48,7 +48,7 @@ package body start_simulation is
          end if;
       else
          print_percorso(percorso.get_percorso_from_route_and_distance);
-         Put_Line("end request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         Put_Line("Inoltro richiesta percorso per abitante [" & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_abitante_from_abitante) & "]");
          get_locate_abitanti_quartiere.set_percorso_abitante(id_abitante => residente.get_id_abitante_from_abitante, percorso => percorso);
          percorso_calcolato:= True;
       end if;
@@ -64,7 +64,7 @@ package body start_simulation is
       error_flag: Boolean:= False;
       to_luogo: Positive;
    begin
-      Put_Line("avvia entità " & Positive'Image(get_from_abitanti) & " " & Positive'Image(get_to_abitanti));
+      Put_Line("Avvio spostamento entità con id: " & Positive'Image(get_from_abitanti) & ".." & Positive'Image(get_to_abitanti));
       -- cicla su ogni abitante e invia richiesta all'ingresso
 
       for i in get_from_abitanti..get_to_abitanti-get_num_autobus loop
@@ -83,7 +83,7 @@ package body start_simulation is
          end if;
 
          --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-         Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+         --*Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
          if is_abitante_in_bus(i) and then switch then
             mezzo:= walking;
             if get_id_fermata_from_id_urbana(get_ingresso_from_id(residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1).get_id_main_strada_ingresso)=0 then
@@ -131,9 +131,7 @@ package body start_simulation is
          end if;
       end loop;
 
-      Put_Line("before conf fermate");
       configure_linee_fermate;
-      Put_Line("after conf fermate");
 
       start_autobus_to_move;
    end start_entity_to_move;
@@ -163,7 +161,7 @@ package body start_simulation is
          else
             first_fermata:= tratto(linea.get_num_tratto(1));
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-            Put_Line("request percorso BUS " & Positive'Image(autobus.get_id_abitante_from_abitante) & " " & Positive'Image(autobus.get_id_quartiere_from_abitante));
+            Put_Line("Richiesta percorso BUS [" & Positive'Image(autobus.get_id_quartiere_from_abitante) & ", " & Positive'Image(autobus.get_id_abitante_from_abitante) & "]");
             declare
                percorso: route_and_distance:= get_server_gps.calcola_percorso(from_id_quartiere => autobus.get_id_quartiere_from_abitante, from_id_luogo => autobus.get_id_luogo_casa_from_abitante+get_from_ingressi-1,
                                                                            to_id_quartiere => first_fermata.get_id_quartiere_tratto, to_id_luogo => first_fermata.get_id_tratto,id_quartiere => get_id_quartiere,id_abitante => i);
@@ -215,7 +213,7 @@ package body start_simulation is
             residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,list.get_tupla.get_id_tratto);
 
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-            Put_Line("request percorso " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+            Put_Line("Richiesta percorso RITARDATA per abitante: " & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_quartiere_from_abitante) & "]");
             if is_abitante_in_bus(residente.get_id_abitante_from_abitante) then
                mezzo:= walking;
                continue:= True;
@@ -268,7 +266,7 @@ package body start_simulation is
                if stop_entity=False then
                   first_fermata:= tratto(linea.get_num_tratto(1));
                   --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-                  Put_Line("request percorso BUS " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
+                  --*Put_Line("request percorso BUS " & Positive'Image(residente.get_id_abitante_from_abitante) & " " & Positive'Image(residente.get_id_quartiere_from_abitante));
                   declare
                      percorso: route_and_distance:= get_server_gps.calcola_percorso(from_id_quartiere => residente.get_id_quartiere_from_abitante, from_id_luogo => residente.get_id_luogo_casa_from_abitante+get_from_ingressi-1,
                                                                            to_id_quartiere => first_fermata.get_id_quartiere_tratto, to_id_luogo => first_fermata.get_id_tratto,id_quartiere => get_id_quartiere,id_abitante => residente.get_id_abitante_from_abitante);

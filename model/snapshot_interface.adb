@@ -29,7 +29,7 @@ package body snapshot_interface is
       procedure configure is
          snap_file: File_Type;
       begin
-         json_snap:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/snapshot/" & get_name_quartiere & "_snapshot.json");
+         json_snap:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/snapshot/quartiere_snapshot.json");
       end configure;
 
    end share_snapshot_file_quartiere;

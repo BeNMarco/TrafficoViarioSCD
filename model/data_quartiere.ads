@@ -28,7 +28,7 @@ use numerical_types;
 package data_quartiere is
 pragma Elaborate_Body;
    function get_id_quartiere return Positive;
-   function get_name_quartiere return String;
+   --function get_name_quartiere return String;
    function get_json_urbane return JSON_Array;
    function get_json_quartiere return JSON_Value;
    function get_json_default_movement_entity return JSON_Value;
@@ -89,9 +89,9 @@ pragma Elaborate_Body;
 
 private
 
-   name_quartiere: String:= Polyorb.Parameters.Get_Conf("dsa","partition_name");
+   --name_quartiere: String:= Polyorb.Parameters.Get_Conf("dsa","partition_name");
 
-   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/" & name_quartiere & ".json");
+   json_quartiere: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/quartiere.json");
    json_traiettorie_incroci: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_incroci.json");
    json_traiettorie_ingressi: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/traiettorie_ingressi.json");
    json_aggiornamenti: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/abilita_invio_aggiornamenti.json");

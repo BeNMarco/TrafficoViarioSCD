@@ -1,0 +1,219 @@
+body {
+	margin: 0;
+	overflow: hidden;
+}
+
+#canvas{cursor:-webkit-grab; cursor: -moz-grab;}
+
+#canvas-wrap{position:relative;}
+
+#title-div{
+	position:absolute;
+  top: 0;
+  left: 0;
+	border-bottom-right-radius: 10px;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	margin: 0;
+	padding: 10px;
+}
+
+#title-div h1{
+	margin: 0px;
+}
+
+#status-box{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+#status-box .toggle{
+	text-align: right;
+}
+
+#statusPanel{
+	margin-bottom: 0;
+	min-width: 500px;
+}
+
+#statusPanel .tab-content{
+	width: 100%;
+	max-height: 200px;
+	overflow-Y: auto;
+}
+
+#statusPanel table tbody tr td{
+	text-align: center;
+}
+
+#info-box{
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	border-top-left-radius: 5px;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	line-height: 8pt;
+	padding-bottom: 0;
+}
+
+#rendering-state-box{
+	position:absolute;
+	bottom: 0;
+	left: 0;
+	border-top-right-radius: 5px;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	line-height: 8pt;
+	padding-bottom: 0;
+}
+
+#rendering-state-box .renderingState{
+	margin: 5px;
+}
+
+.renderingState .progress{
+	margin-bottom:15px;
+	width: 150px;
+}
+
+#rendering-state-box .progress{
+	margin: 0;
+}
+
+#rendering-state-box .table{
+	margin: 0 0 10px 0;
+}
+
+#rendering-state-box tr{
+	padding-left: 10px;
+}
+
+#rendering-state-box tr th{
+	padding:5px;
+}
+
+#rendering-state-box tr td{
+	padding:5px;
+}
+
+#info-title{
+	padding: 10px;
+	border-bottom: 1px solid gray;
+	text-align: center;
+}
+
+.box-title{
+	padding: 10px;
+	border-bottom: 1px solid gray;
+	text-align: center;
+}
+
+.vert-btn {
+	display: block !important;
+	float: none;
+	clear: both;
+}
+
+#info-box .propsBlock{
+	float:left;
+	padding:10px;
+}
+
+#info-box .propsBlock-run{
+	clear:both;
+	padding:10px;
+}
+
+#info-box .top-separator{
+	border-top: 1px solid gray;
+}
+
+#info-box h1{
+	border-right: 1px solid;
+}
+
+#info-box .labels{
+	float:left;
+	text-align: right;
+	padding-right: 2px;
+}
+
+#info-box .values{
+	float:left;
+	padding-left: 2px;
+	padding-right: 10px;
+	min-width: 20px;
+}
+
+/**
+ *   Per INDEX.HTML
+ */
+
+#districts-status tr th{
+	text-align:center;
+}
+
+#controls-div{
+	position: absolute; 
+	top: 25%; left:0;
+	background-color: white;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	padding: 5px;
+	/*opacity: 0.5;*/
+}
+
+.divisor{
+	height: 0px;
+	margin: 7px 0 5px 0;
+	border-bottom: 2px solid #D0D0D0;
+}
+
+.divisor-small{
+	margin-top: 5px;
+}
+
+#controls-div a{
+	display:block; 
+	background-color: white; 
+	text-decoration: none; 
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	font-weight: bolder;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	color: grey;
+}
+
+#controls-div a:hover{
+	color:black;
+}
+
+#zoomInBtn{
+	border-top-left-radius: 2px; 
+	border-top-right-radius: 2px;
+}
+
+#zoomOutBtn{
+	border-bottom-left-radius: 2px; 
+	border-bottom-right-radius: 2px;
+}
+
+#terminateBtn{
+
+}
+
+.loadingScreenWindow .ui-dialog-titlebar-close {display: none;}
+.loadingScreenWindow{z-index:2;}
+.ui-widget-overlay{position: absolute; width: 100%; height: 100%; top:0;left:0;z-index: 1;}
+
+/** modification to bootstrap **/
+.progress .district-status-bar.progress-bar-inactive {
+	background: rgba(166, 166, 166, 1); 
+	background: -webkit-linear-gradient(top, rgba(222, 222, 222, 1) 0%, rgba(166, 166, 166, 1) 100%); 
+	background: linear-gradient(to bottom, rgba(222, 222, 222, 1) 0%, rgba(166, 166, 166, 1) 100%);
+	color: grey;
+}

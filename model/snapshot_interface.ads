@@ -12,8 +12,8 @@ package snapshot_interface is
    procedure recovery_resource(obj: access backup_interface) is abstract;
 
    protected share_snapshot_file_quartiere is
-      procedure get_json_value_resource_snap(id_risorsa: Positive; json_resource: out JSON_Value);
-      procedure get_json_value_locate_abitanti(json_locate: out JSON_Value);
+      --procedure get_json_value_resource_snap(id_risorsa: Positive; json_resource: out JSON_Value);
+      --procedure get_json_value_locate_abitanti(json_locate: out JSON_Value);
       procedure configure;
    private
       json_snap: JSON_Value;

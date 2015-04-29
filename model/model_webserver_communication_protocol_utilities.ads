@@ -43,10 +43,10 @@ package model_webserver_communication_protocol_utilities is
       global_state_semafori_quartiere: JSON_Array:= Empty_Array;
       global_state_abitanti_quartiere_uscenti: JSON_Array:= Empty_Array;
 
-      wrap_global_state_abitanti_quartiere: ptr_JSON_Array:= new wrap_json_ar;
-      wrap_global_state_semafori_quartiere: ptr_JSON_Array:= new wrap_json_ar;
-      wrap_global_state_abitanti_quartiere_uscenti: ptr_JSON_Array:= new wrap_json_ar;
-      --tempFile: File_Type;
+      --wrap_global_state_abitanti_quartiere: ptr_JSON_Array:= new wrap_json_ar;
+      --wrap_global_state_semafori_quartiere: ptr_JSON_Array:= new wrap_json_ar;
+      --wrap_global_state_abitanti_quartiere_uscenti: ptr_JSON_Array:= new wrap_json_ar;
+      tempFile: File_Type;
    end state_view_quartiere;
 
 private

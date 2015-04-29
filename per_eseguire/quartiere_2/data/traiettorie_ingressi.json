@@ -1,0 +1,75 @@
+{
+ "traiettorie_ingresso": {
+    "entrata_andata": {
+      "lunghezza": 10.525279453023643
+    },
+    "uscita_andata": {
+      "lunghezza": 10.525279453795855
+    },
+    "entrata_ritorno": {
+      "lunghezza": 27.763730715141467,
+      "intersezioni": [
+        {
+          "traiettoria": "uscita_ritorno",
+          "distanza": 11.715224803771227
+        }
+      ],
+      "intersezioni_corsie":[
+        {
+          "traiettoria": "linea_corsia",
+          "distanza": 17.671257094661268
+        },
+        {
+          "traiettoria": "linea_mezzaria",
+          "distanza": 9.717994155007158
+        }
+      ]
+    },
+    "uscita_ritorno": {
+      "lunghezza": 27.763730714440186,
+      "intersezioni": [
+        {
+          "traiettoria": "entrata_ritorno",
+          "distanza": 16.048505911287524
+        }
+      ],
+     "intersezioni_corsie":[
+        {
+          "traiettoria": "linea_corsia",
+          "distanza": 10.09247362046708
+        },
+        {
+          "traiettoria": "linea_mezzaria",
+          "distanza": 18.045736559997028
+        }
+      ],
+     "intersezione_bipedi": 24.86617996894603
+    },
+    
+    "uscita_destra_pedoni": {
+      "lunghezza": 1.6069952304121657
+    },
+    "uscita_destra_bici": {
+      "lunghezza": 4.2428925744977075
+    },
+    "uscita_ritorno_pedoni": {
+      "lunghezza": 4.087838905082726
+    },
+    "uscita_ritorno_bici": {
+      "lunghezza": 1.3254968523410597
+    },
+    "entrata_destra_pedoni": {
+      "lunghezza": 1.6002029063655476
+    },
+    "entrata_destra_bici": {
+      "lunghezza": 4.237048834660677
+    },
+    "entrata_ritorno_pedoni": {
+      "lunghezza": 4.086029767462251
+    },
+    "entrata_ritorno_bici": {
+      "lunghezza": 1.3303352550464904
+    }
+  }
+}
+ 

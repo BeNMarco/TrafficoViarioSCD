@@ -1,0 +1,29 @@
+{
+  "quartieri":
+  [
+    {
+      "id": 1,
+      "larghezza": 2000,
+      "altezza": 1500,
+      "sinistra": null,
+      "sopra": null,
+      "file": "quartiere1.json"
+    },
+    {
+      "id": 2,
+      "larghezza": 2000,
+      "altezza": 1500,
+      "sinistra": null,
+      "sopra": 1,
+      "file": "quartiere2.json"
+    },
+    {
+      "id": 3,
+      "larghezza": 2000,
+      "altezza": 3000,
+      "sinistra":1,
+      "sopra":null,
+      "file": "quartiere3.json"
+    }
+  ]
+}

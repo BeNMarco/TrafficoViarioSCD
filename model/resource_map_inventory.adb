@@ -11,6 +11,7 @@ with System_error;
 with System.RPC;
 with Ada.Exceptions;
 with synchronization_partitions;
+with absolute_path;
 
 use Ada.Text_IO;
 with Ada.Strings.Unbounded;
@@ -26,6 +27,7 @@ use risorse_passive_data;
 use Ada.Strings.Unbounded;
 use Ada.Exceptions;
 use synchronization_partitions;
+use absolute_path;
 
 package body resource_map_inventory is
    
@@ -75,6 +77,7 @@ package body resource_map_inventory is
       set: Boolean;
       raise_exception: Boolean:= False;
       error_state: Boolean:= False;
+      tempFile: File_Type;
    begin
       set:= rci_parameters_are_set;
       gps:= get_server_gps;
@@ -107,6 +110,20 @@ package body resource_map_inventory is
                          ptr_rt_quartiere_utilitites(get_quartiere_utilities_obj),
                          ptr_rt_synchronization_partitions_type(get_synchronization_partitions_object),
                          set);
+      
+      Open(File => tempFile, Name =>  abs_path & "data/temp_view/quartiere_abitanti.json", Mode => Out_File);
+      Put_Line(tempFile, "");
+      Close(tempFile);
+      
+      Open(File => tempFile, Name =>  abs_path & "data/temp_view/quartiere_semafori.json", Mode => Out_File);
+      Put_Line(tempFile, "");
+      Close(tempFile);
+      
+      Open(File => tempFile, Name =>  abs_path & "data/temp_view/quartiere_uscenti.json", Mode => Out_File);
+      Put_Line(tempFile, "");
+      Close(tempFile);
+      
+      
       if set=False then
          log_system_error.set_error(name_server,error_state);
          -- quartiere già in uso

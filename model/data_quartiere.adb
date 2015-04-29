@@ -11,10 +11,10 @@ package body data_quartiere is
    begin
       return id_quartiere;
    end get_id_quartiere;
-   function get_name_quartiere return String is
-   begin
-      return name_quartiere;
-   end get_name_quartiere;
+   --function get_name_quartiere return String is
+   --begin
+   --   return name_quartiere;
+   --end get_name_quartiere;
    function get_json_urbane return JSON_Array is
    begin
       return json_urbane;
@@ -208,14 +208,14 @@ package body data_quartiere is
    protected body report_log is
       procedure configure is
       begin
-         Create(Outfile, Out_File, abs_path & "data/log/" & name_quartiere & "_stallo.json");
+         Create(Outfile, Out_File, abs_path & "data/log/quartiere_stallo.json");
          --Open(File => OutFile, Name => str_quartieri'Image(id_mappa) & "_log.txt", Mode => Append_File);
          Put_Line(OutFile, "{}");
          Close(OutFile);
       end configure;
 
       procedure finish(id_quartiere: Positive) is
-         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
+         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/quartiere_stallo.json");
       begin
          --if id_quartiere=get_id_quartiere then
             if state_stallo.Has_Field(Positive'Image(id_quartiere)) then
@@ -223,14 +223,14 @@ package body data_quartiere is
             else
                state_stallo.Set_Field(Positive'Image(id_quartiere),1);
             end if;
-            Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_stallo.json", Mode => Out_File);
+            Open(File => OutFile, Name =>  abs_path & "data/log/quartiere_stallo.json", Mode => Out_File);
             Put_Line(OutFile, Write(state_stallo,False));
             Close(OutFile);
          --end if;
       end finish;
 
       procedure write_state_stallo(id_quartiere: Positive; id_abitante: Positive; reset: Boolean) is
-         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/" & name_quartiere & "_stallo.json");
+         state_stallo: JSON_Value:= Get_Json_Value(Json_String => "",Json_File_Name => abs_path & "data/log/quartiere_stallo.json");
       begin
          if id_quartiere=get_id_quartiere then
             if state_stallo.Has_Field(Positive'Image(id_abitante)) then
@@ -246,7 +246,7 @@ package body data_quartiere is
                   state_stallo.Set_Field(Positive'Image(id_abitante),0);
                end if;
             end if;
-            Open(File => OutFile, Name =>  abs_path & "data/log/" & name_quartiere & "_stallo.json", Mode => Out_File);
+            Open(File => OutFile, Name =>  abs_path & "data/log/quartiere_stallo.json", Mode => Out_File);
             Put_Line(OutFile, Write(state_stallo,False));
             Close(OutFile);
          else

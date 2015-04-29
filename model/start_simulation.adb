@@ -213,7 +213,7 @@ package body start_simulation is
             residente:= get_quartiere_utilities_obj.get_abitante_quartiere(get_id_quartiere,list.get_tupla.get_id_tratto);
 
             --calcola percorso e prendi il riferimento a locate del quartiere abitante e setta percorso
-            Put_Line("Richiesta percorso RITARDATA per abitante: " & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_quartiere_from_abitante) & "]");
+            --Put_Line("Richiesta percorso RITARDATA per abitante: " & Positive'Image(residente.get_id_quartiere_from_abitante) & ", " & Positive'Image(residente.get_id_abitante_from_abitante) & "]");
             if is_abitante_in_bus(residente.get_id_abitante_from_abitante) then
                mezzo:= walking;
                continue:= True;

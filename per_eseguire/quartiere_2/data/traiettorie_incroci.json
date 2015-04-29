@@ -1,0 +1,80 @@
+{
+"traiettorie_incrocio": {
+      "destra_pedoni": 1.3516073071226795,
+      "destra_bici": 4.054821921368038,
+      "dritto_pedoni": 34.0,
+      "dritto_bici": 34.0,
+      "destra": {
+        "lunghezza": 11.71392999506322,
+        "strada_partenza": {
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "corsia": 2
+        },
+        "intersezione_bipedi": 8.713312353603342
+      },
+      "sinistra": {
+        "lunghezza": 32.63980049957327,
+        "strada_partenza": {
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "dritto_1",
+            "distanza": 18.15536731775841
+          },
+          {
+            "traiettoria": "dritto_2",
+            "distanza": 26.064428058872345
+          }
+        ],
+        "intersezioni_corsie":[
+	  { 
+	    "traiettoria": "linea_corsia",
+            "distanza": 22.316320922387316
+          },
+          { 
+	    "traiettoria": "linea_mezzaria",
+            "distanza": 12.96204205862082
+          }
+        ],
+        "intersezione_bipedi": 29.63332050370114
+      },
+      "dritto_1": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "corsia": 1
+        },
+        "strada_arrivo": {
+          "corsia": 1
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 17.908863181982486
+          }
+        ],
+        "intersezione_bipedi": 31.0
+      },
+      "dritto_2": {
+        "lunghezza": 34.0,
+        "strada_partenza": {
+          "corsia": 2
+        },
+        "strada_arrivo": {
+          "corsia": 2
+        },
+        "intersezioni": [
+          {
+            "traiettoria": "sinistra",
+            "distanza": 14.349093848766858
+          }
+        ],
+        "intersezione_bipedi": 31.0
+      }
+    }
+}

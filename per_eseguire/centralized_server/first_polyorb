@@ -1,0 +1,230 @@
+###############################################################################
+# PolyORB configuration file.
+# $Id: polyorb.conf 170012 2011-02-02 17:00:14Z quinot $
+
+###############################################################################
+# The syntax of the configuration file is:
+#  - empty lines and lines that have a '#' in column 1 are
+#    ignored;
+#  - sections can be started by lines of the form
+#    '[' SECTION-NAME ']';
+#  - variable assignments can be performed by lines of the
+#    form VARIABLE-NAME '=' VALUE.
+#  Any variable assignment is local to a section.
+#
+#  Assignments that occur before the first section declaration
+#  are relative to section [environment].
+#  Section and variable names are case sensitive.
+#
+#  A variable Var.Iable in section [Sec] can be overridden by
+#  setting environment variable "POLYORB_SEC_VAR_IABLE"
+#  (see Make_Env_Name in body).
+#  Furthermore, each time a resolved in that section value
+#  starts with "file:", the contents of the file is used instead.
+
+###############################################################################
+# Logging facility
+#
+# Note: debug will work iff PolyORB has been configured with 'debug' enabled
+
+[log]
+#default=notice
+#timestamp=false
+#
+# Middleware core
+#
+#polyorb.any=debug
+#polyorb.any.exceptionlist=debug
+#polyorb.any.nvlist=debug
+#polyorb.asynch_ev.sockets=debug
+#polyorb.binding_data=debug
+#polyorb.binding_objects=debug
+#polyorb.buffers=debug
+#polyorb.buffers_show=debug
+#polyorb.call_back=debug
+#polyorb.components=debug
+#polyorb.configuration=debug
+#polyorb.errors=debug
+#polyorb.errors.helper=debug
+#polyorb.exceptions=debug
+#polyorb.exceptions.stack=debug
+#polyorb.filters=debug
+#polyorb.filters.slicers=debug
+#polyorb.filters.fragmenter=debug
+#polyorb.initialization=debug
+#polyorb.lanes=debug
+#polyorb.orb=debug
+#polyorb.orb_controller=debug
+#polyorb.orb_controller_status=debug
+#polyorb.orb.no_tasking=debug
+#polyorb.orb.thread_per_request=debug
+#polyorb.orb.thread_per_session=debug
+#polyorb.orb.thread_pool=debug
+#polyorb.protocols=debug
+#polyorb.protocols.echo=debug
+#polyorb.references=debug
+#polyorb.references.binding=debug
+#polyorb.references.corbaloc=debug
+#polyorb.references.ior=debug
+#polyorb.references.uri=debug
+#polyorb.representations.cdr=debug
+#polyorb.requests=debug
+#polyorb.request_qos=debug
+#polyorb.request_scheduler.servant_lane=debug
+#polyorb.servants.group_servants=debug
+#polyorb.smart_pointers=debug
+#polyorb.tasking.advanced_mutexes=debug
+#polyorb.tasking.condition_variables=debug
+#polyorb.tasking.mutexes=debug
+#polyorb.tasking.rw_locks=debug
+#polyorb.tasking.semaphores=debug
+#polyorb.tasking.watchers=debug
+#polyorb.tasking.profiles.full_tasking.threads=debug
+#polyorb.transport.connected=debug
+#polyorb.transport.connected.sockets=debug
+#polyorb.transport.connected.sockets.ssl=debug
+#polyorb.transport.datagram.sockets=debug
+#polyorb.utils.configuration_file=debug
+#polyorb.utils.sockets=debug
+#polyorb.utils.tcp_access_points=debug
+#
+# POA
+#
+#polyorb.obj_adapters.group_object_adapter=debug
+#polyorb.object_maps.system=debug
+#polyorb.object_maps.user=debug
+#polyorb.poa=debug
+#polyorb.poa.basic_poa=debug
+#polyorb.poa_manager.basic_manager=debug
+#polyorb.poa_types=debug
+#polyorb.poa_policies.thread_policy.single_thread=debug
+#polyorb.poa_policies.thread_policy.main_thread=debug
+#polyorb.rt_poa.basic_rt_poa=debug
+#
+# CORBA personality
+#
+#corba.fixed_point=debug
+#corba.orb=debug
+#corba.serverrequest=debug
+#polyorb.corba_p.exceptions=debug
+#polyorb.corba_p.initial_references=debug
+#polyorb.corba_p.server_tools=debug
+#polyorb.if_descriptors.corba_ir=debug
+#portableserver=debug
+#portableserver.poa=debug
+#
+# DSA personality
+#
+#polyorb.dsa_p.partitions=debug
+#polyorb.dsa_p.remote_launch=debug
+#polyorb.dsa_p.storages=debug
+#polyorb.dsa_p.storages.dsm=debug
+#polyorb.dsa_p.storages.dfs=debug
+#system.dsa_services=debug
+#system.partition_interface=debug
+#
+#polyorb.qos.term_manager_info=debug
+#polyorb.termination_manager=debug
+#polyorb.termination_manager.bootstrap=debug
+#
+# GIOP personality
+#
+#polyorb.binding_data.giop.common_sockets=debug
+#polyorb.giop_p.exceptions=debug
+#polyorb.giop_p.service_contexts=debug
+#polyorb.giop_p.tagged_components=debug
+#polyorb.protocols.giop=debug
+#polyorb.protocols.giop.common=debug
+#polyorb.protocols.giop.giop_1_0=debug
+#polyorb.protocols.giop.giop_1_1=debug
+#polyorb.protocols.giop.giop_1_2=debug
+#polyorb.representations.cdr.giop_utils=debug
+#
+# IIOP Personality
+#
+#polyorb.binding_data.giop.iiop=debug
+#
+# DIOP Personality
+#
+#polyorb.binding_data.giop.diop=debug
+#
+# MIOP Personality
+#
+#polyorb.binding_data.giop.uipmc=debug
+#polyorb.filters.miop=debug
+#polyorb.filters.miop.miop_in=debug
+#polyorb.filters.miop.miop_out=debug
+#polyorb.miop_p.tagged_components=debug
+#
+# MOMA personality
+#
+#moma.configuration.server=debug
+#moma.configuration=debug
+#moma.message_consumers=debug
+#moma.message_producers=debug
+#moma.provider.message_consumer=debug
+#moma.provider.message_handler=debug
+#moma.provider.message_pool=debug
+#moma.provider.message_producer=debug
+#moma.provider.routers=debug
+#moma.provider.topic_datas=debug
+#moma.types=debug
+#
+# SOAP personality
+#
+#polyorb.filters.http=debug
+#polyorb.protocols.soap_pr=debug
+#soap.message.xml=debug
+#soap.types=debug
+#
+# SRP personality
+#
+#polyorb.protocols.srp=debug
+#polyorb.representations.srp=debug
+#
+# Tasking profiles
+#
+#polyorb.tasking.profiles.full_tasking.condition_variables=debug
+#polyorb.tasking.profiles.full_tasking.mutexes=debug
+#polyorb.tasking.profiles.full_tasking.threads=debug
+#polyorb.tasking.profiles.ravenscar.condition_variables=debug
+#polyorb.tasking.profiles.ravenscar.index_manager=debug
+#polyorb.tasking.profiles.ravenscar.mutexes=debug
+#polyorb.tasking.profiles.ravenscar.threads=debug
+#
+# Security Service
+#
+#polyorb.security.authentication_mechanisms=debug
+#polyorb.security.credentials=debug
+#polyorb.security.exported_names=debug
+
+[smart_pointers]
+
+# Fine-grained control of debugging traces for smart pointers events
+
+#default.trace=false
+#POLYORB.ANY.ANY_CONTAINER.trace=true
+#POLYORB.ANY.NVLIST.OBJECT.trace=true
+#POLYORB.BINDING_OBJECTS.BINDING_OBJECT.trace=true
+#POLYORB.CORBA_P.POLICY.POLICY_OBJECT_TYPE.trace=true
+#POLYORB.OBJ_ADAPTERS.GROUP_OBJECT_ADAPTER.GROUP_OBJECT_ADAPTER.trace=true
+#POLYORB.POA.BASIC_POA.BASIC_OBJ_ADAPTER.trace=true
+#POLYORB.POA_MANAGER.BASIC_MANAGER.BASIC_POA_MANAGER.trace=true
+#POLYORB.REFERENCES.REFERENCE_INFO.trace=true
+
+###############################################################################
+# CORBA parameters
+#
+
+[corba]
+#name_service=IOR:xxx
+#ir_service=IOR:xxx
+#policy_domain_manager=IOR:xxx
+#replication_manager=IOR:xxx
+
+###############################################################################
+# DSA parameters
+#
+
+[dsa]
+#rpc_timeout=0

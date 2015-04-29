@@ -51,6 +51,7 @@ package body synchronization_task_partition is
                begin
                   --Put_Line(Positive'Image(cont));
                   --cont:= cont+1;
+                  Put_Line("begin synch");
                   for i in registro'Range loop
                      if (registro(i)/=null and i/=get_id_quartiere) and get_quartiere_utilities_obj.is_configured_cache_quartiere(i)=False then
                         declare
@@ -146,6 +147,7 @@ package body synchronization_task_partition is
 
                   -- TO DO controllo se ci sono tutti i quartieri se no setto lo stato di errore
                   awake:= True;
+                  Put_Line("end synch");
                exception
                   when System.RPC.Communication_Error =>
                      Put_Line("partizione remota non raggiungibile.");

@@ -1,0 +1,105 @@
+\section{Utilizzo del prototipo}
+Il prototipo viene distribuito già compilato e pronto all'utilizzo all'interno
+di una macchina virtuale, realizzata tramite VirtualBox.
+
+Il file che viene consegnato è un disco virtuale contenente un'installazione di
+Ubuntu Server 14.04. La versione di GNAT utilizzata per lo sviluppo del progetto
+è la GPL 2013 64bit.
+
+La macchina virtuale utilizzata per l'installazione dei componenti è stata
+configurata con 2048 MB di memoria RAM, 2 processori, virtualizzazione abilitata
+e due interfacce di rete. La prima è configurata come NAT (utilizzata per
+l'accesso a internet) mentre la seconda come ``Only-Host network''. La seconda
+interfaccia permette di connettersi via ssh alla macchina virtuale e di
+visualizzare la simulazione sul proprio browser\footnote{Lo sviluppo è stato
+interamente svolto utilizzando il browser Google Chrome.}. 
+
+Una volta avviata la macchina virtuale è necessario effettuare il login. Le
+credenziali sono:
+\begin{description}
+	\item[username:] scd
+	\item[password:] scd
+\end{description}
+
+\subsection{Compilazione}
+Tutto il progetto e i sorgenti sono contenuti nella cartella
+\texttt{/home/scd/TrafficoViarioSCD/}.
+
+Una volta entrati in questa cartella è possibile ricompilare il progetto
+utilizzando il seguente comando:
+
+\begin{center}
+\texttt{po\_gnatdis -Pdefault default.cfg}
+\end{center}
+
+Questa fase non è necessaria perché il disco virtuale contiene già la
+compilazione del progetto alla sua ultima versione.
+
+\subsection{Fasi preliminari}
+Tutti i file necessari per l'esecuzione del progetto sono contenuti nella
+sottocartella \texttt{per\_eseguire}. Qualora si dovesse ricompilare il
+progetto, è necessario eseguire lo script \texttt{copia\_eseguibili.sh} contenuto in
+questa cartella.
+
+Per testare il progetto si mettono a disposizione dell'utente 3 configurazioni.
+Le configurazioni prevedono tutte l'utilizzo della stessa mappa ma il numero di
+entità che popola la simulazione è diverso.
+
+Per selezionare e preparare la configurazione è possibile utilizzare lo script
+\texttt{helper.py} contenuto nella cartella principale del progetto.
+Utilizzare il comando \texttt{config} per configurare il sistema. Sono presenti
+tre configurazioni, rispettivamente identificate con 1, 2 e 3. Per selezionare
+la configurazione 1, ad esempio, usare il comando
+
+\begin{center}
+	\texttt{./helper.py config -c 1}
+\end{center}
+
+\subsection{Avvio}
+Per avviare la simulazione è possibile utilizzare lo script \texttt{helper.py}
+ed eseguire le varie componenti, tramite il comando \texttt{start}.
+
+Per ogni terminale è possibile eseguire più di un componente. Utilizzare i
+seguenti parametri per avviare i vari componenti:
+\begin{description}
+	\item[-ns] avviare il name server
+	\item[-cs] avviare il server centrale
+	\item[-ws] avviare il web server
+	\item[-q] avviare un quartiere. Assieme a questo parametro è necessario
+	specificare che quartiere (uno o più) avviare. I quartieri disponibili sono 1,
+	2 e 3
+\end{description}
+
+Se, per esempio, si vuole avviare la simulazione in due terminali, è possibile
+usare i seguenti comandi:
+\begin{center}
+	\texttt{./helper.py start -ns -cs -q 1}
+	
+	\texttt{./helper.py start -ws -q 2 3}
+\end{center}
+
+Il primo comando avvia il name server, il server centrale e il quartiere 1
+mentre il secondo avvia il web server e i quartieri 2 e 3.
+
+\subsection{Visualizzazione}
+Per visualizzare la simulazione utilizzare un browser e utilizzare l'indirizzo
+IP della macchina virtuale, assegnato all'interfaccia di rete di tipo
+``Host-Only''. Di default il web server viene avviato sulla porta 8080 ma è
+possibile impostare un reindirizzamento delle porte, per usare la porta 80,
+eseguendo lo script \texttt{portForsard.sh}. La password da utilizzare in caso
+di richiesta è ``scd''.
+
+La mappa principale visualizza le partizioni attive e le arre della mappa da
+esse gestite. Le aree vengono disegnate appena una partizione si attiva.
+
+Per visualizzare la simulazione dettagliata di un singolo quartiere posizionare
+il puntatore sopra l'area desiderata, per evidenziarla, e poi cliccare.
+
+\subsection{Terminazione}
+Il sistema può essere terminato in due modi:
+\begin{itemize}
+	\item premendo il tasto ``Q'' nel terminale nel quale si è avviato, da solo o
+	con altri componenti, il name server
+	\item premendo il tasto di richiesta di terminazione, in una delle pagine di
+	visualizzazione della simulazione
+\end{itemize}

@@ -16,7 +16,12 @@ ior_file_path = os.path.join(script_dir,exec_dir,nameserver_dir,"ior.txt")
 
 def list_config(nomi):
   for nome in nomi:
-    print " - " + nome
+    files = os.walk(os.path.join(configs_dir,nome)).next()[2]
+    ids = []
+    for confFile in files:
+      ids.append(confFile.replace('quartiere','').replace('.json',''))
+    ids.sort()
+    print " - " + nome + " (quartieri " + ",".join(ids)+")"
 
 def setup_config(c):
   print "Preparazione della configurazione " + c
@@ -83,7 +88,7 @@ def print_info(args):
   for nodo in get_nodi_quartiere():
     print " - "+nodo
   print ""
-  print "configurazioni disponibili:"
+  print "Configurazioni disponibili:"
   configs = get_nomi_configs()
   configs.sort()
   list_config(configs)

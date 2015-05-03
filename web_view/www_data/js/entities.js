@@ -34,7 +34,7 @@ function EntitiesStyle(){
 	};
 	this.pedestrian = {
 		shape: {type:'Circle', args: {center:[0,0], radius:0.25}},
-		color: 'pink'
+		color: 'violet'
 	};
 }
 

@@ -18,7 +18,7 @@ function EntitiesStyle(){
 	this.bikeShape = {type:'Circle', args: {center:[0,0], radius:0.5}};
 	this.bikeColor = 'green';
 	this.pedestrianShape = {type:'Circle', args: {center:[0,0], radius:0.5}};
-	this.pedestrianColor = 'pink';
+	this.pedestrianColor = 'violet';
 
 	this.car = {
 		shape: {type:'Rectangle', args: {point:[0,0],size:[2,3]}},
@@ -34,7 +34,7 @@ function EntitiesStyle(){
 	};
 	this.pedestrian = {
 		shape: {type:'Circle', args: {center:[0,0], radius:0.25}},
-		color: 'pink'
+		color: 'violet'
 	};
 }
 
@@ -56,7 +56,6 @@ function Entity()
 
 Entity.prototype.show = function(){
 	this.path.visible = true;
-	//this.path.bringToFront();
 }
 
 Entity.prototype.hide = function(){
@@ -64,35 +63,14 @@ Entity.prototype.hide = function(){
 }
 
 Entity.prototype.draw = function(style){
-	this.path = new Path[style.shape.type](style.shape.args); //style.carShape.args[0], style.carShape.args[1]
+	this.path = new Path[style.shape.type](style.shape.args); 
 	this.path.fillColor = style.color;
 	this.path.myData = this;
 
 	this.path.onMouseEnter = this.myOnMouseEnter;
-	/*function(event) {
-	  // Layout the tooltip above the dot
-	  //var tooltipRect = new Rectangle(this.position + new Point(40, 40), new Size(100, 100));
-	  // Create tooltip from rectangle
-	  this.tooltipLabel = new PointText(this.position.subtract(new Point(-5,-5)));
-	  this.tooltipLabel.fillColor = 'white';
-	  this.tooltipLabel.textColor = 'blue';
-	  this.tooltipLabel.strokeColor = 'black';
-	  // Name the tooltip so we can retrieve it later
-	  this.tooltipLabel.content = this.myData.id;
-	  this.tooltipLabel.bringToFront();
-	  // Add the tooltip to the parent (group)
-	  this.fillColor = 'green';
-	}*/
-
 
 	// Create onMouseLeave event for dot
 	this.path.onMouseLeave = this.myOnMouseLeave;
-	/*function(event) {
-	  // We retrieve the tooltip from its name in the parent node (group) then remove it
-	  this.tooltipLabel.remove();
-	  this.fillColor = 'red';
-	  console.log("out");
-	}*/
 }
 
 Entity.prototype.myOnMouseEnter = function(event) {
@@ -121,39 +99,6 @@ Entity.prototype.remove = function()
 	if(this.path)
 		this.path.remove();
 }
-
-/*
-Car.prototype.draw = function(style){
-	this.path = new Path[style.carShape.type](style.carShape.args); //style.carShape.args[0], style.carShape.args[1]
-	this.path.fillColor = style.carColor;
-	this.length = style.carShape.args.size[1];
-	this.path.carData = this;
-
-	this.path.onMouseEnter = function(event) {
-	  // Layout the tooltip above the dot
-	  //var tooltipRect = new Rectangle(this.position + new Point(40, 40), new Size(100, 100));
-	  // Create tooltip from rectangle
-	  this.tooltipLabel = new PointText(this.position.subtract(new Point(-5,-5)));
-	  this.tooltipLabel.fillColor = 'white';
-	  this.tooltipLabel.textColor = 'blue';
-	  this.tooltipLabel.strokeColor = 'black';
-	  // Name the tooltip so we can retrieve it later
-	  this.tooltipLabel.content = this.carData.id;
-	  this.tooltipLabel.bringToFront();
-	  // Add the tooltip to the parent (group)
-	  this.fillColor = 'green';
-	}
-
-
-	// Create onMouseLeave event for dot
-	this.path.onMouseLeave =  function(event) {
-	  // We retrieve the tooltip from its name in the parent node (group) then remove it
-	  this.tooltipLabel.remove();
-	  this.fillColor = 'red';
-	  console.log("out");
-	}
-	//this.path.bringToFront();
-}*/
 
 Car.prototype = new Entity();
 Car.prototype.constructor = Car;

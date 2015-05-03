@@ -70,12 +70,6 @@ Simulation.prototype.addState = function(state) {
 		this.onStateReceived(this.stateCache.length);
 	}
 
-	/*
-	 * var stateDelta = (new Date().getTime()) - this.lastStateTime;
-	 * console.log("Got state after "+stateDelta + " ms"); this.lastStateTime =
-	 * new Date().getTime(); console.log(state);
-	 */
-
 	if (!this.running && this.receivedStates == this.requiredStates
 			&& (typeof this.onReady === 'function')) {
 		console.log("i'm ready!");
@@ -176,36 +170,20 @@ Simulation.prototype.initPrevState = function(state) {
 		var curState = state.abitanti[i];
 		var id = curState.id_quartiere_abitante + "_" + curState.id_abitante;
 		var o = null;
-		try{
-			switch(curState.mezzo)
-			{
-				case 'car':
-					o = this.objects.getOrAddVehicle(curState.id_abitante, curState.id_quartiere_abitante, curState.length_abitante, curState.is_a_bus);
-					//curState = this.setCarPathLength(curState);
-					break;
-				case 'bike':
-					o = this.objects.bikes[id];
-					//curState = this.setPedPathLength(curState);
-					break;
-				case 'walking':
-					o = this.objects.pedestrians[id];
-					//curState = this.setPedPathLength(curState);
-					break;
-			}
-			// if(!done) {console.log("Before> Prev:"+o.prevState.num+" Cur:"+curState.num); }
-			if (o) {
-				o.prevState = curState;
-			}
-		} catch (e) {
-			console.log("INIT PREV STATE > Exception ++++++++++++++++++++");
-			console.log("exception:");
-			console.log(e);
-			console.log("state:");
-			console.log(curState);
-			console.log("o:");
-			console.log(o);
-			console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
-			throw e;
+		switch(curState.mezzo)
+		{
+			case 'car':
+				o = this.objects.getOrAddVehicle(curState.id_abitante, curState.id_quartiere_abitante, curState.length_abitante, curState.is_a_bus);
+				break;
+			case 'bike':
+				o = this.objects.bikes[id];
+				break;
+			case 'walking':
+				o = this.objects.pedestrians[id];
+				break;
+		}
+		if (o) {
+			o.prevState = curState;
 		}
 	}
 }
@@ -267,124 +245,98 @@ Simulation.prototype.computeNewDistanceAndState = function(prevState, curState)
 	// altrimenti calcoliamo la posizione giusta
 	else {
 		// se l'oggetto è passato da uno stato all'altro
-		try {
-			if (!onSamePath(prevState, curState)) {
-				// calcolo della posizione iniziale della traiettoria dello stato successivo
+		if (!onSamePath(prevState, curState)) {
+			// calcolo della posizione iniziale della traiettoria dello stato successivo
 
-				// se ci arriva dallo stato la usiamo
-				var curInizio = curState.inizio;
+			// se ci arriva dallo stato la usiamo
+			var curInizio = curState.inizio;
 
-				// se non abbiamo un riferimento di inizio traiettoria lo calcoliamo
-				if(!curInizio){
+			// se non abbiamo un riferimento di inizio traiettoria lo calcoliamo
+			if(!curInizio){
 
-					// settiamo a 0 nel caso in cui non riusciamo a risolverlo
-					curInizio = 0;
+				// settiamo a 0 nel caso in cui non riusciamo a risolverlo
+				curInizio = 0;
 
-					// lunghezza da percorrere nella traiettoria indicata dallo stato
-					// precedente
-					var segLen1 = prevState.pathLength - prevState.distanza;
+				// lunghezza da percorrere nella traiettoria indicata dallo stato
+				// precedente
+				var segLen1 = prevState.pathLength - prevState.distanza;
 
-					// se la traiettoria precedente era una traiettoria di ingresso
-					// e quella attuale è una strada prendiamo come inzio traiettoria
-					// il punto della strada di ingresso + la larghezza della corisa 
-					// sommata alla larghezza del marciapiede
-					if (prevState.where == 'traiettoria_ingresso' 
-							&& curState.where == 'strada') {
-						if(curState.polo){
-							curInizio = curState.pathLength - prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
-						} else {
-							curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
-						}
-					}
-					else if (prevState.where == 'strada' 
-							&& curState.where == 'traiettoria_ingresso') {
-						if(prevState.polo){
-							segLen1 = prevState.pathLength - curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
-						} else {
-							segLen1 = curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
-						}
-					}
-					// altrimenti, se siamo in una strada e prima eravamo in un cambio
-					// corsia, prendiamo la posizione in cui abbiamo iniziato a fare 
-					// il cambio corsia e ci sommiamo la lunghezza del cambio
-					else if(prevState.where == 'cambio_corsia' && curState.where == 'strada') {
-						if(curState.polo){
-							curInizio = curState.pathLength - prevState.distanza_inizio + this.traiettorie.cambio_corsia.lunghezza_lineare;
-						} else {
-							curInizio = prevState.distanza_inizio + this.traiettorie.cambio_corsia.lunghezza_lineare;
-						}
-					}
-					// se eravamo in una strada e dobbiamo fare un cambio corsia, 
-					// la lunghezza della strada che consideriamo arriva fino al punto in 
-					// cui abbiamo il cambio corsia
-					else if (prevState.where == 'strada' && curState.where == 'cambio_corsia'){
-						segLen1 = curState.distanza_inizio - prevState.distanza;
+				// se la traiettoria precedente era una traiettoria di ingresso
+				// e quella attuale è una strada prendiamo come inzio traiettoria
+				// il punto della strada di ingresso + la larghezza della corisa 
+				// sommata alla larghezza del marciapiede
+				if (prevState.where == 'traiettoria_ingresso' 
+						&& curState.where == 'strada') {
+					if(curState.polo){
+						curInizio = curState.pathLength - prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
+					} else {
+						curInizio = prevState.distanza_ingresso + this.map.mapStyle.laneWidth+this.map.mapStyle.pavementWidth;
 					}
 				}
-
-				var segLen2 = curState.distanza - curInizio;
-				var segLen = segLen1+segLen2;
-
-				// lunghezza che abbiamo percorso in questo Dt
-				var doneLen = this.computeCurrentLength(segLen);
-
-				// se abbiamo fatto più di segLen1 allora siamo sulla nuova 
-				// traiettoria
-				if(doneLen > segLen1)
-				{
-					// prendiamo come nuova distanza l'inizio della nuova traiettoria
-					// più la distanza che abbiamo coperto meno la lunghezza coperta
-					// nella traiettoria precedente
-					newDistance = curInizio + doneLen - segLen1;
-					stateToUse = curState;
-				} 
-				// altrimenti siamo ancora nella traiettoria precedente
-				else {
-					// prendiamo la distanza percorsa
-					newDistance = prevState.distanza + doneLen;
-					// e usiamo lo stato precedente per risolvere 
-					// la posizione sulla traiettoria precedente
-					stateToUse = prevState;
+				else if (prevState.where == 'strada' 
+						&& curState.where == 'traiettoria_ingresso') {
+					if(prevState.polo){
+						segLen1 = prevState.pathLength - curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
+					} else {
+						segLen1 = curState.distanza_ingresso - this.map.mapStyle.laneWidth-this.map.mapStyle.pavementWidth - prevState.distanza;
+					}
+				}
+				// altrimenti, se siamo in una strada e prima eravamo in un cambio
+				// corsia, prendiamo la posizione in cui abbiamo iniziato a fare 
+				// il cambio corsia e ci sommiamo la lunghezza del cambio
+				else if(prevState.where == 'cambio_corsia' && curState.where == 'strada') {
+					if(curState.polo){
+						curInizio = curState.pathLength - prevState.distanza_inizio + this.traiettorie.cambio_corsia.lunghezza_lineare;
+					} else {
+						curInizio = prevState.distanza_inizio + this.traiettorie.cambio_corsia.lunghezza_lineare;
+					}
+				}
+				// se eravamo in una strada e dobbiamo fare un cambio corsia, 
+				// la lunghezza della strada che consideriamo arriva fino al punto in 
+				// cui abbiamo il cambio corsia
+				else if (prevState.where == 'strada' && curState.where == 'cambio_corsia'){
+					segLen1 = curState.distanza_inizio - prevState.distanza;
 				}
 			}
-			// altrimenti prendiamo la posizione dallo stato precedente
-			else {
-				prevPosition = prevState.distanza;
+
+			var segLen2 = curState.distanza - curInizio;
+			var segLen = segLen1+segLen2;
+
+			// lunghezza che abbiamo percorso in questo Dt
+			var doneLen = this.computeCurrentLength(segLen);
+
+			// se abbiamo fatto più di segLen1 allora siamo sulla nuova 
+			// traiettoria
+			if(doneLen > segLen1)
+			{
+				// prendiamo come nuova distanza l'inizio della nuova traiettoria
+				// più la distanza che abbiamo coperto meno la lunghezza coperta
+				// nella traiettoria precedente
+				newDistance = curInizio + doneLen - segLen1;
 				stateToUse = curState;
-				// in questo caso un oggetto è arrivato alla fine di una strada 
-				// di ingresso e vuole tornare indietro
-				if (curState.where == 'strada_ingresso'
-						&& (prevState.in_uscita != curState.in_uscita)) {
-					prevPosition = 0;
-				}
-				if(prevState.distanza > curState.distanza)
-				{
-					console.log("Not possible!");
-					console.log("prev");
-					console.log(prevState);
-					console.log("cur");
-					console.log(curState);
-					console.log("selected");
-					console.log(stateToUse);
-				}
-				//newDistance = this.computeNewDistance(curState.distanza, prevPosition);
-				newDistance = prevState.distanza + this.computeCurrentLength((curState.distanza-prevState.distanza));
+			} 
+			// altrimenti siamo ancora nella traiettoria precedente
+			else {
+				// prendiamo la distanza percorsa
+				newDistance = prevState.distanza + doneLen;
+				// e usiamo lo stato precedente per risolvere 
+				// la posizione sulla traiettoria precedente
+				stateToUse = prevState;
 			}
-		} catch (err) {
-			console.log("COMPUTER NEW DISTANCE > Exception ------------------------");
-			console.log("exception:");
-			console.log(err);
-			console.log("curCar:");
-			console.log(curState);
-			console.log("prevState:");
-			console.log(prevState);
-			console.log("this.prevSate:");
-			console.log(this.prevSate);
-			console.log("prevPosition:");
-			console.log(prevPosition);
-			console.log("----------------------------------------------------------");
-			throw err;
 		}
+		// altrimenti prendiamo la posizione dallo stato precedente
+		else {
+			prevPosition = prevState.distanza;
+			stateToUse = curState;
+			// in questo caso un oggetto è arrivato alla fine di una strada 
+			// di ingresso e vuole tornare indietro
+			if (curState.where == 'strada_ingresso'
+					&& (prevState.in_uscita != curState.in_uscita)) {
+				prevPosition = 0;
+			}
+			newDistance = prevState.distanza + this.computeCurrentLength((curState.distanza-prevState.distanza));
+		}
+
 	}
 	return {state: stateToUse, distance: newDistance};
 }
@@ -394,8 +346,6 @@ Simulation.prototype.moveCar = function(time, curCarState)
 	var curCarID = curCarState.id_quartiere_abitante+"_"+curCarState.id_abitante;
 	var s = null;
 	var newDistance = 0;
-
-	//var curCar = this.objects.getOrAddVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);;
 	
 	var curCar = this.objects.getVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);;
 	if(curCar == null)
@@ -404,71 +354,52 @@ Simulation.prototype.moveCar = function(time, curCarState)
 		curCar = this.objects.addVehicle(curCarState.id_abitante, curCarState.id_quartiere_abitante, curCarState.length_abitante, curCarState.is_a_bus);
 		curCar.prevState = curCarState;
 	}
-	try {
-		var toUse = this.computeNewDistanceAndState(curCar.prevState, curCarState);
-		s = toUse.state;
-		newDistance = toUse.distance;
+	var toUse = this.computeNewDistanceAndState(curCar.prevState, curCarState);
+	s = toUse.state;
+	newDistance = toUse.distance;
 
-		var newPos = null;
-		switch (s.where) {
-		case 'strada':
-			newPos = this.map.streets[s.id_where].getPositionAt(
-					newDistance, s.polo, s.corsia - 1);
-			break;
-		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[s.id_where]
-					.getPositionAt(newDistance, !s.in_uscita,
-							s.corsia - 1);
-			break;
-		case 'traiettoria_ingresso':
-			newPos = this.map.streets[s.id_where]
-					.getPositionAtEntrancePath(s.polo,
-							s.distanza_ingresso,
-							s.traiettoria, newDistance);
-			break;
-		case 'incrocio':
-			newPos = this.map.crossroads[s.id_where]
-					.getPositionAt(newDistance, s.strada_ingresso,
-							s.quartiere_strada_ingresso,
-							s.direzione);
-			
-			break;
-		case 'cambio_corsia':
-		try{
-			var path = this.map.streets[s.id_where]
-					.getOvertakingPath(s.distanza_inizio,
-							s.polo, s.corsia_inizio - 1,
-							s.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare);
-			var loc = path.getLocationAt(newDistance);
-			newPos = {
-				position : loc.point,
-				angle : loc.tangent.angle
-			}
-		}catch(e){
-			console.log("Spostamento a "+newDistance+" di "+this.map.streets[s.id_where]
-					.getOvertakingPathLength(s.distanza_inizio,
-							s.polo, s.corsia_inizio - 1,
-							s.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare))
+	var newPos = null;
+	switch (s.where) {
+	case 'strada':
+		newPos = this.map.streets[s.id_where].getPositionAt(
+				newDistance, s.polo, s.corsia - 1);
+		break;
+	case 'strada_ingresso':
+		newPos = this.map.entranceStreets[s.id_where]
+				.getPositionAt(newDistance, !s.in_uscita,
+						s.corsia - 1);
+		break;
+	case 'traiettoria_ingresso':
+		newPos = this.map.streets[s.id_where]
+				.getPositionAtEntrancePath(s.polo,
+						s.distanza_ingresso,
+						s.traiettoria, newDistance);
+		break;
+	case 'incrocio':
+		newPos = this.map.crossroads[s.id_where]
+				.getPositionAt(newDistance, s.strada_ingresso,
+						s.quartiere_strada_ingresso,
+						s.direzione);
+		
+		break;
+	case 'cambio_corsia':
+		var path = this.map.streets[s.id_where]
+				.getOvertakingPath(s.distanza_inizio,
+						s.polo, s.corsia_inizio - 1,
+						s.corsia_fine - 1, this.traiettorie.cambio_corsia.lunghezza_lineare);
+		var loc = path.getLocationAt(newDistance);
+		newPos = {
+			position : loc.point,
+			angle : loc.tangent.angle
 		}
-			break;
-		}
-		curCar.move(newPos.position, newPos.angle);
-		if(typeof this.onObjectMoved === 'function')
-		{
-			this.onObjectMoved(curCar, s, newDistance, newPos);
-		}
-	} catch (e) {
-		console.log("MOVE CAR > Got exception =====");
-		console.log("New distance: "+newDistance);
-		console.log(e);
-		console.log("current:");
-		console.log(curCarState);
-		console.log("previous:");
-		console.log(curCar.prevState);
-		console.log("used:");
-		console.log(s);
-		console.log("==============================");
+		break;
 	}
+	curCar.move(newPos.position, newPos.angle);
+	if(typeof this.onObjectMoved === 'function')
+	{
+		this.onObjectMoved(curCar, s, newDistance, newPos);
+	}
+	
 }
 
 Simulation.prototype.moveBipede = function(time, curBiState)
@@ -487,52 +418,40 @@ Simulation.prototype.moveBipede = function(time, curBiState)
 		}
 		curBi.prevState = curBiState;
 	}
-	try {
 		
-		var toUse = this.computeNewDistanceAndState(curBi.prevState, curBiState);
-		s = toUse.state;
-		var newDistance = toUse.distance;
+	var toUse = this.computeNewDistanceAndState(curBi.prevState, curBiState);
+	s = toUse.state;
+	var newDistance = toUse.distance;
 
-		var newPos = null;
-		switch (s.where) {
-		case 'strada':
-			newPos = this.map.streets[s.id_where].getOnPavementPositionAt(
-					newDistance, s.polo, s.bike);
-			break;
-		case 'strada_ingresso':
-			newPos = this.map.entranceStreets[s.id_where]
-					.getOnPavementPositionAt(newDistance, !s.in_uscita,
-							s.bike);
-			break;
-		case 'traiettoria_ingresso':
-			newPos = this.map.streets[s.id_where]
-					.getOnZebraPositionAt(newDistance, s.polo,
-							s.distanza_ingresso,
-							s.traiettoria, s.bike);
-			break;
-		case 'incrocio':
-			newPos = this.map.crossroads[s.id_where]
-					.getPositionOnPedestrianPath(newDistance, s.strada_ingresso,
-							s.quartiere_strada_ingresso,
-							s.direzione);
-			
-			break;
-		}
-		curBi.move(newPos.position);
-		if(typeof this.onObjectMoved === 'function')
-		{
-			this.onObjectMoved(curBi, s, newDistance, newPos);
-		}
-	} catch (e) {
-		console.log("MOVE BIPEDE > Got exception =====");
-		console.log(e);
-		console.log("current:");
-		console.log(curBiState);
-		console.log("previous:");
-		console.log(curBi.prevState);
-		console.log("used:");
-		console.log(s);
-		console.log("=================================");
+	var newPos = null;
+	switch (s.where) {
+	case 'strada':
+		newPos = this.map.streets[s.id_where].getOnPavementPositionAt(
+				newDistance, s.polo, s.bike);
+		break;
+	case 'strada_ingresso':
+		newPos = this.map.entranceStreets[s.id_where]
+				.getOnPavementPositionAt(newDistance, !s.in_uscita,
+						s.bike);
+		break;
+	case 'traiettoria_ingresso':
+		newPos = this.map.streets[s.id_where]
+				.getOnZebraPositionAt(newDistance, s.polo,
+						s.distanza_ingresso,
+						s.traiettoria, s.bike);
+		break;
+	case 'incrocio':
+		newPos = this.map.crossroads[s.id_where]
+				.getPositionOnPedestrianPath(newDistance, s.strada_ingresso,
+						s.quartiere_strada_ingresso,
+						s.direzione);
+		
+		break;
+	}
+	curBi.move(newPos.position);
+	if(typeof this.onObjectMoved === 'function')
+	{
+		this.onObjectMoved(curBi, s, newDistance, newPos);
 	}
 }
 
@@ -695,8 +614,6 @@ Simulation.prototype.fastForward = function() {
 	if (this.running && this.stateCache.length >= this.requiredStates) {
 		var tmpArr = this.stateCache.slice(this.stateCache.length
 				- this.requiredStates);
-		console.log("keeping the following..");
-		console.log(tmpArr);
 		this.stateCache = tmpArr;
 		this.init();
 	}
